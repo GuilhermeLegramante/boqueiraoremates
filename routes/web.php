@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Client;
 use Illuminate\Support\Facades\Route;
 
 use Livewire\Livewire;
@@ -19,5 +20,6 @@ Livewire::setUpdateRoute(function ($handle) {
 Route::redirect('/boqueiraoremates/public/login', '/boqueiraoremates/public/login')->name('login');
 
 Route::get('/', function () {
+    dd(Client::find(1)->testando);
     return view('welcome');
 });
