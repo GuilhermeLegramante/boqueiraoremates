@@ -10,6 +10,8 @@ class ListClients extends ListRecords
 {
     protected static string $resource = ClientResource::class;
 
+    protected static ?string $navigationLabel = 'Listar Cliente';
+
     protected function getHeaderActions(): array
     {
         return [
