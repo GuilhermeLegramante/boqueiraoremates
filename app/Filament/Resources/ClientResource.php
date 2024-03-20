@@ -35,7 +35,6 @@ class ClientResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // dd(Client::find(5)->address->street->name);
         return $form
             ->schema(ClientForm::form());
     }

@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\DocumentForm;
 use App\Filament\Resources\DocumentResource\Pages;
 use App\Filament\Resources\DocumentResource\RelationManagers;
 use App\Models\Document;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -32,17 +35,7 @@ class DocumentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Select::make('document_type_id')
-                    ->relationship('documentType', 'name')
-                    ->required(),
-                Forms\Components\Select::make('client_id')
-                    ->relationship('client', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('path')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(DocumentForm::form());
     }
 
     public static function table(Table $table): Table

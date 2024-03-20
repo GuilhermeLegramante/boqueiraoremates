@@ -40,5 +40,6 @@ return [
     'register_origin' => 'Canal de Inclusão',
     'profile' => 'Perfil',
     'income' => 'Renda',
+    
 
 ];
