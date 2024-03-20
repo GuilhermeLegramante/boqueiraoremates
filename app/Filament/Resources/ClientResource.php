@@ -35,6 +35,7 @@ class ClientResource extends Resource
 
     public static function form(Form $form): Form
     {
+        // dd(Client::find(5)->address->street->name);
         return $form
             ->schema(ClientForm::form());
     }
@@ -68,19 +69,19 @@ class ClientResource extends Resource
             ]);
     }
 
-    // public static function getRelations(): array
-    // {
-    //     return [
-    //         //
-    //     ];
-    // }
+    public static function getRelations(): array
+    {
+        return [
+            RelationManagers\DocumentsRelationManager::class,
+        ];
+    }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListClients::route('/'),
-            'create' => Pages\CreateClient::route('/create'),
-            'edit' => Pages\EditClient::route('/{record}/edit'),
+            'create' => Pages\CreateClient::route('/criar'),
+            'edit' => Pages\EditClient::route('/{record}/editar'),
         ];
     }
 

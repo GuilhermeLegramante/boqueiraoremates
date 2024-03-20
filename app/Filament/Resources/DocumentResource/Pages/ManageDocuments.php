@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\StateResource\Pages;
+namespace App\Filament\Resources\DocumentResource\Pages;
 
-use App\Filament\Resources\StateResource;
+use App\Filament\Resources\DocumentResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
-class ManageStates extends ManageRecords
+class ManageDocuments extends ManageRecords
 {
-    protected static string $resource = StateResource::class;
+    protected static string $resource = DocumentResource::class;
 
     protected function getHeaderActions(): array
     {
