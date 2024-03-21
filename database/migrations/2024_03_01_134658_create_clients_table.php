@@ -35,7 +35,7 @@ return new class extends Migration
             $table->string('establishment')->nullable(); // Nome do estabelecimento. Ex. Fazenda Alegria
             $table->boolean('has_register_in_another_auctioneer')->nullable()->default(0); // Possui cadastro em outra leiloeira
             $table->string('auctioneer')->nullable(); // Nome da leiloeira
-            $table->enum('situation', ['able', 'disabled', 'inactive'])->nullable();
+            $table->enum('situation', ['able', 'disabled', 'inactive'])->nullable(); // Habilitado, Inabilitado, Inativo
             $table->enum('register_origin', ['marketing', 'local', 'site'])->nullable(); // Canal de inclusão (divulgação, recinto, site)
             $table->enum('profile', ['purchase', 'sale', 'both'])->nullable(); // Perfil (compra, venda ou ambos)
             $table->timestamps();
