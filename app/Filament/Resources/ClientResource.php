@@ -12,7 +12,11 @@ use Filament\Forms\Form;
 use Filament\Pages\Page;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -21,7 +25,7 @@ class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
@@ -43,20 +47,88 @@ class ClientResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('id')
+                    ->label(__('fields.code'))
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('cpf_cnpj')
+                    ->label(__('fields.cpf_cnpj'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
+                TextColumn::make('name')
+                    ->label(__('fields.name'))
+                    ->searchable(),
+                TextColumn::make('email')
+                    ->label(__('fields.email'))
+                    ->icon('heroicon-m-envelope'),
+                TextColumn::make('situation')
+                    ->label(__('fields.situation'))
+                    ->alignment(Alignment::Center)
+                    ->badge()
+                    ->formatStateUsing(
+                        fn (string $state): string => (($state == 'able' ? 'HABILITADO' : ($state == 'disabled' ? 'INABILITADO' : 'INATIVO')))
+                    )
+                    ->color(fn (string $state): string => match ($state) {
+                        'able' => 'success',
+                        'disabled' => 'warning',
+                        'inactive' => 'danger',
+                    }),
+                TextColumn::make('register_origin')
+                    ->label(__('fields.register_origin'))
+                    ->alignment(Alignment::Center)
+                    ->badge()
+                    ->formatStateUsing(
+                        fn (string $state): string => (($state == 'marketing' ? 'MARKETING' : ($state == 'local' ? 'RECINTO' : 'SITE')))
+                    )
+                    ->color(fn (string $state): string => match ($state) {
+                        'marketing' => 'info',
+                        'local' => 'gray',
+                        'site' => 'primary',
+                    }),
+                TextColumn::make('profile')
+                    ->label(__('fields.profile'))
+                    ->alignment(Alignment::Center)
+                    ->badge()
+                    ->formatStateUsing(
+                        fn (string $state): string => (($state == 'purchase' ? 'COMPRA' : ($state == 'sale' ? 'VENDA' : 'AMBOS')))
+                    )
+                    ->color(fn (string $state): string => match ($state) {
+                        'purchase' => 'primary',
+                        'sale' => 'gray',
+                        'both' => 'success',
+                    }),
+                TextColumn::make('created_at')
+                    ->label(__('fields.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
+                TextColumn::make('updated_at')
+                    ->label(__('fields.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
-            ])
+                SelectFilter::make('situation')
+                    ->label(__('fields.situation'))
+                    ->options([
+                        'able' => 'Habilitado',
+                        'disabled' => 'Inabilitado',
+                        'inactive' => 'Inativo'
+                    ]),
+                SelectFilter::make('register_origin')
+                    ->label(__('fields.register_origin'))
+                    ->options([
+                        'marketing' => 'Divulgação',
+                        'local' => 'Recinto',
+                        'site' => 'Site'
+                    ]),
+                SelectFilter::make('profile')
+                    ->label(__('fields.profile'))
+                    ->options([
+                        'purchase' => 'Compra',
+                        'sale' => 'Venda',
+                        'both' => 'Ambos'
+                    ]),
+                ], layout: FiltersLayout::Dropdown)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),

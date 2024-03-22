@@ -2,6 +2,8 @@
 
 return [
     'name' => 'Nome',
+    'username' => 'Login',
+    'password' => 'Senha',
     'state' => 'Estado',
     'code' => 'Código',
     'created_at' => 'Criado em',
@@ -40,6 +42,7 @@ return [
     'register_origin' => 'Canal de Inclusão',
     'profile' => 'Perfil',
     'income' => 'Renda',
+    'client' => 'Cliente',
     
 
 ];

@@ -42,7 +42,8 @@ class DocumentsRelationManager extends RelationManager
             ->recordTitleAttribute('documentType.name')
             ->columns([
                 TextColumn::make('documentType.name'),
-                FileLink::make('path'),
+                FileLink::make('path')
+                    ->label(__('fields.file')),
             ])
             ->filters([
                 //

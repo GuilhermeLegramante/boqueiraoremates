@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use EightyNine\Reports\ReportsPlugin;
 use Filament\Forms\Components\Select;
 use Filament\Http\Middleware\Authenticate;
@@ -44,7 +45,8 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
+            ->profile()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -58,12 +60,20 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
             ])
+            ->brandName('Boqueirão Remates')
+            ->sidebarCollapsibleOnDesktop()
+            // ->brandLogo('https://boqueiraoremates.com/public/vendor/adminlte/dist/img/b.png')
+            // ->brandLogoHeight(fn () => auth()->check() ? '3rem' : '6rem')
+            ->favicon('https://boqueiraoremates.com/public/vendor/adminlte/dist/img/b.png')
             ->plugins([
                 FilamentProgressbarPlugin::make()->color('#29b'),
                 // ReportsPlugin::make(),
-                FilamentBackgroundsPlugin::make(),
+                // FilamentBackgroundsPlugin::make(),
                 ThemesPlugin::make(),
 
+            ])
+            ->resources([
+                config('filament-logger.activity_resource')
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -18,7 +18,7 @@ class BankResource extends Resource
 {
     protected static ?string $model = Bank::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -41,14 +41,18 @@ class BankResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
+                    ->label(__('fields.code'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('fields.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('fields.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('fields.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -76,6 +80,6 @@ class BankResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false;
+        return true;
     }
 }

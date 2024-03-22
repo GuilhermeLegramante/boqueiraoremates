@@ -6,42 +6,62 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    protected static ?string $modelLabel = 'usuário';
+
+    protected static ?string $pluralModelLabel = 'usuários';
+
+    protected static ?string $navigationGroup = 'Parâmetros';
+
+    protected static ?string $slug = 'usuario';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
+                    ->label(__('fields.name'))
+                    ->unique(ignoreRecord: true)
+                    ->required(),
+                TextInput::make('username')
+                    ->label(__('fields.username'))
+                    ->unique(ignoreRecord: true)
+                    ->required(),
+                TextInput::make('email')
+                    ->label(__('fields.email'))
+                    ->email(),
+                TextInput::make('password')
+                    ->label(__('fields.password'))
+                    ->password()
+                    ->revealable()
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('username')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
+                    ->rule('min:4')
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->same('passwordConfirmation')
+                    ->validationAttribute('senha'),
+                TextInput::make('passwordConfirmation')
+                    ->label(__('filament-panels::pages/auth/register.form.password_confirmation.label'))
                     ->password()
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('theme')
-                    ->maxLength(255)
-                    ->default('default'),
-                Forms\Components\TextInput::make('theme_color')
-                    ->maxLength(255),
+                    ->revealable()
+                    ->dehydrated(false),
             ]);
     }
 
@@ -50,26 +70,24 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label(__('fields.name'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('username')
+                    ->label(__('fields.username'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label(__('fields.email'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label(__('fields.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label(__('fields.updated_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('theme')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('theme_color')
-                    ->searchable(),
             ])
             ->filters([
                 //

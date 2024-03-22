@@ -138,13 +138,8 @@ class ClientForm
                                 ->label(__('fields.current_account')),
                         ])
                         ->columns(3),
-
                     Fieldset::make('Informações Adicionais')
                         ->schema([
-                            Toggle::make('has_register_in_another_auctioneer')
-                                ->label(__('fields.has_register_in_another_auctioneer')),
-                            TextInput::make('auctioneer')
-                                ->label(__('fields.auctioneer')),
                             Radio::make('situation')
                                 ->label(__('fields.situation'))
                                 ->options([
@@ -161,13 +156,15 @@ class ClientForm
                                 ]),
                             Radio::make('profile')
                                 ->label(__('fields.profile'))
-                                ->label('Perfil')
                                 ->options([
                                     'purchase' => 'Compra',
                                     'sale' => 'Venda',
                                     'both' => 'Ambos'
-                                ])
-
+                                ]),
+                            Toggle::make('has_register_in_another_auctioneer')
+                                ->label(__('fields.has_register_in_another_auctioneer')),
+                            TextInput::make('auctioneer')
+                                ->label(__('fields.auctioneer')),
                         ])
                         ->columns(3),
                 ])
