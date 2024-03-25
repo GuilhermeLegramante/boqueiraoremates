@@ -10,6 +10,7 @@ use App\Models\State;
 use App\Models\Street;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Str;
 
 class CreateClient extends CreateRecord
 {
@@ -19,6 +20,15 @@ class CreateClient extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['name'] = Str::upper($data['name']);
+        $data['establishment'] = Str::upper($data['establishment']);
+        $data['occupation'] = Str::upper($data['occupation']);
+        $data['note_occupation'] = Str::upper($data['note_occupation']);
+        $data['mother'] = Str::upper($data['mother']);
+        $data['father'] = Str::upper($data['father']);
+        $data['auctioneer'] = Str::upper($data['auctioneer']);
+        $data['note'] = Str::upper($data['note']);
+
         return $data;
     }
 }

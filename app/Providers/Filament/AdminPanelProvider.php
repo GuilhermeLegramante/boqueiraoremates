@@ -3,6 +3,10 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Resources\ClientResource\Widgets\ClientRegisterOriginChart;
+use App\Filament\Resources\ClientResource\Widgets\ClientSituationChart;
+use App\Filament\Resources\ClientResource\Widgets\StatsOverview;
+use App\Filament\Resources\ClientResource\Widgets\VersionWidget;
 use EightyNine\Reports\ReportsPlugin;
 use Filament\Forms\Components\Select;
 use Filament\Http\Middleware\Authenticate;
@@ -58,7 +62,10 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+                VersionWidget::class,
+                StatsOverview::class,
+                ClientSituationChart::class,
+                ClientRegisterOriginChart::class,
             ])
             ->brandName('Boqueirão Remates')
             ->sidebarCollapsibleOnDesktop()

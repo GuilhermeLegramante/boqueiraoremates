@@ -19,7 +19,10 @@
             </tr>
             <tr class="" style="font-size: 13px;">
                 <td class="collumn-left"><strong>Data de Nascimento:</strong>
-                    {{ date('d/m/Y', strtotime($client->birth_date)) }}</td>
+                    @if (isset($client->birth_date))
+                        {{ date('d/m/Y', strtotime($client->birth_date)) }}
+                    @endif
+                </td>
                 <td class="collumn-right"><strong>Gênero:</strong>
                     @if ($client->gender == 'male')
                         MASCULINO
@@ -94,7 +97,11 @@
     <table>
         <tbody>
             <tr class="bg-light" style="font-size: 13px;">
-                <td class="collumn-left"><strong>Banco:</strong> {{ $client->bank->name }}</td>
+                <td class="collumn-left"><strong>Banco:</strong>
+                    @if (isset($client->bank))
+                        {{ $client->bank->name }}
+                    @endif
+                </td>
                 <td class="collumn-right"><strong>Agência:</strong> {{ $client->bank_agency }}</td>
             </tr>
             <tr class="" style="font-size: 13px;">

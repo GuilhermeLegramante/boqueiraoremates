@@ -43,6 +43,7 @@ return [
     'profile' => 'Perfil',
     'income' => 'Renda',
     'client' => 'Cliente',
+    'note' => 'Observação',
     
 
 ];

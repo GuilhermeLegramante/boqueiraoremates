@@ -16,6 +16,7 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Leandrocfe\FilamentPtbrFormFields\Cep;
@@ -165,6 +166,9 @@ class ClientForm
                                 ->label(__('fields.has_register_in_another_auctioneer')),
                             TextInput::make('auctioneer')
                                 ->label(__('fields.auctioneer')),
+                            Textarea::make('note')
+                                ->label(__('fields.note'))
+                                ->columnSpanFull(),
                         ])
                         ->columns(3),
                 ])

@@ -47,18 +47,10 @@ class Client extends Model
         'note',
     ];
 
-    // protected $map = [
-    //     'birth_date' => 'birthDate',
-    // ];
-
-    // protected function getNomeDoAtributoAttribute()
-    // {
-    //     return ucfirst($this->attributes['name']);
-    // }
-
     protected $casts = [
         'documents' => 'array',
         'has_register_in_another_auctioneer' => 'boolean',
+        'income' => 'double',
     ];
 
     public function bank(): BelongsTo
