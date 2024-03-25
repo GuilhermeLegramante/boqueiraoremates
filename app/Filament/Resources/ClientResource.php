@@ -134,7 +134,10 @@ class ClientResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Action::make('report')
-                    ->url(fn (Client $record): string => route('teste', $record))
+                    ->label('Ficha')
+                    ->icon('heroicon-o-document-text')
+                    ->color('info')
+                    ->url(fn (Client $record): string => route('client-details', $record->id))
                     ->openUrlInNewTab()
             ])
             ->bulkActions([

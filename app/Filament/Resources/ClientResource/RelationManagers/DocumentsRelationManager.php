@@ -10,6 +10,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -41,8 +42,12 @@ class DocumentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('documentType.name')
             ->columns([
-                TextColumn::make('documentType.name'),
+                TextColumn::make('documentType.name')
+                    ->searchable()
+
+                    ->label(__('fields.document_type')),
                 FileLink::make('path')
+                    ->alignment(Alignment::Center)
                     ->label(__('fields.file')),
             ])
             ->filters([

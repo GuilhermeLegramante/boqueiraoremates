@@ -1,0 +1,186 @@
+@extends('reports.page')
+
+@section('header')
+    @include('reports.header')
+@endsection
+
+@section('content')
+    <h1 style="margin-left: 1%; font-size: 23px;">{{ $client->name }}</h1>
+    <p style="margin-left: 1%; margin-top: -1%"><strong>Cadastrado em:
+        </strong>{{ date('d/m/Y', strtotime($client->created_at)) }} <strong> Atualizado em:
+        </strong>{{ date('d/m/Y \à\s H:i:s', strtotime($client->updated_at)) }}</p>
+    <br>
+    <h1 style="margin-left: 1%;">Informações Pessoais</h1>
+    <table>
+        <tbody>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Nome:</strong> {{ $client->name }}</td>
+                <td class="collumn-right"><strong>E-mail:</strong> {{ $client->email }}</td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Data de Nascimento:</strong>
+                    {{ date('d/m/Y', strtotime($client->birth_date)) }}</td>
+                <td class="collumn-right"><strong>Gênero:</strong>
+                    @if ($client->gender == 'male')
+                        MASCULINO
+                    @endif
+                    @if ($client->gender == 'female')
+                        FEMININO
+                    @endif
+                </td>
+            </tr>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Profissão:</strong> {{ $client->occupation }}</td>
+                <td class="collumn-right"><strong>Observação:</strong> {{ $client->note_occupation }}</td>
+            </tr>
+
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Estabelecimento:</strong> {{ $client->establishment }}</td>
+                <td class="collumn-right"><strong>Renda:</strong> {{ 'R$ ' . number_format($client->income, 2, ',', '.') }}
+                </td>
+            </tr>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>CPF ou CNPJ:</strong> {{ $client->cpf_cnpj }}</td>
+                <td class="collumn-right"><strong>RG:</strong> {{ $client->rg }}</td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Nome da Mãe:</strong> {{ $client->mother }}</td>
+                <td class="collumn-right"><strong>Nome do Pai:</strong> {{ $client->father }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <br>
+    <h1 style="margin-left: 1%;">Contato</h1>
+    <table>
+        <tbody>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Whatsapp:</strong> {{ $client->whatsapp }}</td>
+                <td class="collumn-right"><strong>Celular:</strong> {{ $client->cel_phone }}</td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Telefone Comercial:</strong> {{ $client->business_phone }}</td>
+                <td class="collumn-right"><strong>Telefone Residencial:</strong> {{ $client->home_phone }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <h1 style="margin-left: 1%;">Endereço</h1>
+    <table>
+        <tbody>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>CEP:</strong> {{ $client->address->postal_code }}</td>
+                <td class="collumn-right"><strong>Logradouro (Rua, Av.):</strong> {{ $client->address->street }}</td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Nº:</strong> {{ $client->address->number }}</td>
+                <td class="collumn-right"><strong>Complemento:</strong> {{ $client->address->complement }}</td>
+            </tr>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Referência:</strong> {{ $client->address->reference }}</td>
+                <td class="collumn-right"><strong>Bairro:</strong> {{ $client->address->district }}</td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Cidade:</strong> {{ $client->address->city }}</td>
+                <td class="collumn-right"><strong>Estado:</strong> {{ $client->address->state }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <h1 style="margin-left: 1%;">Informações Bancárias</h1>
+    <table>
+        <tbody>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Banco:</strong> {{ $client->bank->name }}</td>
+                <td class="collumn-right"><strong>Agência:</strong> {{ $client->bank_agency }}</td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Conta:</strong> {{ $client->current_account }}</td>
+                <td class="collumn-right"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <h1 style="margin-left: 1%;">Informações Adicionais</h1>
+    <table>
+        <tbody>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Situação:</strong>
+                    @if ($client->situation == 'able')
+                        HABIITADO
+                    @endif
+                    @if ($client->situation == 'disabled')
+                        INABILITADO
+                    @endif
+                    @if ($client->situation == 'inactive')
+                        INATIVO
+                    @endif
+                </td>
+                <td class="collumn-right"></td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Canal de Inclusão:</strong>
+                    @if ($client->register_origin == 'marketing')
+                        DIVULGAÇÃO
+                    @endif
+                    @if ($client->register_origin == 'local')
+                        RECINTO
+                    @endif
+                    @if ($client->register_origin == 'site')
+                        SITE
+                    @endif
+                </td>
+                <td class="collumn-right"></td>
+            </tr>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Perfil:</strong>
+                    @if ($client->profile == 'purchase')
+                        COMPRA
+                    @endif
+                    @if ($client->profile == 'sale')
+                        VENDA
+                    @endif
+                    @if ($client->profile == 'both')
+                        COMPRA E VENDA
+                    @endif
+                </td>
+                <td class="collumn-right"></td>
+            </tr>
+            <tr class="" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Cadastro em Leiloeira:</strong>
+                    {{ $client->has_register_in_another_auctioneer == '1' ? 'SIM' : 'NÃO' }}</td>
+                <td class="collumn-right"><strong>Leiloeira(s):</strong> {{ $client->auctioneer }}</td>
+            </tr>
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Estabelecimento:</strong> {{ $client->estabelecimento }}</td>
+                <td class="collumn-right">
+                    <strong>Perfil: </strong>
+                    @switch($client->perfil)
+                        @case('C')
+                            COMPRA
+                        @break
+
+                        @case('V')
+                            VENDA
+                        @break
+
+                        @case('CV')
+                            COMPRA E VENDA
+                        @endswitch
+                    </td>
+                </tr>
+                <tr class="" style="font-size: 13px;">
+                    <td class="collumn-left"><strong>Observação:</strong> {{ $client->note }}</td>
+                    <td class="collumn-right"></td>
+                </tr>
+            </tbody>
+        </table>
+    @endsection
+
+    @section('footer')
+        @include('reports.footer')
+    @endsection

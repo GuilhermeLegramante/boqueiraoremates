@@ -44,6 +44,7 @@ class Client extends Model
         'situation',
         'register_origin',
         'profile',
+        'note',
     ];
 
     // protected $map = [
