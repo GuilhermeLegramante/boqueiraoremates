@@ -6,6 +6,7 @@ use App\Filament\Forms\ClientForm;
 use App\Filament\Resources\ClientResource\Pages;
 use App\Filament\Resources\ClientResource\RelationManagers;
 use App\Models\Client;
+use Filament\Tables\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -128,10 +129,13 @@ class ClientResource extends Resource
                         'sale' => 'Venda',
                         'both' => 'Ambos'
                     ]),
-                ], layout: FiltersLayout::Dropdown)
+            ], layout: FiltersLayout::Dropdown)
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Action::make('report')
+                    ->url(fn (Client $record): string => route('teste', $record))
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

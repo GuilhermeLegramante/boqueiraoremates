@@ -5,6 +5,8 @@ namespace App\Filament\Reports;
 use App\Models\User;
 use EightyNine\Reports\Report;
 use EightyNine\Reports\Components\Body;
+use EightyNine\Reports\Components\Body\CustomTable;
+use EightyNine\Reports\Components\Body\TextColumn;
 use EightyNine\Reports\Components\Footer;
 use EightyNine\Reports\Components\Header;
 use EightyNine\Reports\Components\Text;
@@ -17,9 +19,16 @@ use Illuminate\Support\Facades\DB;
 
 class UsersReport extends Report
 {
-    public ?string $heading = "Report";
+    public ?string $heading = "Relatórios";
 
     public ?string $subHeading = "A great report";
+
+    protected bool $hasColumns = true;
+
+    public function mount(): void
+    {
+        dd('a');
+    }
 
     public function header(Header $header): Header
     {
@@ -51,19 +60,28 @@ class UsersReport extends Report
             ->schema([
                 Body\Layout\BodyColumn::make()
                     ->schema([
-                        Body\Table::make()
+                        CustomTable::make()
                             ->data(
-                                fn (?array $filters) => User::all()
+                                fn (?array $filters) => $this->registrationSummary($filters)
                             ),
-                        VerticalSpace::make(),
-                        Body\Table::make()
-                            ->data(
-                                fn (?array $filters) => User::all()
-                            ),
+                        // VerticalSpace::make(),
+                        // Body\Table::make()
+                        //     ->data(
+                        //         fn (?array $filters) => $this->verificationSummary($filters)
+                        //     ),
                     ]),
             ]);
     }
 
+    private function verificationSummary($filters)
+    {
+        return User::where('name', 'like', '%GUILHERME%')->get();
+    }
+
+    private function registrationSummary($filters)
+    {
+        return User::where('name', 'like', '%GUILHERME%')->get();
+    }
 
     public function footer(Footer $footer): Footer
     {
@@ -91,16 +109,16 @@ class UsersReport extends Report
     public function filterForm(Form $form): Form
     {
         return $form
-        ->schema([
-            TextInput::make('search')
-                ->placeholder('Search')
-                ->autofocus(),
-            Select::make('status')
-                ->placeholder('Status')
-                ->options([
-                    'active' => 'Active',
-                    'inactive' => 'Inactive',
-                ]),
-        ]);
+            ->schema([
+                TextInput::make('search')
+                    ->placeholder('Search')
+                    ->autofocus(),
+                Select::make('status')
+                    ->placeholder('Status')
+                    ->options([
+                        'active' => 'Active',
+                        'inactive' => 'Inactive',
+                    ]),
+            ]);
     }
 }

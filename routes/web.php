@@ -19,6 +19,9 @@ Livewire::setUpdateRoute(function ($handle) {
  */
 Route::redirect('/boqueiraoremates/public/login', '/boqueiraoremates/public/login')->name('login');
 
+Route::get('/teste/{record}', function () {
+    dd('a');
+})->name('teste');
 Route::get('/', function () {
     dd(Client::find(1)->testando);
     return view('welcome');
