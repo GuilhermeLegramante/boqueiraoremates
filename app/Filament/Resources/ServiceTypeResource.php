@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Forms\DocumentTypeForm;
-use App\Filament\Resources\DocumentTypeResource\Pages;
-use App\Filament\Resources\DocumentTypeResource\RelationManagers;
-use App\Models\DocumentType;
+use App\Filament\Resources\ServiceTypeResource\Pages;
+use App\Filament\Resources\ServiceTypeResource\RelationManagers;
+use App\Models\ServiceType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,27 +14,32 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
-class DocumentTypeResource extends Resource
-{
-    protected static ?string $model = DocumentType::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+class ServiceTypeResource extends Resource
+{
+    protected static ?string $model = ServiceType::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'tipo de documento';
+    protected static ?string $modelLabel = 'tipo de serviço';
 
-    protected static ?string $pluralModelLabel = 'tipos de documento';
+    protected static ?string $pluralModelLabel = 'tipos de serviço';
 
     protected static ?string $navigationGroup = 'Parâmetros';
 
-    protected static ?string $slug = 'tipos-de-documento';
-
+    protected static ?string $slug = 'tipos-de-servico';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(DocumentTypeForm::form());
+            ->schema([
+                Forms\Components\TextInput::make('name')
+                    ->label(__('fields.name'))
+                    ->required()
+                    ->maxLength(255),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -63,6 +67,7 @@ class DocumentTypeResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = Str::upper($data['name']);
+
                         return $data;
                     }),
                 Tables\Actions\DeleteAction::make(),
@@ -77,7 +82,7 @@ class DocumentTypeResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageDocumentTypes::route('/'),
+            'index' => Pages\ManageServiceTypes::route('/'),
         ];
     }
 }

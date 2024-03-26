@@ -44,6 +44,9 @@ return [
     'income' => 'Renda',
     'client' => 'Cliente',
     'note' => 'Observação',
+    'start_date' => 'Data de Início',
+    'finish_date' => 'Data de Término',
+    'multiplier' => 'Multiplicador',
     
 
 ];

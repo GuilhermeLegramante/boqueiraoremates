@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\DocumentTypeResource\Pages;
+namespace App\Filament\Resources\ServiceTypeResource\Pages;
 
-use App\Filament\Resources\DocumentTypeResource;
+use App\Filament\Resources\ServiceTypeResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Support\Str;
 
-class ManageDocumentTypes extends ManageRecords
+class ManageServiceTypes extends ManageRecords
 {
-    protected static string $resource = DocumentTypeResource::class;
+    protected static string $resource = ServiceTypeResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -19,7 +19,6 @@ class ManageDocumentTypes extends ManageRecords
                     $data['name'] = Str::upper($data['name']);
                     return $data;
                 }),
-           
         ];
     }
 }
