@@ -47,6 +47,14 @@ return [
     'start_date' => 'Data de Início',
     'finish_date' => 'Data de Término',
     'multiplier' => 'Multiplicador',
-    
-
+    'breed' => 'Raça',
+    'animal_type' => 'Tipo de Animal',
+    'coat' => 'Pelagem',
+    'register' => 'Registro',
+    'sbb' => 'SBB',
+    'rb' => 'RB',
+    'breeding' => 'Capacidade de Reprodução',
+    'blood_level' => 'Grau de Sangue',
+    'blodd_percentual' => 'Percentual',
+    'quantity' => 'Quantidade',
 ];
