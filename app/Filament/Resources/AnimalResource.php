@@ -42,6 +42,7 @@ class AnimalResource extends Resource
 
     public static function table(Table $table): Table
     {
+
         return $table
             ->columns([
                 TextColumn::make('id')
@@ -158,5 +159,10 @@ class AnimalResource extends Resource
         return [
             'index' => Pages\ManageAnimals::route('/'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

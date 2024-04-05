@@ -28,7 +28,7 @@ class BreedResource extends Resource
 
     protected static ?string $navigationGroup = 'Parâmetros';
 
-    protected static ?string $slug = 'raças';
+    protected static ?string $slug = 'racas';
 
     public static function form(Form $form): Form
     {

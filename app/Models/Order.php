@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -69,4 +71,28 @@ class Order extends Model
 
     ];
 
+    public function event(): HasOne
+    {
+        return $this->hasOne(Event::class);
+    }
+
+    public function seller(): HasOne
+    {
+        return $this->hasOne(Client::class, 'seller_id');
+    }
+
+    public function buyer(): HasOne
+    {
+        return $this->hasOne(Client::class, 'buyer_id');
+    }
+
+    public function status(): HasOne
+    {
+        return $this->hasOne(OrderStatus::class, 'order_status_id');
+    }
+
+    public function animal(): HasOne
+    {
+        return $this->hasOne(Animal::class);
+    }
 }

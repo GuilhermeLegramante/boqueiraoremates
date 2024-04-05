@@ -3,10 +3,6 @@
 namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
-use App\Models\Address;
-use App\Models\City;
-use App\Models\Neighborhood;
-use App\Models\Street;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Str;

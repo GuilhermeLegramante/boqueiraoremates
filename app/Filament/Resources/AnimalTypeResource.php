@@ -25,7 +25,7 @@ class AnimalTypeResource extends Resource
 
     protected static ?string $navigationGroup = 'Parâmetros';
 
-    protected static ?string $slug = 'tipos de animal';
+    protected static ?string $slug = 'tipos-de-animal';
 
     public static function form(Form $form): Form
     {

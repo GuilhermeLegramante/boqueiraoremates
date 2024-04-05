@@ -69,9 +69,9 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandName('Boqueirão Remates')
             ->sidebarCollapsibleOnDesktop()
-            // ->brandLogo('https://boqueiraoremates.com/public/vendor/adminlte/dist/img/b.png')
-            // ->brandLogoHeight(fn () => auth()->check() ? '3rem' : '6rem')
-            ->favicon('https://boqueiraoremates.com/public/vendor/adminlte/dist/img/b.png')
+            ->brandLogo(asset('img/logo.png'))
+            ->brandLogoHeight(fn () => auth()->check() ? '3rem' : '6rem')
+            ->favicon(asset('img/logo.png'))
             ->plugins([
                 FilamentProgressbarPlugin::make()->color('#29b'),
                 // ReportsPlugin::make(),

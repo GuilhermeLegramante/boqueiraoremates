@@ -53,15 +53,18 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('cpf_cnpj')
                     ->label(__('fields.cpf_cnpj'))
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('name')
                     ->label(__('fields.name'))
                     ->searchable(),
                 TextColumn::make('email')
                     ->label(__('fields.email'))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->icon('heroicon-m-envelope'),
                 TextColumn::make('situation')
                     ->label(__('fields.situation'))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
@@ -79,6 +82,7 @@ class ClientResource extends Resource
                     ->formatStateUsing(
                         fn (string $state): string => (($state == 'marketing' ? 'MARKETING' : ($state == 'local' ? 'RECINTO' : 'SITE')))
                     )
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->color(fn (string $state): string => match ($state) {
                         'marketing' => 'info',
                         'local' => 'gray',
@@ -91,6 +95,7 @@ class ClientResource extends Resource
                     ->formatStateUsing(
                         fn (string $state): string => (($state == 'purchase' ? 'COMPRA' : ($state == 'sale' ? 'VENDA' : 'AMBOS')))
                     )
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->color(fn (string $state): string => match ($state) {
                         'purchase' => 'primary',
                         'sale' => 'gray',
@@ -178,5 +183,10 @@ class ClientResource extends Resource
             Pages\EditClient::class,
             Pages\ListClients::class,
         ]);
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

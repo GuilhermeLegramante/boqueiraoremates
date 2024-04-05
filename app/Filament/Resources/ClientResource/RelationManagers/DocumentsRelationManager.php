@@ -47,7 +47,7 @@ class DocumentsRelationManager extends RelationManager
 
                     ->label(__('fields.document_type')),
                 FileLink::make('path')
-                    ->alignment(Alignment::Center)
+                    ->alignment(Alignment::Left)
                     ->label(__('fields.file')),
             ])
             ->filters([

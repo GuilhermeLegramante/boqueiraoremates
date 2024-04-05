@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\EventForm;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Event;
@@ -33,23 +34,7 @@ class EventResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label(__('fields.name'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DatePicker::make('start_date')
-                    ->label(__('fields.start_date')),
-                Forms\Components\DatePicker::make('finish_date')
-                    ->label(__('fields.finish_date')),
-                Forms\Components\TextInput::make('multiplier')
-                    ->label(__('fields.multiplier'))
-                    ->numeric(),
-                Forms\Components\Textarea::make('note')
-                    ->label(__('fields.note'))
-                    ->columnSpanFull()
-                    ->maxLength(255),
-            ]);
+            ->schema(EventForm::form());
     }
 
     public static function table(Table $table): Table
@@ -109,5 +94,10 @@ class EventResource extends Resource
         return [
             'index' => Pages\ManageEvents::route('/'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

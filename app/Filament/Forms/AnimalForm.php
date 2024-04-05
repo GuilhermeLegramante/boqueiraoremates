@@ -6,6 +6,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 
 class AnimalForm
 {
@@ -30,9 +31,10 @@ class AnimalForm
                 ->createOptionForm(AnimalTypeForm::form()),
             Radio::make('gender')
                 ->label(__('fields.gender'))
+                ->live()
                 ->options([
-                    'male' => 'Masculino',
-                    'female' => 'Feminino',
+                    'male' => 'MACHO',
+                    'female' => 'FÊMEA',
                 ]),
             TextInput::make('register')
                 ->label(__('fields.register'))
@@ -48,20 +50,24 @@ class AnimalForm
                 ->label(__('fields.father')),
             Radio::make('blood_level')
                 ->label(__('fields.blood_level'))
+                ->live()
                 ->options([
                     'pure' => 'Puro',
                     'mixed' => 'Mestiço',
                 ]),
             TextInput::make('blodd_percentual')
                 ->label(__('fields.blodd_percentual'))
-                ->numeric(),
+                ->numeric()
+                ->visible(fn (Get $get): bool => $get('blood_level') == 'mixed'),
             Radio::make('breeding')
                 ->label(__('fields.breeding'))
+                ->live()
                 ->options([
                     'breeder' => 'Reprodutor',
                     'whole_male' => 'Macho Inteiro',
                     'castrated' => 'Castrado'
-                ]),
+                ])
+                ->visible(fn (Get $get): bool => $get('gender') == 'male'),
             TextInput::make('quantity')
                 ->label(__('fields.quantity'))
                 ->numeric(),
