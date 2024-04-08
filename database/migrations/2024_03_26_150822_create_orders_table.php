@@ -24,7 +24,7 @@ return new class extends Migration
             $table->double('parcel_value')->nullable()->comment('Valor da Parcela');
             $table->integer('multiplier')->nullable()->comment('Multiplicador');
             $table->double('gross_value')->nullable()->comment('Valor Bruto');
-            $table->string('installment_formula')->nullable()->comment('Fórmula do parcelamento: Ex. 2+2+46');
+            $table->foreignId('payment_way_id')->nullable()->constrained('payment_ways')->restrictOnDelete()->comment('Fórmula do parcelamento: Ex. 2+2+46');
             $table->double('discount_percentage')->nullable()->comment('Percentual de desconto');
             $table->integer('due_day')->nullable()->comment('Dia do vencimento da parcela');
             $table->integer('reinforcements_amount')->nullable()->comment('Quantidade de reforços');

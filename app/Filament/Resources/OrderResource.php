@@ -4,15 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Forms\OrderForm;
 use App\Filament\Resources\OrderResource\Pages;
-use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Order;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OrderResource extends Resource
 {
@@ -27,7 +24,6 @@ class OrderResource extends Resource
     protected static ?string $pluralModelLabel = 'ordens de serviço';
 
     protected static ?string $slug = 'ordens-de-servico';
-
 
     public static function form(Form $form): Form
     {
@@ -65,8 +61,8 @@ class OrderResource extends Resource
     {
         return [
             'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/create'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
+            'create' => Pages\CreateOrder::route('/criar'),
+            'edit' => Pages\EditOrder::route('/{record}/editar'),
         ];
     }
 

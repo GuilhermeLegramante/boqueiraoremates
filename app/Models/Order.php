@@ -23,7 +23,7 @@ class Order extends Model
         'parcel_value',
         'multiplier',
         'gross_value',
-        'installment_formula',
+        'payment_way_id',
         'discount_percentage',
         'due_day',
         'reinforcements_amount',
@@ -71,28 +71,33 @@ class Order extends Model
 
     ];
 
-    public function event(): HasOne
+    public function event(): BelongsTo
     {
-        return $this->hasOne(Event::class);
+        return $this->belongsTo(Event::class);
     }
 
-    public function seller(): HasOne
+    public function seller(): BelongsTo
     {
-        return $this->hasOne(Client::class, 'seller_id');
+        return $this->belongsTo(Client::class, 'seller_id');
     }
 
-    public function buyer(): HasOne
+    public function buyer(): BelongsTo
     {
-        return $this->hasOne(Client::class, 'buyer_id');
+        return $this->belongsTo(Client::class, 'buyer_id');
     }
 
-    public function status(): HasOne
+    public function status(): BelongsTo
     {
-        return $this->hasOne(OrderStatus::class, 'order_status_id');
+        return $this->belongsTo(OrderStatus::class, 'order_status_id');
     }
 
-    public function animal(): HasOne
+    public function animal(): BelongsTo
     {
-        return $this->hasOne(Animal::class);
+        return $this->belongsTo(Animal::class);
+    }
+
+    public function paymentWay(): BelongsTo
+    {
+        return $this->belongsTo(PaymentWay::class);
     }
 }
