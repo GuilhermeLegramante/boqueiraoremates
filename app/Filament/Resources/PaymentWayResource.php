@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\PaymentWayForm;
 use App\Filament\Resources\PaymentWayResource\Pages;
 use App\Filament\Resources\PaymentWayResource\RelationManagers;
 use App\Models\PaymentWay;
@@ -33,13 +34,7 @@ class PaymentWayResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Forms\Components\TextInput::make('name')
-                ->label(__('fields.description'))
-                ->regex('[\d+]') 
-                ->required()
-                ->maxLength(255),
-        ]);
+            ->schema(PaymentWayForm::form());
     }
 
     public static function table(Table $table): Table

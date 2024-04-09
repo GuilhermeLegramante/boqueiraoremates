@@ -142,7 +142,7 @@ class ClientResource extends Resource
                     ->label('Ficha')
                     ->icon('heroicon-o-document-text')
                     ->color('info')
-                    ->url(fn (Client $record): string => route('client-details', $record->id))
+                    ->url(fn (Client $record): string => route('client-details-pdf', $record->id))
                     ->openUrlInNewTab()
             ])
             ->bulkActions([

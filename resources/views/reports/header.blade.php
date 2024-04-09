@@ -4,7 +4,7 @@
             <tbody>
                 <tr>
                     <td style="height: 100px; vertical-align: middle; width: 10%;">
-                        <img src="{{ asset('img/b.png') }}" style="width: 100px; height: 100px;">
+                        <img src="{{ asset('img/logo.png') }}" style="width: 100px; height: 100px;">
                     </td>
                     <td style="height: 64px; width: 50%;">  
                         <table>

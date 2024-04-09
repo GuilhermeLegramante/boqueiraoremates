@@ -10,7 +10,8 @@ class PaymentWayForm
     {
         return [
             TextInput::make('name')
-                ->label(__('fields.name'))
+                ->label(__('fields.description'))
+                ->regex('/^[0-9+]+$/')
                 ->required()
                 ->maxLength(255),
         ];

@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Utils\ReportFactory;
 
-class ReportController extends Controller
+class ClientController extends Controller
 {
-    public function clientDetails($clientId)
+    public function getPdf($clientId)
     {
         $client = Client::where('id', $clientId)->get()->first();
 

@@ -49,9 +49,9 @@ return new class extends Migration
             $table->boolean('output_contracts')->nullable()->default(0)->comment('Documentação - Saída (contratos)');
             $table->boolean('output_promissory')->nullable()->default(0)->comment('Documentação - Saída (Nota promissória)');
             $table->boolean('output_register_copy')->nullable()->default(0)->comment('Documentação - Saída (Cópia do Registro');
-            $table->date('output_seller_sending_documentation_date')->nullable()->comment('Data de envio da documentação ao vendedor');
+            $table->date('output_first_parcel_date')->nullable()->comment('Data da primeira parcela');
+            $table->date('output_sending_documentation_date')->nullable()->comment('Data de envio do processo físico');
             $table->enum('output_seller_sending_documentation_way', ['email', 'whatsapp', 'material'])->nullable()->comment('Forma de envio da documentação ao vendedor');
-            $table->date('output_contract_return_date')->nullable()->comment('Data de retorno do contrato (chegada no escritório)');
             $table->string('output_documentation_note')->nullable()->comment('Observação (Documentação - Saída)');
             $table->date('closing_date')->nullable()->comment('Data do encerramento');
             $table->timestamps();

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
 use App\Filament\Traits\WithParcels;
+use App\Models\Order;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -21,6 +22,11 @@ class EditOrder extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            // Actions\Action::make('getPdf')
+            //     ->label('Gerar PDF')
+            //     ->action(function (Order $record): string {
+            //        return route('order-pdf', $record->id);
+            //     }),
         ];
     }
 

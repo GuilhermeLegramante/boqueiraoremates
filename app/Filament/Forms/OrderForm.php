@@ -7,8 +7,11 @@ use App\Forms\Components\ParcelsDetails;
 use App\Forms\Components\SellerParcelsDetails;
 use App\Utils\ParcelsVerification;
 use Closure;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -33,6 +36,11 @@ class OrderForm
                     self::getBusiness(),
                     self::getBuyerInvoicing(),
                     self::getSellerInvoicing(),
+                    self::getEntry(),
+                    self::getOutput(),
+                    DatePicker::make('closing_date')
+                        ->label('Data de Encerramento da OS'),
+
                 ])
                 ->columns(2)
         ];
@@ -218,6 +226,78 @@ class OrderForm
                     ->label('')
                     ->columnSpanFull()
                     ->visible(fn (Get $get): bool => $get('seller_commission_installments_number') != null),
+            ])->columns(6);
+    }
+
+    private static function getEntry(): Fieldset
+    {
+        return Fieldset::make('Documentação - Entrada (Envio e Recebimento do Comprador')
+            ->schema([
+                Checkbox::make('entry_contracts')
+                    ->label('Contratos'),
+                Checkbox::make('entry_promissory')
+                    ->label('NP'),
+                Checkbox::make('entry_register_copy')
+                    ->label('Cópia do Registro'),
+                Radio::make('entry_first_parcel_business')
+                    ->label('Parcela 01 do Negócio')
+                    ->options([
+                        'ticket' => 'Boleto',
+                        'deposit' => 'Depósito',
+                    ]),
+                Radio::make('entry_first_parcel_comission')
+                    ->label('Parcela 01 da Comissão')
+                    ->options([
+                        'ticket' => 'Boleto',
+                        'deposit' => 'Depósito',
+                    ]),
+                DatePicker::make('entry_buyer_sending_documentation_date')
+                    ->label('Data de envio'),
+                Radio::make('entry_buyer_sending_documentation_way')
+                    ->label('Forma de Envio')
+                    ->options([
+                        'email' => 'E-mail',
+                        'whatsapp' => 'Whatsapp',
+                        'material' => 'Físico'
+                    ]),
+                DatePicker::make('entry_contract_return_date')
+                    ->label('Retorno do Contrato'),
+                Textarea::make('entry_documentation_note')
+                    ->columnSpanFull()
+                    ->label('Observação')
+            ])->columns(4);
+    }
+
+    private static function getOutput(): Fieldset
+    {
+        return Fieldset::make('Documentação - Saída (Envio para o Vendedor')
+            ->schema([
+                Checkbox::make('output_contracts')
+                    ->columnSpan(2)
+                    ->label('Contratos'),
+                Checkbox::make('output_promissory')
+                    ->columnSpan(2)
+                    ->label('NP'),
+                Checkbox::make('output_register_copy')
+                    ->columnSpan(2)
+                    ->label('Cópia do Registro'),
+                DatePicker::make('output_first_parcel_date')
+                    ->columnSpan(2)
+                    ->label('Data da Parcela 01'),
+                DatePicker::make('output_sending_documentation_date')
+                    ->columnSpan(2)
+                    ->label('Data de envio do processo físico'),
+                Radio::make('output_seller_sending_documentation_way')
+                    ->columnSpan(2)
+                    ->label('Forma de Envio')
+                    ->options([
+                        'email' => 'E-mail',
+                        'whatsapp' => 'Whatsapp',
+                        'material' => 'Físico'
+                    ]),
+                Textarea::make('output_documentation_note')
+                    ->columnSpanFull()
+                    ->label('Observação')
             ])->columns(6);
     }
 }

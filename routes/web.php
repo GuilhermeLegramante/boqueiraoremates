@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Models\Client;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +24,9 @@ Route::redirect('/boqueiraoremates/public/admin/login', '/boqueiraoremates/publi
 
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/ficha-cadastral/{clientId}', [ReportController::class, 'clientDetails'])->name('client-details');
+    Route::get('/ficha-cadastral/{clientId}', [ClientController::class, 'getPdf'])->name('client-details-pdf');
+    Route::get('/ordem-de-servico/{orderId}', [OrderController::class, 'getPdf'])->name('order-pdf');
+
 });
 
 // Route::get('/ficha-cadastral/{id}', [ReportController::class, 'clientDetails']);
