@@ -5,6 +5,7 @@ namespace App\Filament\Forms;
 use App\Forms\Components\BuyerParcelsDetails;
 use App\Forms\Components\ParcelsDetails;
 use App\Forms\Components\SellerParcelsDetails;
+use App\Models\Event;
 use App\Utils\ParcelsVerification;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -57,6 +58,10 @@ class OrderForm
                     ->preload()
                     ->relationship(name: 'event', titleAttribute: 'name')
                     ->createOptionForm(EventForm::form())
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $event = Event::find($get('event_id'));
+                        $set('multiplier', $event->multiplier);
+                    })
                     ->columnSpanFull(),
                 Select::make('seller_id')
                     ->label(__('fields.seller'))

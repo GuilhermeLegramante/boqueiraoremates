@@ -20,5 +20,4 @@ class CreateOrder extends CreateRecord
 
     protected static string $view = 'pages.create-order';
 
-   
 }
