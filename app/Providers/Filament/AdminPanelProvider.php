@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Resources\ClientResource\Widgets\ClientRegisterOriginChart;
 use App\Filament\Resources\ClientResource\Widgets\ClientSituationChart;
@@ -50,7 +51,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
-            ->profile()
+            ->profile(EditProfile::class)
             ->colors([
                 'primary' => Color::Amber,
             ])

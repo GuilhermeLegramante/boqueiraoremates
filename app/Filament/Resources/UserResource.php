@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -62,6 +63,10 @@ class UserResource extends Resource
                     ->required()
                     ->revealable()
                     ->dehydrated(false),
+                Toggle::make('is_admin')
+                    ->label('Administrador')
+                    ->onIcon('heroicon-m-bolt')
+                    ->offIcon('heroicon-m-user'),
             ]);
     }
 
