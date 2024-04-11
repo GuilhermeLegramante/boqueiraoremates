@@ -61,6 +61,7 @@ class OrderForm
                             }
                         }
                     })
+                    ->required()
                     ->label('Número')
                     ->numeric(),
                 Select::make('event_id')
