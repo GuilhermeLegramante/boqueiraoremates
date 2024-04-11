@@ -20,13 +20,15 @@ class OrderResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $recordTitleAttribute = 'id';
+    protected static ?string $recordTitleAttribute = 'number';
 
     protected static ?string $modelLabel = 'ordem de serviço';
 
     protected static ?string $pluralModelLabel = 'ordens de serviço';
 
     protected static ?string $slug = 'ordens-de-servico';
+
+    
 
     public static function form(Form $form): Form
     {
@@ -38,7 +40,7 @@ class OrderResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('id')
+                TextColumn::make('number')
                     ->label('Número')
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('event.name')

@@ -6,6 +6,7 @@ use App\Forms\Components\BuyerParcelsDetails;
 use App\Forms\Components\ParcelsDetails;
 use App\Forms\Components\SellerParcelsDetails;
 use App\Models\Event;
+use App\Models\Order;
 use App\Utils\ParcelsVerification;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -51,6 +52,17 @@ class OrderForm
     {
         return Fieldset::make('Serviço')
             ->schema([
+                TextInput::make('number')
+                    ->afterStateHydrated(function (TextInput $component, $state, string $operation) {
+                        if ($operation === 'create') {
+                            $order = Order::whereRaw('number = (select max(`number`) from orders)')->get()->first();
+                            if(isset($order->number)){
+                                $component->state($order->number + 1);
+                            }
+                        }
+                    })
+                    ->label('Número')
+                    ->numeric(),
                 Select::make('event_id')
                     ->label(__('fields.event'))
                     ->required()
