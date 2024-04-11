@@ -20,7 +20,7 @@ Livewire::setUpdateRoute(function ($handle) {
  * Ao trocar a senha do usuário, o Laravel exige um novo login.
  * Para isso, é necessário informar a rota de login
  */
-Route::redirect('/boqueiraoremates/public/admin/login', '/boqueiraoremates/public/admin/login')->name('login');
+Route::redirect('/v2/public/admin/login', '/v2/public/admin/login')->name('login');
 
 
 Route::middleware(['auth'])->group(function () {
