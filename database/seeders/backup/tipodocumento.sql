@@ -1,4 +1,4 @@
-INSERT INTO `document_type` (`id`, `name`, `created_at`, `updated_at`) VALUES
+INSERT INTO `document_types` (`id`, `name`, `created_at`, `updated_at`) VALUES
 (1, 'DOCUMENTO PESSOAL', NULL, NULL),
 (2, 'COMPROVANTE DE RENDA', NULL, NULL),
 (3, 'COMPROVANTE DE RESIDÊNCIA', NULL, NULL),

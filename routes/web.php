@@ -9,11 +9,11 @@ use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 
 Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/boqueiraoremates/public/livewire/livewire.js', $handle);
+    return Route::get('/v2/public/livewire/livewire.js', $handle);
 });
 
 Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/boqueiraoremates/public/livewire/update', $handle);
+    return Route::post('/v2/public/livewire/update', $handle);
 });
 
 /**
