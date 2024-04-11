@@ -11,4 +11,4 @@ INSERT INTO `document_type` (`id`, `name`, `created_at`, `updated_at`) VALUES
 (13,'BOLETO DE COMPRA', '2023-04-19 13:27:22', NULL),
 (14,'BOLETO DE COMISSÃO', '2023-04-19 13:27:31', NULL);
 
-/* Atualizado em 10/04 às 10h
+/* Atualizado em 11/04 às 17h

@@ -5594,6 +5594,6 @@ INSERT INTO `addresses` (`id`, `street`, `complement`, `number`, `district`, `po
 (5607, 'RUA CERVANTES', 'APTO 1201', '68', 'JARDIM BOTÂNICO', '90.690-020', 'PORTO ALEGRE', 'RS'),
 (5608, 'RUA CONSTÂNCIO CUCATO', 'CASA', NULL, 'CENTRO', '87.880-000', 'GUAIRAÇÁ', 'PR');
 
-/* Atualizado em 10/04 às 10h
+/* Atualizado em 11/04 às 17h
 
 

@@ -7,4 +7,6 @@
     - Cadastro de Clientes
         - Ficha Cadastral
 
-    - 
+    - Cadastro de Eventos
+    - Cadastro de Animais
+    - Geração de Ordem de Serviço
