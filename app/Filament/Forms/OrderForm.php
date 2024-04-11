@@ -53,18 +53,20 @@ class OrderForm
             ->schema([
                 Select::make('event_id')
                     ->label(__('fields.event'))
+                    ->required()
                     ->preload()
                     ->searchable()
                     ->preload()
                     ->relationship(name: 'event', titleAttribute: 'name')
                     ->createOptionForm(EventForm::form())
                     ->afterStateUpdated(function (Get $get, Set $set) {
-                        $event = Event::find($get('event_id'));
-                        $set('multiplier', $event->multiplier);
+                        // $event = Event::find($get('event_id'));
+                        // $set('multiplier', $event->multiplier);
                     })
                     ->columnSpanFull(),
                 Select::make('seller_id')
                     ->label(__('fields.seller'))
+                    ->required()
                     ->preload()
                     ->relationship(name: 'seller', titleAttribute: 'name')
                     ->createOptionForm(ClientForm::form())
@@ -78,6 +80,7 @@ class OrderForm
             ->schema([
                 Select::make('buyer_id')
                     ->label(__('fields.buyer'))
+                    ->required()
                     ->preload()
                     ->searchable()
                     ->relationship(name: 'buyer', titleAttribute: 'name')
@@ -85,6 +88,7 @@ class OrderForm
                     ->columnSpanFull(),
                 Select::make('animal_id')
                     ->label(__('fields.animal'))
+                    ->required()
                     ->preload()
                     ->searchable()
                     ->relationship(name: 'animal', titleAttribute: 'name')

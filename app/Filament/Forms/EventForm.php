@@ -13,10 +13,6 @@ class EventForm
         return [
             TextInput::make('name')
                 ->label(__('fields.name'))
-                // ->afterStateHydrated(function (TextInput $component, string $state) {
-                //     $component->state(ucwords($state));
-                // })
-                ->formatStateUsing(fn (string $state): string => ucwords($state))
                 ->required()
                 ->maxLength(255),
             DatePicker::make('start_date')
