@@ -15,7 +15,11 @@ class StatsOverview extends BaseWidget
 
         $able = Client::where('situation', 'able')->get()->count();
 
-        $percentualAble = ($able * 100) / $total;
+        if($total > 0){
+            $percentualAble = ($able * 100) / $total;
+        } else {
+            $percentualAble = 0;
+        }
 
         $documents = Document::all()->count();
 
