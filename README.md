@@ -7,3 +7,6 @@
     - Cadastro de Eventos
     - Cadastro de Animais
     - Geração de Ordem de Serviço
+
+- 2.1.0
+    - Persistência das parcelas da ordem de serviço
