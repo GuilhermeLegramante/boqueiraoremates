@@ -4,6 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Forms\OrderForm;
 use App\Filament\Resources\OrderResource\Pages;
+use App\Filament\Resources\OrderResource\RelationManagers\BuyerParcelsRelationManager;
+use App\Filament\Resources\OrderResource\RelationManagers\ParcelsRelationManager;
+use App\Filament\Resources\OrderResource\RelationManagers\SellerParcelsRelationManager;
 use App\Models\Order;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -27,8 +30,6 @@ class OrderResource extends Resource
     protected static ?string $pluralModelLabel = 'ordens de serviço';
 
     protected static ?string $slug = 'ordens-de-servico';
-
-    
 
     public static function form(Form $form): Form
     {
@@ -106,13 +107,15 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Action::make('report')
                     ->label('Gerar PDF')
                     ->icon('heroicon-o-document-text')
                     ->color('info')
                     ->url(fn (Order $record): string => route('order-pdf', $record->id))
-                    ->openUrlInNewTab()
+                    ->openUrlInNewTab(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -124,9 +127,12 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ParcelsRelationManager::class,
+            BuyerParcelsRelationManager::class,
+            SellerParcelsRelationManager::class,
         ];
     }
+
 
     public static function getPages(): array
     {
@@ -134,6 +140,7 @@ class OrderResource extends Resource
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/criar'),
             'edit' => Pages\EditOrder::route('/{record}/editar'),
+            'view' => Pages\ViewOrder::route('/{record}'),
         ];
     }
 

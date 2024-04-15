@@ -2,6 +2,9 @@
 
 namespace App\Filament\Traits;
 
+use App\Models\BuyerParcel;
+use App\Models\Parcel;
+use App\Models\SellerParcel;
 use App\Utils\BuyerParcelsVerification;
 use App\Utils\ParcelsVerification;
 use App\Utils\SellerParcelsVerification;
@@ -10,25 +13,18 @@ use Filament\Notifications\Notification;
 trait WithParcels
 {
     public array $parcels = [];
-
     public array $values = [];
-
     public float $sum = 0;
+    public bool $showParcels = false;
 
     public array $buyerParcels = [];
-
     public array $buyerValues = [];
-
     public float $buyerSum = 0;
+    public bool $showBuyerParcels = false;
 
     public array $sellerParcels = [];
-
     public array $sellerValues = [];
-
     public float $sellerSum = 0;
-
-    public bool $showParcels = false;
-    public bool $showBuyerParcels = false;
     public bool $showSellerParcels = false;
 
 
@@ -54,7 +50,7 @@ trait WithParcels
 
             $parcel['ord'] = $i + 1 . '/' . $data['multiplier'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
-            $this->values[$i] = $data['parcel_value'];
+            $this->values[$i] = number_format($data['parcel_value'], 2);
 
             $this->sum += doubleval($data['parcel_value']);
 
@@ -81,7 +77,7 @@ trait WithParcels
         $this->buyerSum = 0;
         $this->buyerParcels = [];
 
-        $parcelValue = floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'];
+        $parcelValue = number_format(floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'], 2);
 
         $this->buyerValues[0] = $parcelValue;
 
@@ -122,7 +118,7 @@ trait WithParcels
         $this->sellerSum = 0;
         $this->sellerParcels = [];
 
-        $parcelValue = floatval($data['seller_comission_value']) / $data['seller_commission_installments_number'];
+        $parcelValue = number_format(floatval($data['seller_comission_value']) / $data['seller_commission_installments_number'], 2);
 
         $this->sellerValues[0] = $parcelValue;
 
@@ -250,5 +246,47 @@ trait WithParcels
     public function hideSellerParcels(): void
     {
         $this->showSellerParcels = false;
+    }
+
+    private function saveParcels(): void
+    {
+        foreach ($this->parcels as $key => $value) {
+            $date = explode("/", $value['date']);
+
+            Parcel::create([
+                'order_id' => $this->record->id,
+                'number' => $value['ord'],
+                'date' => $date[2] . '-' . $date[1] . '-' . $date[0],
+                'value' => floatval($this->values[$key])
+            ]);
+        }
+    }
+
+    private function saveBuyerParcels(): void
+    {
+        foreach ($this->buyerParcels as $key => $value) {
+            $date = explode("/", $value['date']);
+
+            BuyerParcel::create([
+                'order_id' => $this->record->id,
+                'number' => $value['ord'],
+                'date' => $date[2] . '-' . $date[1] . '-' . $date[0],
+                'value' => floatval($this->buyerValues[$key])
+            ]);
+        }
+    }
+
+    private function saveSellerParcels(): void
+    {
+        foreach ($this->sellerParcels as $key => $value) {
+            $date = explode("/", $value['date']);
+
+            SellerParcel::create([
+                'order_id' => $this->record->id,
+                'number' => $value['ord'],
+                'date' => $date[2] . '-' . $date[1] . '-' . $date[0],
+                'value' => floatval($this->sellerValues[$key])
+            ]);
+        }
     }
 }

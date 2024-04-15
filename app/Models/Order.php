@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
@@ -99,5 +100,20 @@ class Order extends Model
     public function paymentWay(): BelongsTo
     {
         return $this->belongsTo(PaymentWay::class);
+    }
+
+    public function parcels(): HasMany
+    {
+        return $this->hasMany(Parcel::class);
+    }
+
+    public function buyerParcels(): HasMany
+    {
+        return $this->hasMany(BuyerParcel::class);
+    }
+
+    public function sellerParcels(): HasMany
+    {
+        return $this->hasMany(SellerParcel::class);
     }
 }
