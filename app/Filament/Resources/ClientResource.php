@@ -16,6 +16,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -144,7 +145,7 @@ class ClientResource extends Resource
                     ->color('info')
                     ->url(fn (Client $record): string => route('client-details-pdf', $record->id))
                     ->openUrlInNewTab()
-            ])
+            ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

@@ -6,12 +6,14 @@ use App\Filament\Forms\AnimalForm;
 use App\Filament\Resources\AnimalResource\Pages;
 use App\Filament\Resources\AnimalResource\RelationManagers;
 use App\Models\Animal;
+use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -137,16 +139,19 @@ class AnimalResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->mutateRecordDataUsing(function (array $data): array {
-                        $data['name'] = Str::upper($data['name']);
-                        $data['mother'] = Str::upper($data['mother']);
-                        $data['father'] = Str::upper($data['father']);
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->mutateRecordDataUsing(function (array $data): array {
+                            $data['name'] = Str::upper($data['name']);
+                            $data['mother'] = Str::upper($data['mother']);
+                            $data['father'] = Str::upper($data['father']);
 
-                        return $data;
-                    }),
-                Tables\Actions\DeleteAction::make(),
-            ])
+                            return $data;
+                        }),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
+
+            ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

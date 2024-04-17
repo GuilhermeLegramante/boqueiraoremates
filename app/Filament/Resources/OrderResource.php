@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 
@@ -116,7 +117,7 @@ class OrderResource extends Resource
                     ->url(fn (Order $record): string => route('order-pdf', $record->id))
                     ->openUrlInNewTab(),
                 Tables\Actions\DeleteAction::make(),
-            ])
+            ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
