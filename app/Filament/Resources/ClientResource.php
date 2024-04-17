@@ -15,6 +15,7 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
@@ -137,14 +138,16 @@ class ClientResource extends Resource
                     ]),
             ], layout: FiltersLayout::Dropdown)
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Action::make('report')
-                    ->label('Ficha')
-                    ->icon('heroicon-o-document-text')
-                    ->color('info')
-                    ->url(fn (Client $record): string => route('client-details-pdf', $record->id))
-                    ->openUrlInNewTab()
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\DeleteAction::make(),
+                    Action::make('report')
+                        ->label('Ficha')
+                        ->icon('heroicon-o-document-text')
+                        ->color('info')
+                        ->url(fn (Client $record): string => route('client-details-pdf', $record->id))
+                        ->openUrlInNewTab()
+                ]),
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

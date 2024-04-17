@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Grouping\Group;
@@ -108,15 +109,17 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Action::make('report')
-                    ->label('Gerar PDF')
-                    ->icon('heroicon-o-document-text')
-                    ->color('info')
-                    ->url(fn (Order $record): string => route('order-pdf', $record->id))
-                    ->openUrlInNewTab(),
-                Tables\Actions\DeleteAction::make(),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Action::make('report')
+                        ->label('Gerar PDF')
+                        ->icon('heroicon-o-document-text')
+                        ->color('info')
+                        ->url(fn (Order $record): string => route('order-pdf', $record->id))
+                        ->openUrlInNewTab(),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

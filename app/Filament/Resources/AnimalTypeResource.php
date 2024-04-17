@@ -8,6 +8,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -61,13 +62,15 @@ class AnimalTypeResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                    ->mutateRecordDataUsing(function (array $data): array {
-                        $data['name'] = Str::upper($data['name']);
+                ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->mutateRecordDataUsing(function (array $data): array {
+                            $data['name'] = Str::upper($data['name']);
 
-                        return $data;
-                    }),
-                Tables\Actions\DeleteAction::make(),
+                            return $data;
+                        }),
+                    Tables\Actions\DeleteAction::make(),
+                ]),
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
