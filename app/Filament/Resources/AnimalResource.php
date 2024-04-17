@@ -6,7 +6,7 @@ use App\Filament\Forms\AnimalForm;
 use App\Filament\Resources\AnimalResource\Pages;
 use App\Filament\Resources\AnimalResource\RelationManagers;
 use App\Models\Animal;
-use Filament\Actions\ActionGroup;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
