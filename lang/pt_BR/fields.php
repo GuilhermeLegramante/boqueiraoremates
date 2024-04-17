@@ -53,7 +53,7 @@ return [
     'coat' => 'Pelagem',
     'register' => 'Registro',
     'sbb' => 'SBB',
-    'rb' => 'RB',
+    'rb' => 'RP',
     'breeding' => 'Capacidade de Reprodução',
     'blood_level' => 'Grau de Sangue',
     'blodd_percentual' => 'Percentual',
