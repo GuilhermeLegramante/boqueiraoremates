@@ -13,6 +13,8 @@ class Parcel extends Model
     protected $fillable = [
         'number', 
         'order_id',
+        'payment_method_id',
+        'payment_date',
         'date',
         'value',
         'paid',
@@ -27,5 +29,11 @@ class Parcel extends Model
     {
         return $this->belongsTo(Order::class);
     }
+
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
 
 }

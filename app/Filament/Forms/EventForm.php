@@ -14,6 +14,7 @@ class EventForm
             TextInput::make('name')
                 ->label(__('fields.name'))
                 ->required()
+                ->unique()
                 ->maxLength(255),
             DatePicker::make('start_date')
                 ->label(__('fields.start_date')),

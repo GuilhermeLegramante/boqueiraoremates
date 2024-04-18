@@ -13,6 +13,7 @@ class PaymentWayForm
                 ->label(__('fields.description'))
                 ->regex('/^[0-9+]+$/')
                 ->required()
+                ->unique()
                 ->maxLength(255),
         ];
     }

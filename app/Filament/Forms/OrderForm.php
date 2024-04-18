@@ -271,7 +271,7 @@ class OrderForm
 
     private static function getEntry(): Fieldset
     {
-        return Fieldset::make('Documentação - Entrada (Envio e Recebimento do Comprador')
+        return Fieldset::make('Documentação - envio para assinaturas (Comprador/Vendedor/Testemunhas)')
             ->schema([
                 Checkbox::make('entry_contracts')
                     ->label('Contratos'),
@@ -293,15 +293,14 @@ class OrderForm
                     ]),
                 DatePicker::make('entry_buyer_sending_documentation_date')
                     ->label('Data de envio'),
-                Radio::make('entry_buyer_sending_documentation_way')
+                Select::make('entry_sending_docs_method_id')
                     ->label('Forma de Envio')
-                    ->options([
-                        'email' => 'E-mail',
-                        'whatsapp' => 'Whatsapp',
-                        'material' => 'Físico'
-                    ]),
+                    ->preload()
+                    ->searchable()
+                    ->relationship(name: 'entrySendingDocsMethod', titleAttribute: 'name')
+                    ->createOptionForm(SendingDocsMethodForm::form()),
                 DatePicker::make('entry_contract_return_date')
-                    ->label('Retorno do Contrato'),
+                    ->label('Assinatura do Comprador'),
                 Textarea::make('entry_documentation_note')
                     ->columnSpanFull()
                     ->label('Observação')
@@ -310,7 +309,7 @@ class OrderForm
 
     private static function getOutput(): Fieldset
     {
-        return Fieldset::make('Documentação - Saída (Envio para o Vendedor')
+        return Fieldset::make('Documentação - Saída (Envio para o Vendedor)')
             ->schema([
                 Checkbox::make('output_contracts')
                     ->columnSpan(2)
@@ -327,14 +326,13 @@ class OrderForm
                 DatePicker::make('output_sending_documentation_date')
                     ->columnSpan(2)
                     ->label('Data de envio do processo físico'),
-                Radio::make('output_seller_sending_documentation_way')
-                    ->columnSpan(2)
+                Select::make('output_sending_docs_method_id')
                     ->label('Forma de Envio')
-                    ->options([
-                        'email' => 'E-mail',
-                        'whatsapp' => 'Whatsapp',
-                        'material' => 'Físico'
-                    ]),
+                    ->preload()
+                    ->searchable()
+                    ->relationship(name: 'outputSendingDocsMethod', titleAttribute: 'name')
+                    ->createOptionForm(SendingDocsMethodForm::form())
+                    ->columnSpan(2),
                 Textarea::make('output_documentation_note')
                     ->columnSpanFull()
                     ->label('Observação')

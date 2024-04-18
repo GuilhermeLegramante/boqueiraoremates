@@ -44,6 +44,7 @@ class Order extends Model
         'entry_first_parcel_comission',
         'entry_buyer_sending_documentation_date',
         'entry_buyer_sending_documentation_way',
+        'sending_docs_method_id',
         'entry_contract_return_date',
         'entry_documentation_note',
         'output_contracts',
@@ -115,5 +116,15 @@ class Order extends Model
     public function sellerParcels(): HasMany
     {
         return $this->hasMany(SellerParcel::class);
+    }
+
+    public function entrySendingDocsMethod(): BelongsTo
+    {
+        return $this->belongsTo(SendingDocsMethod::class, 'entry_sending_docs_method_id');
+    }
+
+    public function outputSendingDocsMethod(): BelongsTo
+    {
+        return $this->belongsTo(SendingDocsMethod::class, 'output_sending_docs_method_id');
     }
 }

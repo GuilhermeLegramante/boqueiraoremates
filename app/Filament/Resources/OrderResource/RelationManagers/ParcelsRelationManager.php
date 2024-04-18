@@ -2,6 +2,9 @@
 
 namespace App\Filament\Resources\OrderResource\RelationManagers;
 
+use App\Filament\Forms\PaymentMethodForm;
+use App\Filament\Tables\ParcelsTable;
+use App\Models\PaymentMethod;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -11,7 +14,10 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Enums\Alignment;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 
@@ -39,26 +45,7 @@ class ParcelsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('number')
-            ->columns([
-                TextColumn::make('number')
-                    ->label('Número'),
-                TextColumn::make('date')
-                    ->label('Data de Vencimento')
-                    ->formatStateUsing(
-                        fn (string $state): string => (date('d/m/Y', strtotime($state)))
-                    ),
-                TextColumn::make('value')
-                    ->label('Valor')
-                    ->money('BRL')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
-
-                ToggleColumn::make('paid')
-                    ->sortable()
-                    ->label('Paga'),
-                TextInputColumn::make('note')
-                    ->label('Observação')
-            ])
+            ->columns(ParcelsTable::table())
             ->filters([
                 //
             ])

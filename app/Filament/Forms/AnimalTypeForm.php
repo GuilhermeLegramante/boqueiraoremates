@@ -11,6 +11,7 @@ class AnimalTypeForm
         return [
             TextInput::make('name')
                 ->label(__('fields.name'))
+                ->unique()
                 ->required()
                 ->maxLength(255),
         ];

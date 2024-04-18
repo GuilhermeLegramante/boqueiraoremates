@@ -13,6 +13,8 @@ class BuyerParcel extends Model
     protected $fillable = [
         'number',
         'order_id',
+        'payment_method_id',
+        'payment_date',
         'date',
         'value',
         'paid',

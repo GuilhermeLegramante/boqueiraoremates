@@ -12,6 +12,7 @@ class CoatForm
             TextInput::make('name')
                 ->label(__('fields.name'))
                 ->required()
+                ->unique()
                 ->maxLength(255),
         ];
     }

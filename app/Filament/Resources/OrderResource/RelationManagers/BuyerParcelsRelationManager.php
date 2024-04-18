@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\OrderResource\RelationManagers;
 
+use App\Filament\Tables\ParcelsTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -37,25 +38,7 @@ class BuyerParcelsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('number')
-            ->columns([
-                TextColumn::make('number')
-                    ->label('Número'),
-                TextColumn::make('date')
-                    ->label('Data de Vencimento')
-                    ->formatStateUsing(
-                        fn (string $state): string => (date('d/m/Y', strtotime($state)))
-                    ),
-                TextColumn::make('value')
-                    ->label('Valor')
-                    ->money('BRL')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
-                ToggleColumn::make('paid')
-                    ->sortable()
-                    ->label('Paga'),
-                TextInputColumn::make('note')
-                    ->label('Observação')
-            ])
+            ->columns(ParcelsTable::table())
             ->filters([
                 //
             ])
