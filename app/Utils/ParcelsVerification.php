@@ -34,10 +34,38 @@ class ParcelsVerification
             }
 
             if ($sum != doubleval($multiplier)) {
-               return false;
+                return false;
             } else {
                 return true;
             }
+        }
+    }
+
+    public static function getMultiplier($paymentWayId): int
+    {
+        $paymentWay = PaymentWay::find($paymentWayId);
+
+        $values = explode("+", $paymentWay->name);
+
+        $sum = 0;
+
+        foreach ($values as $key => $value) {
+            $sum += intval($value);
+        }
+
+        return $sum;
+    }
+
+    public static function getFirstParcelValue($paymentWayId, $parcelValue): float
+    {
+        $paymentWay = PaymentWay::find($paymentWayId);
+
+        if (isset($paymentWay)) {
+            $values = explode("+", $paymentWay->name);
+
+            return doubleval($parcelValue) * intval($values[0]);
+        } else {
+            return 0;
         }
     }
 }

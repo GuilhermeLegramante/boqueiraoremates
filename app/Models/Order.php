@@ -22,6 +22,7 @@ class Order extends Model
         'animal_id',
         'batch',
         'parcel_value',
+        'first_parcel_value',
         'multiplier',
         'gross_value',
         'payment_way_id',
@@ -59,6 +60,7 @@ class Order extends Model
 
     protected $casts = [
         'parcel_value' => 'double',
+        'first_parcel_value' => 'double',
         'gross_value' => 'double',
         'discount_percentage' => 'double',
         'reinforcement_value' => 'double',

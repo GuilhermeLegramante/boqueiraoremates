@@ -140,7 +140,6 @@
 
                                             <td></td>
 
-
                                             <td class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 fi-table-cell-total-price"
                                                 wire:key="EeyC234bYe73viiJ8x1V.table.record.3.column.total_price">
                                                 <div class="fi-ta-col-wrp">

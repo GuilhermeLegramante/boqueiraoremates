@@ -4,6 +4,7 @@ namespace App\Filament\Traits;
 
 use App\Models\BuyerParcel;
 use App\Models\Parcel;
+use App\Models\PaymentWay;
 use App\Models\SellerParcel;
 use App\Utils\BuyerParcelsVerification;
 use App\Utils\ParcelsVerification;
@@ -31,26 +32,70 @@ trait WithParcels
     public function resolveParcels(): void
     {
         $data = $this->form->getState();
-
+        
         $parcel = [];
         $month = 1;
         $year = 0;
-        $this->sum = 0;
+        $this->sum = doubleval($data['first_parcel_value']);
         $this->parcels = [];
+        $this->values = [];
 
-        $this->values[0] = $data['parcel_value'];
+        $paymentWay = PaymentWay::find($data['payment_way_id']);
+        $parcelsParts = explode("+", $paymentWay->name);
+        array_pop($parcelsParts); // Remove a última posição (parcelas iguais ex. 2+2+46, deixa só as duas primeiras partes)
 
-        for ($i = 0; $i < floatval($data['multiplier']); $i++) {
+        $parcelCounter = 0;
 
+        $parcelsRemains = 0;
+
+        $parcels = 0;
+
+        // Montando as primeiras parcelas da fórmula
+        if (count($parcelsParts) > 1) {
+            $parcelCounter += intval($parcelsParts[0]);
+
+            for ($i = 0; $i < count($parcelsParts); $i++) {
+                $day = floatval($data['due_day']);
+                $year = $year == 0 ? now()->format('Y') : $year;
+                $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+
+                $parcels = intval($parcelsParts[$i]);
+
+                $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $data['multiplier']; // Ex: 1-2/50 , 1-3/50, etc.
+                $parcel['date'] = $day . '/' . $month . '/' . $year;
+
+                $parcelValue = floatval($data['parcel_value']) * intval($parcelsParts[$i]);
+                $this->values[$i] = number_format($parcelValue, 2);
+
+                if (intval($month) <= 11) {
+                    $month++;
+                } else {
+                    $month = 1;
+                    $year++;
+                }
+
+                $parcelCounter = $parcelCounter + 1;
+
+                if ($i > 0) {
+                    array_push($this->parcels, $parcel);
+
+                    $parcelsRemains += intval($parcelsParts[$i]);
+                }
+            }
+
+            $this->values = array_slice($this->values, -1, 1);
+        }
+
+
+        for ($i = intval($parcelsParts[0]); $i < floatval($data['multiplier']); $i++) {
             $day = floatval($data['due_day']);
-
             $year = $year == 0 ? now()->format('Y') : $year;
-
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
             $parcel['ord'] = $i + 1 . '/' . $data['multiplier'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
-            $this->values[$i] = number_format($data['parcel_value'], 2);
+
+            array_push($this->values, number_format($data['parcel_value'], 2));
 
             $this->sum += doubleval($data['parcel_value']);
 
@@ -64,8 +109,15 @@ trait WithParcels
             array_push($this->parcels, $parcel);
         }
 
+        /*
+         Remover parcelas "do meio" em caso de parcelamento múltiplo ex. 2+2+8, 
+         */
+        array_splice($this->parcels, 1, $parcelsRemains);
+        array_splice($this->values, 1, $parcelsRemains);
+
         $this->showParcels = true;
     }
+
 
     public function resolveBuyerParcels()
     {
@@ -153,7 +205,7 @@ trait WithParcels
     {
         $data = $this->form->getState();
 
-        $this->sum = 0;
+        $this->sum = doubleval($data['first_parcel_value']);
 
         foreach ($this->values as $value) {
             $this->sum += doubleval($value);
