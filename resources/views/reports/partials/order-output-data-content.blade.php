@@ -37,7 +37,9 @@
         </tr>
         <tr>
             <td colspan="2" class="table-0pky"><strong>Data de envio:</strong>
-                {{ date('d/m/Y', strtotime($order->output_sending_documentation_date)) }}
+                @isset($order->output_sending_documentation_date)
+                    {{ date('d/m/Y', strtotime($order->output_sending_documentation_date)) }}
+                @endisset
             </td>
             <td colspan="2" class="table-0pky"><strong>Forma de envio:</strong>
                 @isset($order->outputSendingDocsMethod)

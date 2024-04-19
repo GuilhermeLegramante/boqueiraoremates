@@ -62,11 +62,7 @@
         </tr>
         <tr>
             <td class="table-fymr">Remate</td>
-            <td class="table-0pky">{{ $order->event->name }}</td>
-            <td class="table-0pky"></td>
-            <td class="table-0pky"></td>
-            <td class="table-0pky"></td>
-            <td class="table-0pky"></td>
+            <td colspan="4" class="table-0pky">{{ $order->event->name }}</td>
         </tr>
         <tr>
             <td class="table-fymr">Animal</td>
