@@ -164,6 +164,8 @@
 
         @include('reports.partials.order-entry-data-content')
 
+        @include('reports.partials.order-output-data-content')
+
     </div>
 @endsection
 
