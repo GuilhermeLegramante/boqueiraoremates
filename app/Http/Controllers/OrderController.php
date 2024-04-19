@@ -12,7 +12,7 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $id)->get()->first();
 
-        $fileName = 'ORDEM_DE_SERVICO_' . $order->id . '.pdf';
+        $fileName = 'ORDEM_DE_SERVICO_' . $order->number . '.pdf';
 
         $netValue = floatval($order->gross_value) - (floatval($order->gross_value) * floatval($order->discount_percentage)) / 100;
         $buyerComissionValue = (floatval($order->gross_value) * floatval($order->buyer_commission)) / 100;
