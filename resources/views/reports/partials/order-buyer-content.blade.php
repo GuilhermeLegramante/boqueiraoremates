@@ -9,14 +9,14 @@
     </colgroup>
     <thead>
         <tr>
-            <th class="table-header" colspan="6"><span style="color:#FFF">Faturamento pelo Comprador</span></th>
+            <th class="table-header" colspan="6"><span style="color:#FFF">Comissão pelo Comprador</span></th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td class="table-0pky"><span style="font-weight:bold">Comissão</span></td>
             <td class="table-0pky">{{ $order->buyer_commission }}%</td>
-            <td class="table-0pky"><span style="font-weight:bold">Faturamento Boqueirão</span></td>
+            <td class="table-0pky"><span style="font-weight:bold">Comissão Boqueirão</span></td>
             </td>
             <td class="table-0pky">
                 {{ 'R$ ' . number_format($buyerComissionValue, 2, ',', '.') }}

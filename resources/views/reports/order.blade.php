@@ -158,7 +158,7 @@
 
         @include('reports.partials.order-buyer-content')
 
-        <div class="break"></div>
+        {{-- <div class="break"></div> --}}
 
         @include('reports.partials.order-seller-content')
 

@@ -9,7 +9,7 @@
     </colgroup>
     <thead>
         <tr>
-            <th class="table-header" colspan="6"><span style="color:#FFF">Serviço</span></th>
+            <th class="table-header" colspan="6"><span style="color:#FFF">Serviço / Vendedor</span></th>
         </tr>
     </thead>
     <tbody>
@@ -40,7 +40,7 @@
             </td>
         </tr>
         <tr>
-            <td class="table-header-text" colspan="6">Negócio</td>
+            <td class="table-header-text" colspan="6">Comprador</td>
         </tr>
         <tr>
             <td class="table-fymr">Comprador</td>
@@ -61,8 +61,11 @@
             </td>
         </tr>
         <tr>
+            <td class="table-header-text" colspan="6">Negócio</td>
+        </tr>
+        <tr>
             <td class="table-fymr">Remate</td>
-            <td colspan="4" class="table-0pky">{{ $order->event->name }}</td>
+            <td colspan="5" class="table-0pky">{{ $order->event->name }}</td>
         </tr>
         <tr>
             <td class="table-fymr">Animal</td>

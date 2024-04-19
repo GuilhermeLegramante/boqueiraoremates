@@ -20,7 +20,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 0; $i < 15; $i++)
+            @for ($i = 0; $i < 3; $i++)
                 <tr>
                     <td>
                         @if (isset($order->buyerParcels->toArray()[$i]))
@@ -71,7 +71,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 15; $i < 30; $i++)
+            @for ($i = 3; $i < 6; $i++)
                 <tr>
                     <td>
                         @if (isset($order->buyerParcels->toArray()[$i]))
@@ -122,7 +122,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 30; $i < 45; $i++)
+            @for ($i = 6; $i < 9; $i++)
                 <tr>
                     <td>
                         @if (isset($order->buyerParcels->toArray()[$i]))
@@ -173,7 +173,7 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 45; $i < 60; $i++)
+            @for ($i = 9; $i < 12; $i++)
                 <tr>
                     <td>
                         @if (isset($order->buyerParcels->toArray()[$i]))
