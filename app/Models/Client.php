@@ -50,7 +50,7 @@ class Client extends Model
     protected $casts = [
         'documents' => 'array',
         'has_register_in_another_auctioneer' => 'boolean',
-        'income' => 'double',
+        // 'income' => 'double',
     ];
 
     public function bank(): BelongsTo
