@@ -89,7 +89,7 @@
                 <td class="collumn-right"><strong>NP:</strong> {{ $order->entry_promissory ? 'SIM' : 'NÃO' }}</td>
             </tr>
             <tr class="" style="font-size: 13px;">
-                <td class="collumn-left"><strong>Cópia do Registro:</strong>
+                <td class="collumn-left"><strong>Cópia do Regulamento:</strong>
                     {{ $order->entry_register_copy ? 'SIM' : 'NÃO' }}</td>
                 <td class="collumn-right"><strong>Parcela 01 do Negócio:</strong>
                     @if ($order->entry_first_parcel_business == 'ticket')
@@ -141,7 +141,7 @@
                 <td class="collumn-right"><strong>NP:</strong> {{ $order->output_promissory ? 'SIM' : 'NÃO' }}</td>
             </tr>
             <tr class="" style="font-size: 13px;">
-                <td class="collumn-left"><strong>Cópia do Registro:</strong>
+                <td class="collumn-left"><strong>Cópia do Regulamento:</strong>
                     {{ $order->output_register_copy ? 'SIM' : 'NÃO' }}</td>
                 <td class="collumn-right"><strong>Data da Parcela 01:</strong>
                     {{ date('d/m/Y', strtotime($order->output_first_parcel_date)) }}

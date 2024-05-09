@@ -39,7 +39,7 @@ return new class extends Migration
             $table->integer('seller_due_day')->nullable()->comment('Dia do vencimento da parcela para o faturamento do comprador (comissão)');
             $table->boolean('entry_contracts')->nullable()->default(0)->comment('Documentação - Entrada (contratos)');
             $table->boolean('entry_promissory')->nullable()->default(0)->comment('Documentação - Entrada (Nota promissória)');
-            $table->boolean('entry_register_copy')->nullable()->default(0)->comment('Documentação - Entrada (Cópia do Registro');
+            $table->boolean('entry_register_copy')->nullable()->default(0)->comment('Documentação - Entrada (Cópia do Regulamento');
             $table->enum('entry_first_parcel_business', ['ticket', 'deposit'])->nullable()->comment('Parcela 01 do Negócio (boleto ou depósito)');
             $table->enum('entry_first_parcel_comission', ['ticket', 'deposit'])->nullable()->comment('Parcela 01 da Comissão / Faturamento Boqueirão (boleto ou depósito)');
             $table->date('entry_buyer_sending_documentation_date')->nullable()->comment('Data de envio da documentação ao comprador');
@@ -48,7 +48,7 @@ return new class extends Migration
             $table->string('entry_documentation_note')->nullable()->comment('Observação (Documentação - Entrada)');
             $table->boolean('output_contracts')->nullable()->default(0)->comment('Documentação - Saída (contratos)');
             $table->boolean('output_promissory')->nullable()->default(0)->comment('Documentação - Saída (Nota promissória)');
-            $table->boolean('output_register_copy')->nullable()->default(0)->comment('Documentação - Saída (Cópia do Registro');
+            $table->boolean('output_register_copy')->nullable()->default(0)->comment('Documentação - Saída (Cópia do Regulamento');
             $table->date('output_first_parcel_date')->nullable()->comment('Data da primeira parcela');
             $table->date('output_sending_documentation_date')->nullable()->comment('Data de envio do processo físico');
             $table->enum('output_seller_sending_documentation_way', ['email', 'whatsapp', 'material'])->nullable()->comment('Forma de envio da documentação ao vendedor');

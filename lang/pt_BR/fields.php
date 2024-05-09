@@ -82,7 +82,7 @@ return [
     'seller_due_day' => 'Dia do Vencimento',
     'contracts' => 'Contratos',
     'promissory' => 'Nota Promissória',
-    'register_copy' => 'Cópia do Registro',
+    'register_copy' => 'Cópia do Regulamento',
     'entry_first_parcel_business' => 'Forma de Pagamento da 1ª parcela',
     'entry_first_parcel_comission' => 'Forma de Pagamento da 1ª parcela (Comissão)',
     'entry_buyer_sending_documentation_date' => 'Data de envio ao Comprador',

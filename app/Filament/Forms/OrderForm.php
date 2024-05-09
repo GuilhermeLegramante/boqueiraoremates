@@ -297,7 +297,7 @@ class OrderForm
                 Checkbox::make('entry_promissory')
                     ->label('NP'),
                 Checkbox::make('entry_register_copy')
-                    ->label('Cópia do Registro'),
+                    ->label('Cópia do Regulamento'),
                 Radio::make('entry_first_parcel_business')
                     ->label('Parcela 01 do Negócio')
                     ->options([
@@ -338,7 +338,7 @@ class OrderForm
                     ->label('NP'),
                 Checkbox::make('output_register_copy')
                     ->columnSpan(2)
-                    ->label('Cópia do Registro'),
+                    ->label('Cópia do Regulamento'),
                 DatePicker::make('output_first_parcel_date')
                     ->columnSpan(2)
                     ->label('Data da Parcela 01'),
