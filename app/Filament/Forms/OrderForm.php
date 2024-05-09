@@ -296,6 +296,8 @@ class OrderForm
                     ->label('Contratos'),
                 Checkbox::make('entry_promissory')
                     ->label('NP'),
+                Checkbox::make('entry_comission_promissory')
+                    ->label('NP da Comissão'),
                 Checkbox::make('entry_register_copy')
                     ->label('Cópia do Regulamento'),
                 Radio::make('entry_first_parcel_business')
@@ -340,6 +342,8 @@ class OrderForm
                 Checkbox::make('output_promissory')
                     ->columnSpan(2)
                     ->label('NP'),
+                Checkbox::make('output_comission_promissory')
+                    ->label('NP da Comissão'),
                 Checkbox::make('output_register_copy')
                     ->columnSpan(2)
                     ->label('Cópia do Regulamento'),
