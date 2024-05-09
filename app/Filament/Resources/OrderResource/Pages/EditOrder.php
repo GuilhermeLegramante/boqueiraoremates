@@ -4,9 +4,11 @@ namespace App\Filament\Resources\OrderResource\Pages;
 
 use App\Filament\Resources\OrderResource;
 use App\Filament\Traits\WithParcels;
+use App\Models\BuyerParcel;
 use App\Models\Event;
 use App\Models\Order;
 use App\Models\Parcel;
+use App\Models\SellerParcel;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
@@ -38,5 +40,49 @@ class EditOrder extends EditRecord
         $data['multiplier'] = $event->multiplier; 
 
         return $data;
+    }
+
+    public function save(bool $shouldRedirect = true): void
+    {
+        $this->authorizeAccess();
+
+        try {
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->callHook('beforeSave');
+
+            $this->handleRecordUpdate($this->getRecord(), $data);
+
+            $this->deleteParcels();
+            $this->saveParcels();
+            $this->saveBuyerParcels();
+            $this->saveSellerParcels();
+
+            $this->callHook('afterSave');
+        } catch (Halt $exception) {
+            return;
+        }
+
+        $this->rememberData();
+
+        $this->getSavedNotification()?->send();
+
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
+            $this->redirect($redirectUrl);
+        }
+    }
+
+
+    private function deleteParcels()
+    {
+        Parcel::where('order_id', $this->getRecord()->id)->delete();
+        SellerParcel::where('order_id', $this->getRecord()->id)->delete();
+        BuyerParcel::where('order_id', $this->getRecord()->id)->delete();
     }
 }

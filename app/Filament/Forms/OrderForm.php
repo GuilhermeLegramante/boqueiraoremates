@@ -71,7 +71,7 @@ class OrderForm
                     ->preload()
                     ->searchable()
                     ->preload()
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->relationship(name: 'event', titleAttribute: 'name')
                     ->createOptionForm(EventForm::form())
                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -81,7 +81,7 @@ class OrderForm
                     ->columnSpanFull(),
                 Select::make('seller_id')
                     ->label(__('fields.seller'))
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->required()
                     ->preload()
                     ->relationship(name: 'seller', titleAttribute: 'name')
@@ -96,7 +96,7 @@ class OrderForm
             ->schema([
                 Select::make('buyer_id')
                     ->label(__('fields.buyer'))
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->required()
                     ->preload()
                     ->searchable()
@@ -105,7 +105,7 @@ class OrderForm
                     ->columnSpanFull(),
                 Select::make('animal_id')
                     ->label(__('fields.animal'))
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->required()
                     ->preload()
                     ->searchable()
@@ -117,7 +117,7 @@ class OrderForm
                     ->numeric(),
                 Select::make('payment_way_id')
                     ->label('Forma de Pagamento')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->preload()
                     ->searchable()
                     ->live()
@@ -130,7 +130,7 @@ class OrderForm
                     })
                     ->columnSpan(2),
                 TextInput::make('parcel_value')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->prefix('R$')
                     ->numeric()
                     ->live()
@@ -145,13 +145,13 @@ class OrderForm
                         $set('gross_value', $grossValue);
                     }),
                 TextInput::make('first_parcel_value')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->prefix('R$')
                     ->numeric()
                     ->columnSpan(2)
                     ->label('Valor da Entrada'),
                 TextInput::make('multiplier')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->label(__('fields.multiplier'))
                     ->live()
                     ->columnSpan(1)
@@ -172,7 +172,7 @@ class OrderForm
                     ->label(__('fields.gross_value')),
                 TextInput::make('discount_percentage')
                     ->label('Desconto')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->columnSpan(2)
                     ->live()
                     ->debounce(600)
@@ -184,7 +184,7 @@ class OrderForm
                     ->numeric(),
                 TextInput::make('due_day')
                     ->label('Dia do Venc.')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->numeric()
                     ->minValue(1)
                     ->maxValue(28)
@@ -204,7 +204,7 @@ class OrderForm
                 ParcelsDetails::make('parcels_details')
                     ->label('')
                     ->columnSpanFull()
-                    ->visible(fn (Get $get, string $operation): bool => ($get('gross_value') != null) && ($operation === 'create')),
+                    ->visible(fn (Get $get, string $operation): bool => ($get('gross_value') != null)),
             ])->columns(6);
     }
 
@@ -214,7 +214,7 @@ class OrderForm
             ->schema([
                 TextInput::make('buyer_commission')
                     ->label('Comissão')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->live()
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -231,20 +231,20 @@ class OrderForm
                     ->label('Valor da Comissão'),
                 TextInput::make('buyer_due_day')
                     ->label('Dia do Venc.')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->live()
                     ->columnSpan(1)
                     ->numeric(),
                 TextInput::make('buyer_commission_installments_number')
                     ->label('N° de Parcelas')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->live()
                     ->columnSpan(1)
                     ->numeric(),
                 BuyerParcelsDetails::make('buyer_parcels_details')
                     ->label('')
                     ->columnSpanFull()
-                    ->visible(fn (Get $get, string $operation): bool => ($get('buyer_commission_installments_number') != null) && ($operation === 'create')),
+                    ->visible(fn (Get $get, string $operation): bool => ($get('buyer_commission_installments_number') != null)),
             ])->columns(6);
     }
 
@@ -254,7 +254,7 @@ class OrderForm
             ->schema([
                 TextInput::make('seller_commission')
                     ->label('Comissão')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->live()
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -271,20 +271,20 @@ class OrderForm
                     ->label('Valor da Comissão'),
                 TextInput::make('seller_due_day')
                     ->label('Dia do Venc.')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->live()
                     ->columnSpan(1)
                     ->numeric(),
                 TextInput::make('seller_commission_installments_number')
                     ->label('N° de Parcelas')
-                    ->disabledOn('edit')
+                    // ->disabledOn('edit')
                     ->live()
                     ->columnSpan(1)
                     ->numeric(),
                 SellerParcelsDetails::make('seller_parcels_details')
                     ->label('')
                     ->columnSpanFull()
-                    ->visible(fn (Get $get, string $operation): bool => ($get('seller_commission_installments_number') != null) && ($operation === 'create')),
+                    ->visible(fn (Get $get, string $operation): bool => ($get('seller_commission_installments_number') != null)),
             ])->columns(6);
     }
 
