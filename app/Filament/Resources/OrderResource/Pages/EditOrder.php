@@ -35,9 +35,9 @@ class EditOrder extends EditRecord
     {
         $data['net_value'] = floatval($data['gross_value']) - (floatval($data['gross_value']) * floatval($data['discount_percentage'])) / 100;
 
-        $event = Event::find($data['event_id']);
+        // $event = Event::find($data['event_id']);
 
-        $data['multiplier'] = $event->multiplier; 
+        // $data['multiplier'] = $event->multiplier; 
 
         return $data;
     }
