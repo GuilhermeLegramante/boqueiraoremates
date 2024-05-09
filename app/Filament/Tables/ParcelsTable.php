@@ -33,6 +33,8 @@ class ParcelsTable
                 ->options(PaymentMethod::all()->pluck('name', 'id')),
             ToggleColumn::make('paid')
                 ->sortable()
+                ->onColor('success')
+                ->offColor('danger')
                 ->label('Paga'),
             TextInputColumn::make('note')
                 ->label('Observação')
