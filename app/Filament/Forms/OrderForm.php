@@ -302,6 +302,7 @@ class OrderForm
                     ->label('Cópia do Regulamento'),
                 Radio::make('entry_first_parcel_business')
                     ->label('Parcela 01 do Negócio')
+                    ->columnSpan(2)
                     ->options([
                         'ticket' => 'Boleto',
                         'deposit' => 'Depósito',
@@ -310,6 +311,7 @@ class OrderForm
                     ]),
                 Radio::make('entry_first_parcel_comission')
                     ->label('Parcela 01 da Comissão')
+                    ->columnSpan(2)
                     ->options([
                         'ticket' => 'Boleto',
                         'deposit' => 'Depósito',
