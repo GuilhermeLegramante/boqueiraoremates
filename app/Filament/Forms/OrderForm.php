@@ -303,12 +303,16 @@ class OrderForm
                     ->options([
                         'ticket' => 'Boleto',
                         'deposit' => 'Depósito',
+                        'transfer' => 'Transferência',
+                        'pix' => 'Pix'
                     ]),
                 Radio::make('entry_first_parcel_comission')
                     ->label('Parcela 01 da Comissão')
                     ->options([
                         'ticket' => 'Boleto',
                         'deposit' => 'Depósito',
+                        'transfer' => 'Transferência',
+                        'pix' => 'Pix'
                     ]),
                 DatePicker::make('entry_buyer_sending_documentation_date')
                     ->label('Data de envio'),

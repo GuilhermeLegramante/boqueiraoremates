@@ -33,6 +33,12 @@
                 @if ($order->entry_first_parcel_business == 'deposit')
                     DEPÓSITO
                 @endif
+                @if ($order->entry_first_parcel_business == 'transfer')
+                    TRANSFERÊNCIA
+                @endif
+                @if ($order->entry_first_parcel_business == 'pix')
+                    PIX
+                @endif
             </td>
             <td class="table-0pky" style="width: 20%;">
                 <strong>Pcla 01 da Comissão:</strong>
@@ -41,6 +47,12 @@
                 @endif
                 @if ($order->entry_first_parcel_comission == 'deposit')
                     DEPÓSITO
+                @endif
+                @if ($order->entry_first_parcel_comission == 'transfer')
+                    TRANSFERÊNCIA
+                @endif
+                @if ($order->entry_first_parcel_comission == 'pix')
+                    PIX
                 @endif
             </td>
         </tr>

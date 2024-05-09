@@ -98,6 +98,12 @@
                     @if ($order->entry_first_parcel_business == 'deposit')
                         DEPÓSITO
                     @endif
+                    @if ($order->entry_first_parcel_business == 'transfer')
+                        TRANSFERÊNCIA
+                    @endif
+                    @if ($order->entry_first_parcel_business == 'pix')
+                        PIX
+                    @endif
                 </td>
             </tr>
             <tr class="bg-light" style="font-size: 13px;">
@@ -107,6 +113,12 @@
                     @endif
                     @if ($order->entry_first_parcel_comission == 'deposit')
                         DEPÓSITO
+                    @endif
+                    @if ($order->entry_first_parcel_comission == 'transfer')
+                        TRANSFERÊNCIA
+                    @endif
+                    @if ($order->entry_first_parcel_comission == 'pix')
+                        PIX
                     @endif
                 </td>
                 <td class="collumn-right"><strong>Data de envio:</strong>
