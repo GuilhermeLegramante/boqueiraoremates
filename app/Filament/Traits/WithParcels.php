@@ -32,7 +32,7 @@ trait WithParcels
     public function resolveParcels(): void
     {
         $data = $this->form->getState();
-        
+
         $parcel = [];
         $month = 1;
         $year = 0;
@@ -129,9 +129,9 @@ trait WithParcels
         $this->buyerSum = 0;
         $this->buyerParcels = [];
 
-        $parcelValue = number_format(floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'], 2);
+        $parcelValue = floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'];
 
-        $this->buyerValues[0] = doubleval($parcelValue);
+        $this->buyerValues[0] = $parcelValue;
 
         for ($i = 0; $i < floatval($data['buyer_commission_installments_number']); $i++) {
 
@@ -144,7 +144,7 @@ trait WithParcels
             $parcel['ord'] = $i + 1 . '/' . $data['buyer_commission_installments_number'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
 
-            $this->buyerValues[$i] =  number_format(doubleval($parcelValue), 2);
+            $this->buyerValues[$i] = $parcelValue;
 
             $this->buyerSum += doubleval($parcelValue);
 
@@ -157,6 +157,7 @@ trait WithParcels
 
             array_push($this->buyerParcels, $parcel);
         }
+
 
         $this->showBuyerParcels = true;
     }
@@ -171,9 +172,9 @@ trait WithParcels
         $this->sellerSum = 0;
         $this->sellerParcels = [];
 
-        $parcelValue = number_format(floatval($data['seller_comission_value']) / $data['seller_commission_installments_number'], 2);
+        $parcelValue = floatval($data['seller_comission_value']) / $data['seller_commission_installments_number'];
 
-        $this->sellerValues[0] = doubleval($parcelValue);
+        $this->sellerValues[0] = $parcelValue;
 
         for ($i = 0; $i < floatval($data['seller_commission_installments_number']); $i++) {
 
@@ -185,7 +186,7 @@ trait WithParcels
 
             $parcel['ord'] = $i + 1 . '/' . $data['seller_commission_installments_number'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
-            $this->sellerValues[$i] =  number_format(doubleval($parcelValue), 2);
+            $this->sellerValues[$i] = $parcelValue;
 
             $this->sellerSum += doubleval($parcelValue);
 
