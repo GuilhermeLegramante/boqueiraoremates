@@ -131,7 +131,7 @@ trait WithParcels
 
         $parcelValue = number_format(floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'], 2);
 
-        $this->buyerValues[0] = $parcelValue;
+        $this->buyerValues[0] = doubleval($parcelValue);
 
         for ($i = 0; $i < floatval($data['buyer_commission_installments_number']); $i++) {
 
@@ -172,7 +172,7 @@ trait WithParcels
 
         $parcelValue = number_format(floatval($data['seller_comission_value']) / $data['seller_commission_installments_number'], 2);
 
-        $this->sellerValues[0] = $parcelValue;
+        $this->sellerValues[0] = doubleval($parcelValue);
 
         for ($i = 0; $i < floatval($data['seller_commission_installments_number']); $i++) {
 
