@@ -110,7 +110,7 @@ class OrderResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    // Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Action::make('report')
                         ->label('Gerar PDF')
@@ -144,7 +144,7 @@ class OrderResource extends Resource
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/criar'),
             'edit' => Pages\EditOrder::route('/{record}/editar'),
-            'view' => Pages\ViewOrder::route('/{record}'),
+            // 'view' => Pages\ViewOrder::route('/{record}'),
         ];
     }
 

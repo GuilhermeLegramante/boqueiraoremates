@@ -88,11 +88,11 @@ class EditOrder extends EditRecord
         }
     }
 
-
     private function deleteParcels()
     {
         Parcel::where('order_id', $this->getRecord()->id)->delete();
         SellerParcel::where('order_id', $this->getRecord()->id)->delete();
         BuyerParcel::where('order_id', $this->getRecord()->id)->delete();
     }
+
 }
