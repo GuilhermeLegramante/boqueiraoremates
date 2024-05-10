@@ -59,8 +59,6 @@ class EditOrder extends EditRecord
 
             $this->handleRecordUpdate($this->getRecord(), $data);
 
-            $this->deleteParcels();
-
             if (count($this->parcels) > 0) {
                 Parcel::where('order_id', $this->getRecord()->id)->delete();
                 $this->saveParcels();
