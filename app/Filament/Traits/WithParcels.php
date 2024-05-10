@@ -143,7 +143,7 @@ trait WithParcels
 
             $parcel['ord'] = $i + 1 . '/' . $data['buyer_commission_installments_number'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
-            $this->buyerValues[$i] = $parcelValue;
+            $this->buyerValues[$i] = doubleval($parcelValue);
 
             $this->buyerSum += doubleval($parcelValue);
 
@@ -184,7 +184,7 @@ trait WithParcels
 
             $parcel['ord'] = $i + 1 . '/' . $data['seller_commission_installments_number'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
-            $this->sellerValues[$i] = $parcelValue;
+            $this->sellerValues[$i] = doubleval($parcelValue);
 
             $this->sellerSum += doubleval($parcelValue);
 
