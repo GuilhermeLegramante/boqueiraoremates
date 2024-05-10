@@ -60,9 +60,21 @@ class EditOrder extends EditRecord
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->deleteParcels();
-            $this->saveParcels();
-            $this->saveBuyerParcels();
-            $this->saveSellerParcels();
+
+            if (count($this->parcels) > 0) {
+                Parcel::where('order_id', $this->getRecord()->id)->delete();
+                $this->saveParcels();
+            }
+
+            if (count($this->buyerParcels) > 0) {
+                BuyerParcel::where('order_id', $this->getRecord()->id)->delete();
+                $this->saveBuyerParcels();
+            }
+
+            if (count($this->sellerParcels) > 0) {
+                SellerParcel::where('order_id', $this->getRecord()->id)->delete();
+                $this->saveSellerParcels();
+            }
 
             $this->callHook('afterSave');
         } catch (Halt $exception) {
