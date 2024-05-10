@@ -110,7 +110,7 @@ class OrderResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    // Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Action::make('report')
                         ->label('Gerar PDF')
