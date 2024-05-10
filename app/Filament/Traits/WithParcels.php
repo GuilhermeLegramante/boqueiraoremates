@@ -145,7 +145,7 @@ trait WithParcels
             $parcel['date'] = $day . '/' . $month . '/' . $year;
             $this->buyerValues[$i] = $parcelValue;
 
-            $this->buyerSum += $parcelValue;
+            $this->buyerSum += doubleval($parcelValue);
 
             if (intval($month) <= 11) {
                 $month++;
@@ -186,7 +186,7 @@ trait WithParcels
             $parcel['date'] = $day . '/' . $month . '/' . $year;
             $this->sellerValues[$i] = $parcelValue;
 
-            $this->sellerSum += $parcelValue;
+            $this->sellerSum += doubleval($parcelValue);
 
             if (intval($month) <= 11) {
                 $month++;
