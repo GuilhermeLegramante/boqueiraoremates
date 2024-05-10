@@ -115,9 +115,12 @@ trait WithParcels
         array_splice($this->parcels, 1, $parcelsRemains);
         array_splice($this->values, 1, $parcelsRemains);
 
+        for ($i = 0; $i < count($this->values); $i++) {
+            $this->values[$i] = str_replace(",", "",str_replace("11223344", "", $this->values[$i]));
+        }
+
         $this->showParcels = true;
     }
-
 
     public function resolveBuyerParcels()
     {
@@ -128,10 +131,11 @@ trait WithParcels
         $year = 0;
         $this->buyerSum = 0;
         $this->buyerParcels = [];
+        $this->buyerValues = [];
 
         $parcelValue = floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'];
 
-        $this->buyerValues[0] = $parcelValue;
+        $this->buyerValues[0] = number_format($parcelValue, 2);
 
         for ($i = 0; $i < floatval($data['buyer_commission_installments_number']); $i++) {
 
@@ -144,7 +148,7 @@ trait WithParcels
             $parcel['ord'] = $i + 1 . '/' . $data['buyer_commission_installments_number'];
             $parcel['date'] = $day . '/' . $month . '/' . $year;
 
-            $this->buyerValues[$i] = $parcelValue;
+            $this->buyerValues[$i] = number_format($parcelValue, 2);
 
             $this->buyerSum += doubleval($parcelValue);
 
@@ -158,6 +162,9 @@ trait WithParcels
             array_push($this->buyerParcels, $parcel);
         }
 
+        for ($i = 0; $i < count($this->buyerValues); $i++) {
+            $this->buyerValues[$i] = str_replace(",", "",str_replace("11223344", "", $this->buyerValues[$i]));
+        }
 
         $this->showBuyerParcels = true;
     }
@@ -198,6 +205,10 @@ trait WithParcels
             }
 
             array_push($this->sellerParcels, $parcel);
+        }
+
+        for ($i = 0; $i < count($this->sellerValues); $i++) {
+            $this->sellerValues[$i] = str_replace(",", "",str_replace("11223344", "", $this->sellerValues[$i]));
         }
 
         $this->showSellerParcels = true;
@@ -343,4 +354,5 @@ trait WithParcels
             ]);
         }
     }
+
 }
