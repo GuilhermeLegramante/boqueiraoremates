@@ -319,9 +319,9 @@ class OrderForm
                         'pix' => 'Pix'
                     ]),
                 DatePicker::make('entry_buyer_sending_documentation_date')
-                    ->label('Data de envio'),
+                    ->label('Data de envio da Documentação'),
                 Select::make('entry_sending_docs_method_id')
-                    ->label('Forma de Envio')
+                    ->label('Forma de Envio da Documentação')
                     ->preload()
                     ->searchable()
                     ->relationship(name: 'entrySendingDocsMethod', titleAttribute: 'name')
@@ -356,7 +356,7 @@ class OrderForm
                     ->columnSpan(2)
                     ->label('Data de envio do processo físico'),
                 Select::make('output_sending_docs_method_id')
-                    ->label('Forma de Envio')
+                    ->label('Forma de Envio da Documentação')
                     ->preload()
                     ->searchable()
                     ->relationship(name: 'outputSendingDocsMethod', titleAttribute: 'name')
