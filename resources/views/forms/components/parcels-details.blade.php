@@ -1,16 +1,28 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
 
-        <div class="flex justify-center">
-            <p class="fi-section-header-description text-sm text-gray-500 dark:text-gray-400">
-                <x-filament::button wire:click="resolveParcels()">
-                    Ver Parcelas
-                </x-filament::button>
-                <x-filament::button color="gray" wire:click="hideParcels()">
-                    Esconder Parcelas
-                </x-filament::button>
-            </p>
-        </div>
+        @if (!$this->showParcelsEdition)
+            <div class="flex justify-center">
+                <p class="fi-section-header-description text-sm text-gray-500 dark:text-gray-400">
+                    <x-filament::button wire:click="enableParcelsEdition()">
+                        Habilitar Parcelamento
+                    </x-filament::button>
+                </p>
+            </div>
+        @endif
+
+        @if ($this->showParcelsEdition)
+            <div class="flex justify-center">
+                <p class="fi-section-header-description text-sm text-gray-500 dark:text-gray-400">
+                    <x-filament::button wire:click="resolveParcels()">
+                        Gerar Parcelas
+                    </x-filament::button>
+                    <x-filament::button color="gray" wire:click="hideParcels()">
+                        Esconder Grade de Parcelas
+                    </x-filament::button>
+                </p>
+            </div>
+        @endif
 
         <br>
 

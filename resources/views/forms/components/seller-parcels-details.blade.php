@@ -6,10 +6,10 @@
         <div class="flex justify-center">
             <p class="fi-section-header-description text-sm text-gray-500 dark:text-gray-400">
                 <x-filament::button wire:click="resolveSellerParcels()">
-                    Ver Parcelas
+                    Gerar Parcelas
                 </x-filament::button>
                 <x-filament::button color="gray" wire:click="hideSellerParcels()">
-                    Esconder Parcelas
+                    Esconder Grade de Parcelas
                 </x-filament::button>
             </p>
         </div>

@@ -17,6 +17,7 @@ trait WithParcels
     public array $values = [];
     public float $sum = 0;
     public bool $showParcels = false;
+    public bool $showParcelsEdition = false;
 
     public array $buyerParcels = [];
     public array $buyerValues = [];
@@ -49,6 +50,8 @@ trait WithParcels
         $parcelsRemains = 0;
 
         $parcels = 0;
+
+
 
         // Montando as primeiras parcelas da fórmula
         if (count($parcelsParts) > 1) {
@@ -115,11 +118,31 @@ trait WithParcels
         array_splice($this->parcels, 1, $parcelsRemains);
         array_splice($this->values, 1, $parcelsRemains);
 
+        // Inclui a "entrada" nas parcelas
+        if (intval($parcelsParts[0]) > 0) {
+            $this->resolveFirstPayment(intval($parcelsParts[0]), floatval($data['first_parcel_value']), $data['multiplier']); // parcelsParts[0] é a qtde de parcelas da entrada
+        }
+
+        // Tira a "vírgula" de valores maior que 1000
         for ($i = 0; $i < count($this->values); $i++) {
-            $this->values[$i] = str_replace(",", "",str_replace("11223344", "", $this->values[$i]));
+            $this->values[$i] = str_replace(",", "", $this->values[$i]);
         }
 
         $this->showParcels = true;
+    }
+
+    private function resolveFirstPayment($firstPaymentParcelsQuantity, $firstParcelValue, $multiplier)
+    {
+        $parcel = [];
+
+        $prefix = $firstPaymentParcelsQuantity == 1 ? '1' : '1-';
+
+        $parcel['ord'] = $prefix . $firstPaymentParcelsQuantity . '/' . $multiplier . ' (Ent.)';
+        $parcel['date'] = now()->format('d/n/Y');
+        $value = $firstParcelValue;
+
+        array_unshift($this->parcels, $parcel); // array_unshift => Coloca na primeira posição e desloca os demais para índices maiores
+        array_unshift($this->values, number_format($value, 2));
     }
 
     public function resolveBuyerParcels()
@@ -163,7 +186,7 @@ trait WithParcels
         }
 
         for ($i = 0; $i < count($this->buyerValues); $i++) {
-            $this->buyerValues[$i] = str_replace(",", "",str_replace("11223344", "", $this->buyerValues[$i]));
+            $this->buyerValues[$i] = str_replace(",", "", str_replace("11223344", "", $this->buyerValues[$i]));
         }
 
         $this->showBuyerParcels = true;
@@ -208,7 +231,7 @@ trait WithParcels
         }
 
         for ($i = 0; $i < count($this->sellerValues); $i++) {
-            $this->sellerValues[$i] = str_replace(",", "",str_replace("11223344", "", $this->sellerValues[$i]));
+            $this->sellerValues[$i] = str_replace(",", "", str_replace("11223344", "", $this->sellerValues[$i]));
         }
 
         $this->showSellerParcels = true;
@@ -218,7 +241,8 @@ trait WithParcels
     {
         $data = $this->form->getState();
 
-        $this->sum = doubleval($data['first_parcel_value']);
+        // $this->sum = doubleval($data['first_parcel_value']);
+        $this->sum = 0;
 
         foreach ($this->values as $value) {
             $this->sum += doubleval($value);
@@ -303,6 +327,11 @@ trait WithParcels
         $this->showParcels = false;
     }
 
+    public function enableParcelsEdition(): void
+    {
+        $this->showParcelsEdition = true;
+    }
+
     public function hideBuyerParcels(): void
     {
         $this->showBuyerParcels = false;
@@ -354,5 +383,4 @@ trait WithParcels
             ]);
         }
     }
-
 }
