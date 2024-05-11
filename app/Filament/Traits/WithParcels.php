@@ -248,8 +248,8 @@ trait WithParcels
             $this->sum += doubleval($value);
         }
 
-        if (doubleval($data['gross_value']) != $this->sum) {
-            $msg = ParcelsVerification::getDifferenceBetweenParcelsAndGrossValueMessage(doubleval($data['gross_value']), $this->sum);
+        if (doubleval($data['net_value']) != $this->sum) {
+            $msg = ParcelsVerification::getDifferenceBetweenParcelsAndNetValueMessage(doubleval($data['net_value']), $this->sum);
 
             Notification::make()
                 ->title('Atenção!')
@@ -260,7 +260,7 @@ trait WithParcels
         } else {
             Notification::make()
                 ->title('Sucesso!')
-                ->body('A soma das parcelas e o valor bruto são iguais.')
+                ->body('A soma das parcelas e o valor líquido são iguais.')
                 ->success()
                 ->send();
         }

@@ -9,14 +9,14 @@ use Illuminate\Support\Str;
 
 class ParcelsVerification
 {
-    public static function getDifferenceBetweenParcelsAndGrossValueMessage($grossValue, $sum): string
+    public static function getDifferenceBetweenParcelsAndNetValueMessage($netValue, $sum): string
     {
-        $difference = doubleval($grossValue) - $sum;
+        $difference = doubleval($netValue) - $sum;
 
         if ($difference > 0) {
-            return "Há uma diferença de R$" . number_format($difference, 2, ',', '.') . " entre o valor das parcelas e o valor bruto.";
+            return "Há uma diferença de R$" . number_format($difference, 2, ',', '.') . " entre o valor das parcelas e o valor líquido.";
         } else {
-            return "A soma das parcelas excede R$" . number_format(abs($difference), 2, ',', '.') . " do valor bruto.";
+            return "A soma das parcelas excede R$" . number_format(abs($difference), 2, ',', '.') . " do valor líquido.";
         }
     }
 

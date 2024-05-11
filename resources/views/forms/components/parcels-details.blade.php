@@ -185,11 +185,11 @@
                                             class="fi-ta-cell p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3 text-start">
                                             <div class="fi-ta-text-summary grid gap-y-1 px-3 py-4">
                                                 <span class="text-sm font-medium text-gray-950 dark:text-white">
-                                                    Valor Bruto
+                                                    Valor Líquido
                                                 </span>
                                                 <span class="text-sm text-gray-500 dark:text-gray-400">
                                                     R$
-                                                    {{ number_format($this->form->getState()['gross_value'], 2, ',', '.') }}
+                                                    {{ number_format($this->form->getState()['net_value'], 2, ',', '.') }}
                                                 </span>
                                             </div>
                                         </td>
