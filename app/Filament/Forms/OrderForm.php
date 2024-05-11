@@ -192,11 +192,16 @@ class OrderForm
                     ->columnSpan(1)
                     ->numeric(),
                 TextInput::make('net_value')
-                    ->readOnly()
+                    // ->readOnly()
                     ->live()
                     ->prefix('R$')
                     ->columnSpan(5)
                     ->numeric()
+                    ->debounce(600)
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $percentage = 100 - (floatval($get('net_value')) * 100) / floatval($get('gross_value'));
+                        $set('discount_percentage', $percentage);
+                    })
                     ->label(__('fields.net_value')),
                 Textarea::make('business_note')
                     ->label('Observação')
