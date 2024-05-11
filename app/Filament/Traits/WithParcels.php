@@ -135,9 +135,9 @@ trait WithParcels
     {
         $parcel = [];
 
-        $prefix = $firstPaymentParcelsQuantity == 1 ? '1' : '1-';
+        $prefix = $firstPaymentParcelsQuantity == 1 ? '1' : '1-' . $firstPaymentParcelsQuantity;
 
-        $parcel['ord'] = $prefix . $firstPaymentParcelsQuantity . '/' . $multiplier . ' (Ent.)';
+        $parcel['ord'] = $prefix . '/' . $multiplier . ' (Ent.)';
         $parcel['date'] = now()->format('d/n/Y');
         $value = $firstParcelValue;
 
