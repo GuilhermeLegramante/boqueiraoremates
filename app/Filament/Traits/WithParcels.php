@@ -68,7 +68,6 @@ trait WithParcels
                 $parcels = intval($parcelsParts[$i]);
 
                 $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $data['multiplier']; // Ex: 1-2/50 , 1-3/50, etc.
-                // $parcel['date'] = $day . '/' . $month . '/' . $year;
                 $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $day;
                 $this->parcelsDates[$i] = $parcel['date'];
 
@@ -173,24 +172,27 @@ trait WithParcels
         $this->buyerValues[0] = number_format($parcelValue, 2);
 
         for ($i = 0; $i < floatval($data['buyer_commission_installments_number']); $i++) {
-
-            $day = floatval($data['buyer_due_day']);
+            $day = str_pad(floatval($data['buyer_due_day']), 2, '0', STR_PAD_LEFT);
 
             $year = $year == 0 ? now()->format('Y') : $year;
 
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
             $parcel['ord'] = $i + 1 . '/' . $data['buyer_commission_installments_number'];
-            $parcel['date'] = $day . '/' . $month . '/' . $year;
+            $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
 
             $this->buyerValues[$i] = number_format($parcelValue, 2);
+            $this->buyerParcelsDates[$i] = $parcel['date'];
+
 
             $this->buyerSum += doubleval($parcelValue);
 
             if (intval($month) <= 11) {
                 $month++;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
             } else {
                 $month = 1;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
                 $year++;
             }
 
@@ -219,23 +221,26 @@ trait WithParcels
         $this->sellerValues[0] = $parcelValue;
 
         for ($i = 0; $i < floatval($data['seller_commission_installments_number']); $i++) {
-
-            $day = floatval($data['seller_due_day']);
+            $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
 
             $year = $year == 0 ? now()->format('Y') : $year;
 
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
             $parcel['ord'] = $i + 1 . '/' . $data['seller_commission_installments_number'];
-            $parcel['date'] = $day . '/' . $month . '/' . $year;
-            $this->sellerValues[$i] = $parcelValue;
+            $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
+
+            $this->sellerValues[$i] = number_format($parcelValue, 2);
+            $this->sellerParcelsDates[$i] = $parcel['date'];
 
             $this->sellerSum += doubleval($parcelValue);
 
             if (intval($month) <= 11) {
                 $month++;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
             } else {
                 $month = 1;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
                 $year++;
             }
 
@@ -243,7 +248,7 @@ trait WithParcels
         }
 
         for ($i = 0; $i < count($this->sellerValues); $i++) {
-            $this->sellerValues[$i] = str_replace(",", "", str_replace("11223344", "", $this->sellerValues[$i]));
+            $this->sellerValues[$i] = str_replace(",", "", $this->sellerValues[$i]);
         }
 
         $this->showSellerParcels = true;
@@ -357,12 +362,10 @@ trait WithParcels
     private function saveParcels(): void
     {
         foreach ($this->parcels as $key => $value) {
-            $date = explode("/", $value['date']);
-
             Parcel::create([
                 'order_id' => $this->record->id,
                 'number' => $value['ord'],
-                'date' => $date[2] . '-' . $date[1] . '-' . $date[0],
+                'date' => $value['date'],
                 'value' => floatval($this->values[$key])
             ]);
         }
@@ -371,12 +374,10 @@ trait WithParcels
     private function saveBuyerParcels(): void
     {
         foreach ($this->buyerParcels as $key => $value) {
-            $date = explode("/", $value['date']);
-
             BuyerParcel::create([
                 'order_id' => $this->record->id,
                 'number' => $value['ord'],
-                'date' => $date[2] . '-' . $date[1] . '-' . $date[0],
+                'date' => $value['date'],
                 'value' => floatval($this->buyerValues[$key])
             ]);
         }
@@ -385,12 +386,10 @@ trait WithParcels
     private function saveSellerParcels(): void
     {
         foreach ($this->sellerParcels as $key => $value) {
-            $date = explode("/", $value['date']);
-
             SellerParcel::create([
                 'order_id' => $this->record->id,
                 'number' => $value['ord'],
-                'date' => $date[2] . '-' . $date[1] . '-' . $date[0],
+                'date' => $value['date'],
                 'value' => floatval($this->sellerValues[$key])
             ]);
         }

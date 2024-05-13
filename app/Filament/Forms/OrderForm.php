@@ -249,6 +249,7 @@ class OrderForm
                     ->numeric(),
                 BuyerParcelsDetails::make('buyer_parcels_details')
                     ->label('')
+                    ->live()
                     ->columnSpanFull()
                     ->visible(fn (Get $get, string $operation): bool => ($get('buyer_commission_installments_number') != null)),
             ])->columns(6);
@@ -289,6 +290,7 @@ class OrderForm
                     ->numeric(),
                 SellerParcelsDetails::make('seller_parcels_details')
                     ->label('')
+                    ->live()
                     ->columnSpanFull()
                     ->visible(fn (Get $get, string $operation): bool => ($get('seller_commission_installments_number') != null)),
             ])->columns(6);

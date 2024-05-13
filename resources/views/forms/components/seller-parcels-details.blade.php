@@ -1,7 +1,4 @@
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
         <div class="flex justify-center">
             <p class="fi-section-header-description text-sm text-gray-500 dark:text-gray-400">
@@ -88,11 +85,9 @@
                                     <div class="fi-ta-text grid w-full gap-y-1 px-3 py-4">
                                         <div class="flex gap-1.5 flex-wrap ">
                                             <div class="flex w-max" style="">
-                                                <span
-                                                    class="fi-ta-text-item-label text-sm leading-6 text-gray-950 dark:text-white  "
-                                                    style="">
-                                                    {{ $parcel['date'] }}
-                                                </span>
+                                                <input
+                                                    class="fi-input block w-full border-none py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6 dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] bg-white/0 ps-3 pe-3"
+                                                    type="date" wire:model='sellerParcelsDates.{{ $key }}'>
                                             </div>
                                         </div>
                                     </div>
