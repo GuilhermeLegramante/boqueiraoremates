@@ -154,6 +154,7 @@ trait WithParcels
 
         array_unshift($this->parcels, $parcel); // array_unshift => Coloca na primeira posição e desloca os demais para índices maiores
         array_unshift($this->values, number_format($value, 2));
+        array_unshift($this->parcelsDates, $parcel['date']);
     }
 
     public function resolveBuyerParcels()
