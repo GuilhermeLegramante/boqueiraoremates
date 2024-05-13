@@ -200,7 +200,7 @@ class OrderForm
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         $percentage = 100 - (floatval($get('net_value')) * 100) / floatval($get('gross_value'));
-                        $set('discount_percentage', $percentage);
+                        $set('discount_percentage', number_format((float)$percentage, 2, '.', ''));
                     })
                     ->label(__('fields.net_value')),
                 Textarea::make('business_note')
