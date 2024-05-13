@@ -34,10 +34,13 @@ class EditOrder extends EditRecord
     protected function mutateFormDataBeforeFill(array $data): array
     {
         $data['net_value'] = floatval($data['gross_value']) - (floatval($data['gross_value']) * floatval($data['discount_percentage'])) / 100;
+        $data['net_value'] = number_format($data['net_value'], 2);
 
         $data['buyer_comission_value'] = (floatval($data['gross_value']) * floatval($data['buyer_commission'])) / 100;
+        $data['buyer_comission_value'] = number_format($data['buyer_comission_value'], 2);
 
         $data['seller_comission_value'] = (floatval($data['gross_value']) * floatval($data['seller_commission'])) / 100;
+        $data['seller_comission_value'] = number_format($data['seller_comission_value'], 2);
 
         return $data;
     }
