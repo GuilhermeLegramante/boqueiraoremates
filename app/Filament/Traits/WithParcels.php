@@ -15,17 +15,22 @@ trait WithParcels
 {
     public array $parcels = [];
     public array $values = [];
+    public array $parcelsDates = [];
     public float $sum = 0;
     public bool $showParcels = false;
     public bool $showParcelsEdition = false;
 
+    public $dateTest;
+
     public array $buyerParcels = [];
     public array $buyerValues = [];
+    public array $buyerParcelsDates = [];
     public float $buyerSum = 0;
     public bool $showBuyerParcels = false;
 
     public array $sellerParcels = [];
     public array $sellerValues = [];
+    public array $sellerParcelsDates = [];
     public float $sellerSum = 0;
     public bool $showSellerParcels = false;
 
@@ -51,21 +56,22 @@ trait WithParcels
 
         $parcels = 0;
 
-
-
         // Montando as primeiras parcelas da fórmula
         if (count($parcelsParts) > 1) {
             $parcelCounter += intval($parcelsParts[0]);
 
             for ($i = 0; $i < count($parcelsParts); $i++) {
-                $day = floatval($data['due_day']);
+                $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
                 $year = $year == 0 ? now()->format('Y') : $year;
                 $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
                 $parcels = intval($parcelsParts[$i]);
 
                 $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $data['multiplier']; // Ex: 1-2/50 , 1-3/50, etc.
-                $parcel['date'] = $day . '/' . $month . '/' . $year;
+                // $parcel['date'] = $day . '/' . $month . '/' . $year;
+                $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $day;
+                $this->parcelsDates[$i] = $parcel['date'];
+
 
                 $parcelValue = floatval($data['parcel_value']) * intval($parcelsParts[$i]);
                 $this->values[$i] = number_format($parcelValue, 2);
@@ -91,12 +97,13 @@ trait WithParcels
 
 
         for ($i = intval($parcelsParts[0]); $i < floatval($data['multiplier']); $i++) {
-            $day = floatval($data['due_day']);
+            $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
             $year = $year == 0 ? now()->format('Y') : $year;
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
             $parcel['ord'] = $i + 1 . '/' . $data['multiplier'];
-            $parcel['date'] = $day . '/' . $month . '/' . $year;
+            $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
+            $this->parcelsDates[$i] = $parcel['date'];
 
             array_push($this->values, number_format($data['parcel_value'], 2));
 
@@ -104,19 +111,24 @@ trait WithParcels
 
             if (intval($month) <= 11) {
                 $month++;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
             } else {
                 $month = 1;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
                 $year++;
             }
 
+
             array_push($this->parcels, $parcel);
         }
+
 
         /*
          Remover parcelas "do meio" em caso de parcelamento múltiplo ex. 2+2+8, 
          */
         array_splice($this->parcels, 1, $parcelsRemains);
         array_splice($this->values, 1, $parcelsRemains);
+        array_splice($this->parcelsDates, 1, $parcelsRemains);
 
         // Inclui a "entrada" nas parcelas
         if (intval($parcelsParts[0]) > 0) {
@@ -138,7 +150,7 @@ trait WithParcels
         $prefix = $firstPaymentParcelsQuantity == 1 ? '1' : '1-' . $firstPaymentParcelsQuantity;
 
         $parcel['ord'] = $prefix . '/' . $multiplier . ' (Ent.)';
-        $parcel['date'] = now()->format('d/n/Y');
+        $parcel['date'] = now()->format('Y-m-d');
         $value = $firstParcelValue;
 
         array_unshift($this->parcels, $parcel); // array_unshift => Coloca na primeira posição e desloca os demais para índices maiores

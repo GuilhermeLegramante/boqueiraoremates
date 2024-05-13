@@ -4,6 +4,7 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Models\Client;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Livewire\Livewire;
 
@@ -53,26 +54,123 @@ Route::get('/converter-imagem', function () {
     // }
 
 
-    $file = file_get_contents('C:\Users\Marca & Sinal\Desktop\santa vitoria do palmar\localidades.csv');
+    // LOCALIDADES
 
-    $array = explode(PHP_EOL, $file);
+    // $file = file_get_contents('C:\Users\Marca & Sinal\Desktop\santa vitoria do palmar\localidades.csv');
 
-    $locales = [];
+    // $array = explode(PHP_EOL, $file);
 
-    foreach ($array as $key => $value) {
-        $exploit = explode(';', $value);
+    // $locales = [];
 
-        if(isset($exploit[0]) && isset($exploit[1])){
-            $locale['id'] = $exploit[0];
-            
-            $locale['name'] = $exploit[1];
-    
-            array_push($locales, $locale);
-        }
-        
-    }
+    // foreach ($array as $key => $value) {
+    //     $exploit = explode(';', $value);
 
-    dd($locales);
+    //     if (isset($exploit[0]) && isset($exploit[1])) {
+    //         $locale['id'] = $exploit[0];
+
+    //         $locale['name'] = $exploit[1];
+
+    //         array_push($locales, $locale);
+    //     }
+    // }
+
+    // foreach ($locales as $key => $locale) {
+    //     DB::connection('marcaesinal')->table('agro_localidade')
+    //         ->insert([
+    //             'id' => $locale['id'],
+    //             'idusuario' => 1,
+    //             'idmunicipio' => 4218,
+    //             'datahora' => now(),
+    //             'descricao' => mb_strtoupper(str_replace('"', "", $locale['name'])),
+    //             'codigo' => $locale['id'],
+    //             'created_at' => now(),
+    //         ]);
+    // }
+
+
+
+    // PRODUTORES
+
+    // set_time_limit(0);
+
+    // $file = file_get_contents('C:\Users\Marca & Sinal\Desktop\santa vitoria do palmar\produtores.csv');
+
+    // $array = explode(PHP_EOL, $file);
+
+    // $farmers = [];
+
+    // foreach ($array as $key => $value) {
+    //     $exploit = explode(';', $value);
+
+    //     if (isset($exploit[0]) && isset($exploit[1])) {
+    //         $farmer['id'] = $exploit[0];
+    //         $farmer['name'] = $exploit[1];
+    //         $farmer['cpf'] = $exploit[2];
+    //         $farmer['locale'] = $exploit[3];
+    //         $farmer['address'] = $exploit[4];
+    //         $farmer['phone'] = $exploit[5];
+
+    //         array_push($farmers, $farmer);
+    //     }
+    // }
+
+    // foreach ($farmers as $key => $farmer) {
+    //     $idLogradouro =  DB::connection('marcaesinal')->table('hscad_logradouros')
+    //         ->insertGetId([
+    //             'idcidade' => 4218,
+    //             'nome' => mb_strtoupper(str_replace('"', "", $farmer['address'])),
+    //             'cep' => '96230-000',
+    //             'tipo' => 'R',
+    //             'created_at' => now(),
+    //         ]);
+
+    //     $idMunicipe = DB::connection('marcaesinal')->table('hscad_cadmunicipal')
+    //         ->insertGetId([
+    //             'idusuario' => 1,
+    //             'idlogradouro' => $idLogradouro,
+    //             'nome' => mb_strtoupper(str_replace('"', "", $farmer['name'])),
+    //             'tipopessoa' => 'F',
+    //             'ativo' => 1,
+    //             'datacadastro' => now(),
+    //             'datahora' => now(),
+    //             'fornecedor' => 0,
+    //             'tipocredor' => '02',
+    //             'created_at' => now(),
+    //         ]);
+
+    //     $idProdutor = DB::connection('marcaesinal')->table('agro_produtor')
+    //         ->insertGetId([
+    //             'idusuario' => 1,
+    //             'idmunicipe' => $idMunicipe,
+    //             'datahora' => now(),
+    //             'created_at' => now(),
+    //             'ativo' => 1,
+    //         ]);
+
+    //     $idPropriedade = DB::connection('marcaesinal')->table('agro_propriedade')
+    //         ->insertGetId([
+    //             'idusuario' => 1,
+    //             'idlocalidade' =>  mb_strtoupper(str_replace('"', "", $farmer['locale'])),
+    //             'idprodutor' => $idProdutor,
+    //             'idtitulo' => 1,
+    //             'descricao' => 'SEM DENOMINAÇÃO',
+    //             'created_at' => now(),
+    //         ]);
+
+    //     DB::connection('marcaesinal')->table('agro_produtor_propriedade')
+    //         ->insertGetId([
+    //             'idprodutor' => $idProdutor,
+    //             'idpropriedade' => $idPropriedade,
+    //             'created_at' => now(),
+    //         ]);
+    // }
+
+    dd('SALVOU OS PRODUTORES');
+
+
+
+
+
 })->name('convert-image');
 
 Route::get('/', function () {

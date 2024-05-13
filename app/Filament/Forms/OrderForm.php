@@ -208,6 +208,7 @@ class OrderForm
                     ->columnSpanFull(),
                 ParcelsDetails::make('parcels_details')
                     ->label('')
+                    ->live()
                     ->columnSpanFull()
                     ->visible(fn (Get $get, string $operation): bool => ($get('gross_value') != null)),
             ])->columns(6);
