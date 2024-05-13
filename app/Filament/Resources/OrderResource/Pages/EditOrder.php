@@ -42,6 +42,8 @@ class EditOrder extends EditRecord
         $sellerComission = (floatval($data['gross_value']) * floatval($data['seller_commission'])) / 100;
         $data['seller_comission_value'] = str_replace(",", "", number_format($sellerComission, 2));
 
+        $data['discount_percentage'] = number_format((float) $data['discount_percentage'], 2, '.', '');
+
         return $data;
     }
 
