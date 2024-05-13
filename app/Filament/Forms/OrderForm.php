@@ -178,7 +178,7 @@ class OrderForm
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         $netValue = floatval($get('gross_value')) - (floatval($get('gross_value')) * floatval($get('discount_percentage'))) / 100;
-                        $set('net_value', $netValue);
+                        $set('net_value', number_format($netValue, 2));
                     })
                     ->suffix('%')
                     ->numeric(),
