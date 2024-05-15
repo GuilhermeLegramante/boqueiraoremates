@@ -186,7 +186,7 @@ Route::get('/converter-imagem', function () {
 
     set_time_limit(0);
 
-    $file = file_get_contents('C:\Users\Marca & Sinal\Desktop\santa vitoria do palmar\marcas.csv');
+    $file = file_get_contents('https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas.csv');
 
     $array = explode(PHP_EOL, $file);
 
@@ -208,7 +208,7 @@ Route::get('/converter-imagem', function () {
         $farmer = DB::connection('marcaesinal')->table('agro_produtor')->where('id', $brand['farmerId'])->get()->first();
 
         if (isset($farmer)) {
-            dd($farmer);
+            dd($brand['id']);
 
             $url = 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'];
 
