@@ -197,8 +197,9 @@ Route::get('/converter-imagem', function () {
 
         if (isset($exploit[0]) && isset($exploit[1])) {
             $brand['id'] = $exploit[0];
-            $brand['farmerId'] = $exploit[1];
-            $brand['filename'] = $exploit[2];
+            $brand['number'] = $exploit[1];
+            $brand['farmerId'] = $exploit[2];
+            $brand['filename'] = $exploit[3];
 
             array_push($brands, $brand);
         }
@@ -208,6 +209,7 @@ Route::get('/converter-imagem', function () {
         $farmer = DB::connection('marcaesinal')->table('agro_produtor')->where('id', $brand['farmerId'])->get()->first();
 
         if (isset($farmer)) {
+            dd($farmer->idmunicipe);
             $url = 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'];
 
             $handle = curl_init($url);
