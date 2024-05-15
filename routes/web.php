@@ -242,8 +242,6 @@ Route::get('/converter-imagem', function () {
 
             curl_close($handle);
         }
-
-        dd('teste');
     }
 })->name('convert-image');
 
