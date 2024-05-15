@@ -208,8 +208,6 @@ Route::get('/converter-imagem', function () {
         $farmer = DB::connection('marcaesinal')->table('agro_produtor')->where('id', $brand['farmerId'])->get()->first();
 
         if (isset($farmer)) {
-            dd($brand['id']);
-
             $url = 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'];
 
             $handle = curl_init($url);
@@ -242,6 +240,8 @@ Route::get('/converter-imagem', function () {
 
             curl_close($handle);
         }
+
+        dd('teste');
     }
 })->name('convert-image');
 
