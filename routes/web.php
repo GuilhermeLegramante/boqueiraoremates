@@ -222,7 +222,7 @@ Route::get('/converter-imagem', function () {
 
             if ($httpCode == 200) {
                 /* Handle 404 here. */
-                DB::connection('marcaesinal')->table('agro_marca')
+                $brandId =  DB::connection('marcaesinal')->table('agro_marca')
                     ->insertGetId([
                         'id' => $brand['id'],
                         'idusuario' => 1,
@@ -237,6 +237,8 @@ Route::get('/converter-imagem', function () {
                         'datahora' => now(),
                         'created_at' => now(),
                     ]);
+
+                dd($brandId);
             }
 
             curl_close($handle);
