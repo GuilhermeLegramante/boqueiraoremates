@@ -115,61 +115,137 @@ Route::get('/converter-imagem', function () {
     // }
 
     // foreach ($farmers as $key => $farmer) {
-    //     $idLogradouro =  DB::connection('marcaesinal')->table('hscad_logradouros')
-    //         ->insertGetId([
-    //             'idcidade' => 4218,
-    //             'nome' => mb_strtoupper(str_replace('"', "", $farmer['address'])),
-    //             'cep' => '96230-000',
-    //             'tipo' => 'R',
-    //             'created_at' => now(),
-    //         ]);
+    //     if ($farmer['name'] != "") {
+    //         $idLogradouro =  DB::connection('marcaesinal')->table('hscad_logradouros')
+    //             ->insertGetId([
+    //                 'idcidade' => 4218,
+    //                 'nome' => mb_strtoupper(str_replace('"', "", $farmer['address'])),
+    //                 'cep' => '96230-000',
+    //                 'tipo' => 'R',
+    //                 'created_at' => now(),
+    //             ]);
 
-    //     $idMunicipe = DB::connection('marcaesinal')->table('hscad_cadmunicipal')
-    //         ->insertGetId([
-    //             'idusuario' => 1,
-    //             'idlogradouro' => $idLogradouro,
-    //             'nome' => mb_strtoupper(str_replace('"', "", $farmer['name'])),
-    //             'tipopessoa' => 'F',
-    //             'ativo' => 1,
-    //             'datacadastro' => now(),
-    //             'datahora' => now(),
-    //             'fornecedor' => 0,
-    //             'tipocredor' => '02',
-    //             'created_at' => now(),
-    //         ]);
+    //         $idMunicipe = DB::connection('marcaesinal')->table('hscad_cadmunicipal')
+    //             ->insertGetId([
+    //                 'idusuario' => 1,
+    //                 'idlogradouro' => $idLogradouro,
+    //                 'nome' => mb_strtoupper(str_replace('"', "", $farmer['name'])),
+    //                 'tipopessoa' => 'F',
+    //                 'ativo' => 1,
+    //                 'datacadastro' => now(),
+    //                 'datahora' => now(),
+    //                 'fornecedor' => 0,
+    //                 'tipocredor' => '02',
+    //                 'created_at' => now(),
+    //             ]);
 
-    //     $idProdutor = DB::connection('marcaesinal')->table('agro_produtor')
-    //         ->insertGetId([
-    //             'idusuario' => 1,
-    //             'idmunicipe' => $idMunicipe,
-    //             'datahora' => now(),
-    //             'created_at' => now(),
-    //             'ativo' => 1,
-    //         ]);
+    //         if (strlen($farmer['cpf']) == 11) {
+    //             DB::connection('marcaesinal')->table('hscad_municipedoc')
+    //                 ->insertGetId([
+    //                     'idmunicipe' => $idMunicipe,
+    //                     'iddocumento' => 3,
+    //                     'numero' => $farmer['cpf'][0] .
+    //                         $farmer['cpf'][1] . $farmer['cpf'][2] . '.' . $farmer['cpf'][3] . $farmer['cpf'][4] . $farmer['cpf'][5] . '.' .
+    //                         $farmer['cpf'][6] . $farmer['cpf'][7] . $farmer['cpf'][8] . '-' . $farmer['cpf'][9] . $farmer['cpf'][10],
+    //                     'observacao' => '',
+    //                 ]);
+    //         }
 
-    //     $idPropriedade = DB::connection('marcaesinal')->table('agro_propriedade')
-    //         ->insertGetId([
-    //             'idusuario' => 1,
-    //             'idlocalidade' =>  mb_strtoupper(str_replace('"', "", $farmer['locale'])),
-    //             'idprodutor' => $idProdutor,
-    //             'idtitulo' => 1,
-    //             'descricao' => 'SEM DENOMINAÇÃO',
-    //             'created_at' => now(),
-    //         ]);
+    //         DB::connection('marcaesinal')->table('agro_produtor')
+    //             ->insertGetId([
+    //                 'id' => $farmer['id'],
+    //                 'idusuario' => 1,
+    //                 'idmunicipe' => $idMunicipe,
+    //                 'datahora' => now(),
+    //                 'created_at' => now(),
+    //                 'ativo' => 1,
+    //             ]);
 
-    //     DB::connection('marcaesinal')->table('agro_produtor_propriedade')
-    //         ->insertGetId([
-    //             'idprodutor' => $idProdutor,
-    //             'idpropriedade' => $idPropriedade,
-    //             'created_at' => now(),
-    //         ]);
+    //         $idPropriedade = DB::connection('marcaesinal')->table('agro_propriedade')
+    //             ->insertGetId([
+    //                 'idusuario' => 1,
+    //                 'idlocalidade' =>  mb_strtoupper(str_replace('"', "", $farmer['locale'])),
+    //                 'idprodutor' => $farmer['id'],
+    //                 'idtitulo' => 1,
+    //                 'descricao' => 'SEM DENOMINAÇÃO',
+    //                 'created_at' => now(),
+    //             ]);
+
+    //         DB::connection('marcaesinal')->table('agro_produtor_propriedade')
+    //             ->insertGetId([
+    //                 'idprodutor' => $farmer['id'],
+    //                 'idpropriedade' => $idPropriedade,
+    //                 'created_at' => now(),
+    //             ]);
+    //     }
     // }
 
-    dd('SALVOU OS PRODUTORES');
+    // dd('SALVOU OS PRODUTORES');
+
+    // MARCAS
+
+    set_time_limit(0);
+
+    $file = file_get_contents('C:\Users\Marca & Sinal\Desktop\santa vitoria do palmar\marcas.csv');
+
+    $array = explode(PHP_EOL, $file);
+
+    $brands = [];
+
+    foreach ($array as $key => $value) {
+        $exploit = explode(';', $value);
+
+        if (isset($exploit[0]) && isset($exploit[1])) {
+            $brand['id'] = $exploit[0];
+            $brand['farmerId'] = $exploit[1];
+            $brand['filename'] = $exploit[2];
+
+            array_push($brands, $brand);
+        }
+    }
+
+    foreach ($brands as $key => $brand) {
+        $farmer = DB::connection('marcaesinal')->table('agro_produtor')->where('id', $brand['farmerId'])->get()->first();
+
+        dd($farmer);
+
+        if (isset($farmer)) {
+            $url = 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'];
+
+            $handle = curl_init($url);
+            curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
+
+            /* Get the HTML or whatever is linked in $url. */
+            $response = curl_exec($handle);
+
+            /* Check for 404 (file not found). */
+            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+
+            if ($httpCode == 200) {
+                /* Handle 404 here. */
+                DB::connection('marcaesinal')->table('agro_marca')
+                    ->insertGetId([
+                        'id' => $brand['id'],
+                        'idusuario' => 1,
+                        'idmunicipe' => $farmer->idmunicipe,
+                        'numero' => $brand['id'],
+                        'numero_original' => $brand['id'],
+                        'ano' => date('Y'),
+                        'ano_original' => date('Y'),
+                        'path' => 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'],
+                        'visivel' => 1,
+                        'situacao' => 'L',
+                        'datahora' => now(),
+                        'created_at' => now(),
+                    ]);
+            }
+
+            curl_close($handle);
+        }
+    }
 
 
-
-
+        
 
 })->name('convert-image');
 
