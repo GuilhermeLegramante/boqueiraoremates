@@ -80,7 +80,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('paymentWay.name')
-                    ->label('Comprador')
+                    ->label('Forma de Pagamento')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('created_at')
