@@ -75,8 +75,8 @@ class OrderForm
                     ->relationship(name: 'event', titleAttribute: 'name')
                     ->createOptionForm(EventForm::form())
                     ->afterStateUpdated(function (Get $get, Set $set) {
-                        // $event = Event::find($get('event_id'));
-                        // $set('multiplier', $event->multiplier);
+                        $event = Event::find($get('event_id'));
+                        $set('multiplier', $event->multiplier);
                     })
                     ->columnSpanFull(),
                 Select::make('seller_id')
@@ -126,7 +126,7 @@ class OrderForm
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         $set('parcel_value', null);
                         $set('first_parcel_value', null);
-                        $set('multiplier', ParcelsVerification::getMultiplier($get('payment_way_id')));
+                        // $set('multiplier', ParcelsVerification::getMultiplier($get('payment_way_id')));
                     })
                     ->columnSpan(2),
                 TextInput::make('parcel_value')
@@ -134,7 +134,7 @@ class OrderForm
                     ->prefix('R$')
                     ->numeric()
                     ->live()
-                    ->debounce(600)
+                    ->debounce(1000)
                     ->columnSpan(2)
                     ->label(__('fields.parcel_value'))
                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -157,8 +157,11 @@ class OrderForm
                     ->columnSpan(1)
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
+                        // Calcula o valor bruto
                         $grossValue = floatval($get('parcel_value')) * floatval($get('multiplier'));
                         $set('gross_value', $grossValue);
+
+                       
                     })
                     ->rules([
                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
@@ -181,8 +184,18 @@ class OrderForm
                     ->live()
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
+                        // Calcula o Valor Líquido
                         $netValue = floatval($get('gross_value')) - (floatval($get('gross_value')) * floatval($get('discount_percentage'))) / 100;
                         $set('net_value', $netValue);
+
+                         // Atualiza o valor da parcela 
+                         $parcelsQuantity = ParcelsVerification::getMultiplier($get('payment_way_id'));
+                         $parcelValue = $netValue / $parcelsQuantity;
+                         $set('parcel_value', $parcelValue);
+ 
+                         // Atualiza o valor da entrada
+                         $firstParcelValue = ParcelsVerification::getFirstParcelValue($get('payment_way_id'), $get('parcel_value'));
+                         $set('first_parcel_value', $firstParcelValue);
                     })
                     ->suffix('%')
                     ->numeric(),
