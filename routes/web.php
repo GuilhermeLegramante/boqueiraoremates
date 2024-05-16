@@ -184,66 +184,64 @@ Route::get('/converter-imagem', function () {
 
     // MARCAS
 
-    set_time_limit(0);
+    // set_time_limit(0);
 
-    $file = file_get_contents('https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas.csv');
+    // $file = file_get_contents('https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas.csv');
 
-    $array = explode(PHP_EOL, $file);
+    // $array = explode(PHP_EOL, $file);
 
-    $brands = [];
+    // $brands = [];
 
-    foreach ($array as $key => $value) {
-        $exploit = explode(';', $value);
+    // foreach ($array as $key => $value) {
+    //     $exploit = explode(';', $value);
 
-        if (isset($exploit[0]) && isset($exploit[1])) {
-            $brand['id'] = $exploit[0];
-            $brand['number'] = $exploit[1];
-            $brand['farmerId'] = $exploit[2];
-            $brand['filename'] = $exploit[3];
+    //     if (isset($exploit[0]) && isset($exploit[1])) {
+    //         $brand['id'] = $exploit[0];
+    //         $brand['number'] = $exploit[1];
+    //         $brand['farmerId'] = $exploit[2];
+    //         $brand['filename'] = $exploit[3];
 
-            array_push($brands, $brand);
-        }
-    }
+    //         array_push($brands, $brand);
+    //     }
+    // }
 
-    foreach ($brands as $key => $brand) {
-        $farmer = DB::connection('marcaesinal')->table('agro_produtor')->where('id', $brand['farmerId'])->get()->first();
+    // foreach ($brands as $key => $brand) {
+    //     $farmer = DB::connection('marcaesinal')->table('agro_produtor')->where('id', $brand['farmerId'])->get()->first();
 
-        if (isset($farmer)) {
-            $url = 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'];
+    //     if (isset($farmer)) {
+    //         $url = 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'];
 
-            $handle = curl_init($url);
-            curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
+    //         $handle = curl_init($url);
+    //         curl_setopt($handle,  CURLOPT_RETURNTRANSFER, TRUE);
 
-            /* Get the HTML or whatever is linked in $url. */
-            $response = curl_exec($handle);
+    //         /* Get the HTML or whatever is linked in $url. */
+    //         $response = curl_exec($handle);
 
-            /* Check for 404 (file not found). */
-            $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+    //         /* Check for 404 (file not found). */
+    //         $httpCode = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
-            if ($httpCode == 200) {
-                /* Handle 404 here. */
-                $brandId =  DB::connection('marcaesinal')->table('agro_marca')
-                    ->insertGetId([
-                        'id' => $brand['id'],
-                        'idusuario' => 1,
-                        'idmunicipe' => $farmer->idmunicipe,
-                        'numero' => $brand['number'],
-                        'numero_original' => $brand['number'],
-                        'ano' => date('Y'),
-                        'ano_original' => date('Y'),
-                        'path' => 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'],
-                        'visivel' => 1,
-                        'situacao' => 'L',
-                        'datahora' => now(),
-                        'created_at' => now(),
-                    ]);
+    //         if ($httpCode == 200) {
+    //             /* Handle 404 here. */
+    //             $brandId =  DB::connection('marcaesinal')->table('agro_marca')
+    //                 ->insertGetId([
+    //                     'id' => $brand['id'],
+    //                     'idusuario' => 1,
+    //                     'idmunicipe' => $farmer->idmunicipe,
+    //                     'numero' => $brand['number'],
+    //                     'numero_original' => $brand['number'],
+    //                     'ano' => date('Y'),
+    //                     'ano_original' => date('Y'),
+    //                     'path' => 'https://santa-vitoria-do-palmar.marcaesinal.com/storage/marcas/marcas_png/' . $brand['filename'],
+    //                     'visivel' => 1,
+    //                     'situacao' => 'L',
+    //                     'datahora' => now(),
+    //                     'created_at' => now(),
+    //                 ]);
+    //         }
 
-                dd($brandId);
-            }
-
-            curl_close($handle);
-        }
-    }
+    //         curl_close($handle);
+    //     }
+    // }
 })->name('convert-image');
 
 Route::get('/', function () {

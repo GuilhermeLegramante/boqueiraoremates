@@ -156,11 +156,15 @@ class OrderForm
                     ->live()
                     ->columnSpan(1)
                     ->debounce(600)
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $grossValue = floatval($get('parcel_value')) * floatval($get('multiplier'));
+                        $set('gross_value', $grossValue);
+                    })
                     ->rules([
                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
-                            if ($get('multiplier') != null && !ParcelsVerification::checkIfPaymentWaySumIsInAccordingWithMultiplier($get('payment_way_id'), $get('multiplier'))) {
-                                $fail('O multiplicador não está de acordo com a forma de pagamento.');
-                            }
+                            // if ($get('multiplier') != null && !ParcelsVerification::checkIfPaymentWaySumIsInAccordingWithMultiplier($get('payment_way_id'), $get('multiplier'))) {
+                            //     $fail('O multiplicador não está de acordo com a forma de pagamento.');
+                            // }
                         },
                     ])
                     ->numeric(),
