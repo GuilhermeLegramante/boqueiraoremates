@@ -34,6 +34,8 @@ trait WithParcels
     public float $sellerSum = 0;
     public bool $showSellerParcels = false;
 
+    public $parcelsQuantity;
+
 
     public function resolveParcels(): void
     {
@@ -56,6 +58,9 @@ trait WithParcels
 
         $parcels = 0;
 
+        $this->parcelsQuantity = ParcelsVerification::getMultiplier($data['payment_way_id']);
+
+
         // Montando as primeiras parcelas da fórmula
         if (count($parcelsParts) > 1) {
             $parcelCounter += intval($parcelsParts[0]);
@@ -67,7 +72,7 @@ trait WithParcels
 
                 $parcels = intval($parcelsParts[$i]);
 
-                $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $data['multiplier']; // Ex: 1-2/50 , 1-3/50, etc.
+                $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $this->parcelsQuantity; // Ex: 1-2/50 , 1-3/50, etc.
                 $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $day;
                 $this->parcelsDates[$i] = $parcel['date'];
 
@@ -95,12 +100,12 @@ trait WithParcels
         }
 
 
-        for ($i = intval($parcelsParts[0]); $i < floatval($data['multiplier']); $i++) {
+        for ($i = intval($parcelsParts[0]); $i < floatval($this->parcelsQuantity); $i++) {
             $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
             $year = $year == 0 ? now()->format('Y') : $year;
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
-            $parcel['ord'] = $i + 1 . '/' . $data['multiplier'];
+            $parcel['ord'] = $i + 1 . '/' . $this->parcelsQuantity;
             $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
             $this->parcelsDates[$i] = $parcel['date'];
 
@@ -131,7 +136,7 @@ trait WithParcels
 
         // Inclui a "entrada" nas parcelas
         if (intval($parcelsParts[0]) > 0) {
-            $this->resolveFirstPayment(intval($parcelsParts[0]), floatval($data['first_parcel_value']), $data['multiplier']); // parcelsParts[0] é a qtde de parcelas da entrada
+            $this->resolveFirstPayment(intval($parcelsParts[0]), floatval($data['first_parcel_value']), $this->parcelsQuantity); // parcelsParts[0] é a qtde de parcelas da entrada
         }
 
         // Tira a "vírgula" de valores maior que 1000
