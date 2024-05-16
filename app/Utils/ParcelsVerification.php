@@ -43,14 +43,16 @@ class ParcelsVerification
 
     public static function getMultiplier($paymentWayId): int
     {
-        $paymentWay = PaymentWay::find($paymentWayId);
-
-        $values = explode("+", $paymentWay->name);
-
         $sum = 0;
 
-        foreach ($values as $key => $value) {
-            $sum += intval($value);
+        $paymentWay = PaymentWay::find($paymentWayId);
+
+        if (isset($paymentWay)) {
+            $values = explode("+", $paymentWay->name);
+
+            foreach ($values as $key => $value) {
+                $sum += intval($value);
+            }
         }
 
         return $sum;
