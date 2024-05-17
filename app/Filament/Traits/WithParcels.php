@@ -190,7 +190,6 @@ trait WithParcels
             $this->buyerValues[$i] = number_format($parcelValue, 2);
             $this->buyerParcelsDates[$i] = $parcel['date'];
 
-
             $this->buyerSum += doubleval($parcelValue);
 
             if (intval($month) <= 11) {
@@ -371,7 +370,7 @@ trait WithParcels
             Parcel::create([
                 'order_id' => $this->record->id,
                 'number' => $value['ord'],
-                'date' => $value['date'],
+                'date' => $this->parcelsDates[$key],
                 'value' => floatval($this->values[$key])
             ]);
         }
@@ -383,7 +382,7 @@ trait WithParcels
             BuyerParcel::create([
                 'order_id' => $this->record->id,
                 'number' => $value['ord'],
-                'date' => $value['date'],
+                'date' => $this->buyerParcelsDates[$key],
                 'value' => floatval($this->buyerValues[$key])
             ]);
         }
@@ -395,7 +394,7 @@ trait WithParcels
             SellerParcel::create([
                 'order_id' => $this->record->id,
                 'number' => $value['ord'],
-                'date' => $value['date'],
+                'date' => $this->sellerParcelsDates[$key],
                 'value' => floatval($this->sellerValues[$key])
             ]);
         }
