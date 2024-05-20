@@ -4,7 +4,10 @@
             <tbody style="font-size: 6pt;">
                 <tr>
                     <td>
-                        <span style="font-weight: bold;">Boqueirão</span> Remates e Negócios Rurais - www.boqueiraoremates.com.br - Santiago/RS
+                        <span style="font-weight: bold;">Boqueirão</span> Remates e Negócios Rurais - www.boqueiraoremates.com.br - Santiago/RS - 
+                    </td>
+                    <td>
+                       documento impresso em {{ date('d/m/Y \à\s H:i:s') }}
                     </td>
                 </tr>
             </tbody>
