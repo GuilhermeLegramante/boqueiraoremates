@@ -67,7 +67,9 @@
                                     <td
                                         style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
                                         <span style="font-weight: bold;">Data Base da OS:</span>
-                                        {{ date('d/m/Y', strtotime($order->base_date)) }}
+                                        @if (isset($order->base_date))
+                                            {{ date('d/m/Y', strtotime($order->base_date)) }}
+                                        @endif
                                     </td>
                                 </tr>
                             </tbody>
