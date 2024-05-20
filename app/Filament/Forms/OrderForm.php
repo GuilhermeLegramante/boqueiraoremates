@@ -76,7 +76,7 @@ class OrderForm
                     })
                     ->live()
                     ->required()
-                    ->label('Data Base'),
+                    ->label('Data do Negócio'),
                 Select::make('event_id')
                     ->label(__('fields.event'))
                     ->required()
