@@ -65,18 +65,36 @@ class OrderForm
                     ->required()
                     ->label('Número')
                     ->numeric(),
+                DatePicker::make('base_date')
+                    ->afterStateHydrated(function (DatePicker $component, $state, string $operation) {
+                        if ($operation === 'create') {
+                            $component->state(now()->format('Y-m-d'));
+                        }
+                    })
+                    ->afterStateUpdated(function (DatePicker $component, $state, string $operation, Set $set) {
+                        $set('due_day', now()->format('d'));
+                    })
+                    ->live()
+                    ->required()
+                    ->label('Data Base'),
                 Select::make('event_id')
                     ->label(__('fields.event'))
                     ->required()
                     ->preload()
                     ->searchable()
                     ->preload()
+                    ->live()
                     // ->disabledOn('edit')
                     ->relationship(name: 'event', titleAttribute: 'name')
                     ->createOptionForm(EventForm::form())
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         $event = Event::find($get('event_id'));
                         $set('multiplier', $event->multiplier);
+
+                        if (isset($event->start_date)) {
+                            $set('base_date', $event->start_date->format('Y-m-d'));
+                            $set('due_day', $event->start_date->format('d'));
+                        }
                     })
                     ->columnSpanFull(),
                 Select::make('seller_id')
@@ -199,7 +217,10 @@ class OrderForm
                     ->numeric(),
                 TextInput::make('due_day')
                     ->label('Dia do Venc.')
-                    // ->disabledOn('edit')
+                    ->afterStateHydrated(function (Get $get, Set $set) {
+                        $date = explode('-', $get('base_date'));
+                        $set('due_day', $date[2]);
+                    })
                     ->numeric()
                     ->minValue(1)
                     ->maxValue(28)

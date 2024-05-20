@@ -41,9 +41,11 @@ trait WithParcels
     {
         $data = $this->form->getState();
 
+        $baseDate = explode('-', $data['base_date']);
+
         $parcel = [];
-        $month = 1;
-        $year = 0;
+        $month = intval($baseDate[1]) + 1;
+        $year = intval($baseDate[0]);
         $this->sum = doubleval($data['first_parcel_value']);
         $this->parcels = [];
         $this->values = [];
@@ -68,7 +70,7 @@ trait WithParcels
             for ($i = 0; $i < count($parcelsParts); $i++) {
                 $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
                 $year = $year == 0 ? now()->format('Y') : $year;
-                $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+                // $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
                 $parcels = intval($parcelsParts[$i]);
 
@@ -103,7 +105,7 @@ trait WithParcels
         for ($i = intval($parcelsParts[0]); $i < floatval($this->parcelsQuantity); $i++) {
             $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
             $year = $year == 0 ? now()->format('Y') : $year;
-            $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+            // $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
             $parcel['ord'] = $i + 1 . '/' . $this->parcelsQuantity;
             $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
@@ -121,7 +123,6 @@ trait WithParcels
                 $month = str_pad($month, 2, '0', STR_PAD_LEFT);
                 $year++;
             }
-
 
             array_push($this->parcels, $parcel);
         }
@@ -149,12 +150,16 @@ trait WithParcels
 
     private function resolveFirstPayment($firstPaymentParcelsQuantity, $firstParcelValue, $multiplier)
     {
+        $data = $this->form->getState();
+
         $parcel = [];
 
         $prefix = $firstPaymentParcelsQuantity == 1 ? '1' : '1-' . $firstPaymentParcelsQuantity;
 
+        $date = explode('-', $data['base_date']);
+
         $parcel['ord'] = $prefix . '/' . $multiplier . ' (Ent.)';
-        $parcel['date'] = now()->format('Y-m-d');
+        $parcel['date'] = $date[0] . '-' . $date[1] . '-' . $data['due_day'];
         $value = $firstParcelValue;
 
         array_unshift($this->parcels, $parcel); // array_unshift => Coloca na primeira posição e desloca os demais para índices maiores
