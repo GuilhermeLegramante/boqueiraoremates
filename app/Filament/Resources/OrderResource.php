@@ -65,7 +65,7 @@ class OrderResource extends Resource
                     ->label('Comprador')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-                TextColumn::make('parcel_value')
+                TextColumn::make('gross_parcel')
                     ->label('Valor da Parcela')
                     ->money('BRL')
                     ->toggleable(isToggledHiddenByDefault: false)

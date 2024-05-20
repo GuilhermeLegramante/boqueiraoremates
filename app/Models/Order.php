@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Order extends Model
 {
     use HasFactory;
+
+    protected $appends = ['gross_parcel'];
 
     protected $fillable = [
         'number',
@@ -130,5 +133,16 @@ class Order extends Model
     public function outputSendingDocsMethod(): BelongsTo
     {
         return $this->belongsTo(SendingDocsMethod::class, 'output_sending_docs_method_id');
+    }
+
+    public function getGrossParcelAttribute()
+    {
+        if($this->multiplier > 0) {
+            $grossParcel = $this->gross_value / $this->multiplier;
+        } else {
+            $grossParcel = 0;
+        }
+
+        return $grossParcel;
     }
 }

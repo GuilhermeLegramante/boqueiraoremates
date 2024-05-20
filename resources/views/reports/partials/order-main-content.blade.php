@@ -80,7 +80,7 @@
         <tr>
             <td class="table-fymr">Parcela</td>
             <td class="table-0pky">
-                {{ 'R$ ' . number_format($order->parcel_value, 2, ',', '.') }}
+                {{ 'R$ ' . number_format($order->gross_value / $order->multiplier, 2, ',', '.') }}
             </td>
             <td class="table-fymr">Multiplicador</td>
             <td class="table-0pky">
