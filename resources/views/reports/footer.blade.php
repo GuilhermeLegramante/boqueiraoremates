@@ -4,7 +4,7 @@
             <tbody style="font-size: 6pt;">
                 <tr>
                     <td>
-                        <span style="font-weight: bold;">Boqueirão</span> Negócios e Remates Rurais - www.boqueiraoremates.com.br - Santiago/RS
+                        <span style="font-weight: bold;">Boqueirão</span> Remates e Negócios Rurais - www.boqueiraoremates.com.br - Santiago/RS
                     </td>
                 </tr>
             </tbody>

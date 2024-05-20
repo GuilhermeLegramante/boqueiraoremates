@@ -160,8 +160,6 @@ class OrderForm
                         // Calcula o valor bruto
                         $grossValue = floatval($get('parcel_value')) * floatval($get('multiplier'));
                         $set('gross_value', $grossValue);
-
-                       
                     })
                     ->rules([
                         fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
@@ -188,14 +186,14 @@ class OrderForm
                         $netValue = floatval($get('gross_value')) - (floatval($get('gross_value')) * floatval($get('discount_percentage'))) / 100;
                         $set('net_value', $netValue);
 
-                         // Atualiza o valor da parcela 
-                         $parcelsQuantity = ParcelsVerification::getMultiplier($get('payment_way_id'));
-                         $parcelValue = $netValue / $parcelsQuantity;
-                         $set('parcel_value', $parcelValue);
- 
-                         // Atualiza o valor da entrada
-                         $firstParcelValue = ParcelsVerification::getFirstParcelValue($get('payment_way_id'), $get('parcel_value'));
-                         $set('first_parcel_value', $firstParcelValue);
+                        // Atualiza o valor da parcela 
+                        $parcelsQuantity = ParcelsVerification::getMultiplier($get('payment_way_id'));
+                        $parcelValue = $netValue / $parcelsQuantity;
+                        $set('parcel_value', number_format((float)$parcelValue, 2, '.', ''));
+
+                        // Atualiza o valor da entrada
+                        $firstParcelValue = ParcelsVerification::getFirstParcelValue($get('payment_way_id'), $get('parcel_value'));
+                        $set('first_parcel_value', number_format((float)$firstParcelValue, 2, '.', ''));
                     })
                     ->suffix('%')
                     ->numeric(),

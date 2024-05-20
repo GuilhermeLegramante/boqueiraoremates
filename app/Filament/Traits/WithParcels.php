@@ -270,8 +270,12 @@ trait WithParcels
             $this->sum += doubleval($value);
         }
 
-        if (doubleval($data['net_value']) != $this->sum) {
-            $msg = ParcelsVerification::getDifferenceBetweenParcelsAndNetValueMessage(doubleval($data['net_value']), $this->sum);
+        // Padronizando as casas decimais
+        $this->sum = number_format((float)$this->sum, 2, '.', '');
+        $netValue =  number_format((float)$data['net_value'], 2, '.', '');
+
+        if ($netValue != $this->sum) {
+            $msg = ParcelsVerification::getDifferenceBetweenParcelsAndNetValueMessage($netValue, $this->sum);
 
             Notification::make()
                 ->title('Atenção!')
@@ -298,8 +302,12 @@ trait WithParcels
             $this->buyerSum += doubleval($value);
         }
 
-        if (doubleval($data['buyer_comission_value']) != $this->buyerSum) {
-            $msg = BuyerParcelsVerification::getDifferenceBetweenParcelsAndGrossValueMessage(doubleval($data['buyer_comission_value']), $this->buyerSum);
+        // Padronizando as casas decimais
+        $this->buyerSum = number_format((float)$this->buyerSum, 2, '.', '');
+        $parcelValue =  number_format((float)$data['buyer_comission_value'], 2, '.', '');
+
+        if ($parcelValue != $this->buyerSum) {
+            $msg = BuyerParcelsVerification::getDifferenceBetweenParcelsAndGrossValueMessage($parcelValue, $this->buyerSum);
 
             Notification::make()
                 ->title('Atenção!')
@@ -325,6 +333,10 @@ trait WithParcels
         foreach ($this->sellerValues as $value) {
             $this->sellerSum += doubleval($value);
         }
+
+        // Padronizando as casas decimais
+        $this->sellerSum = number_format((float)$this->sellerSum, 2, '.', '');
+        $parcelValue =  number_format((float)$data['buyer_comission_value'], 2, '.', '');
 
         if (doubleval($data['seller_comission_value']) != $this->sellerSum) {
             $msg = SellerParcelsVerification::getDifferenceBetweenParcelsAndGrossValueMessage(doubleval($data['seller_comission_value']), $this->sellerSum);
