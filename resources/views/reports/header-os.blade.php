@@ -66,7 +66,7 @@
                                 <tr>
                                     <td
                                         style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
-                                        <span style="font-weight: bold;">Data Base:</span>
+                                        <span style="font-weight: bold;">Data Base da OS:</span>
                                         {{ date('d/m/Y', strtotime($order->base_date)) }}
                                     </td>
                                 </tr>
