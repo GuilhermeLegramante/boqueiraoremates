@@ -49,18 +49,25 @@
                                         <span style="font-weight: bold;"></span> contato@boqueiraoremates.com.br
                                     </td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <td
                                         style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
                                         <span style="font-weight: bold;">Impresso em:</span>
                                         {{ date('d/m/Y \à\s H:i:s') }}
                                     </td>
-                                </tr>
+                                </tr> --}}
                                 <tr>
                                     <td
                                         style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
                                         <span style="font-weight: bold;">Emitido em:</span>
                                         {{ $order->created_at->format('d/m/Y \à\s H:i:s') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td
+                                        style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
+                                        <span style="font-weight: bold;">Data Base:</span>
+                                        {{ date('d/m/Y', strtotime($order->base_date)) }}
                                     </td>
                                 </tr>
                             </tbody>
