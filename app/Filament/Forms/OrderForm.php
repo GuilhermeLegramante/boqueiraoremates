@@ -218,8 +218,10 @@ class OrderForm
                 TextInput::make('due_day')
                     ->label('Dia do Venc.')
                     ->afterStateHydrated(function (Get $get, Set $set) {
-                        $date = explode('-', $get('base_date'));
-                        $set('due_day', $date[2]);
+                        if($get('base_date') != null){
+                            $date = explode('-', $get('base_date'));
+                            $set('due_day', $date[2]);
+                        }
                     })
                     ->numeric()
                     ->minValue(1)
