@@ -55,19 +55,24 @@ class AnimalResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('name')
                     ->label(__('fields.name'))
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('breed.name')
                     ->label(__('fields.breed'))
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('coat.name')
                     ->label(__('fields.coat'))
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('animalType.name')
                     ->label(__('fields.animal_type'))
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('gender')
                     ->label(__('fields.gender'))
                     ->alignment(Alignment::Center)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->badge()
                     ->formatStateUsing(
                         fn (string $state): string => (($state == 'male' ? 'MACHO' : ($state == 'female' ? 'FÊMEA' : '')))
@@ -78,25 +83,29 @@ class AnimalResource extends Resource
                     }),
                 TextColumn::make('register')
                     ->label(__('fields.register'))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('sbb')
                     ->label(__('fields.sbb'))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('rb')
                     ->label(__('fields.rb'))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 TextColumn::make('mother')
                     ->label(__('fields.mother'))
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('father')
                     ->label(__('fields.father'))
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('blood_level')
                     ->label(__('fields.blood_level'))
                     ->alignment(Alignment::Center)
                     ->badge()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->formatStateUsing(
                         fn (string $state): string => (($state == 'pure' ? 'PURO' : ($state == 'mixed' ? 'MESTIÇO' : '')))
                     )
@@ -106,6 +115,7 @@ class AnimalResource extends Resource
                     }),
                 TextColumn::make('breeding')
                     ->label(__('fields.breeding'))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
@@ -169,7 +179,7 @@ class AnimalResource extends Resource
             'index' => Pages\ManageAnimals::route('/'),
         ];
     }
-    
+
 
     public static function getNavigationBadge(): ?string
     {
