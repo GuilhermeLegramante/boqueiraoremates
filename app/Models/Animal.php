@@ -27,6 +27,7 @@ class Animal extends Model
         'blood_level',
         'blood_percentual',
         'quantity',
+        'birth_date'
     ];
 
     protected $casts = [

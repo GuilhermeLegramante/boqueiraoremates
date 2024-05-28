@@ -3,6 +3,7 @@
 namespace App\Filament\Forms;
 
 use App\Models\Breed;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -81,6 +82,9 @@ class AnimalForm
             TextInput::make('quantity')
                 ->label(__('fields.quantity'))
                 ->numeric(),
+            DatePicker::make('birth_date')
+                ->maxDate(now())
+                ->label('Data de Nascimento'),
         ];
     }
 
