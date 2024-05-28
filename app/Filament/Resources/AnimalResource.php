@@ -169,6 +169,7 @@ class AnimalResource extends Resource
             'index' => Pages\ManageAnimals::route('/'),
         ];
     }
+    
 
     public static function getNavigationBadge(): ?string
     {
