@@ -126,6 +126,11 @@ class AnimalResource extends Resource
                         'whole_male' => 'gray',
                         'castrated' => 'danger,'
                     }),
+                TextColumn::make('birth_date')
+                    ->label('Data de Nascimento')
+                    ->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label(__('fields.created_at'))
                     ->dateTime()
