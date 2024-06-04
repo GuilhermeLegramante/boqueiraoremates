@@ -146,6 +146,39 @@ trait WithParcels
         }
 
         $this->showParcels = true;
+
+        $this->adjustMonths();
+    }
+
+    /**
+     * Para casos de parcelas agrupadas Ex. 2+2+46
+     * Precisa corrigir os meses para que não "salte" nenhum
+     */
+    private function adjustMonths()
+    {
+        $newParcelsDates = [];
+
+        $firstDate = explode('-', $this->parcelsDates[0]);
+
+        $month = $firstDate[1];
+
+        foreach ($this->parcelsDates as $parcelDate) {
+            $date = explode('-', $parcelDate);
+
+            $newDate = $date[0] . '-' . $month . '-' . $date[2];
+
+            if (intval($month) <= 11) {
+                $month++;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+            } else {
+                $month = 1;
+                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+            }
+
+            array_push($newParcelsDates, $newDate);
+        }
+
+        $this->parcelsDates = $newParcelsDates;
     }
 
     private function resolveFirstPayment($firstPaymentParcelsQuantity, $firstParcelValue, $multiplier)
