@@ -72,6 +72,13 @@
                                         @endif
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td
+                                        style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
+                                        <span style="font-weight: bold;">Criada por:</span>
+                                        {{ ucfirst($user->username) }}
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </td>
@@ -79,5 +86,5 @@
             </tbody>
         </table>
     </div>
-    <hr style="margin-top: 5px; width: 147%;" />
+    <hr style="margin-top: 20px; width: 147%;" />
 </header>
