@@ -59,7 +59,7 @@
                                 <tr>
                                     <td
                                         style="font-size: 8px; height: 10px; text-align: right; vertical-align: bottom;">
-                                        <span style="font-weight: bold;">Emitido em:</span>
+                                        <span style="font-weight: bold;">Emitida em:</span>
                                         {{ $order->created_at->format('d/m/Y \à\s H:i:s') }}
                                     </td>
                                 </tr>
