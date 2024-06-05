@@ -121,12 +121,12 @@ class OrderResource extends Resource
                 SelectFilter::make('event')
                     ->label('Evento')
                     ->relationship('event', 'name'),
-                SelectFilter::make('seller')
-                    ->label('Vendedor')
-                    ->relationship('seller', 'name'),
-                SelectFilter::make('buyer')
-                    ->label('Comprador')
-                    ->relationship('buyer', 'name'),
+                // SelectFilter::make('seller')
+                //     ->label('Vendedor')
+                //     ->relationship('seller', 'name'),
+                // SelectFilter::make('buyer')
+                //     ->label('Comprador')
+                //     ->relationship('buyer', 'name'),
                 SelectFilter::make('paymentWay')
                     ->label('Forma de Pagamento')
                     ->relationship('paymentWay', 'name'),
