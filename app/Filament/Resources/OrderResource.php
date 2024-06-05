@@ -9,15 +9,22 @@ use App\Filament\Resources\OrderResource\RelationManagers\ParcelsRelationManager
 use App\Filament\Resources\OrderResource\RelationManagers\SellerParcelsRelationManager;
 use App\Models\Order;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 
 class OrderResource extends Resource
 {
@@ -46,6 +53,11 @@ class OrderResource extends Resource
                 TextColumn::make('number')
                     ->label('Número')
                     ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('base_date')
+                    ->label('Data da Negociação')
+                    ->date()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('event.name')
                     ->label('Evento')
                     ->searchable(),
@@ -65,9 +77,10 @@ class OrderResource extends Resource
                     ->label('Comprador')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-                TextColumn::make('gross_parcel')
+                TextColumn::make('parcel_value')
                     ->label('Valor da Parcela')
                     ->money('BRL')
+                    ->summarize(Sum::make()->label('Total')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('multiplier')
@@ -77,6 +90,7 @@ class OrderResource extends Resource
                 TextColumn::make('gross_value')
                     ->label('Valor Bruto')
                     ->money('BRL')
+                    ->summarize(Sum::make()->label('Total')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('paymentWay.name')
@@ -84,7 +98,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('created_at')
-                    ->label(__('fields.created_at'))
+                    ->label('Emitida em')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -106,7 +120,36 @@ class OrderResource extends Resource
                     ->collapsible(),
             ])
             ->filters([
-                //
+                SelectFilter::make('event')
+                    ->label('Evento')
+                    ->relationship('event', 'name'),
+                SelectFilter::make('seller')
+                    ->label('Vendedor')
+                    ->relationship('seller', 'name'),
+                SelectFilter::make('buyer')
+                    ->label('Comprador')
+                    ->relationship('buyer', 'name'),
+                SelectFilter::make('paymentWay')
+                    ->label('Forma de Pagamento')
+                    ->relationship('paymentWay', 'name'),
+                Filter::make('base_date')
+                    ->form([
+                        DatePicker::make('created_from')
+                            ->label('Data de Negociação (De)'),
+                        DatePicker::make('created_until')
+                            ->label('Data de Negociação (Até)'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('base_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('base_date', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 ActionGroup::make([
@@ -125,7 +168,7 @@ class OrderResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])->filtersFormWidth(MaxWidth::FourExtraLarge);
     }
 
     public static function getRelations(): array
