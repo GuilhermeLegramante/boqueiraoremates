@@ -121,33 +121,9 @@ class OrderResource extends Resource
                 SelectFilter::make('event')
                     ->label('Evento')
                     ->relationship('event', 'name'),
-                // SelectFilter::make('seller')
-                //     ->label('Vendedor')
-                //     ->relationship('seller', 'name'),
-                // SelectFilter::make('buyer')
-                //     ->label('Comprador')
-                //     ->relationship('buyer', 'name'),
                 SelectFilter::make('paymentWay')
                     ->label('Forma de Pagamento')
                     ->relationship('paymentWay', 'name'),
-                // Filter::make('base_date')
-                //     ->form([
-                //         DatePicker::make('created_from')
-                //             ->label('Data de Negociação (De)'),
-                //         DatePicker::make('created_until')
-                //             ->label('Data de Negociação (Até)'),
-                //     ])
-                //     ->query(function (Builder $query, array $data): Builder {
-                //         return $query
-                //             ->when(
-                //                 $data['created_from'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('base_date', '>=', $date),
-                //             )
-                //             ->when(
-                //                 $data['created_until'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('base_date', '<=', $date),
-                //             );
-                //     })
             ])
             ->actions([
                 ActionGroup::make([
