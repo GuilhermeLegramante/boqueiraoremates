@@ -25,13 +25,10 @@
             <td style="width: 15%;" class="table-0pky">
                 <strong>Cópia do Reg.:</strong> {{ $order->output_register_copy ? 'OK' : ' ' }}
             </td>
-            <td class="table-0pky" colspan="2" style="width: 20%;">
-                <strong>Pcla 01 do Negócio:</strong>
-                @if ($order->output_first_parcel_business == 'ticket')
-                    BOLETO
-                @endif
-                @if ($order->output_first_parcel_business == 'deposit')
-                    DEPÓSITO
+            <td class="table-0pky" style="width: 20%;">
+                <strong>Pcla 01 da Comissão:</strong>
+                @if (isset($order->output_first_parcel_comission))
+                    {{ $order->output_first_parcel_comission }}
                 @endif
             </td>
         </tr>
@@ -41,16 +38,16 @@
                     {{ date('d/m/Y', strtotime($order->output_sending_documentation_date)) }}
                 @endisset
             </td>
-            <td colspan="2" class="table-0pky"><strong>Forma de envio:</strong>
+            <td colspan="4" class="table-0pky"><strong>Forma de envio:</strong>
                 @isset($order->outputSendingDocsMethod)
                     {{ $order->outputSendingDocsMethod->name }}
                 @endisset
             </td>
-            <td colspan="2" class="table-0pky"><strong>Assinatura do Comprador:</strong>
+            {{-- <td colspan="2" class="table-0pky"><strong>Assinatura do Comprador:</strong>
                 @isset($order->output_contract_return_date)
                     {{ date('d/m/Y', strtotime($order->output_contract_return_date)) }}
                 @endisset
-            </td>
+            </td> --}}
         </tr>
         <tr>
             <td class="table-fymr">Obs</td>

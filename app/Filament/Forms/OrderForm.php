@@ -408,6 +408,15 @@ class OrderForm
                 DatePicker::make('output_first_parcel_date')
                     ->columnSpan(2)
                     ->label('Data da Parcela 01'),
+                Radio::make('output_first_parcel_comission')
+                    ->label('Parcela 01 do Negócio')
+                    ->columnSpan(2)
+                    ->options([
+                        'BOLETO' => 'Boleto',
+                        'DEPÓSITO' => 'Depósito',
+                        'TRANSFERÊNCIA' => 'Transferência',
+                        'PIX' => 'Pix'
+                    ]),
                 DatePicker::make('output_sending_documentation_date')
                     ->columnSpan(2)
                     ->label('Data de envio do processo físico'),

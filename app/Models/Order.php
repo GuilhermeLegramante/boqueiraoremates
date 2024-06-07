@@ -58,10 +58,11 @@ class Order extends Model
         'output_contracts',
         'output_promissory',
         'output_register_copy',
-        'output_first_parcel_date',
+        'output_first_parcel_comission',
         'output_sending_documentation_date',
         'output_seller_sending_documentation_way',
         'output_documentation_note',
+        'output_first_parcel_comission',
         'closing_date',
         'output_sending_docs_method_id',
         'entry_sending_docs_method_id'
