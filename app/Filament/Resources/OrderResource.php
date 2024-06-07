@@ -50,6 +50,7 @@ class OrderResource extends Resource
             ->columns([
                 TextColumn::make('number')
                     ->label('Número')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('base_date')
                     ->label('Data da Negociação')
