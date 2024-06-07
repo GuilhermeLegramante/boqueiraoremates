@@ -26,7 +26,7 @@
                 <strong>Cópia do Reg.:</strong> {{ $order->output_register_copy ? 'OK' : ' ' }}
             </td>
             <td class="table-0pky" style="width: 20%;">
-                <strong>Pcla 01 da Comissão:</strong>
+                <strong>Pcla 01 do Negócio:</strong>
                 @if (isset($order->output_first_parcel_comission))
                     {{ $order->output_first_parcel_comission }}
                 @endif
