@@ -52,6 +52,8 @@ class Order extends Model
         'entry_buyer_sending_documentation_way',
         'sending_docs_method_id',
         'entry_contract_return_date',
+        'entry_seller_signature_date',
+        'entry_witness_signature_date',
         'entry_documentation_note',
         'output_contracts',
         'output_promissory',
@@ -139,7 +141,7 @@ class Order extends Model
 
     public function getGrossParcelAttribute()
     {
-        if($this->multiplier > 0) {
+        if ($this->multiplier > 0) {
             $grossParcel = $this->gross_value / $this->multiplier;
         } else {
             $grossParcel = 0;

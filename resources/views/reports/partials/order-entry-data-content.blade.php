@@ -74,6 +74,18 @@
             </td>
         </tr>
         <tr>
+            <td colspan="3" class="table-0pky"><strong>Assinatura do Vendedor:</strong>
+                @isset($order->entry_seller_signature_date)
+                    {{ date('d/m/Y', strtotime($order->entry_seller_signature_date)) }}
+                @endisset
+            </td>
+            <td colspan="2" class="table-0pky"><strong>Assinatura da Testemunha:</strong>
+                @isset($order->entry_witness_signature_date)
+                    {{ date('d/m/Y', strtotime($order->entry_witness_signature_date)) }}
+                @endisset
+            </td>
+        </tr>
+        <tr>
             <td class="table-fymr">Obs</td>
             <td class="table-0pky" colspan="5">
                 {{ $order->entry_documentation_note }}

@@ -380,6 +380,10 @@ class OrderForm
                     ->createOptionForm(SendingDocsMethodForm::form()),
                 DatePicker::make('entry_contract_return_date')
                     ->label('Assinatura do Comprador'),
+                DatePicker::make('entry_seller_signature_date')
+                    ->label('Assinatura do Vendedor'),
+                DatePicker::make('entry_witness_signature_date')
+                    ->label('Assinatura da Testemunha'),
                 Textarea::make('entry_documentation_note')
                     ->columnSpanFull()
                     ->label('Observação')
