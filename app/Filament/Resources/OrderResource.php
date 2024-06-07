@@ -106,6 +106,7 @@ class OrderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('number', 'desc')
             ->groups([
                 Group::make('event.name')
                     ->label('Evento')
