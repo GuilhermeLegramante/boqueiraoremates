@@ -32,6 +32,7 @@ class Order extends Model
         'payment_way_id',
         'discount_percentage',
         'due_day',
+        'first_due_date',
         'reinforcements_amount',
         'reinforcement_value',
         'reinforcement_parcels',

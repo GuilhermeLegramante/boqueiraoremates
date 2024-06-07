@@ -72,7 +72,7 @@ class OrderForm
                         }
                     })
                     ->afterStateUpdated(function (DatePicker $component, $state, string $operation, Set $set) {
-                        $set('due_day', now()->format('d'));
+                        // $set('due_day', now()->format('d'));
                     })
                     ->live()
                     ->required()
@@ -215,20 +215,26 @@ class OrderForm
                     })
                     ->suffix('%')
                     ->numeric(),
-                TextInput::make('due_day')
-                    ->label('Dia do Venc.')
+                // TextInput::make('due_day')
+                //     ->label('Dia do Venc.')
+                //     ->afterStateHydrated(function (Get $get, Set $set) {
+                //         if ($get('base_date') != null) {
+                //             $date = explode('-', $get('base_date'));
+                //             $set('due_day', $date[2]);
+                //         }
+                //     })
+                //     ->minValue(1)
+                //     ->maxValue(28)
+                //     ->live()
+                //     ->columnSpan(1)
+                //     ->numeric(),
+                DatePicker::make('first_due_date')
+                    ->label('Data do 1° Vencimento')
                     ->afterStateHydrated(function (Get $get, Set $set) {
-                        if($get('base_date') != null){
-                            $date = explode('-', $get('base_date'));
-                            $set('due_day', $date[2]);
+                        if ($get('base_date') != null) {
+                            $set('first_due_date', $get('base_date'));
                         }
-                    })
-                    ->numeric()
-                    ->minValue(1)
-                    ->maxValue(28)
-                    ->live()
-                    ->columnSpan(1)
-                    ->numeric(),
+                    }),
                 TextInput::make('net_value')
                     // ->readOnly()
                     ->live()

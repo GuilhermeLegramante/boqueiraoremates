@@ -30,7 +30,7 @@
             </tr>
             <tr class="" style="font-size: 13px;">
                 <td class="collumn-left"><strong>Valor da Parcela:</strong> {{ $order->parcel_value }}</td>
-                <td class="collumn-right"><strong>Dia do Vencimento:</strong> {{ $order->due_day }}</td>
+                <td class="collumn-right"><strong>Data do 1° Vencimento:</strong> {{ date('d/m/Y', strtotime($order->first_due_date)) }}</td>
             </tr>
             <tr class="bg-light" style="font-size: 13px;">
                 <td class="collumn-left"><strong>Multiplicador:</strong> {{ $order->multiplier }}</td>
