@@ -11,6 +11,7 @@ use App\Models\Order;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -96,6 +97,11 @@ class OrderResource extends Resource
                     ->label('Forma de Pagamento')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+                TextColumn::make('status.name')
+                    ->label('Status')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->alignment(Alignment::Center)
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('Emitida em')
                     ->dateTime()
@@ -109,6 +115,9 @@ class OrderResource extends Resource
             ])
             ->defaultSort('number', 'desc')
             ->groups([
+                Group::make('status.name')
+                    ->label('Status')
+                    ->collapsible(),
                 Group::make('event.name')
                     ->label('Evento')
                     ->collapsible(),
@@ -120,6 +129,9 @@ class OrderResource extends Resource
                     ->collapsible(),
             ])
             ->filters([
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->relationship('status', 'name'),
                 SelectFilter::make('event')
                     ->label('Evento')
                     ->relationship('event', 'name'),

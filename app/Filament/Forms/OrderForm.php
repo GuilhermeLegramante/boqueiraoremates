@@ -41,6 +41,14 @@ class OrderForm
                     self::getSellerInvoicing(),
                     self::getEntry(),
                     self::getOutput(),
+                    Select::make('order_status_id')
+                        ->label('Status da OS')
+                        ->preload()
+                        ->searchable()
+                        ->live()
+                        ->relationship(name: 'status', titleAttribute: 'name')
+                        ->required()
+                        ->createOptionForm(OrderStatusForm::form()),
                     DatePicker::make('closing_date')
                         ->label('Data de Encerramento da OS'),
 
