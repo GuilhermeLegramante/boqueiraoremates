@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Forms\OrderStatusForm;
 use App\Filament\Resources\OrderStatusResource\Pages;
 use App\Filament\Resources\OrderStatusResource\Pages\ManageOrderStatuses;
 use App\Filament\Resources\OrderStatusResource\RelationManagers;
@@ -36,15 +37,7 @@ class OrderStatusResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label(__('field.name'))
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextArea::make('note')
-                    ->label(__('field.note'))
-                    ->maxLength(255),
-            ]);
+            ->schema(OrderStatusForm::form());
     }
 
     public static function table(Table $table): Table
