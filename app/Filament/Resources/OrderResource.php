@@ -137,11 +137,11 @@ class OrderResource extends Resource
                     ->relationship('event', 'name'),
                 SelectFilter::make('buyer')
                     ->label('Comprador')
-                    ->preload(false)
+                    ->preload()
                     ->relationship('buyer', 'name'),
                 SelectFilter::make('seller')
                     ->label('Vendedor')
-                    ->preload(false)
+                    ->preload()
                     ->relationship('seller', 'name'),
             ])
             ->actions([
