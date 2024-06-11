@@ -129,13 +129,6 @@ class OrderResource extends Resource
                     ->collapsible(),
             ])
             ->filters([
-                SelectFilter::make('status')
-                    ->label('Status')
-                    // ->default(1)
-                    ->relationship('status', 'name'),
-                SelectFilter::make('event')
-                    ->label('Evento')
-                    ->relationship('event', 'name'),
                 SelectFilter::make('buyer')
                     ->label('Comprador')
                     ->searchable()
@@ -144,6 +137,13 @@ class OrderResource extends Resource
                     ->label('Vendedor')
                     ->searchable()
                     ->relationship('seller', 'name'),
+                SelectFilter::make('status')
+                    ->label('Status')
+                    // ->default(1)
+                    ->relationship('status', 'name'),
+                SelectFilter::make('event')
+                    ->label('Evento')
+                    ->relationship('event', 'name'),
             ])
             ->actions([
                 ActionGroup::make([
