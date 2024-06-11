@@ -139,11 +139,11 @@ class OrderResource extends Resource
                 SelectFilter::make('buyer')
                     ->label('Comprador')
                     ->searchable()
-                    ->relationship('buyer.name', 'name'),
+                    ->relationship('buyer', 'name'),
                 SelectFilter::make('seller')
                     ->label('Vendedor')
                     ->searchable()
-                    ->relationship('seller.name', 'name'),
+                    ->relationship('seller', 'name'),
             ])
             ->actions([
                 ActionGroup::make([
