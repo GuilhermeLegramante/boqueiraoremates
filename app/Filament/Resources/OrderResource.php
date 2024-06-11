@@ -145,6 +145,7 @@ class OrderResource extends Resource
                     ->label('Evento')
                     ->relationship('event', 'name'),
             ])
+            ->deferFilters()
             ->actions([
                 ActionGroup::make([
                     // Tables\Actions\ViewAction::make(),
