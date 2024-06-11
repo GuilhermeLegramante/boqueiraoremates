@@ -146,6 +146,11 @@ class OrderResource extends Resource
                     ->relationship('event', 'name'),
             ])
             ->deferFilters()
+            ->filtersApplyAction(
+                fn (Action $action) => $action
+                    ->link()
+                    ->label('Aplicar Filtro(s)'),
+            )
             ->actions([
                 ActionGroup::make([
                     // Tables\Actions\ViewAction::make(),
