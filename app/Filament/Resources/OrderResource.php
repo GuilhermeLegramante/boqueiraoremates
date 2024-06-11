@@ -148,7 +148,7 @@ class OrderResource extends Resource
             ->deferFilters()
             ->filtersApplyAction(
                 fn (Action $action) => $action
-                    ->link()
+                    ->button()
                     ->label('Aplicar Filtro(s)'),
             )
             ->actions([
