@@ -35,12 +35,6 @@ class OrderForm
                 )
                 ->collapsible()
                 ->schema([
-                    self::getService(),
-                    self::getBusiness(),
-                    self::getBuyerInvoicing(),
-                    self::getSellerInvoicing(),
-                    self::getEntry(),
-                    self::getOutput(),
                     Select::make('order_status_id')
                         ->label('Status da OS')
                         ->preload()
@@ -49,6 +43,12 @@ class OrderForm
                         ->relationship(name: 'status', titleAttribute: 'name')
                         ->required()
                         ->createOptionForm(OrderStatusForm::form()),
+                    self::getService(),
+                    self::getBusiness(),
+                    self::getBuyerInvoicing(),
+                    self::getSellerInvoicing(),
+                    self::getEntry(),
+                    self::getOutput(),
                     DatePicker::make('closing_date')
                         ->label('Data de Encerramento da OS'),
 
