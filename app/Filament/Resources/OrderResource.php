@@ -131,7 +131,7 @@ class OrderResource extends Resource
             ->filters([
                 SelectFilter::make('status')
                     ->label('Status')
-                    ->default(1)
+                    // ->default(1)
                     ->relationship('status', 'name'),
                 SelectFilter::make('event')
                     ->label('Evento')
