@@ -245,6 +245,22 @@ Route::get('/converter-imagem', function () {
 })->name('convert-image');
 
 Route::get('/', function () {
-    dd(Client::find(1)->testando);
-    return view('welcome');
+    $file = file_get_contents('C:\Users\Marca & Sinal\Downloads\animais.csv');
+
+    $array = explode(PHP_EOL, $file);
+
+    foreach ($array as $key => $value) {
+        $exploit = explode(';', $value);
+
+        dd($exploit);
+
+        // if (isset($exploit[0]) && isset($exploit[1])) {
+        //     $brand['id'] = $exploit[0];
+        //     $brand['number'] = $exploit[1];
+        //     $brand['farmerId'] = $exploit[2];
+        //     $brand['filename'] = $exploit[3];
+
+        //     array_push($brands, $brand);
+        // }
+    }
 });
