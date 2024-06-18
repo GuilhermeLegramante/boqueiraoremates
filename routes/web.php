@@ -244,6 +244,6 @@ Route::get('/converter-imagem', function () {
     // }
 })->name('convert-image');
 
-// Route::get('/', function () {
-   
-// });
+Route::get('/', function () {
+    return redirect(route('filament.admin.dashboard'));
+});
