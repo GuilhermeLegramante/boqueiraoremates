@@ -97,12 +97,9 @@ class OrderForm
                     ->createOptionForm(EventForm::form())
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         $event = Event::find($get('event_id'));
-                        $set('multiplier', $event->multiplier);
-
-                        // if (isset($event->start_date)) {
-                        //     $set('base_date', $event->start_date->format('Y-m-d'));
-                        //     $set('due_day', $event->start_date->format('d'));
-                        // }
+                        if (isset($event->multiplier)) {
+                            $set('multiplier', $event->multiplier);
+                        }
                     })
                     ->columnSpanFull(),
                 Select::make('seller_id')
