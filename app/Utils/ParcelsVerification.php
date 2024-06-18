@@ -54,7 +54,9 @@ class ParcelsVerification
                 $sum += intval($value);
             }
         }
-
+        if ($sum == 0) {
+            $sum = 1;
+        }
         return $sum;
     }
 
