@@ -195,7 +195,7 @@ class OrderResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()->label('Planilha'),
+                    ExportBulkAction::make()->label('Download'),
                 ]),
             ]);
     }
