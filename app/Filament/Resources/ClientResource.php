@@ -24,7 +24,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
@@ -150,10 +151,19 @@ class ClientResource extends Resource
                         ->openUrlInNewTab()
                 ]),
             ], position: ActionsPosition::BeforeColumns)
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Download')
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->withFilename(date('d-m-Y') . ' - Clientes')
+                    ])
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()->label('Planilha'),
+                    ExportBulkAction::make()->label('Download'),
                 ]),
             ]);
     }

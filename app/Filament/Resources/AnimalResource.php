@@ -156,6 +156,15 @@ class AnimalResource extends Resource
                     ->relationship('animalType', 'name')
                     ->preload(),
             ])
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Download')
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->withFilename(date('d-m-Y') . ' - Animais')
+                    ])
+            ])
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make()
@@ -173,7 +182,7 @@ class AnimalResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()->label('Planilha'),
+                    ExportBulkAction::make()->label('Download'),
                 ]),
             ]);
     }
