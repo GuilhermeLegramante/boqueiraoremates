@@ -145,6 +145,22 @@ class OrderResource extends Resource
                 SelectFilter::make('event')
                     ->label('Evento')
                     ->relationship('event', 'name'),
+                Filter::make('base_date')
+                    ->form([
+                        DatePicker::make('created_from')->label('Data de Negociação (Inicial)'),
+                        DatePicker::make('created_until')->label('Data de Negociação (Final)'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('base_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('base_date', '<=', $date),
+                            );
+                    })
             ])
             ->deferFilters()
             ->filtersApplyAction(
@@ -171,7 +187,6 @@ class OrderResource extends Resource
                     ExportBulkAction::make()->label('Planilha'),
                 ]),
             ]);
-            
     }
 
     public static function getRelations(): array
