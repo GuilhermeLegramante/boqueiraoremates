@@ -25,6 +25,8 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class OrderResource extends Resource
 {
@@ -168,6 +170,15 @@ class OrderResource extends Resource
                     ->link()
                     ->label('Aplicar Filtro(s)'),
             )
+            ->headerActions([
+                ExportAction::make()
+                    ->label('Download')
+                    ->exports([
+                        ExcelExport::make()
+                            ->fromTable()
+                            ->withFilename(date('d-m-Y') . ' - Ordens de Serviço')
+                    ])
+            ])
             ->actions([
                 ActionGroup::make([
                     // Tables\Actions\ViewAction::make(),
