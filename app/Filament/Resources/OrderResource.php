@@ -96,14 +96,14 @@ class OrderResource extends Resource
                 TextColumn::make('gross_value')
                     ->label('Valor Bruto')
                     ->money('BRL')
-                    ->summarize(Sum::make()->label('Total')->money('BRL'))
+                    ->summarize(Sum::make()->label('Total Valor Bruto')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('net_value')
                     ->label('Valor Líquido')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
-                        ->label('Total')
+                        ->label('Total Valor Líquido')
                         ->money('BRL')
                         ->using(
                             fn (DatabaseBuilder $query): float =>
@@ -118,7 +118,7 @@ class OrderResource extends Resource
                     ->label('Comissão Comprador')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
-                        ->label('Total')
+                        ->label('Total Comissão Comprador')
                         ->money('BRL')
                         ->using(
                             fn (DatabaseBuilder $query): float =>
@@ -133,7 +133,7 @@ class OrderResource extends Resource
                     ->label('Comissão Vendedor')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
-                        ->label('Total')
+                        ->label('Total Comissão Vendedor')
                         ->money('BRL')
                         ->using(
                             fn (DatabaseBuilder $query): float =>
