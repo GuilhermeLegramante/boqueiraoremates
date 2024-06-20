@@ -101,6 +101,7 @@ class OrderResource extends Resource
                     ->searchable(),
                 TextColumn::make('net_value')
                     ->label('Valor Líquido')
+                    ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total')
                         ->money('BRL')
@@ -130,6 +131,7 @@ class OrderResource extends Resource
                     ->searchable(),
                 TextColumn::make('seller_comission_value')
                     ->label('Comissão Vendedor')
+                    ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total')
                         ->money('BRL')
