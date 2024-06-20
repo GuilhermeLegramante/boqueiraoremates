@@ -13,7 +13,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $appends = ['gross_parcel'];
+    protected $appends = ['gross_parcel', 'net_value', 'buyer_comission_value', 'seller_comission_value'];
 
     protected $fillable = [
         'number',
@@ -75,7 +75,9 @@ class Order extends Model
         'discount_percentage' => 'double',
         'reinforcement_value' => 'double',
         'buyer_commission' => 'double',
+        'buyer_commission_value' => 'double',
         'seller_commission' => 'double',
+        'seller_commission_value' => 'double',
         'entry_contracts' => 'boolean',
         'entry_promissory' => 'boolean',
         'entry_register_copy' => 'boolean',
@@ -149,5 +151,20 @@ class Order extends Model
         }
 
         return $grossParcel;
+    }
+
+    public function getNetValueAttribute()
+    {
+        return floatval($this->gross_value) - (floatval($this->gross_value) * floatval($this->discount_percentage)) / 100;
+    }
+
+    public function getBuyerComissionValueAttribute()
+    {
+        return (floatval($this->gross_value) * floatval($this->buyer_commission)) / 100;
+    }
+
+    public function getSellerComissionValueAttribute()
+    {
+        return (floatval($this->gross_value) * floatval($this->seller_commission)) / 100;
     }
 }

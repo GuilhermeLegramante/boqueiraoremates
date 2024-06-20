@@ -17,6 +17,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\Filter;
@@ -24,6 +25,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Support\Facades\DB;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
@@ -50,7 +53,7 @@ class OrderResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return $table
+        $a = $table
             ->columns([
                 TextColumn::make('number')
                     ->label('Número')
@@ -80,14 +83,14 @@ class OrderResource extends Resource
                     ->label('Comprador')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+                TextColumn::make('multiplier')
+                    ->label('Multiplicador')
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->searchable(),
                 TextColumn::make('parcel_value')
                     ->label('Valor da Parcela')
                     ->money('BRL')
                     ->summarize(Sum::make()->label('Total')->money('BRL'))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
-                TextColumn::make('multiplier')
-                    ->label('Multiplicador')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('gross_value')
@@ -96,6 +99,57 @@ class OrderResource extends Resource
                     ->summarize(Sum::make()->label('Total')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+                TextColumn::make('net_value')
+                    ->label('Valor Líquido')
+                    ->summarize(Summarizer::make()
+                        ->label('Total')
+                        ->money('BRL')
+                        ->using(
+                            fn (DatabaseBuilder $query): float =>
+                            $query
+                                ->sum(
+                                    DB::raw('(gross_value * discount_percentage) / 100')
+                                )
+                        ))
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->searchable(),
+                TextColumn::make('buyer_comission_value')
+                    ->label('Comissão Comprador')
+                    ->money('BRL')
+                    ->summarize(Summarizer::make()
+                        ->label('Total')
+                        ->money('BRL')
+                        ->using(
+                            fn (DatabaseBuilder $query): float =>
+                            $query
+                                ->sum(
+                                    DB::raw('(gross_value * buyer_commission) / 100')
+                                )
+                        ))
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->searchable(),
+                TextColumn::make('seller_comission_value')
+                    ->label('Comissão Vendedor')
+                    ->summarize(Summarizer::make()
+                        ->label('Total')
+                        ->money('BRL')
+                        ->using(
+                            fn (DatabaseBuilder $query): float =>
+                            $query
+                                ->sum(
+                                    DB::raw('(gross_value * seller_commission) / 100')
+                                )
+                        ))
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->searchable(),
+                TextColumn::make('buyer_commission')
+                    ->label('% Comprador')
+                    ->suffix('%')
+                    ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('seller_commission')
+                    ->label('% Vendedor')
+                    ->suffix('%')
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('paymentWay.name')
                     ->label('Forma de Pagamento')
                     ->toggleable(isToggledHiddenByDefault: false)
@@ -198,6 +252,8 @@ class OrderResource extends Resource
                     ExportBulkAction::make()->label('Download'),
                 ]),
             ]);
+        // dd($a);
+        return $a;
     }
 
     public static function getRelations(): array
