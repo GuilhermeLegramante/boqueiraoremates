@@ -88,19 +88,19 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('parcel_value')
-                    ->label('Valor da Parcela')
+                    ->label('')
                     ->money('BRL')
-                    ->summarize(Sum::make()->label('Total')->money('BRL'))
+                    ->summarize(Sum::make()->label('Total Valor da Parcela')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('gross_value')
-                    ->label('Valor Bruto')
+                    ->label('')
                     ->money('BRL')
                     ->summarize(Sum::make()->label('Total Valor Bruto')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('net_value')
-                    ->label('Valor Líquido')
+                    ->label('')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total Valor Líquido')
@@ -115,7 +115,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('buyer_comission_value')
-                    ->label('Comissão Comprador')
+                    ->label('')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total Comissão Comprador')
@@ -130,7 +130,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('seller_comission_value')
-                    ->label('Comissão Vendedor')
+                    ->label('')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total Comissão Vendedor')
