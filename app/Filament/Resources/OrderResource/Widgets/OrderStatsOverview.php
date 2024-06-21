@@ -38,8 +38,10 @@ class OrderStatsOverview extends BaseWidget
 
 
         return [
-            Stat::make('Total de Negociações', $total),
-            Stat::make('Comissão Vendedor', 'R$ ' . $comissionValue),
+            Stat::make('Negociações', $total)
+                ->description('Total'),
+            Stat::make('Comissão Vendedor', 'R$ ' . $comissionValue)
+                ->description('Total'),
             // Stat::make('Valor Médio', 'R$ ' . $avgOS)
             //     ->description('Por negociação'),
         ];
