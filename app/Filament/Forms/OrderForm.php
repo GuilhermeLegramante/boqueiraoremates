@@ -234,7 +234,7 @@ class OrderForm
                 //     ->columnSpan(1)
                 //     ->numeric(),
                 DatePicker::make('first_due_date')
-                    ->label('Data do 1° Vencimento')
+                    ->label('1° Vencimento')
                     ->afterStateHydrated(function (Get $get, Set $set) {
                         if ($get('base_date') != null) {
                             $set('first_due_date', $get('base_date'));
