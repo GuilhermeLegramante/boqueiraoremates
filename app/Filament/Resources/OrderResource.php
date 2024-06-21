@@ -7,6 +7,7 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers\BuyerParcelsRelationManager;
 use App\Filament\Resources\OrderResource\RelationManagers\ParcelsRelationManager;
 use App\Filament\Resources\OrderResource\RelationManagers\SellerParcelsRelationManager;
+use App\Filament\Resources\OrderResource\Widgets\OrderStatsOverview;
 use App\Models\Order;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
@@ -281,5 +282,12 @@ class OrderResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            OrderStatsOverview::class,
+        ];
     }
 }
