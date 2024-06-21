@@ -31,6 +31,11 @@ class OrderStatsOverview extends BaseWidget
 
         $commission = $sellerCommissionValue + $buyerCommissionValue;
 
+        $totalComissionDescription = 'C: R$' .
+            number_format($buyerCommissionValue, 2, ',', '.') .
+            ' V: R$' . number_format($sellerCommissionValue, 2, ',', '.');
+
+
         $avgOS = 0;
 
         if ($total > 0) {
@@ -51,17 +56,29 @@ class OrderStatsOverview extends BaseWidget
             ->where('seller_parcels.paid', 1)
             ->sum('seller_parcels.value');
 
-        $totalPaid = $paidBuyerParcels + $paidSellerParcels;
+        $noPaidBuyerParcels = $this->getPageTableQuery()
+            ->join('buyer_parcels', 'buyer_parcels.order_id', '=', 'orders.id')
+            ->where('buyer_parcels.paid', 0)
+            ->sum('buyer_parcels.value');
 
+        $noPaidSellerParcels = $this->getPageTableQuery()
+            ->join('seller_parcels', 'seller_parcels.order_id', '=', 'orders.id')
+            ->where('seller_parcels.paid', 0)
+            ->sum('seller_parcels.value');
+
+        $totalPaid = $paidBuyerParcels + $paidSellerParcels;
         $totalPaid = number_format($totalPaid, 2, ',', '.');
+
+        $totalNoPaid = $noPaidBuyerParcels + $noPaidSellerParcels;
+        $totalNoPaid = number_format($totalNoPaid, 2, ',', '.');
 
         return [
             Stat::make('Total Comissão', 'R$ ' . $commission)
-                ->description('Comprador + Vendedor'),
+                ->description($totalComissionDescription),
             Stat::make('Valor Médio', 'R$ ' . $avgOS)
                 ->description('Por negociação'),
             Stat::make('Parcelas Pagas', 'R$ ' . $totalPaid)
-                ->description('Total'),
+                ->description('Em aberto: R$' . $totalNoPaid),
         ];
     }
 }
