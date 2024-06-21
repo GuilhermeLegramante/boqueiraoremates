@@ -89,19 +89,19 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('parcel_value')
-                    ->label('')
+                    ->label('Valor da Parcela')
                     ->money('BRL')
                     ->summarize(Sum::make()->label('Total Valor da Parcela')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('gross_value')
-                    ->label('')
+                    ->label('Valor Bruto')
                     ->money('BRL')
                     ->summarize(Sum::make()->label('Total Valor Bruto')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('net_value')
-                    ->label('')
+                    ->label('Valor Líquido')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total Valor Líquido')
@@ -116,7 +116,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('buyer_comission_value')
-                    ->label('')
+                    ->label('Comissão Comprador')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total Comissão Comprador')
@@ -131,7 +131,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('seller_comission_value')
-                    ->label('')
+                    ->label('Comissão Vendedor')
                     ->money('BRL')
                     ->summarize(Summarizer::make()
                         ->label('Total Comissão Vendedor')
