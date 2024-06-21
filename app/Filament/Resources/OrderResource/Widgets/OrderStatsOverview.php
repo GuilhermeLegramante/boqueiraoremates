@@ -23,25 +23,29 @@ class OrderStatsOverview extends BaseWidget
     {
         $total = $this->getPageTableQuery()->count();
 
-        $comissionValue = $this->getPageTableQuery()
+        $sellerCommissionValue = $this->getPageTableQuery()
             ->sum(DB::raw('(gross_value * seller_commission) / 100'));
+
+        $buyerCommissionValue = $this->getPageTableQuery()
+            ->sum(DB::raw('(gross_value * buyer_commission) / 100'));
+
+        $commission = $sellerCommissionValue + $buyerCommissionValue;
 
         $avgOS = 0;
 
         if ($total > 0) {
-            $avgOS = $comissionValue / $total;
+            $avgOS = $commission / $total;
         }
 
         $avgOS = number_format($avgOS, 2, ',', '.');
 
-        $comissionValue = number_format($comissionValue, 2, ',', '.');
-
+        $commission = number_format($commission, 2, ',', '.');
 
         return [
             Stat::make('Negociações', $total)
                 ->description('Total'),
-            Stat::make('Comissão Vendedor', 'R$ ' . $comissionValue)
-                ->description('Total'),
+            Stat::make('Total Comissão', 'R$ ' . $commission)
+                ->description('Comprador + Vendedor'),
             // Stat::make('Valor Médio', 'R$ ' . $avgOS)
             //     ->description('Por negociação'),
         ];
