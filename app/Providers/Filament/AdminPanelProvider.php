@@ -68,8 +68,8 @@ class AdminPanelProvider extends PanelProvider
                 StatsOverview::class,
                 ClientSituationChart::class,
                 ClientRegisterOriginChart::class,
-                // OrdersPerMonthChart::class,
-                // CommissionPerMonthChart::class
+                OrdersPerMonthChart::class,
+                CommissionPerMonthChart::class
             ])
             ->brandName('Boqueirão Remates')
             ->sidebarCollapsibleOnDesktop()
