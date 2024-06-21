@@ -3,12 +3,13 @@
 namespace App\Filament\Resources\OrderResource\Widgets;
 
 use App\Filament\Resources\OrderResource\Pages\ListOrders;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 
 class ActiveOrdersChart extends ChartWidget
 {
-    use InteractsWithPageTable;
+    use InteractsWithPageTable, HasWidgetShield;
 
     protected static ?string $heading = 'Status';
 

@@ -4,6 +4,7 @@ namespace App\Filament\Resources\OrderResource\Widgets;
 
 use App\Filament\Resources\OrderResource\Pages\ListOrders;
 use App\Models\Order;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Support\Enums\IconPosition;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class OrderStatsOverview extends BaseWidget
 {
-    use InteractsWithPageTable;
+    use InteractsWithPageTable, HasWidgetShield;
 
     protected function getTablePage(): string
     {

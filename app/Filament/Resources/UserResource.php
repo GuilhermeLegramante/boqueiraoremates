@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -48,6 +49,7 @@ class UserResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->required(),
                 TextInput::make('email')
+                    ->required()
                     ->label(__('fields.email'))
                     ->email(),
                 TextInput::make('password')
@@ -65,10 +67,15 @@ class UserResource extends Resource
                     ->required()
                     ->revealable()
                     ->dehydrated(false),
-                Toggle::make('is_admin')
-                    ->label('Administrador')
-                    ->onIcon('heroicon-m-bolt')
-                    ->offIcon('heroicon-m-user'),
+                // Toggle::make('is_admin')
+                //     ->label('Administrador')
+                //     ->onIcon('heroicon-m-bolt')
+                //     ->offIcon('heroicon-m-user'),
+                Select::make('roles')
+                    ->label('Perfil')
+                    ->relationship('roles', 'name')
+                    ->preload()
+                    ->searchable(),
             ]);
     }
 

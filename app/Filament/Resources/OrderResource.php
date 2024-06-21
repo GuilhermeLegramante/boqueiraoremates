@@ -93,14 +93,12 @@ class OrderResource extends Resource
                     ->label('Valor da Parcela')
                     ->money('BRL')
                     ->summarize(Sum::make()->label('Total Valor da Parcela')->money('BRL'))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('gross_value')
                     ->label('Valor Bruto')
                     ->money('BRL')
                     ->summarize(Sum::make()->label('Total Valor Bruto')->money('BRL'))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('net_value')
                     ->label('Valor Líquido')
                     ->money('BRL')
@@ -114,8 +112,7 @@ class OrderResource extends Resource
                                     DB::raw('(gross_value * discount_percentage) / 100')
                                 )
                         ))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('buyer_comission_value')
                     ->label('Comissão Comprador')
                     ->money('BRL')
@@ -129,8 +126,7 @@ class OrderResource extends Resource
                                     DB::raw('(gross_value * buyer_commission) / 100')
                                 )
                         ))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('seller_comission_value')
                     ->label('Comissão Vendedor')
                     ->money('BRL')
@@ -144,8 +140,7 @@ class OrderResource extends Resource
                                     DB::raw('(gross_value * seller_commission) / 100')
                                 )
                         ))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('buyer_commission')
                     ->label('% Comprador')
                     ->suffix('%')

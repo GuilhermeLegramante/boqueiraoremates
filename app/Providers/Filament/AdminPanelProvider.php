@@ -81,6 +81,7 @@ class AdminPanelProvider extends PanelProvider
                 // ReportsPlugin::make(),
                 // FilamentBackgroundsPlugin::make(),
                 ThemesPlugin::make(),
+                \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
             ])
             ->resources([
                 config('filament-logger.activity_resource')

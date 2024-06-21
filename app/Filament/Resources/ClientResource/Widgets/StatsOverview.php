@@ -4,11 +4,16 @@ namespace App\Filament\Resources\ClientResource\Widgets;
 
 use App\Models\Client;
 use App\Models\Document;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverview extends BaseWidget
 {
+    use HasWidgetShield;
+    
+    protected static ?string $heading = 'Clientes Resumo';
+
     protected function getStats(): array
     {
         $total = Client::all()->count();

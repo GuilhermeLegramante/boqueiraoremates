@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.1",
         "barryvdh/laravel-dompdf": "^2.1",
+        "bezhansalleh/filament-shield": "*",
         "eightynine/filament-reports": "^3.0",
         "filament/filament": "3.2",
         "filament/widgets": "3.2",
@@ -24,6 +25,7 @@
         "njxqlus/filament-progressbar": "^1.0",
         "pxlrbt/filament-excel": "^2.3",
         "spatie/laravel-activitylog": "^4.8",
+        "spatie/laravel-permission": "*",
         "swisnl/filament-backgrounds": "^1.1",
         "webbingbrasil/filament-advancedfilter": "3.0",
         "z3d0x/filament-logger": "^0.7.0"

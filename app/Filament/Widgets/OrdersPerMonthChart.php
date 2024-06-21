@@ -3,10 +3,13 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Order;
+use BezhanSalleh\FilamentShield\Traits\HasWidgetShield;
 use Filament\Widgets\ChartWidget;
 
 class OrdersPerMonthChart extends ChartWidget
 {
+    use HasWidgetShield;
+
     protected static ?string $heading = 'Ordens de Serviço';
 
     protected function getData(): array

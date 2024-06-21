@@ -6,6 +6,7 @@ use App\Models\Animal;
 use App\Models\AnimalType;
 use App\Models\Breed;
 use App\Models\Coat;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Exception;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
@@ -16,6 +17,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ImportAnimals extends Page
 {
+    use HasPageShield;
+    
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.import-animals';
