@@ -45,8 +45,8 @@ class OrderStatsOverview extends BaseWidget
                 ->description('No mês'),
             Stat::make('Comissão Vendedor', 'R$ ' . $comissionValue)
                 ->description('No mês'),
-            Stat::make('Valor Médio', 'R$ ' . $avgOS)
-                ->description('Por negociação'),
+            // Stat::make('Valor Médio', 'R$ ' . $avgOS)
+            //     ->description('Por negociação'),
         ];
     }
 }
