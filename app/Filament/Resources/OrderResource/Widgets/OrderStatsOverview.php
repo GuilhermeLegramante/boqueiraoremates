@@ -23,16 +23,13 @@ class OrderStatsOverview extends BaseWidget
     {
         $total = $this->getPageTableQuery()->count();
 
-        $totalMonth = $this->getPageTableQuery()->whereDate('base_date', '>=', date('Y') . '-' . date('m') . '-01')->count();
-
         $comissionValue = $this->getPageTableQuery()
-            ->whereDate('base_date', '>=', date('Y') . '-' . date('m') . '-01')
             ->sum(DB::raw('(gross_value * seller_commission) / 100'));
 
         $avgOS = 0;
 
-        if ($totalMonth > 0) {
-            $avgOS = $comissionValue / $totalMonth;
+        if ($total > 0) {
+            $avgOS = $comissionValue / $total;
         }
 
         $avgOS = number_format($avgOS, 2, ',', '.');
@@ -41,10 +38,8 @@ class OrderStatsOverview extends BaseWidget
 
 
         return [
-            Stat::make('Total de Negociações', $totalMonth)
-                ->description('No mês'),
-            Stat::make('Comissão Vendedor', 'R$ ' . $comissionValue)
-                ->description('No mês'),
+            Stat::make('Total de Negociações', $total),
+            Stat::make('Comissão Vendedor', 'R$ ' . $comissionValue),
             // Stat::make('Valor Médio', 'R$ ' . $avgOS)
             //     ->description('Por negociação'),
         ];
