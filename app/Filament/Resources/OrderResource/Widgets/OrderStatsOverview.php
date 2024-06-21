@@ -41,13 +41,27 @@ class OrderStatsOverview extends BaseWidget
 
         $commission = number_format($commission, 2, ',', '.');
 
+        $paidBuyerParcels = $this->getPageTableQuery()
+            ->join('buyer_parcels', 'buyer_parcels.order_id', '=', 'orders.id')
+            ->where('buyer_parcels.paid', 1)
+            ->sum('buyer_parcels.value');
+
+        $paidSellerParcels = $this->getPageTableQuery()
+            ->join('seller_parcels', 'seller_parcels.order_id', '=', 'orders.id')
+            ->where('seller_parcels.paid', 1)
+            ->sum('seller_parcels.value');
+
+        $totalPaid = $paidBuyerParcels + $paidSellerParcels;
+
+        $totalPaid = number_format($totalPaid, 2, ',', '.');
+
         return [
-            Stat::make('Negociações', $total)
-                ->description('Total'),
             Stat::make('Total Comissão', 'R$ ' . $commission)
                 ->description('Comprador + Vendedor'),
             Stat::make('Valor Médio', 'R$ ' . $avgOS)
                 ->description('Por negociação'),
+            Stat::make('Parcelas Pagas', 'R$ ' . $totalPaid)
+                ->description('Total'),
         ];
     }
 }
