@@ -8,6 +8,8 @@ use App\Filament\Resources\ClientResource\Widgets\ClientRegisterOriginChart;
 use App\Filament\Resources\ClientResource\Widgets\ClientSituationChart;
 use App\Filament\Resources\ClientResource\Widgets\StatsOverview;
 use App\Filament\Resources\ClientResource\Widgets\VersionWidget;
+use App\Filament\Widgets\CommissionPerMonthChart;
+use App\Filament\Widgets\OrdersPerMonthChart;
 use EightyNine\Reports\ReportsPlugin;
 use Filament\Forms\Components\Select;
 use Filament\Http\Middleware\Authenticate;
@@ -29,7 +31,6 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Njxqlus\FilamentProgressbar\FilamentProgressbarPlugin;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -67,6 +68,8 @@ class AdminPanelProvider extends PanelProvider
                 StatsOverview::class,
                 ClientSituationChart::class,
                 ClientRegisterOriginChart::class,
+                OrdersPerMonthChart::class,
+                CommissionPerMonthChart::class
             ])
             ->brandName('Boqueirão Remates')
             ->sidebarCollapsibleOnDesktop()
