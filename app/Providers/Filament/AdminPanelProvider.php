@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\CommissionReport;
 use App\Filament\Resources\ClientResource\Widgets\ClientRegisterOriginChart;
 use App\Filament\Resources\ClientResource\Widgets\ClientSituationChart;
 use App\Filament\Resources\ClientResource\Widgets\StatsOverview;
@@ -60,6 +61,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
+            ])
+            ->resources([
+                // CommissionReport::class,
             ])
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([

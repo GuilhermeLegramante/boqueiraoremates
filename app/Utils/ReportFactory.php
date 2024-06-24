@@ -22,4 +22,15 @@ class ReportFactory
 
         return $pdf->setPaper('a4', $orientation)->stream($fileName);
     }
+
+    public static function download($orientation, $view, $args, $fileName)
+    {
+        $pdf = app('dompdf.wrapper');
+
+        $pdf->loadView($view, $args);
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, $fileName);
+    }
 }

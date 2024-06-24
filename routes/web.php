@@ -26,6 +26,9 @@ Route::redirect('/v2/public/admin/login', '/v2/public/admin/login')->name('login
 Route::middleware(['auth'])->group(function () {
     Route::get('/ficha-cadastral/{clientId}', [ClientController::class, 'getPdf'])->name('client-details-pdf');
     Route::get('/ordem-de-servico/{orderId}', [OrderController::class, 'getPdf'])->name('order-pdf');
+
+    // Route::get('/ordem-de-servico/{orderId}', [OrderController::class, 'getPdf'])->name('order-pdf');
+
 });
 
 // Route::get('/ficha-cadastral/{id}', [ReportController::class, 'clientDetails']);

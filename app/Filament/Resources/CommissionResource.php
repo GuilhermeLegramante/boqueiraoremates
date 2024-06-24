@@ -10,6 +10,8 @@ use App\Filament\Resources\OrderResource\RelationManagers\SellerParcelsRelationM
 use App\Filament\Resources\OrderResource\Widgets\ActiveOrdersChart;
 use App\Filament\Resources\OrderResource\Widgets\OrderStatsOverview;
 use App\Models\Order;
+use App\Utils\ReportFactory;
+use Barryvdh\DomPDF\PDF;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,6 +20,8 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
@@ -27,13 +31,15 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
-class OrderResource extends Resource
+class CommissionResource extends Resource
 {
     protected static ?string $model = Order::class;
 
@@ -41,11 +47,13 @@ class OrderResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'number';
 
-    protected static ?string $modelLabel = 'ordem de serviço';
+    protected static ?string $modelLabel = 'comissão por OS';
 
-    protected static ?string $pluralModelLabel = 'ordens de serviço';
+    protected static ?string $pluralModelLabel = 'comissões por OS';
 
-    protected static ?string $slug = 'ordens-de-servico';
+    protected static ?string $slug = 'comissao-por-os';
+
+    protected static ?string $navigationGroup = 'Relatórios';
 
     public static function form(Form $form): Form
     {
@@ -68,6 +76,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('event.name')
                     ->label('Evento')
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 TextColumn::make('seller.name')
                     ->label('Vendedor')
@@ -81,33 +90,14 @@ class OrderResource extends Resource
                     ->label('Animal')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-                TextColumn::make('multiplier')
-                    ->label('Multiplicador')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
-                TextColumn::make('parcel_value')
-                    ->label('Valor da Parcela')
-                    ->money('BRL')
-                    ->summarize(Sum::make()->label('Total Valor da Parcela')->money('BRL'))
-                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('gross_value')
-                    ->label('Valor Bruto')
+                    ->label('Base de Cálculo')
                     ->money('BRL')
-                    ->summarize(Sum::make()->label('Total Valor Bruto')->money('BRL'))
+                    // ->summarize(Sum::make()->label('Total Valor Bruto')->money('BRL'))
                     ->toggleable(isToggledHiddenByDefault: false),
-                TextColumn::make('net_value')
-                    ->label('Valor Líquido')
-                    ->money('BRL')
-                    ->summarize(Summarizer::make()
-                        ->label('Total Valor Líquido')
-                        ->money('BRL')
-                        ->using(
-                            fn (DatabaseBuilder $query): float =>
-                            $query
-                                ->sum(
-                                    DB::raw('(gross_value * discount_percentage) / 100')
-                                )
-                        ))
+                TextColumn::make('buyer_commission')
+                    ->label('% Comprador')
+                    ->suffix('%')
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('buyer_comission_value')
                     ->label('Comissão Comprador')
@@ -123,6 +113,10 @@ class OrderResource extends Resource
                                 )
                         ))
                     ->toggleable(isToggledHiddenByDefault: false),
+                TextColumn::make('seller_commission')
+                    ->label('% Vendedor')
+                    ->suffix('%')
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('seller_comission_value')
                     ->label('Comissão Vendedor')
                     ->money('BRL')
@@ -137,33 +131,20 @@ class OrderResource extends Resource
                                 )
                         ))
                     ->toggleable(isToggledHiddenByDefault: false),
-                TextColumn::make('buyer_commission')
-                    ->label('% Comprador')
-                    ->suffix('%')
+                TextColumn::make('total_commission')
+                    ->label('Comissão Total')
+                    ->money('BRL')
+                    ->summarize(Summarizer::make()
+                        ->label('Total')
+                        ->money('BRL')
+                        ->using(
+                            fn (DatabaseBuilder $query): float =>
+                            $query
+                                ->sum(
+                                    DB::raw('((gross_value * buyer_commission) / 100) + ((gross_value * seller_commission) / 100)')
+                                )
+                        ))
                     ->toggleable(isToggledHiddenByDefault: false),
-                TextColumn::make('seller_commission')
-                    ->label('% Vendedor')
-                    ->suffix('%')
-                    ->toggleable(isToggledHiddenByDefault: false),
-                TextColumn::make('paymentWay.name')
-                    ->label('Forma de Pagamento')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
-                TextColumn::make('status.name')
-                    ->label('Status')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->alignment(Alignment::Center)
-                    ->badge(),
-                TextColumn::make('created_at')
-                    ->label('Emitida em')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->label(__('fields.updated_at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('number', 'desc')
             ->groups([
@@ -181,21 +162,21 @@ class OrderResource extends Resource
                     ->collapsible(),
             ])
             ->filters([
-                SelectFilter::make('buyer')
-                    ->label('Comprador')
-                    ->searchable()
-                    ->relationship('buyer', 'name'),
-                SelectFilter::make('seller')
-                    ->label('Vendedor')
-                    ->searchable()
-                    ->relationship('seller', 'name'),
-                SelectFilter::make('status')
-                    ->label('Status')
-                    // ->default(1)
-                    ->relationship('status', 'name'),
-                SelectFilter::make('event')
-                    ->label('Evento')
-                    ->relationship('event', 'name'),
+                // SelectFilter::make('buyer')
+                //     ->label('Comprador')
+                //     ->searchable()
+                //     ->relationship('buyer', 'name'),
+                // SelectFilter::make('seller')
+                //     ->label('Vendedor')
+                //     ->searchable()
+                //     ->relationship('seller', 'name'),
+                // SelectFilter::make('status')
+                //     ->label('Status')
+                //     // ->default(1)
+                //     ->relationship('status', 'name'),
+                // SelectFilter::make('event')
+                //     ->label('Evento')
+                //     ->relationship('event', 'name'),
                 Filter::make('base_date')
                     ->form([
                         DatePicker::make('created_from')->label('Data de Negociação (Inicial)'),
@@ -220,53 +201,117 @@ class OrderResource extends Resource
                     ->label('Aplicar Filtro(s)'),
             )
             ->headerActions([
-                ExportAction::make()
-                    ->label('Download')
-                    ->exports([
-                        ExcelExport::make()
-                            ->fromTable()
-                            ->withFilename(date('d-m-Y') . ' - Ordens de Serviço')
-                    ])
+                // Action::make('report')
+                //     ->label('Gerar PDF')
+                //     ->icon('heroicon-o-document-text')
+                //     ->color('info')
+                //     ->url(fn (Collection $orders): string => dd($orders) route('order-pdf', '1'))
+                //     ->openUrlInNewTab(),
+                // ExportAction::make()
+                //     ->label('Download')
+                //     ->exports([
+                //         ExcelExport::make()
+                //             ->fromTable()
+                //             ->withFilename(date('d-m-Y') . ' - Ordens de Serviço')
+                //     ])
             ])
             ->actions([
                 ActionGroup::make([
                     // Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
                     Action::make('report')
                         ->label('Gerar PDF')
                         ->icon('heroicon-o-document-text')
                         ->color('info')
                         ->url(fn (Order $record): string => route('order-pdf', $record->id))
                         ->openUrlInNewTab(),
-                    Tables\Actions\DeleteAction::make(),
                 ]),
             ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    ExportBulkAction::make()->label('Download'),
+                BulkActionGroup::make([
+                    BulkAction::make('exportPdf')
+                        ->label('Exportar em PDF')
+                        // ->action(function (Collection $records, Table $table) {
+                        //     self::exportPdf($records, $table);
+                        // })
+                        ->action(function (Collection $records, Table $table) {
+                            $ids = [];
+
+                            foreach ($records as $key => $value) {
+                                array_push($ids, $value->id);
+                            }
+
+                            $columns = array_keys($table->getColumns());
+
+                            $orders = Order::whereIn('id', $ids)->get();
+
+                            $fileName = 'COMISSAO_POR_OS.pdf';
+
+                            $args = [
+                                'orders' => $orders,
+                                'title' => 'COMISSÃO POR OS',
+                                'columns' => $columns,
+                            ];
+
+                            $pdf = app('dompdf.wrapper');
+
+                            $pdf->loadView('reports.commission-per-os', $args);
+
+                            $pdf->setPaper('a4', 'landscape');
+
+                            $content = $pdf->download()->getOriginalContent();
+
+                            return response()->streamDownload(function () use ($content) {
+                                echo $content;
+                            }, $fileName);
+                        })
                 ]),
             ]);
-        
     }
 
-    public static function getRelations(): array
+
+    private static function exportPdf(Collection $records, Table $table)
     {
-        return [
-            ParcelsRelationManager::class,
-            BuyerParcelsRelationManager::class,
-            SellerParcelsRelationManager::class,
-        ];
-    }
+        $ids = [];
 
+        foreach ($records as $key => $value) {
+            array_push($ids, $value->id);
+        }
+
+        $columns = array_keys($table->getColumns());
+
+        $orders = Order::whereIn('id', $ids)->get();
+
+        $fileName = 'COMISSAO_POR_OS.pdf';
+
+        $args = [
+            'orders' => $orders,
+            'title' => 'COMISSÃO POR OS',
+            'columns' => $columns,
+        ];
+
+        $pdf = app('dompdf.wrapper');
+
+        $pdf->loadView('reports.commission-per-os', $args);
+
+        return response()->streamDownload(function () {
+            echo 'CSV Contents...';
+        }, 'export.csv');
+
+        // return ReportFactory::download('portrait', 'reports.commission-per-os', $args, $fileName);
+
+        // $models = CustomModel::whereIn('id', $records)->get();
+
+        // $pdf = PDF::loadView('pdf.custom_models', ['models' => $models]);
+
+        // return response()->streamDownload(function () use ($pdf) {
+        //     echo $pdf->stream();
+        // }, 'custom_models.pdf');
+    }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListOrders::route('/'),
-            'create' => Pages\CreateOrder::route('/criar'),
-            'edit' => Pages\EditOrder::route('/{record}/editar'),
-            // 'view' => Pages\ViewOrder::route('/{record}'),
+            'index' => Pages\ListCommissions::route('/'),
         ];
     }
 
@@ -278,8 +323,8 @@ class OrderResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            OrderStatsOverview::class,
-            ActiveOrdersChart::class
+            // OrderStatsOverview::class,
+            // ActiveOrdersChart::class
         ];
     }
 }

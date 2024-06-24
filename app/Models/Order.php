@@ -13,7 +13,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $appends = ['gross_parcel', 'net_value', 'buyer_comission_value', 'seller_comission_value'];
+    protected $appends = ['gross_parcel', 'net_value', 'buyer_comission_value', 'seller_comission_value', 'total_commission'];
 
     protected $fillable = [
         'number',
@@ -166,5 +166,10 @@ class Order extends Model
     public function getSellerComissionValueAttribute()
     {
         return (floatval($this->gross_value) * floatval($this->seller_commission)) / 100;
+    }
+
+    public function getTotalCommissionAttribute()
+    {
+        return (floatval($this->buyer_comission_value) + floatval($this->seller_comission_value));
     }
 }
