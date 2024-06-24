@@ -170,6 +170,6 @@ class Order extends Model
 
     public function getTotalCommissionAttribute()
     {
-        return (floatval($this->buyer_comission_value) + floatval($this->seller_comission_value));
+        return ((floatval($this->gross_value) * floatval($this->buyer_commission)) / 100) + ((floatval($this->gross_value) * floatval($this->seller_commission)) / 100);
     }
 }
