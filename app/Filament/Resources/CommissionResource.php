@@ -12,8 +12,10 @@ use App\Filament\Resources\OrderResource\Widgets\OrderStatsOverview;
 use App\Models\Order;
 use App\Utils\ReportFactory;
 use Barryvdh\DomPDF\PDF;
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
@@ -43,7 +45,7 @@ class CommissionResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
     protected static ?string $recordTitleAttribute = 'number';
 
@@ -54,6 +56,8 @@ class CommissionResource extends Resource
     protected static ?string $slug = 'comissao-por-os';
 
     protected static ?string $navigationGroup = 'Relatórios';
+
+    protected static ?int $navigationSort = 5;
 
     public static function form(Form $form): Form
     {
@@ -179,8 +183,14 @@ class CommissionResource extends Resource
                 //     ->relationship('event', 'name'),
                 Filter::make('base_date')
                     ->form([
-                        DatePicker::make('created_from')->label('Data de Negociação (Inicial)'),
-                        DatePicker::make('created_until')->label('Data de Negociação (Final)'),
+                        DatePicker::make('created_from')->label('Data de Negociação (Inicial)')
+                            ->afterStateHydrated(function (DatePicker $component, $state, string $operation) {
+                                $component->state(Carbon::now()->firstOfMonth()->format('Y-m-d'));
+                            }),
+                        DatePicker::make('created_until')->label('Data de Negociação (Final)')
+                            ->afterStateHydrated(function (DatePicker $component, $state, string $operation) {
+                                $component->state(Carbon::now()->lastOfMonth()->format('Y-m-d'));
+                            }),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
@@ -250,6 +260,7 @@ class CommissionResource extends Resource
                                 'orders' => $orders,
                                 'title' => 'COMISSÃO POR OS',
                                 'columns' => $columns,
+                                'filters' => $table->getFilter('base_date')->getState(),
                             ];
 
                             $pdf = app('dompdf.wrapper');

@@ -12,10 +12,12 @@ use App\Filament\Resources\ClientResource\Widgets\VersionWidget;
 use App\Filament\Widgets\CommissionPerMonthChart;
 use App\Filament\Widgets\OrdersPerMonthChart;
 use EightyNine\Reports\ReportsPlugin;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -47,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
             $textColumn
                 ->sortable();
         });
+
 
         return $panel
             ->default()
@@ -89,6 +92,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->resources([
                 config('filament-logger.activity_resource')
+            ])
+            ->navigationGroups([
+                NavigationGroup::make()
+                    ->label('Relatórios'),
+                NavigationGroup::make()
+                    ->label('Controle de Acesso'),
+                NavigationGroup::make()
+                    ->label('Configurações'),
+                NavigationGroup::make()
+                    ->label('Parâmetros')
+                    ->collapsed(),
             ])
             ->middleware([
                 EncryptCookies::class,
