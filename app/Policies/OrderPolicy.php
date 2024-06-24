@@ -105,4 +105,9 @@ class OrderPolicy
     {
         return $user->can('{{ Reorder }}');
     }
+
+    public function report(User $user, Order $order): bool
+    {
+        return $user->can('report');
+    }
 }

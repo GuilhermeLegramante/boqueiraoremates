@@ -75,5 +75,6 @@ return [
         'reorder' => 'Reordenar',
         'restore_any' => 'Restaurar todos',
         'replicate' => 'Replicar',
+        'report' => 'Relatório',
     ],
 ];

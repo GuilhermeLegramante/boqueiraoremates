@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Storage;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
 class CommissionResource extends Resource
 {
@@ -62,6 +63,19 @@ class CommissionResource extends Resource
 
     protected static ?int $navigationSort = 5;
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        $canShow = false;
+
+        foreach (auth()->user()->roles as $role) {
+            if ($role->name == 'super_admin') {
+                $canShow = true;
+            }
+        }
+        
+        return $canShow;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -70,6 +84,18 @@ class CommissionResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $canAccess = false;
+
+        foreach (auth()->user()->roles as $role) {
+            if ($role->name == 'super_admin') {
+                $canAccess = true;
+            }
+        }
+
+        if (!$canAccess) {
+            abort(403);
+        }
+
         return $table
             ->columns([
                 TextColumn::make('number')
