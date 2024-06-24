@@ -185,10 +185,10 @@
                             R$ {{ number_format($order->gross_value, 2, ',', '.') }}
                         </td>
                         <td class="text-center">
-                            {{ $order->buyer_commission }}%
+                            {{ $order->buyer_commission }}
                         </td>
                         <td class="text-center">
-                            {{ $order->seller_commission }}%
+                            {{ $order->seller_commission }}
                         </td>
                         <td class="text-right">
                             R$ {{ number_format(($order->gross_value * $order->buyer_commission) / 100, 2, ',', '.') }}
