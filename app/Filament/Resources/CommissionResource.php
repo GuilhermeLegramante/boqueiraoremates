@@ -12,6 +12,7 @@ use App\Filament\Resources\OrderResource\Widgets\OrderStatsOverview;
 use App\Models\Order;
 use App\Utils\ReportFactory;
 use Barryvdh\DomPDF\PDF;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
@@ -43,6 +44,8 @@ use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class CommissionResource extends Resource
 {
+    use HasPageShield;
+    
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
