@@ -44,8 +44,8 @@ use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class CommissionResource extends Resource
 {
-    use HasPageShield;
-    
+    // use HasPageShield;
+
     protected static ?string $model = Order::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
