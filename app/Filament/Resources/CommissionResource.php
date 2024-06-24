@@ -148,7 +148,7 @@ class CommissionResource extends Resource
                             fn (DatabaseBuilder $query): float =>
                             $query
                                 ->sum(
-                                    DB::raw('((gross_value * buyer_commission) / 100) + ((gross_value * seller_commission) / 100)')
+                                    DB::raw('((gross_value * buyer_commission) / 100)')
                                 )
                         ))
                     ->toggleable(isToggledHiddenByDefault: false),
