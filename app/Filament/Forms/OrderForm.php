@@ -279,7 +279,12 @@ class OrderForm
                     ->suffix('%')
                     ->numeric(),
                 TextInput::make('buyer_comission_value')
-                    ->readOnly()
+                    // ->readOnly()
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $buyerCommission = (floatval($get('buyer_comission_value')) * 100) / floatval($get('gross_value'));
+                        $set('buyer_commission', $buyerCommission);
+                    })
+                    ->debounce(1000)
                     ->live()
                     ->columnSpan(3)
                     ->numeric()
@@ -320,8 +325,12 @@ class OrderForm
                     ->suffix('%')
                     ->numeric(),
                 TextInput::make('seller_comission_value')
-                    ->readOnly()
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $sellerCommission = (floatval($get('seller_comission_value')) * 100) / floatval($get('gross_value'));
+                        $set('seller_commission', $sellerCommission);
+                    })
                     ->live()
+                    ->debounce(1000)
                     ->columnSpan(3)
                     ->numeric()
                     ->label('Valor da Comissão'),
