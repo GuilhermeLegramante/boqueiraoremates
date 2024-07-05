@@ -83,8 +83,7 @@ class OrderResource extends Resource
                     ->searchable(),
                 TextColumn::make('multiplier')
                     ->label('Multiplicador')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('parcel_value')
                     ->label('Valor da Parcela')
                     ->money('BRL')
@@ -147,8 +146,7 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('paymentWay.name')
                     ->label('Forma de Pagamento')
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 TextColumn::make('status.name')
                     ->label('Status')
                     ->toggleable(isToggledHiddenByDefault: false)
@@ -278,7 +276,7 @@ class OrderResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            OrderStatsOverview::class,
+            // OrderStatsOverview::class,
             ActiveOrdersChart::class
         ];
     }

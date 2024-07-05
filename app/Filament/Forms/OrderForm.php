@@ -138,41 +138,17 @@ class OrderForm
                 TextInput::make('batch')
                     ->label(__('fields.batch'))
                     ->numeric(),
-                Select::make('payment_way_id')
-                    ->label('Forma de Pagamento')
-                    // ->disabledOn('edit')
-                    ->preload()
-                    ->searchable()
-                    ->live()
-                    ->relationship(name: 'paymentWay', titleAttribute: 'name')
-                    ->createOptionForm(PaymentWayForm::form())
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        $set('parcel_value', null);
-                        $set('first_parcel_value', null);
-                        // $set('multiplier', ParcelsVerification::getMultiplier($get('payment_way_id')));
-                    })
-                    ->columnSpan(2),
-                TextInput::make('parcel_value')
-                    // ->disabledOn('edit')
+                TextInput::make('original_parcel')
                     ->prefix('R$')
                     ->numeric()
                     ->live()
                     ->debounce(1000)
                     ->columnSpan(2)
-                    ->label(__('fields.parcel_value'))
+                    ->label('Parcela de Venda')
                     ->afterStateUpdated(function (Get $get, Set $set) {
-                        $firstParcelValue = ParcelsVerification::getFirstParcelValue($get('payment_way_id'), $get('parcel_value'));
-                        $set('first_parcel_value', $firstParcelValue);
-
-                        $grossValue = floatval($get('parcel_value')) * floatval($get('multiplier'));
+                        $grossValue = floatval($get('original_parcel')) * floatval($get('multiplier'));
                         $set('gross_value', $grossValue);
                     }),
-                TextInput::make('first_parcel_value')
-                    // ->disabledOn('edit')
-                    ->prefix('R$')
-                    ->numeric()
-                    ->columnSpan(2)
-                    ->label('Valor da Entrada'),
                 TextInput::make('multiplier')
                     // ->disabledOn('edit')
                     ->label(__('fields.multiplier'))
@@ -198,10 +174,23 @@ class OrderForm
                     ->prefix('R$')
                     ->numeric()
                     ->label(__('fields.gross_value')),
+                Select::make('payment_way_id')
+                    ->label('Forma de Pagamento')
+                    // ->disabledOn('edit')
+                    ->preload()
+                    ->searchable()
+                    ->live()
+                    ->relationship(name: 'paymentWay', titleAttribute: 'name')
+                    ->createOptionForm(PaymentWayForm::form())
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $set('parcel_value', null);
+                        $set('first_parcel_value', null);
+                        // $set('multiplier', ParcelsVerification::getMultiplier($get('payment_way_id')));
+                    })
+                    ->columnSpan(2),
                 TextInput::make('discount_percentage')
                     ->label('Desconto')
                     // ->disabledOn('edit')
-                    ->columnSpan(2)
                     ->live()
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -220,6 +209,40 @@ class OrderForm
                     })
                     ->suffix('%')
                     ->numeric(),
+                TextInput::make('net_value')
+                    // ->readOnly()
+                    ->live()
+                    ->prefix('R$')
+                    ->columnSpan(3)
+                    ->numeric()
+                    ->debounce(600)
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $percentage = 100 - (floatval($get('net_value')) * 100) / floatval($get('gross_value'));
+                        $set('discount_percentage', number_format((float)$percentage, 2, '.', ''));
+                    })
+                    ->label(__('fields.net_value')),
+                TextInput::make('parcel_value')
+                    // ->disabledOn('edit')
+                    ->prefix('R$')
+                    ->numeric()
+                    ->live()
+                    ->debounce(1000)
+                    ->columnSpan(2)
+                    ->label('Parcela de Compra')
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        $firstParcelValue = ParcelsVerification::getFirstParcelValue($get('payment_way_id'), $get('parcel_value'));
+                        $set('first_parcel_value', $firstParcelValue);
+
+                        // $grossValue = floatval($get('parcel_value')) * floatval($get('multiplier'));
+                        // $set('gross_value', $grossValue);
+                    }),
+                TextInput::make('first_parcel_value')
+                    // ->disabledOn('edit')
+                    ->prefix('R$')
+                    ->numeric()
+                    ->columnSpan(2)
+                    ->label('Valor da Entrada'),
+
                 // TextInput::make('due_day')
                 //     ->label('Dia do Venc.')
                 //     ->afterStateHydrated(function (Get $get, Set $set) {
@@ -234,24 +257,14 @@ class OrderForm
                 //     ->columnSpan(1)
                 //     ->numeric(),
                 DatePicker::make('first_due_date')
+                    ->columnSpan(2)
                     ->label('1° Vencimento')
                     ->afterStateHydrated(function (Get $get, Set $set) {
                         if ($get('base_date') != null) {
                             $set('first_due_date', $get('base_date'));
                         }
                     }),
-                TextInput::make('net_value')
-                    // ->readOnly()
-                    ->live()
-                    ->prefix('R$')
-                    ->columnSpan(5)
-                    ->numeric()
-                    ->debounce(600)
-                    ->afterStateUpdated(function (Get $get, Set $set) {
-                        $percentage = 100 - (floatval($get('net_value')) * 100) / floatval($get('gross_value'));
-                        $set('discount_percentage', number_format((float)$percentage, 2, '.', ''));
-                    })
-                    ->label(__('fields.net_value')),
+
                 Textarea::make('business_note')
                     ->label('Observação')
                     ->columnSpanFull(),

@@ -27,7 +27,7 @@ class ListOrders extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            OrderStatsOverview::class,
+            // OrderStatsOverview::class,
         ];
     }
 
