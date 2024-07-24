@@ -103,7 +103,7 @@ class ClientForm
                         ->schema([
                             Cep::make('postal_code')
                                 ->label(__('fields.cep'))
-                                ->live(onBlur: true)
+                                // ->live(onBlur: true)
                                 ->viaCep(
                                     mode: 'suffix',
                                     errorMessage: 'CEP inválido.',
