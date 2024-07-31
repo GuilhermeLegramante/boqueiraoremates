@@ -48,6 +48,12 @@ trait WithParcels
         $year = intval($baseDate[0]);
         $day = intval($baseDate[2]);
 
+        if (($day == '30') && ($month == 2)) {
+            $day = '28';
+        } else {
+            $day = intval($baseDate[2]);
+        }
+
         $this->sum = doubleval($data['first_parcel_value']);
         $this->parcels = [];
         $this->values = [];
@@ -224,6 +230,12 @@ trait WithParcels
 
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
+            if (($day == '30') && ($month == 2)) {
+                $day = '28';
+            } else {
+                $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
+            }
+
             $parcel['ord'] = $i + 1 . '/' . $data['buyer_commission_installments_number'];
             $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
 
@@ -271,6 +283,12 @@ trait WithParcels
             $year = $year == 0 ? now()->format('Y') : $year;
 
             $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+
+            if (($day == '30') && ($month == 2)) {
+                $day = '28';
+            } else {
+                $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
+            }
 
             $parcel['ord'] = $i + 1 . '/' . $data['seller_commission_installments_number'];
             $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
