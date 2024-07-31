@@ -79,7 +79,6 @@ trait WithParcels
                 $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $day;
                 $this->parcelsDates[$i] = $parcel['date'];
 
-
                 $parcelValue = floatval($data['parcel_value']) * intval($parcelsParts[$i]);
                 $this->values[$i] = number_format($parcelValue, 2);
 
@@ -99,12 +98,8 @@ trait WithParcels
                 }
             }
 
-            // dd($day);
-
             $this->values = array_slice($this->values, -1, 1);
         }
-
-       
 
         for ($i = intval($parcelsParts[0]); $i < floatval($this->parcelsQuantity); $i++) {
             // $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
@@ -114,12 +109,6 @@ trait WithParcels
             $parcel['ord'] = $i + 1 . '/' . $this->parcelsQuantity;
             $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
             $this->parcelsDates[$i] = $parcel['date'];
-
-            if (($day == 30) && ($month == 2)) {
-                $day = 28;
-            } else {
-                $day = intval($baseDate[2]);
-            }
 
             array_push($this->values, number_format($data['parcel_value'], 2));
 
@@ -175,7 +164,13 @@ trait WithParcels
         foreach ($this->parcelsDates as $parcelDate) {
             $date = explode('-', $parcelDate);
 
-            $newDate = $date[0] . '-' . $month . '-' . str_pad($date[2], 2, '0', STR_PAD_LEFT);
+            $day = str_pad($date[2], 2, '0', STR_PAD_LEFT);
+
+            if ($month == '2') {
+                $day = '28';
+            }
+
+            $newDate = $date[0] . '-' . $month . '-' . $day;
 
             if (intval($month) <= 11) {
                 $month++;
