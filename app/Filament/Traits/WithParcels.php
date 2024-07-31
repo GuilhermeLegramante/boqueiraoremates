@@ -48,12 +48,6 @@ trait WithParcels
         $year = intval($baseDate[0]);
         $day = intval($baseDate[2]);
 
-        if (($day == '30') && ($month == 2)) {
-            $day = '28';
-        } else {
-            $day = intval($baseDate[2]);
-        }
-
         $this->sum = doubleval($data['first_parcel_value']);
         $this->parcels = [];
         $this->values = [];
@@ -69,8 +63,7 @@ trait WithParcels
         $parcels = 0;
 
         $this->parcelsQuantity = ParcelsVerification::getMultiplier($data['payment_way_id']);
-
-
+        
         // Montando as primeiras parcelas da fórmula
         if (count($parcelsParts) > 1) {
             $parcelCounter += intval($parcelsParts[0]);
@@ -81,6 +74,12 @@ trait WithParcels
                 // $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
                 $parcels = intval($parcelsParts[$i]);
+
+                if (($day == 30) && ($month == 2)) {
+                    $day = 28;
+                } else {
+                    $day = intval($baseDate[2]);
+                }
 
                 $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $this->parcelsQuantity; // Ex: 1-2/50 , 1-3/50, etc.
                 $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $day;
@@ -114,6 +113,12 @@ trait WithParcels
             // $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
             $year = $year == 0 ? now()->format('Y') : $year;
             // $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+
+            if (($day == 30) && ($month == 2)) {
+                $day = 28;
+            } else {
+                $day = intval($baseDate[2]);
+            }
 
             $parcel['ord'] = $i + 1 . '/' . $this->parcelsQuantity;
             $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
