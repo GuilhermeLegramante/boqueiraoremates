@@ -160,6 +160,7 @@ trait WithParcels
         $firstDate = explode('-', $this->parcelsDates[0]);
 
         $month = $firstDate[1];
+        $year = $firstDate[0];
 
         foreach ($this->parcelsDates as $parcelDate) {
             $date = explode('-', $parcelDate);
@@ -170,7 +171,7 @@ trait WithParcels
                 $day = '28';
             }
 
-            $newDate = $date[0] . '-' . $month . '-' . $day;
+            $newDate = $year . '-' . $month . '-' . $day;
 
             if (intval($month) <= 11) {
                 $month++;
@@ -178,6 +179,7 @@ trait WithParcels
             } else {
                 $month = 1;
                 $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+                $year++;
             }
 
             array_push($newParcelsDates, $newDate);
