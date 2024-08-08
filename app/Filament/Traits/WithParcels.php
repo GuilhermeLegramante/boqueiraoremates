@@ -167,7 +167,7 @@ trait WithParcels
 
             $day = str_pad($date[2], 2, '0', STR_PAD_LEFT);
 
-            if ($month == '2') {
+            if (($day == '30') && ($month == 2)) {
                 $day = '28';
             }
 
