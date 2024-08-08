@@ -258,6 +258,7 @@ class OrderForm
                 //     ->numeric(),
                 DatePicker::make('first_due_date')
                     ->columnSpan(2)
+                    ->live()
                     ->label('1° Vencimento')
                     ->afterStateHydrated(function (Get $get, Set $set) {
                         if ($get('base_date') != null) {
