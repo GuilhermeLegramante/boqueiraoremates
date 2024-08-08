@@ -167,7 +167,7 @@ trait WithParcels
 
             $day = str_pad($date[2], 2, '0', STR_PAD_LEFT);
 
-            if (($day == '30') && ($month == 2)) {
+            if ((($day == '30') || ($day == '29') || ($day == '31')) && ($month == 2)) {
                 $day = '28';
             }
 
@@ -246,7 +246,7 @@ trait WithParcels
                 $year++;
             }
 
-            if (($day == '30') && ($month == 2)) {
+            if ((($day == '30') || ($day == '29') || ($day == '31')) && ($month == 2)) {
                 $day = '28';
             } else {
                 $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
@@ -300,7 +300,7 @@ trait WithParcels
                 $year++;
             }
 
-            if (($day == '30') && ($month == 2)) {
+            if ((($day == '30') || ($day == '29') || ($day == '31')) && ($month == 2)) {
                 $day = '28';
             } else {
                 $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
