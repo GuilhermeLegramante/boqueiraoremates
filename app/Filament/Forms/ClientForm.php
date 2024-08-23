@@ -109,8 +109,8 @@ class ClientForm
                                     errorMessage: 'CEP inválido.',
                                     setFields: [
                                         'street' => 'logradouro',
-                                        'number' => 'numero',
-                                        'complement' => 'complemento',
+                                        // 'number' => 'numero',
+                                        // 'complement' => 'complemento',
                                         'district' => 'bairro',
                                         'city' => 'localidade',
                                         'state' => 'uf',
