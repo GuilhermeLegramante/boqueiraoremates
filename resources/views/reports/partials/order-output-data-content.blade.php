@@ -51,7 +51,7 @@
         </tr>
         <tr>
             <td style="width: 20%;" class="table-0pky">
-                <strong>Liberado para embarque:</strong> {{ $order->able_to_loading ? 'OK' : ' ' }}
+                <strong>Liberado para embarque:</strong> {{ $order->able_to_loading ? 'SIM' : ' ' }}
             </td>
             <td style="width: 20%;" class="table-0pky">
                 <strong>Data da liberação:</strong>

@@ -87,9 +87,9 @@
         </tr>
         <tr>
             <td style="width: 20%;" class="table-0pky">
-                <strong>Liberado para exame:</strong> {{ $order->able_to_exam ? 'OK' : ' ' }}
+                <strong>Liberado para exame:</strong> {{ $order->able_to_exam ? 'SIM' : ' ' }}
             </td>
-            <td style="width: 20%;" class="table-0pky">
+            <td colspan="5" class="table-0pky">
                 <strong>Data da liberação:</strong>
                 @isset($order->able_to_exam_date)
                     {{ date('d/m/Y', strtotime($order->able_to_exam_date)) }}
