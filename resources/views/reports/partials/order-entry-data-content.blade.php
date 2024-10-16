@@ -86,6 +86,17 @@
             </td>
         </tr>
         <tr>
+            <td style="width: 20%;" class="table-0pky">
+                <strong>Liberado para exame:</strong> {{ $order->able_to_exam ? 'OK' : ' ' }}
+            </td>
+            <td style="width: 20%;" class="table-0pky">
+                <strong>Data da liberação:</strong>
+                @isset($order->able_to_exam_date)
+                    {{ date('d/m/Y', strtotime($order->able_to_exam_date)) }}
+                @endisset
+            </td>
+        </tr>
+        <tr>
             <td class="table-fymr">Obs</td>
             <td class="table-0pky" colspan="5">
                 {{ $order->entry_documentation_note }}
