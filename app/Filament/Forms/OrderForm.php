@@ -20,6 +20,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 
 class OrderForm
@@ -31,7 +32,7 @@ class OrderForm
         return [
             Section::make('Dados da Ordem de Serviço')
                 ->description(
-                    fn (string $operation): string => $operation === 'create' || $operation === 'edit' ? 'Informe os campos solicitados' : ''
+                    fn(string $operation): string => $operation === 'create' || $operation === 'edit' ? 'Informe os campos solicitados' : ''
                 )
                 ->collapsible()
                 ->schema([
@@ -161,7 +162,7 @@ class OrderForm
                         $set('gross_value', $grossValue);
                     })
                     ->rules([
-                        fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+                        fn(Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
                             // if ($get('multiplier') != null && !ParcelsVerification::checkIfPaymentWaySumIsInAccordingWithMultiplier($get('payment_way_id'), $get('multiplier'))) {
                             //     $fail('O multiplicador não está de acordo com a forma de pagamento.');
                             // }
@@ -273,7 +274,7 @@ class OrderForm
                     ->label('')
                     ->live()
                     ->columnSpanFull()
-                    ->visible(fn (Get $get, string $operation): bool => ($get('gross_value') != null)),
+                    ->visible(fn(Get $get, string $operation): bool => ($get('gross_value') != null)),
             ])->columns(6);
     }
 
@@ -319,7 +320,7 @@ class OrderForm
                     ->label('')
                     ->live()
                     ->columnSpanFull()
-                    ->visible(fn (Get $get, string $operation): bool => ($get('buyer_commission_installments_number') != null)),
+                    ->visible(fn(Get $get, string $operation): bool => ($get('buyer_commission_installments_number') != null)),
             ])->columns(6);
     }
 
@@ -364,7 +365,7 @@ class OrderForm
                     ->label('')
                     ->live()
                     ->columnSpanFull()
-                    ->visible(fn (Get $get, string $operation): bool => ($get('seller_commission_installments_number') != null)),
+                    ->visible(fn(Get $get, string $operation): bool => ($get('seller_commission_installments_number') != null)),
             ])->columns(6);
     }
 
@@ -412,6 +413,11 @@ class OrderForm
                     ->label('Assinatura do Vendedor'),
                 DatePicker::make('entry_witness_signature_date')
                     ->label('Assinatura da Testemunha'),
+                Toggle::make('able_to_exam')
+                    ->inline(false)
+                    ->label('Liberado para exame'),
+                DatePicker::make('able_to_exam_date')
+                    ->label('Data da liberação para exame'),
                 Textarea::make('entry_documentation_note')
                     ->columnSpanFull()
                     ->label('Observação')
@@ -446,7 +452,7 @@ class OrderForm
                         'PIX' => 'Pix'
                     ]),
                 DatePicker::make('output_sending_documentation_date')
-                    ->columnSpan(2)
+                    ->columnSpan(3)
                     ->label('Data de envio do processo físico'),
                 Select::make('output_sending_docs_method_id')
                     ->label('Forma de Envio da Documentação')
@@ -454,7 +460,14 @@ class OrderForm
                     ->searchable()
                     ->relationship(name: 'outputSendingDocsMethod', titleAttribute: 'name')
                     ->createOptionForm(SendingDocsMethodForm::form())
-                    ->columnSpan(2),
+                    ->columnSpan(3),
+                Toggle::make('able_to_loading')
+                    ->columnSpan(3)
+                    ->inline(false)
+                    ->label('Liberado para embarque'),
+                DatePicker::make('able_to_loading_date')
+                    ->columnSpan(3)
+                    ->label('Data da liberação para embarque'),
                 Textarea::make('output_documentation_note')
                     ->columnSpanFull()
                     ->label('Observação')

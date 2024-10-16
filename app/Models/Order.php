@@ -65,7 +65,11 @@ class Order extends Model
         'output_first_parcel_comission',
         'closing_date',
         'output_sending_docs_method_id',
-        'entry_sending_docs_method_id'
+        'entry_sending_docs_method_id',
+        'able_to_exam',
+        'able_to_exam_date',
+        'able_to_loading',
+        'able_to_loading_date',
     ];
 
     protected $casts = [
@@ -84,7 +88,8 @@ class Order extends Model
         'output_contracts' => 'boolean',
         'output_promissory' => 'boolean',
         'output_register_copy' => 'boolean',
-
+        'able_to_exam' => 'boolean',
+        'able_to_loading' => 'boolean',
     ];
 
     public function event(): BelongsTo
