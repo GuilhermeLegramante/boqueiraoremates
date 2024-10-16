@@ -10,3 +10,6 @@
 
 - 2.1.0
     - Persistência das parcelas da ordem de serviço
+- 2.2.0
+    - Adicionando campos de liberação de exame e embarque na OS
+    
