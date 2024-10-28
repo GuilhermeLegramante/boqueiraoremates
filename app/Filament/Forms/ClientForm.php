@@ -59,7 +59,8 @@ class ClientForm
                                 ->label(__('fields.occupation')),
                             TextInput::make('note_occupation')
                                 ->label(__('fields.note_occupation')),
-                            Money::make('income')
+                            TextInput::make('income')
+                                ->numeric()
                                 ->label(__('fields.income')),
                         ])
                         ->columns(2),
