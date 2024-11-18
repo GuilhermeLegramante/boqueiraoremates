@@ -69,15 +69,18 @@ trait WithParcels
             $parcelCounter += intval($parcelsParts[0]);
 
             for ($i = 0; $i < count($parcelsParts); $i++) {
-                // $day = str_pad(floatval($data['due_day']), 2, '0', STR_PAD_LEFT);
                 $year = $year == 0 ? now()->format('Y') : $year;
-                // $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
 
                 $parcels = intval($parcelsParts[$i]);
 
                 $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $this->parcelsQuantity; // Ex: 1-2/50 , 1-3/50, etc.
                 $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . $day;
                 $this->parcelsDates[$i] = $parcel['date'];
+
+                if ($i > 1) { // Para casos como 2+2+2+44, estava ficando 3-4/50, 4-5/50 o correto é 5-6/50
+                    $parcelCounter++;
+                    $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $this->parcelsQuantity; // Ex: 1-2/50 , 1-3/50, etc.
+                }
 
                 $parcelValue = floatval($data['parcel_value']) * intval($parcelsParts[$i]);
                 $this->values[$i] = number_format($parcelValue, 2);
@@ -98,7 +101,15 @@ trait WithParcels
                 }
             }
 
-            $this->values = array_slice($this->values, -1, 1);
+            // Para 2+2+8, deixa só 1 posição, para 2+2+2+44 deixa 2
+            $parcelIndexToPivot = count($parcelsParts) - 1;
+
+            // Garante que só extraímos o número correto de elementos
+            if ($parcelIndexToPivot > 0) {
+                $this->values = array_slice($this->values, -$parcelIndexToPivot);
+            } else {
+                $this->values = []; // Ou outra lógica para tratar o caso de índice 0 ou negativo
+            }
         }
 
         for ($i = intval($parcelsParts[0]); $i < floatval($this->parcelsQuantity); $i++) {
@@ -126,13 +137,14 @@ trait WithParcels
             array_push($this->parcels, $parcel);
         }
 
-
         /*
          Remover parcelas "do meio" em caso de parcelamento múltiplo ex. 2+2+8, 
          */
-        array_splice($this->parcels, 1, $parcelsRemains);
-        array_splice($this->values, 1, $parcelsRemains);
-        array_splice($this->parcelsDates, 1, $parcelsRemains);
+        $removedPosition = count($parcelsParts) - 1; // Posição a ser removida ex. 2+2+9 vai remover a posição 1, se for 2+2+2+44 a pos 2
+
+        array_splice($this->parcels, $removedPosition, $parcelsRemains);
+        array_splice($this->values, $removedPosition, $parcelsRemains);
+        array_splice($this->parcelsDates, $removedPosition, $parcelsRemains);
 
         // Inclui a "entrada" nas parcelas
         if (intval($parcelsParts[0]) > 0) {
