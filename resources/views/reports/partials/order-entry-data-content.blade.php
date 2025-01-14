@@ -39,6 +39,15 @@
                 @if ($order->entry_first_parcel_business == 'pix')
                     PIX
                 @endif
+                @if ($order->entry_first_parcel_business == 'dinheiro')
+                    DINHEIRO
+                @endif
+                @if ($order->entry_first_parcel_business == 'cheque')
+                    CHEQUE
+                @endif
+                @if ($order->entry_first_parcel_business == 'cartao')
+                    CARTÃO
+                @endif
             </td>
             <td class="table-0pky" style="width: 20%;">
                 <strong>Pcla 01 da Comissão:</strong>
@@ -53,6 +62,15 @@
                 @endif
                 @if ($order->entry_first_parcel_comission == 'pix')
                     PIX
+                @endif
+                @if ($order->entry_first_parcel_comission == 'dinheiro')
+                    DINHEIRO
+                @endif
+                @if ($order->entry_first_parcel_comission == 'cheque')
+                    CHEQUE
+                @endif
+                @if ($order->entry_first_parcel_comission == 'cartao')
+                    CARTÃO
                 @endif
             </td>
         </tr>

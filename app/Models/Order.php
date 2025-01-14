@@ -63,6 +63,7 @@ class Order extends Model
         'output_seller_sending_documentation_way',
         'output_documentation_note',
         'output_first_parcel_comission',
+        'event_map',
         'closing_date',
         'output_sending_docs_method_id',
         'entry_sending_docs_method_id',

@@ -12,4 +12,7 @@
     - Persistência das parcelas da ordem de serviço
 - 2.2.0
     - Adicionando campos de liberação de exame e embarque na OS
+- 2.3.0
+    - Adicionando opções dinheiro, cheque, cartão nas opções da Parcela 01 do negócio e da comissão na "Documentação - envio para assinaturas" da OS
+    - Adicionando Mapa do Remate como documento no checklist da documentação de saída da OS
     

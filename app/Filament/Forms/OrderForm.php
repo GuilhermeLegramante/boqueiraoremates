@@ -388,7 +388,10 @@ class OrderForm
                         'ticket' => 'Boleto',
                         'deposit' => 'Depósito',
                         'transfer' => 'Transferência',
-                        'pix' => 'Pix'
+                        'pix' => 'Pix',
+                        'dinheiro' => 'Dinheiro',
+                        'cheque' => 'Cheque',
+                        'cartao' => 'Cartão',
                     ]),
                 Radio::make('entry_first_parcel_comission')
                     ->label('Parcela 01 da Comissão')
@@ -397,7 +400,10 @@ class OrderForm
                         'ticket' => 'Boleto',
                         'deposit' => 'Depósito',
                         'transfer' => 'Transferência',
-                        'pix' => 'Pix'
+                        'pix' => 'Pix',
+                        'dinheiro' => 'Dinheiro',
+                        'cheque' => 'Cheque',
+                        'cartao' => 'Cartão',
                     ]),
                 DatePicker::make('entry_buyer_sending_documentation_date')
                     ->label('Data de envio da Documentação'),
@@ -439,6 +445,9 @@ class OrderForm
                 Checkbox::make('output_register_copy')
                     ->columnSpan(2)
                     ->label('Cópia do Regulamento'),
+                Checkbox::make('event_map')
+                    ->columnSpan(2)
+                    ->label('Mapa do Remate'),
                 DatePicker::make('output_first_parcel_date')
                     ->columnSpan(2)
                     ->label('Data da Parcela 01'),
@@ -449,7 +458,10 @@ class OrderForm
                         'BOLETO' => 'Boleto',
                         'DEPÓSITO' => 'Depósito',
                         'TRANSFERÊNCIA' => 'Transferência',
-                        'PIX' => 'Pix'
+                        'PIX' => 'Pix',
+                        'DINHEIRO' => 'Dinheiro',
+                        'CHEQUE' => 'Cheque',
+                        'CARTÃO' => 'Cartão',
                     ]),
                 DatePicker::make('output_sending_documentation_date')
                     ->columnSpan(3)
