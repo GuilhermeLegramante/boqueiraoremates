@@ -445,9 +445,6 @@ class OrderForm
                 Checkbox::make('output_register_copy')
                     ->columnSpan(2)
                     ->label('Cópia do Regulamento'),
-                Checkbox::make('event_map')
-                    ->columnSpan(2)
-                    ->label('Mapa do Remate'),
                 DatePicker::make('output_first_parcel_date')
                     ->columnSpan(2)
                     ->label('Data da Parcela 01'),
