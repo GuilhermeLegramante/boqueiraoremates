@@ -462,6 +462,7 @@ class OrderForm
                         'DINHEIRO' => 'Dinheiro',
                         'CHEQUE' => 'Cheque',
                         'CARTÃO' => 'Cartão',
+                        'MAPA DO REMATE' => 'Mapa do Remate',
                     ]),
                 DatePicker::make('output_sending_documentation_date')
                     ->columnSpan(3)
