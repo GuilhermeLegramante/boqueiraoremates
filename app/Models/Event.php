@@ -23,4 +23,9 @@ class Event extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function animals()
+    {
+        return $this->belongsToMany(Animal::class, 'animal_event');
+    }
+
 }

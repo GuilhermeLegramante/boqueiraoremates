@@ -15,4 +15,6 @@
 - 2.3.0
     - Adicionando opções dinheiro, cheque, cartão nas opções da Parcela 01 do negócio e da comissão na "Documentação - envio para assinaturas" da OS
     - Adicionando Mapa do Remate como documento no checklist da documentação de saída da OS
+- 2.4.0
+    - Vinculando animais ao evento
     

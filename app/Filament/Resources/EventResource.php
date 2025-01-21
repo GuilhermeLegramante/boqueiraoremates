@@ -5,6 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Forms\EventForm;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Filament\Resources\EventResource\RelationManagers\AnimalsRelationManager;
+use App\Filament\Resources\OrderResource\Pages\CreateEvent;
+use App\Filament\Resources\OrderResource\Pages\EditEvent;
+use App\Filament\Resources\OrderResource\Pages\ListEvents;
 use App\Models\Event;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -93,10 +97,20 @@ class EventResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            // AnimalsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageEvents::route('/'),
+            'index' => ListEvents::route('/'),
+            'create' => CreateEvent::route('/criar'),
+            'edit' => EditEvent::route('/{record}/editar'),
+            // 'index' => Pages\ManageEvents::route('/'),
         ];
     }
 

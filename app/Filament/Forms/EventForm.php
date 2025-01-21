@@ -3,6 +3,7 @@
 namespace App\Filament\Forms;
 
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
@@ -23,6 +24,13 @@ class EventForm
             TextInput::make('multiplier')
                 ->label(__('fields.multiplier'))
                 ->numeric(),
+            Select::make('animals')
+                ->label('Animais')
+                ->multiple()
+                ->relationship('animals', 'name')
+                ->preload()
+                ->columnSpanFull()
+                ->searchable(),
             Textarea::make('note')
                 ->label(__('fields.note'))
                 ->columnSpanFull()

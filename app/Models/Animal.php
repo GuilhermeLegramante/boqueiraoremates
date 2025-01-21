@@ -54,4 +54,9 @@ class Animal extends Model
     {
         return $this->hasMany(Order::class);
     }
+
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'animal_event');
+    }
 }
