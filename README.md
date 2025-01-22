@@ -17,4 +17,4 @@
     - Adicionando Mapa do Remate como documento no checklist da documentação de saída da OS
 - 2.4.0
     - Vinculando animais ao evento
-    
+    - Detalhes dos animais no evento
