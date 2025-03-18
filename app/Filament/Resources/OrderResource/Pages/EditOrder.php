@@ -9,10 +9,13 @@ use App\Models\Event;
 use App\Models\Order;
 use App\Models\Parcel;
 use App\Models\SellerParcel;
+use App\Models\User;
+use App\Utils\ReportFactory;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\DB;
 
 class EditOrder extends EditRecord
 {
@@ -27,6 +30,11 @@ class EditOrder extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('generatePdf')
+                ->label('Gerar PDF')
+                ->icon('heroicon-o-document-text')
+                ->url(fn() => route('order-pdf', ['orderId' => $this->record->id]))
+                ->openUrlInNewTab(),
             Actions\DeleteAction::make(),
         ];
     }
