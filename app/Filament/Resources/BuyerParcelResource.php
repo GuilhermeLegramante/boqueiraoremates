@@ -74,7 +74,7 @@ class BuyerParcelResource extends Resource
         return [
             'index' => Pages\ListBuyerParcels::route('/'),
             'create' => Pages\CreateBuyerParcel::route('/criar'),
-            'edit' => Pages\EditBuyerParcel::route('/{record}/editar'),
+            // 'edit' => Pages\EditBuyerParcel::route('/{record}/editar'),
         ];
     }
 
