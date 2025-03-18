@@ -51,6 +51,9 @@ class BuyerParcelResource extends Resource
                 Group::make('order.number')
                     ->label('Ordem de Serviço')
                     ->collapsible(),
+                Group::make('order.event.name')
+                    ->label('Evento')
+                    ->collapsible(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
