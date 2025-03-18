@@ -19,3 +19,5 @@
     - Vinculando animais ao evento
 - 2.5.0
     - Detalhes dos animais no evento
+- 2.6.0
+    - Listando as Parcelas da Comissão do Comprador

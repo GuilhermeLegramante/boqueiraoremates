@@ -18,7 +18,7 @@ class ParcelsTable
             TextColumn::make('date')
                 ->label('Dt de Venc.')
                 ->formatStateUsing(
-                    fn (string $state): string => (date('d/m/Y', strtotime($state)))
+                    fn(string $state): string => (date('d/m/Y', strtotime($state)))
                 ),
             TextColumn::make('value')
                 ->label('Valor')
@@ -36,6 +36,11 @@ class ParcelsTable
                 ->onColor('success')
                 ->offColor('danger')
                 ->label('Paga'),
+            ToggleColumn::make('invoice_generated')
+                ->sortable()
+                ->onColor('success')
+                ->offColor('danger')
+                ->label('Boleto Emitido'),
             TextInputColumn::make('note')
                 ->label('Observação')
         ];
