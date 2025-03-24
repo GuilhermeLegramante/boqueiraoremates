@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
+
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
@@ -72,9 +73,9 @@ class ClientResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => (($state == 'able' ? 'HABILITADO' : ($state == 'disabled' ? 'INABILITADO' : 'INATIVO')))
+                        fn(string $state): string => (($state == 'able' ? 'HABILITADO' : ($state == 'disabled' ? 'INABILITADO' : 'INATIVO')))
                     )
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'able' => 'success',
                         'disabled' => 'warning',
                         'inactive' => 'danger',
@@ -84,10 +85,10 @@ class ClientResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => (($state == 'marketing' ? 'MARKETING' : ($state == 'local' ? 'RECINTO' : 'SITE')))
+                        fn(string $state): string => (($state == 'marketing' ? 'MARKETING' : ($state == 'local' ? 'RECINTO' : 'SITE')))
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'marketing' => 'info',
                         'local' => 'gray',
                         'site' => 'primary',
@@ -97,14 +98,26 @@ class ClientResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => (($state == 'purchase' ? 'COMPRA' : ($state == 'sale' ? 'VENDA' : 'AMBOS')))
+                        fn(string $state): string => (($state == 'purchase' ? 'COMPRA' : ($state == 'sale' ? 'VENDA' : 'AMBOS')))
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'purchase' => 'primary',
                         'sale' => 'gray',
                         'both' => 'success',
                     }),
+                TextColumn::make('whatsapp')
+                    ->label('Whatsapp')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('cel_phone')
+                    ->label('Celular')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('business_phone')
+                    ->label('Tel. Comercial')
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('home_phone')
+                    ->label('Tel. Res.')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label(__('fields.created_at'))
                     ->dateTime()
@@ -147,7 +160,7 @@ class ClientResource extends Resource
                         ->label('Ficha')
                         ->icon('heroicon-o-document-text')
                         ->color('info')
-                        ->url(fn (Client $record): string => route('client-details-pdf', $record->id))
+                        ->url(fn(Client $record): string => route('client-details-pdf', $record->id))
                         ->openUrlInNewTab()
                 ]),
             ], position: ActionsPosition::BeforeColumns)
