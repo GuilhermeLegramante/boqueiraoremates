@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <h1 style="margin-left: 1%; font-size: 23px;">ORDEM DE SERVIÇO {{ $order->number }} /
+    <h1 style="margin-left: 1%; font-size: 23px;">FATURA DE VENDA {{ $order->number }} /
         {{ date('Y', strtotime($order->created_at)) }}</h1>
     <p style="margin-left: 1%; margin-top: -1%"><strong>Cadastrado em:
         </strong>{{ date('d/m/Y', strtotime($order->created_at)) }} <strong> Atualizado em:

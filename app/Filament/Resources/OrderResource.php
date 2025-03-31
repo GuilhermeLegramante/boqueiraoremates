@@ -41,9 +41,9 @@ class OrderResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'number';
 
-    protected static ?string $modelLabel = 'ordem de serviço';
+    protected static ?string $modelLabel = 'Fatura de Venda / OS';
 
-    protected static ?string $pluralModelLabel = 'ordens de serviço';
+    protected static ?string $pluralModelLabel = 'Faturas de Venda / OS';
 
     protected static ?string $slug = 'ordens-de-servico';
 
@@ -223,7 +223,7 @@ class OrderResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(date('d-m-Y') . ' - Ordens de Serviço')
+                            ->withFilename(date('d-m-Y') . ' - Faturas de Venda / OS')
                     ])
             ])
             ->actions([

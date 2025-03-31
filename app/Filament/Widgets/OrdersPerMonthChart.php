@@ -10,7 +10,7 @@ class OrdersPerMonthChart extends ChartWidget
 {
     use HasWidgetShield;
 
-    protected static ?string $heading = 'Ordens de Serviço';
+    protected static ?string $heading = 'Faturas de Venda / OS';
 
     protected function getData(): array
     {

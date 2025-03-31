@@ -18,7 +18,7 @@ class OrdersReport extends Report
 {
     public ?string $heading = "Relatório";
 
-    public ?string $subHeading = "Resumo Ordens de Serviço";
+    public ?string $subHeading = "Resumo Faturas de Venda / OS";
 
     public $heads = ['id', 'numero'];
 
@@ -26,7 +26,7 @@ class OrdersReport extends Report
     public function header(Header $header): Header
     {
         return $header
-            ->schema(DefaultHeaderReport::content(title: 'Ordens de Serviço'));
+            ->schema(DefaultHeaderReport::content(title: 'Faturas de Venda / OS'));
     }
 
     public function getGroup(): ?string

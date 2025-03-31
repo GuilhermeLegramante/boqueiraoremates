@@ -49,7 +49,7 @@ class BuyerParcelResource extends Resource
             ])
             ->groups([
                 Group::make('order.number')
-                    ->label('Ordem de Serviço')
+                    ->label('Fatura de Venda / OS')
                     ->collapsible(),
                 Group::make('order.event.name')
                     ->label('Evento')

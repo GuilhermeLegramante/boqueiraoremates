@@ -20,7 +20,7 @@ class CreateOrder extends CreateRecord
 
     protected static string $resource = OrderResource::class;
 
-    protected static ?string $navigationLabel = 'Criar Ordem de Serviço';
+    protected static ?string $navigationLabel = 'Criar Fatura de Venda / OS';
 
     protected static string $view = 'pages.create-order';
 

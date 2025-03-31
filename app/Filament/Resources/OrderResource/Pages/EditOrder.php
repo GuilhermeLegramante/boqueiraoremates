@@ -23,7 +23,7 @@ class EditOrder extends EditRecord
 
     protected static string $resource = OrderResource::class;
 
-    protected static ?string $navigationLabel = 'Editar Ordem de Serviço';
+    protected static ?string $navigationLabel = 'Editar Fatura de Venda / OS';
 
     protected static string $view = 'pages.edit-order';
 

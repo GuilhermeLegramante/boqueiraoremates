@@ -15,7 +15,7 @@ class ListOrders extends ListRecords
 
     protected static string $resource = OrderResource::class;
 
-    protected static ?string $navigationLabel = 'Listar Ordens de Serviço';
+    protected static ?string $navigationLabel = 'Listar Faturas de Venda / OS';
 
     protected function getHeaderActions(): array
     {

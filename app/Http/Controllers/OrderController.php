@@ -34,7 +34,7 @@ class OrderController extends Controller
 
         $args = [
             'order' => $order,
-            'title' => 'ORDEM DE SERVIÇO',
+            'title' => 'FATURA DE VENDA / OS',
             'netValue' => $netValue,
             'buyerComissionValue' => $buyerComissionValue,
             'sellerComissionValue' => $sellerComissionValue,

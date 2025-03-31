@@ -30,7 +30,7 @@ class OrderForm
     public static function form(): array
     {
         return [
-            Section::make('Dados da Ordem de Serviço')
+            Section::make('Dados da Fatura de Venda / OS')
                 ->description(
                     fn(string $operation): string => $operation === 'create' || $operation === 'edit' ? 'Informe os campos solicitados' : ''
                 )
