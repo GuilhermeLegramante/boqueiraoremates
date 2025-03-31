@@ -23,3 +23,5 @@
     - Listando as Parcelas da Comissão do Comprador
 - 2.7.0
     - Botão para gerar pdf da OS no EditOrder
+- 2.7.1
+    - Mudança do nome da OS
