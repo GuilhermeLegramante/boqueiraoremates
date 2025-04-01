@@ -64,4 +64,9 @@ class Animal extends Model
     {
         return $this->belongsToMany(Event::class, 'animal_event');
     }
+
+    public function getFirstOrderAttribute()
+    {
+        return $this->orders()->first();
+    }
 }
