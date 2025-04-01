@@ -31,32 +31,27 @@ class ViewSalesMapAnimals extends BaseWidget
             ->heading($this->record->event->name)
             ->query(fn() => Animal::whereHas(
                 'events',
-                fn($query) => $query->where('event_id', $this->record->event_id)
+                fn($query) =>
+                $query->where('event_id', $this->record->event_id)
             )
                 ->withSum([
                     'orders as total_gross_value' => fn($query) =>
                     $query->where('event_id', $this->record->event_id)
                 ], 'gross_value'))
             ->columns([
-                TextColumn::make('firstOrder.batch')
-                    ->label('Lote')
-                    ->sortable(false)
-                    ->formatStateUsing(fn($record) => optional($record->firstOrder)->batch ?? 'SEM LOTE'),
-
-                TextColumn::make('name')
-                    ->label('Animal')
+                TextColumn::make('orders.0.batch')->label('Lote')->sortable(false),
+                TextColumn::make('name')->label('Animal')
                     ->sortable(false)
                     ->summarize([
                         Summarizer::make()
                             ->label('Lotes Vendidos')
                             ->using(fn() => \App\Models\Order::where('event_id', $this->record->id)->count()),
-                    ]),
 
-                TextColumn::make('firstOrder.seller.name')
+                    ]),
+                TextColumn::make('orders.0.seller.name') // Pega a única order do evento
                     ->label('Vendedor')
                     ->default('SEM VENDA')
                     ->sortable(false)
-                    ->formatStateUsing(fn($record) => optional($record->firstOrder->seller)->name ?? 'SEM VENDA')
                     ->summarize([
                         Summarizer::make()
                             ->label('Média Geral (Todos os Animais)')
@@ -69,13 +64,12 @@ class ViewSalesMapAnimals extends BaseWidget
                                     ->whereHas('events', fn($query) => $query->where('event_id', $this->record->id))
                                     ->avg(DB::raw('IFNULL(orders.gross_value, 0)'))
                             ),
-                    ]),
 
-                TextColumn::make('firstOrder.seller.address.city')
+                    ]),
+                TextColumn::make('orders.0.seller.address.city')
                     ->label('Cidade')
                     ->default('-')
                     ->sortable(false)
-                    ->formatStateUsing(fn($record) => optional($record->firstOrder->seller->address)->city ?? '-')
                     ->summarize([
                         Summarizer::make()
                             ->label('Média de Faturamento (Machos)')
@@ -86,14 +80,13 @@ class ViewSalesMapAnimals extends BaseWidget
                                     ->where('gender', 'male');
                             })->where('event_id', $this->record->id)
                                 ->avg('gross_value') ?? 0.00),
-                    ]),
 
-                TextColumn::make('firstOrder.parcel_value')
+                    ]),
+                TextColumn::make('orders.0.parcel_value')
                     ->label('Parcela')
                     ->numeric()
                     ->money('BRL')
                     ->sortable(false)
-                    ->formatStateUsing(fn($record) => optional($record->firstOrder)->parcel_value ?? 0.00)
                     ->summarize([
                         Summarizer::make()
                             ->label('Média de Faturamento (Fêmeas)')
@@ -105,7 +98,6 @@ class ViewSalesMapAnimals extends BaseWidget
                             })->where('event_id', $this->record->id)
                                 ->avg('gross_value') ?? 0.00),
                     ]),
-
                 TextColumn::make('total_gross_value')
                     ->label('Faturamento')
                     ->money('BRL')
