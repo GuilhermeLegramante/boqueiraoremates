@@ -55,6 +55,11 @@ class Animal extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function orderForEvent($eventId)
+    {
+        return $this->hasOne(Order::class)->where('event_id', $eventId);
+    }
+
     public function events()
     {
         return $this->belongsToMany(Event::class, 'animal_event');
