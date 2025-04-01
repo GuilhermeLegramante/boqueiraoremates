@@ -31,73 +31,46 @@ class ViewSalesMapAnimals extends BaseWidget
             ->heading($this->record->event->name)
             ->query(fn() => Animal::whereHas(
                 'events',
-                fn($query) =>
-                $query->where('event_id', $this->record->event_id)
+                fn($query) => $query->where('event_id', $this->record->event_id)
             )
                 ->withSum([
                     'orders as total_gross_value' => fn($query) =>
                     $query->where('event_id', $this->record->event_id)
                 ], 'gross_value'))
             ->columns([
-                TextColumn::make('orders.0.batch')->label('Lote')->sortable(false),
-                TextColumn::make('name')->label('Animal')
+                TextColumn::make('orders.0.batch')
+                    ->label('Lote')
+                    ->sortable(false)
+                    ->formatStateUsing(fn($record) => $record->orders[0]->batch ?? 'SEM LOTE'),
+
+                TextColumn::make('name')
+                    ->label('Animal')
                     ->sortable(false)
                     ->summarize([
                         Summarizer::make()
                             ->label('Lotes Vendidos')
                             ->using(fn() => \App\Models\Order::where('event_id', $this->record->id)->count()),
-
                     ]),
-                TextColumn::make('orders.0.seller.name') // Pega a única order do evento
+
+                TextColumn::make('orders.0.seller.name')
                     ->label('Vendedor')
                     ->default('SEM VENDA')
                     ->sortable(false)
-                    ->summarize([
-                        Summarizer::make()
-                            ->label('Média Geral (Todos os Animais)')
-                            ->money('BRL')
-                            ->using(
-                                fn() => \App\Models\Animal::leftJoin('orders', function ($join) {
-                                    $join->on('animals.id', '=', 'orders.animal_id')
-                                        ->where('orders.event_id', $this->record->id);
-                                })
-                                    ->whereHas('events', fn($query) => $query->where('event_id', $this->record->id))
-                                    ->avg(DB::raw('IFNULL(orders.gross_value, 0)'))
-                            ),
+                    ->formatStateUsing(fn($record) => isset($record->orders[0]) ? $record->orders[0]->seller->name : 'SEM VENDA'),
 
-                    ]),
                 TextColumn::make('orders.0.seller.address.city')
                     ->label('Cidade')
                     ->default('-')
                     ->sortable(false)
-                    ->summarize([
-                        Summarizer::make()
-                            ->label('Média de Faturamento (Machos)')
-                            ->money('BRL')
-                            ->using(fn() => \App\Models\Order::whereIn('animal_id', function ($query) {
-                                $query->select('id')
-                                    ->from('animals')
-                                    ->where('gender', 'male');
-                            })->where('event_id', $this->record->id)
-                                ->avg('gross_value') ?? 0.00),
+                    ->formatStateUsing(fn($record) => isset($record->orders[0]) ? $record->orders[0]->seller->address->city : '-'),
 
-                    ]),
                 TextColumn::make('orders.0.parcel_value')
                     ->label('Parcela')
                     ->numeric()
                     ->money('BRL')
                     ->sortable(false)
-                    ->summarize([
-                        Summarizer::make()
-                            ->label('Média de Faturamento (Fêmeas)')
-                            ->money('BRL')
-                            ->using(fn() => \App\Models\Order::whereIn('animal_id', function ($query) {
-                                $query->select('id')
-                                    ->from('animals')
-                                    ->where('gender', 'female');
-                            })->where('event_id', $this->record->id)
-                                ->avg('gross_value') ?? 0.00),
-                    ]),
+                    ->formatStateUsing(fn($record) => $record->orders[0]->parcel_value ?? 0.00),
+
                 TextColumn::make('total_gross_value')
                     ->label('Faturamento')
                     ->money('BRL')
