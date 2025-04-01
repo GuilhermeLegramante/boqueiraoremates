@@ -9,11 +9,4 @@ use Filament\Resources\Pages\EditRecord;
 class EditSalesMap extends EditRecord
 {
     protected static string $resource = SalesMapResource::class;
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Actions\DeleteAction::make(),
-        ];
-    }
 }

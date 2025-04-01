@@ -25,4 +25,16 @@ class ViewSalesMap extends ViewRecord
             ViewSalesMapAnimals::class, // Chamando o widget
         ];
     }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('generatePdf')
+                ->label('Gerar PDF')
+                ->icon('heroicon-o-document-text')
+                ->url(fn() => route('sales-map-pdf', ['eventId' => $this->record->event_id]))
+                ->openUrlInNewTab(),
+            Actions\DeleteAction::make(),
+        ];
+    }
 }

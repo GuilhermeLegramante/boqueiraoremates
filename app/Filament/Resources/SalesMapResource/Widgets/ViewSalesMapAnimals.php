@@ -39,9 +39,9 @@ class ViewSalesMapAnimals extends BaseWidget
                     $query->where('event_id', $this->record->event_id)
                 ], 'gross_value'))
             ->columns([
-                TextColumn::make('orders.0.batch')->label('Lote')->sortable(),
+                TextColumn::make('orders.0.batch')->label('Lote')->sortable(false),
                 TextColumn::make('name')->label('Animal')
-                    ->sortable()
+                    ->sortable(false)
                     ->summarize([
                         Summarizer::make()
                             ->label('Lotes Vendidos')
@@ -51,7 +51,7 @@ class ViewSalesMapAnimals extends BaseWidget
                 TextColumn::make('orders.0.seller.name') // Pega a única order do evento
                     ->label('Vendedor')
                     ->default('SEM VENDA')
-                    ->sortable()
+                    ->sortable(false)
                     ->summarize([
                         Summarizer::make()
                             ->label('Média Geral (Todos os Animais)')
@@ -69,7 +69,7 @@ class ViewSalesMapAnimals extends BaseWidget
                 TextColumn::make('orders.0.seller.address.city')
                     ->label('Cidade')
                     ->default('-')
-                    ->sortable()
+                    ->sortable(false)
                     ->summarize([
                         Summarizer::make()
                             ->label('Média de Faturamento (Machos)')
@@ -86,6 +86,7 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->label('Parcela')
                     ->numeric()
                     ->money('BRL')
+                    ->sortable(false)
                     ->summarize([
                         Summarizer::make()
                             ->label('Média de Faturamento (Fêmeas)')
@@ -100,7 +101,7 @@ class ViewSalesMapAnimals extends BaseWidget
                 TextColumn::make('total_gross_value')
                     ->label('Faturamento')
                     ->money('BRL')
-                    ->sortable()
+                    ->sortable(false)
                     ->summarize([
                         Sum::make()->label('Faturamento Total')->money('BRL'),
                         Average::make()->label('Média Geral por Lote')->money('BRL'),
