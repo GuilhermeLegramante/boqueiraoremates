@@ -25,3 +25,5 @@
     - Botão para gerar pdf da OS no EditOrder
 - 2.7.1
     - Mudança do nome da OS
+- 2.8.0
+    - Mapa do Remate
