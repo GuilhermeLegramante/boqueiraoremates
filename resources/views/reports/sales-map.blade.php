@@ -168,7 +168,7 @@
                             {{ 'R$ ' .
                                 ($order->multiplier > 0 ? number_format($order->gross_value / $order->multiplier, 2, ',', '.') : '0,00') }}
                         </td>
-                        <td style="text-align: right;">R$ {{ number_format($order->total_gross_value ?? 0, 2, ',', '.') }}
+                        <td style="text-align: right;">R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
