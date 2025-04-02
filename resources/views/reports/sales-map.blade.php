@@ -152,23 +152,21 @@
             <tbody>
                 @foreach ($orders as $order)
                     <tr>
-                        <td style="text-align: center;">{{ $order->first()->number ?? '-' }}</td>
-                        <td style="text-align: center;">{{ $order->first()->batch ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $order->number ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $order->batch ?? '-' }}</td>
                         <td>{{ strtoupper($order->animal->name) }}</td>
-                        <td>{{ strtoupper($order->first()?->seller?->name ?? 'SEM VENDA') }}</td>
-                        <td>{{ strtoupper($order->first()?->buyer->name) ?? 'SEM VENDA' }}</td>
+                        <td>{{ strtoupper($order->seller->name ?? 'SEM VENDA') }}</td>
+                        <td>{{ strtoupper($order->buyer->name) ?? 'SEM VENDA' }}</td>
                         <td style="text-align: left;">
-                            @if (isset($order->first()->buyer->address->city) && isset($order->first()->buyer->address->state))
-                                {{ strtoupper($order->first()->buyer->address->city . ' - ' . $order->first()->buyer->address->state) }}
+                            @if (isset($order->buyer->address->city) && isset($order->buyer->address->state))
+                                {{ strtoupper($order->buyer->address->city . ' - ' . $order->buyer->address->state) }}
                             @else
                                 {{ ' -' }}
                             @endif
                         </td>
                         <td style="text-align: right;">
                             {{ 'R$ ' .
-                                ($order->first()?->multiplier > 0
-                                    ? number_format($order->first()?->gross_value / $order->first()?->multiplier, 2, ',', '.')
-                                    : '0,00') }}
+                                ($order->multiplier > 0 ? number_format($order->gross_value / $order->multiplier, 2, ',', '.') : '0,00') }}
                         </td>
                         <td style="text-align: right;">R$ {{ number_format($order->total_gross_value ?? 0, 2, ',', '.') }}
                         </td>
