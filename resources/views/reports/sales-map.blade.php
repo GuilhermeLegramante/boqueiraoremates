@@ -185,11 +185,12 @@
         <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
-                    <th colspan="5" class="table-header text-white">RESUMO</th>
+                    <th colspan="6" class="table-header text-white">RESUMO</th>
                 </tr>
                 <tr>
                     <th class="table-header text-white">Faturamento Total</th>
-                    <th class="table-header text-white">N° de Lotes Vendidos</th>
+                    <th class="table-header text-white">Lotes Vendidos</th>
+                    <th class="table-header text-white">Lotes Sem Venda</th>
                     <th class="table-header text-white">Média Geral por Lote</th>
                     <th class="table-header text-white">Média das Fêmeas</th>
                     <th class="table-header text-white">Média dos Machos</th>
@@ -198,7 +199,8 @@
             <tbody>
                 <tr>
                     <td style="text-align: right"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
-                    <td style="text-align: center"> {{ $totalOrders }}</td>
+                    <td style="text-align: center"> {{ $totalSaleOrders }}</td>
+                    <td style="text-align: center"> {{ $totalOrders - $totalSaleOrders }}</td>
                     <td style="text-align: right"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
                     <td style="text-align: right"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
                     <td style="text-align: right"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>

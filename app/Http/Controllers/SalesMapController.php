@@ -26,33 +26,40 @@ class SalesMapController extends Controller
             )
             ->get();
 
-        // Cálculo de resumos
         $totalOrders = Order::where('event_id', $eventId)->count();
 
-        $avgGeneral = Animal::leftJoin('orders', function ($join) use ($eventId) {
-            $join->on('animals.id', '=', 'orders.animal_id')
-                ->where('orders.event_id', $eventId);
-        })
-            ->whereHas('events', function ($query) use ($eventId) {
-                $query->where('event_id', $eventId);
+        $totalSaleOrders = Order::where('event_id', $eventId)
+            ->whereHas('buyer', function ($query) {
+                $query->where('name', '!=', 'SEM VENDA');
             })
-            ->avg(DB::raw('IFNULL(orders.gross_value, 0)')) ?? 0.00;
+            ->count();
+
 
         $avgMaleRevenue = Order::whereIn('animal_id', function ($query) {
             $query->select('id')->from('animals')->where('gender', 'male');
         })
             ->where('event_id', $eventId)
+            ->whereHas('buyer', function ($query) {
+                $query->where('name', '!=', 'SEM VENDA');
+            })
             ->avg('gross_value') ?? 0.00;
 
         $avgFemaleRevenue = Order::whereIn('animal_id', function ($query) {
             $query->select('id')->from('animals')->where('gender', 'female');
         })
             ->where('event_id', $eventId)
+            ->whereHas('buyer', function ($query) {
+                $query->where('name', '!=', 'SEM VENDA');
+            })
+            ->avg('gross_value') ?? 0.00;
+
+        $avgRevenuePerBatch = Order::where('event_id', $eventId)
+            ->whereHas('buyer', function ($query) {
+                $query->where('name', '!=', 'SEM VENDA');
+            })
             ->avg('gross_value') ?? 0.00;
 
         $totalRevenue = Order::where('event_id', $eventId)->sum('gross_value') ?? 0.00;
-
-        $avgRevenuePerBatch = Order::where('event_id', $eventId)->avg('gross_value') ?? 0.00;
 
         $name = strtoupper('MAPA DE VENDAS  - ' . $event->name);
 
@@ -75,7 +82,7 @@ class SalesMapController extends Controller
             'user' => $user,
             'orders' => $orders,
             'totalOrders' => $totalOrders,
-            'avgGeneral' => $avgGeneral,
+            'totalSaleOrders' => $totalSaleOrders,
             'avgMaleRevenue' => $avgMaleRevenue,
             'avgFemaleRevenue' => $avgFemaleRevenue,
             'totalRevenue' => $totalRevenue,

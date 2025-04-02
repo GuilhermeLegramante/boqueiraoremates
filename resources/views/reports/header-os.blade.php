@@ -1,6 +1,6 @@
 <header style="position: fixed; margin-top: -17%;">
     <div style="height: 100px;">
-        <table style="width: 120%;">
+        <table style="width: 126%;">
             <tbody>
                 <tr>
                     <td style="height: 100px; vertical-align: middle; width: 10%;">
@@ -86,5 +86,5 @@
             </tbody>
         </table>
     </div>
-    <hr style="margin-top: 20px; width: 147%;" />
+    <hr style="margin-top: 20px; width: 154%;" />
 </header>
