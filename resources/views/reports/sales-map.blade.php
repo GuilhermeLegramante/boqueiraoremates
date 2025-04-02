@@ -175,6 +175,10 @@
                     </tr>
                 @endforeach
                 <!-- Resumo dentro do Tbody para evitar problemas no PDF -->
+                @if (count($animals) >= 30)
+                    <div class="break"></div>
+                @endif
+
                 <tr>
                     <td colspan="8" style="border-top: 2px solid #000; padding-top: 10px; text-align: center;">
                         <strong>RESUMO</strong>
