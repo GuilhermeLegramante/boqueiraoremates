@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SalesMapResource\Widgets;
 
 use App\Models\Animal;
+use App\Models\Order;
 use Filament\Tables;
 use Filament\Tables\Columns\Summarizers\Average;
 use Filament\Tables\Columns\Summarizers\Count;
@@ -29,49 +30,37 @@ class ViewSalesMapAnimals extends BaseWidget
     {
         return $table
             ->heading($this->record->event->name)
-            ->query(fn() => Animal::whereHas(
-                'events',
-                fn($query) => $query->where('event_id', $this->record->event_id)
+            ->query(
+                fn() => Order::where('event_id', $this->record->event_id)
+                    ->with(['animal', 'seller.address']) // Garantir que carregamos os relacionamentos necessários
             )
-                ->withSum([
-                    'orders as total_gross_value' => fn($query) =>
-                    $query->where('event_id', $this->record->event_id)
-                ], 'gross_value'))
             ->columns([
-                TextColumn::make('orders.0.batch')
+                TextColumn::make('batch')
                     ->label('Lote')
                     ->sortable(false)
-                    ->formatStateUsing(fn($record) => $record->orders[0]->batch ?? 'SEM LOTE'),
+                    ->formatStateUsing(fn($record) => $record->batch ?? 'SEM LOTE'),
 
-                TextColumn::make('name')
+                TextColumn::make('animal.name')
                     ->label('Animal')
                     ->sortable(false),
-                    // ->summarize([
-                    //     Summarizer::make()
-                    //         ->label('Lotes Vendidos')
-                    //         ->using(fn() => \App\Models\Order::where('event_id', $this->record->id)->count()),
-                    // ]),
 
-                TextColumn::make('orders.0.seller.name')
+                TextColumn::make('seller.name')
                     ->label('Vendedor')
                     ->default('SEM VENDA')
-                    ->sortable(false)
-                    ->formatStateUsing(fn($record) => isset($record->orders[0]) ? $record->orders[0]->seller->name : 'SEM VENDA'),
+                    ->sortable(false),
 
-                TextColumn::make('orders.0.seller.address.city')
+                TextColumn::make('seller.address.city')
                     ->label('Cidade')
                     ->default('-')
-                    ->sortable(false)
-                    ->formatStateUsing(fn($record) => isset($record->orders[0]) ? $record->orders[0]->seller->address->city : '-'),
+                    ->sortable(false),
 
-                TextColumn::make('orders.0.parcel_value')
+                TextColumn::make('parcel_value')
                     ->label('Parcela')
                     ->numeric()
                     ->money('BRL')
-                    ->sortable(false)
-                    ->formatStateUsing(fn($record) => $record->orders[0]->parcel_value ?? 0.00),
+                    ->sortable(false),
 
-                TextColumn::make('total_gross_value')
+                TextColumn::make('gross_value')
                     ->label('Faturamento')
                     ->money('BRL')
                     ->sortable(false)
@@ -80,6 +69,6 @@ class ViewSalesMapAnimals extends BaseWidget
                         Average::make()->label('Média Geral por Lote')->money('BRL'),
                     ]),
             ])
-            ->defaultSort('name');
+            ->defaultSort('batch');
     }
 }

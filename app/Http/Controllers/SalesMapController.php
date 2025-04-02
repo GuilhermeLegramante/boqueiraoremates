@@ -18,24 +18,11 @@ class SalesMapController extends Controller
 
         $event = Event::find($id);
 
-        $animals = Animal::whereHas('events', function ($query) use ($eventId) {
-            $query->where('event_id', $eventId);
-        })
-            ->with([
-                'orders' => function ($query) use ($eventId) {
-                    $query->where('event_id', $eventId)
-                        ->with('seller', 'seller.address');
-                }
-            ])
-            ->withSum([
-                'orders as total_gross_value' => function ($query) use ($eventId) {
-                    $query->where('event_id', $eventId);
-                }
-            ], 'gross_value')
+        $orders = Order::where('event_id', $eventId)
+            ->with(['animal', 'seller', 'seller.address'])
+            ->selectRaw('orders.*, SUM(gross_value) OVER() as total_gross_value')
             ->orderByRaw(
-                "(SELECT MIN(batch) FROM orders WHERE orders.animal_id = animals.id AND event_id = ?) IS NULL, 
-             (SELECT MIN(batch) FROM orders WHERE orders.animal_id = animals.id AND event_id = ?)",
-                [$eventId, $eventId]
+                "batch IS NULL, batch"
             )
             ->get();
 
@@ -86,7 +73,7 @@ class SalesMapController extends Controller
         $args = [
             'title' => $name,
             'user' => $user,
-            'animals' => $animals,
+            'orders' => $orders,
             'totalOrders' => $totalOrders,
             'avgGeneral' => $avgGeneral,
             'avgMaleRevenue' => $avgMaleRevenue,

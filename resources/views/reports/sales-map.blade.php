@@ -150,34 +150,34 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($animals as $animal)
+                @foreach ($orders as $order)
                     <tr>
-                        <td style="text-align: center;">{{ $animal->orders->first()->number ?? '-' }}</td>
-                        <td style="text-align: center;">{{ $animal->orders->first()->batch ?? '-' }}</td>
-                        <td>{{ strtoupper($animal->name) }}</td>
-                        <td>{{ strtoupper($animal->orders->first()?->seller?->name ?? 'SEM VENDA') }}</td>
-                        <td>{{ strtoupper($animal->orders->first()?->buyer->name) ?? 'SEM VENDA' }}</td>
+                        <td style="text-align: center;">{{ $order->first()->number ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $order->first()->batch ?? '-' }}</td>
+                        <td>{{ strtoupper($order->animal->name) }}</td>
+                        <td>{{ strtoupper($order->first()?->seller?->name ?? 'SEM VENDA') }}</td>
+                        <td>{{ strtoupper($order->first()?->buyer->name) ?? 'SEM VENDA' }}</td>
                         <td style="text-align: left;">
-                            @if (isset($animal->orders->first()->buyer->address->city) && isset($animal->orders->first()->buyer->address->state))
-                                {{ strtoupper($animal->orders->first()->buyer->address->city . ' - ' . $animal->orders->first()->buyer->address->state) }}
+                            @if (isset($order->first()->buyer->address->city) && isset($order->first()->buyer->address->state))
+                                {{ strtoupper($order->first()->buyer->address->city . ' - ' . $order->first()->buyer->address->state) }}
                             @else
                                 {{ ' -' }}
                             @endif
                         </td>
                         <td style="text-align: right;">
                             {{ 'R$ ' .
-                                ($animal->orders->first()?->multiplier > 0
-                                    ? number_format($animal->orders->first()?->gross_value / $animal->orders->first()?->multiplier, 2, ',', '.')
+                                ($order->first()?->multiplier > 0
+                                    ? number_format($order->first()?->gross_value / $order->first()?->multiplier, 2, ',', '.')
                                     : '0,00') }}
                         </td>
-                        <td style="text-align: right;">R$ {{ number_format($animal->total_gross_value ?? 0, 2, ',', '.') }}
+                        <td style="text-align: right;">R$ {{ number_format($order->total_gross_value ?? 0, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
-        @if (count($animals) >= 30)
+        @if (count($orders) >= 30)
             <div class="break"></div>
         @endif
         <br>
