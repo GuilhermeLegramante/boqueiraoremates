@@ -200,8 +200,8 @@
                     <td style="text-align: center"> {{ $totalSaleOrders }}</td>
                     <td style="text-align: center"> {{ $totalOrders - $totalSaleOrders }}</td>
                     <td style="text-align: center"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
+                    <td style="text-align: center"> R$ {{ number_format($avgFeMaleRevenue, 2, ',', '.') }}</td>
                     <td style="text-align: center"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
-                    <td style="text-align: center"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
