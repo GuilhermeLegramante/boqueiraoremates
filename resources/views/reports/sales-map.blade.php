@@ -144,7 +144,7 @@
                     <th class="table-header text-white">Animal</th>
                     <th class="table-header text-white">Vendedor</th>
                     <th class="table-header text-white">Comprador</th>
-                    <th class="table-header text-white">Cidade</th>
+                    <th class="table-header text-white" style="width: 10%;">Cidade</th>
                     <th class="table-header text-white" style="width: 10%;">Parcela</th>
                     <th class="table-header text-white" style="width: 10%;">Faturamento</th>
                 </tr>
@@ -196,12 +196,12 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: right"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
+                    <td style="text-align: center"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
                     <td style="text-align: center"> {{ $totalSaleOrders }}</td>
                     <td style="text-align: center"> {{ $totalOrders - $totalSaleOrders }}</td>
-                    <td style="text-align: right"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
-                    <td style="text-align: right"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
-                    <td style="text-align: right"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
+                    <td style="text-align: center"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
+                    <td style="text-align: center"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
+                    <td style="text-align: center"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
                 </tr>
             </tbody>
         </table>
