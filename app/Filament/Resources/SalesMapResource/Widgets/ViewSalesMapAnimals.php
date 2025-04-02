@@ -35,6 +35,10 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->with(['animal', 'seller.address']) // Garantir que carregamos os relacionamentos necessários
             )
             ->columns([
+                TextColumn::make('number')
+                    ->label('OS')
+                    ->sortable(false),
+
                 TextColumn::make('batch')
                     ->label('Lote')
                     ->sortable(false)
