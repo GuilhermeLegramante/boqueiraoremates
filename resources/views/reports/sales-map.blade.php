@@ -139,65 +139,69 @@
         <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
+                    <th class="table-header text-white" style="width: 5%;">N° OS</th>
                     <th class="table-header text-white" style="width: 5%;">Lote</th>
                     <th class="table-header text-white">Animal</th>
                     <th class="table-header text-white">Vendedor</th>
                     <th class="table-header text-white">Comprador</th>
                     <th class="table-header text-white">Cidade</th>
-                    <th class="table-header text-white">Parcela (R$)</th>
-                    <th class="table-header text-white">Faturamento (R$)</th>
+                    <th class="table-header text-white" style="width: 10%;">Parcela</th>
+                    <th class="table-header text-white" style="width: 10%;">Faturamento</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($animals as $animal)
                     <tr>
+                        <td style="text-align: center;">{{ $animal->orders->first()->number ?? '-' }}</td>
                         <td style="text-align: center;">{{ $animal->orders->first()->batch ?? '-' }}</td>
-                        <td>{{ $animal->name }}</td>
-                        <td>{{ $animal->orders->first()->seller->name ?? 'SEM VENDA' }}</td>
-                        <td>{{ $animal->orders->first()->buyer->name ?? 'SEM VENDA' }}</td>
-                        <td style="text-align: center;">
+                        <td>{{ strtoupper($animal->name) }}</td>
+                        <td>{{ strtoupper($animal->orders->first()?->seller?->name ?? 'SEM VENDA') }}</td>
+                        <td>{{ strtoupper($animal->orders->first()?->buyer->name) ?? 'SEM VENDA' }}</td>
+                        <td style="text-align: left;">
                             @if (isset($animal->orders->first()->buyer->address->city) && isset($animal->orders->first()->buyer->address->state))
-                                {{ $animal->orders->first()->buyer->address->city . ' - ' . $animal->orders->first()->buyer->address->state }}
+                                {{ strtoupper($animal->orders->first()->buyer->address->city . ' - ' . $animal->orders->first()->buyer->address->state) }}
                             @else
                                 {{ ' -' }}
                             @endif
                         </td>
                         <td style="text-align: right;">
-                            {{ number_format($animal->orders->first()->parcel_value ?? 0, 2, ',', '.') }}</td>
-                        <td style="text-align: right;">{{ number_format($animal->total_gross_value ?? 0, 2, ',', '.') }}
+                            {{ 'R$ ' .
+                                ($animal->orders->first()?->multiplier > 0
+                                    ? number_format($animal->orders->first()?->gross_value / $animal->orders->first()?->multiplier, 2, ',', '.')
+                                    : '0,00') }}
+                        </td>
+                        <td style="text-align: right;">R$ {{ number_format($animal->total_gross_value ?? 0, 2, ',', '.') }}
                         </td>
                     </tr>
                 @endforeach
                 <!-- Resumo dentro do Tbody para evitar problemas no PDF -->
                 <tr>
-                    <td colspan="7" style="border-top: 2px solid #000; padding-top: 10px; text-align: center;">
+                    <td colspan="8" style="border-top: 2px solid #000; padding-top: 10px; text-align: center;">
                         <strong>RESUMO</strong>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>Lotes Vendidos:</strong></td>
-                    <td colspan="3"> {{ $totalOrders }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Média Geral (Todos os Animais):</strong></td>
-                    <td colspan="3"> R$ {{ number_format($avgGeneral, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Média de Faturamento (Machos):</strong></td>
-                    <td colspan="3"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Média de Faturamento (Fêmeas):</strong></td>
-                    <td colspan="3"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="4"><strong>Faturamento Total:</strong></td>
+                    <td colspan="5"><strong>Faturamento Total:</strong></td>
                     <td colspan="3"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
                 </tr>
                 <tr>
-                    <td colspan="4"><strong>Média Geral por Lote:</strong></td>
+                    <td colspan="5"><strong>N° de Lotes Vendidos:</strong></td>
+                    <td colspan="3"> {{ $totalOrders }}</td>
+                </tr>
+                <tr>
+                    <td colspan="5"><strong>Média Geral por Lote:</strong></td>
                     <td colspan="3"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
                 </tr>
+                <tr>
+                    <td colspan="5"><strong>Média das Fêmeas:</strong></td>
+                    <td colspan="3"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td colspan="5"><strong>Média dos Machos:</strong></td>
+                    <td colspan="3"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
+                </tr>
+
+
             </tbody>
         </table>
     @endsection

@@ -16,7 +16,7 @@
                                         </strong>
                                     </td>
                                     <td style="font-size: 12px;">
-                                        OS N°:
+                                        N°:
                                     </td>
                                     <td style="font-size: 15px; border: 2px solid black; text-align:center;">
                                         <strong>
