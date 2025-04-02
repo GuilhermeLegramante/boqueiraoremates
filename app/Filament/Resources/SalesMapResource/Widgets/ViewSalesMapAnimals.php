@@ -45,12 +45,12 @@ class ViewSalesMapAnimals extends BaseWidget
 
                 TextColumn::make('name')
                     ->label('Animal')
-                    ->sortable(false)
-                    ->summarize([
-                        Summarizer::make()
-                            ->label('Lotes Vendidos')
-                            ->using(fn() => \App\Models\Order::where('event_id', $this->record->id)->count()),
-                    ]),
+                    ->sortable(false),
+                    // ->summarize([
+                    //     Summarizer::make()
+                    //         ->label('Lotes Vendidos')
+                    //         ->using(fn() => \App\Models\Order::where('event_id', $this->record->id)->count()),
+                    // ]),
 
                 TextColumn::make('orders.0.seller.name')
                     ->label('Vendedor')
