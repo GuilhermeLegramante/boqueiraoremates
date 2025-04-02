@@ -37,37 +37,36 @@ class ViewSalesMapAnimals extends BaseWidget
             ->columns([
                 TextColumn::make('number')
                     ->label('OS')
-                    ->sortable(false),
+                    ->searchable(),
 
                 TextColumn::make('batch')
                     ->label('Lote')
-                    ->sortable(false)
+                    ->searchable()
                     ->formatStateUsing(fn($record) => $record->batch ?? 'SEM LOTE'),
 
                 TextColumn::make('animal.name')
                     ->label('Animal')
-                    ->sortable(false),
+                    ->searchable(),
 
                 TextColumn::make('seller.name')
                     ->label('Vendedor')
-                    ->default('SEM VENDA')
-                    ->sortable(false),
+                    ->searchable()
+                    ->default('SEM VENDA'),
 
                 TextColumn::make('seller.address.city')
                     ->label('Cidade')
-                    ->default('-')
-                    ->sortable(false),
+                    ->searchable()
+                    ->default('-'),
 
                 TextColumn::make('parcel_value')
                     ->label('Parcela')
                     ->numeric()
-                    ->money('BRL')
-                    ->sortable(false),
+                    ->money('BRL'),
 
                 TextColumn::make('gross_value')
                     ->label('Faturamento')
                     ->money('BRL')
-                    ->sortable(false)
+
                     ->summarize([
                         Sum::make()->label('Faturamento Total')->money('BRL'),
                         Average::make()->label('Média Geral por Lote')->money('BRL'),
