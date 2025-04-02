@@ -32,6 +32,11 @@ class SalesMapController extends Controller
                     $query->where('event_id', $eventId);
                 }
             ], 'gross_value')
+            ->orderByRaw(
+                "(SELECT MIN(batch) FROM orders WHERE orders.animal_id = animals.id AND event_id = ?) IS NULL, 
+             (SELECT MIN(batch) FROM orders WHERE orders.animal_id = animals.id AND event_id = ?)",
+                [$eventId, $eventId]
+            )
             ->get();
 
         // Cálculo de resumos
