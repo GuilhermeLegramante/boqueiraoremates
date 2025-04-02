@@ -174,38 +174,35 @@
                         </td>
                     </tr>
                 @endforeach
-                <!-- Resumo dentro do Tbody para evitar problemas no PDF -->
-                @if (count($animals) >= 30)
-                    <div class="break"></div>
-                @endif
+            </tbody>
+        </table>
 
-                <tr>
-                    <td colspan="8" style="border-top: 2px solid #000; padding-top: 10px; text-align: center;">
-                        <strong>RESUMO</strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="5"><strong>Faturamento Total:</strong></td>
-                    <td colspan="3"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="5"><strong>N° de Lotes Vendidos:</strong></td>
-                    <td colspan="3"> {{ $totalOrders }}</td>
-                </tr>
-                <tr>
-                    <td colspan="5"><strong>Média Geral por Lote:</strong></td>
-                    <td colspan="3"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="5"><strong>Média das Fêmeas:</strong></td>
-                    <td colspan="3"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
-                </tr>
-                <tr>
-                    <td colspan="5"><strong>Média dos Machos:</strong></td>
-                    <td colspan="3"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
-                </tr>
+        @if (count($animals) >= 30)
+            <div class="break"></div>
+        @endif
+        <br>
 
-
+        <table class="table" style="table-layout: fixed; width: 100%;">
+            <thead>
+                <tr>
+                    <th colspan="5" class="table-header text-white">RESUMO</th>
+                </tr>
+                <tr>
+                    <th class="table-header text-white">Faturamento Total</th>
+                    <th class="table-header text-white">N° de Lotes Vendidos</th>
+                    <th class="table-header text-white">Média Geral por Lote</th>
+                    <th class="table-header text-white">Média das Fêmeas</th>
+                    <th class="table-header text-white">Média dos Machos</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: right"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
+                    <td style="text-align: center"> {{ $totalOrders }}</td>
+                    <td style="text-align: right"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
+                    <td style="text-align: right"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
+                    <td style="text-align: right"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
+                </tr>
             </tbody>
         </table>
     @endsection
