@@ -14,8 +14,6 @@ class SalesMapController extends Controller
         $sellerId = $request->query('seller');
         $eventId = $request->query('record');
 
-        dd($eventId);
-
         $event = Event::find($eventId);
 
         // Consulta base de pedidos com filtros condicionais
