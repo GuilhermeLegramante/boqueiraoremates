@@ -24,7 +24,8 @@ class SalesMapController extends Controller
 
         // Se houver um vendedor selecionado, filtra os pedidos pelo vendedor
         if ($sellerId) {
-            dd($sellerId);
+            $orders = Order::where('seller_id', $sellerId)->get();
+            dd($orders);
             $ordersQuery = Order::where('event_id', $eventId)
                 ->where('seller_id', $sellerId)
                 ->with(['animal', 'seller', 'seller.address'])
