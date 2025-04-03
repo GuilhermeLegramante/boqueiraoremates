@@ -30,17 +30,7 @@ class ViewSalesMap extends ViewRecord
 
     protected function getHeaderActions(): array
     {
-        // dd(request()->query()); // Depuração para ver quais filtros estão sendo passados
-
         return [
-            // Actions\Action::make('generatePdf')
-            //     ->label('Gerar PDF')
-            //     ->icon('heroicon-o-document-text')
-            //     ->url(fn() => route('sales-map-pdf', [
-            //         'record' => $this->record->id,
-            //         'seller' => request()->query('tableFilters')['seller'] ?? null, // Captura o filtro corretamente
-            //     ]))
-            //     ->openUrlInNewTab(),
             Actions\Action::make('gerar_pdf')
                 ->label('Gerar PDF')
                 ->form([
