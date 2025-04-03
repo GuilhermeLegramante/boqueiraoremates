@@ -25,8 +25,8 @@ class SalesMapController extends Controller
         // Se houver um vendedor selecionado, filtra os pedidos pelo vendedor
         if ($sellerId) {
             $ordersQuery = Order::where('event_id', $eventId)
-                ->with(['animal', 'seller', 'seller.address'])
                 ->where('seller_id', $sellerId)
+                ->with(['animal', 'seller', 'seller.address'])
                 ->selectRaw('orders.*, SUM(gross_value) OVER() as total_gross_value')
                 ->orderByRaw("batch IS NULL, batch");
         }
