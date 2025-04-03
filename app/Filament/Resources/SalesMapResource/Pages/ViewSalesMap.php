@@ -44,7 +44,7 @@ class ViewSalesMap extends ViewRecord
                 ])
                 ->action(function (array $data) {
                     return redirect()->route('sales-map-pdf', [
-                        'record' => $this->record->id,
+                        'record' => $this->record->event_id,
                         'seller' => $data['seller'],
                     ]);
                 })
