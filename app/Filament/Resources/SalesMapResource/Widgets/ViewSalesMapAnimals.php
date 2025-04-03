@@ -10,10 +10,12 @@ use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Facades\DB;
+use Filament\Tables\Actions\Action;
 
 class ViewSalesMapAnimals extends BaseWidget
 {
@@ -72,6 +74,18 @@ class ViewSalesMapAnimals extends BaseWidget
                         Average::make()->label('Média Geral por Lote')->money('BRL'),
                     ]),
             ])
+            ->filters([
+                SelectFilter::make('seller')
+                    ->label('Vendedor')
+                    ->searchable()
+                    ->relationship('seller', 'name'),
+            ])
+            ->deferFilters()
+            ->filtersApplyAction(
+                fn(Action $action) => $action
+                    ->link()
+                    ->label('Aplicar Filtro(s)'),
+            )
             ->defaultSort('batch');
     }
 }

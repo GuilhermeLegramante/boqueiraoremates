@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/ficha-cadastral/{clientId}', [ClientController::class, 'getPdf'])->name('client-details-pdf');
     Route::get('/ordem-de-servico/{orderId}', [OrderController::class, 'getPdf'])->name('order-pdf');
 
-    Route::get('/mapa-de-vendas/{eventId}', [SalesMapController::class, 'getPdf'])->name('sales-map-pdf');
+    Route::get('/mapa-de-vendas/pdf', [SalesMapController::class, 'getPdf'])->name('sales-map-pdf');
 
 });
 
