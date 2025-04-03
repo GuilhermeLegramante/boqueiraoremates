@@ -25,7 +25,7 @@ class SalesMapController extends Controller
         // Se houver um vendedor selecionado, filtra os pedidos pelo vendedor
         if ($sellerId) {
             $ordersQuery->whereHas('seller', function ($query) use ($sellerId) {
-                $query->where('id', $sellerId);
+                $query->where('orders.seller_id', $sellerId);
             });
         }
 
