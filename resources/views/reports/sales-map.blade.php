@@ -139,13 +139,13 @@
         <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
-                    <th class="table-header text-white" style="width: 5%;">OS</th>
+                    <th class="table-header text-white" style="width: 3%;">OS</th>
                     <th class="table-header text-white" style="width: 5%;">Lote</th>
                     <th class="table-header text-white">Animal</th>
                     <th class="table-header text-white">Vendedor</th>
                     <th class="table-header text-white">Comprador</th>
                     <th class="table-header text-white" style="width: 12%;">Cidade</th>
-                    <th class="table-header text-white" style="width: 10%;">Parcela</th>
+                    <th class="table-header text-white" style="width: 8%;">Parcela</th>
                     <th class="table-header text-white" style="width: 10%;">Faturamento</th>
                 </tr>
             </thead>
@@ -207,6 +207,7 @@
         </table>
     @endsection
 
+    <br><br>
     @section('footer')
         @include('reports.footer')
     @endsection
