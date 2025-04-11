@@ -52,16 +52,12 @@ class AnimalForm
                 ->visible(fn (Get $get): bool => self::isCrioulo($get('breed_id'))),
             TextInput::make('rb')
                 ->live()
-                ->nullable()
-                ->unique(ignoreRecord: true)
                 ->label(__('fields.rb'))
                 ->visible(fn (Get $get): bool => self::isCrioulo($get('breed_id'))),
             TextInput::make('register')
                 ->label(__('fields.register'))
                 ->numeric()
                 ->live()
-                ->nullable()
-                ->unique(ignoreRecord: true)
                 ->visible(fn (Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
             Radio::make('blood_level')
                 ->label(__('fields.blood_level'))
