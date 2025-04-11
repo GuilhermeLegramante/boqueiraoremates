@@ -65,6 +65,7 @@ class SellerStatementController extends Controller
             'orders' => $orders,
             'earnings' => $earnings,
             'discounts' => $discounts,
+            'event' => $event,
         ];
 
         return ReportFactory::getBasicPdf('landscape', 'reports.seller-statement', $args, $fileName);
