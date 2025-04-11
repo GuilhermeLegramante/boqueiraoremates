@@ -42,7 +42,11 @@ class ParcelsTable
                 ->offColor('danger')
                 ->label('Boleto Emitido'),
             TextInputColumn::make('note')
-                ->label('Observação')
+                ->label('Observação'),
+            TextInputColumn::make('map_note')
+                ->label('Obs. p/ Mapa')
+                // ->visible(fn($record) => $record && $record->payment_method_id == 5)
+                ->placeholder('Obs. p/ mapa'),
         ];
     }
 }

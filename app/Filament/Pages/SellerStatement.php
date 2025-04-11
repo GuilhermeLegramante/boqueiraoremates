@@ -7,6 +7,7 @@ use App\Models\AnimalType;
 use App\Models\Breed;
 use App\Models\Client;
 use App\Models\Coat;
+use App\Models\EarningDiscount;
 use App\Models\Event;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Exception;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SellerStatement extends Page
 {
-    use HasPageShield;
+    // use HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -31,11 +32,13 @@ class SellerStatement extends Page
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $title = 'Extrato do Vendedor';
+    protected static ?string $title = 'Extrato de Vendedor';
 
-    protected static ?string $slug = 'extrato-do-vendedor';
+    protected static ?string $slug = 'extrato-de-vendedor';
 
-    protected ?string $heading = 'Extrato do Vendedor';
+    protected ?string $heading = 'Extrato de Vendedor';
+
+    protected static ?string $navigationGroup = 'Relatórios';
 
     // protected ?string $subheading = 'Geração do Extrato do Vendedor por Evento';
 
@@ -45,7 +48,7 @@ class SellerStatement extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return false;
+        return true;
     }
 
     public function mount(): void
@@ -57,7 +60,7 @@ class SellerStatement extends Page
     {
         return $form
             ->schema([
-                Section::make('Geração do Extrato do Vendedor por Evento')
+                Section::make('Geração do Extrato de Vendedor por Evento')
                     ->columns([
                         'sm' => 2,
                         'xl' => 2,
@@ -71,28 +74,32 @@ class SellerStatement extends Page
                             ->options(Event::all()->pluck('name', 'id')->toArray())
                             ->reactive()
                             ->required()
-                            ->afterStateUpdated(fn($state, callable $set) => $set('seller_id', null)),
+                            ->afterStateUpdated(function ($state, callable $set, $get, $livewire) {
+                                $set('seller_id', null);
+                                $set('additional_earnings', []);
+                                $set('additional_discounts', []);
+                                $livewire->loadEarningsAndDiscounts();
+                            }),
 
                         Select::make('seller_id')
                             ->label('Vendedor')
                             ->columnSpanFull()
                             ->options(function (callable $get) {
                                 $eventId = $get('event_id');
-                                if (!$eventId) {
-                                    return [];
-                                }
+                                if (!$eventId) return [];
 
-                                return \App\Models\Client::whereHas('sellerOrders', function ($query) use ($eventId) {
-                                    $query->where('event_id', $eventId)
-                                        ->whereColumn('seller_id', 'clients.id');
-                                })
-                                    ->pluck('name', 'id')
-                                    ->toArray();
+                                return Client::whereHas(
+                                    'sellerOrders',
+                                    fn($query) =>
+                                    $query->where('event_id', $eventId)->whereColumn('seller_id', 'clients.id')
+                                )->pluck('name', 'id')->toArray();
                             })
                             ->searchable()
                             ->required()
                             ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set, $get, $livewire) => $livewire->loadEarningsAndDiscounts())
                             ->visible(fn(callable $get) => !empty($get('event_id'))),
+
 
                         Repeater::make('additional_earnings')
                             ->label('Proventos Adicionais')
@@ -112,7 +119,7 @@ class SellerStatement extends Page
                             ->visible(fn(callable $get) => !empty($get('seller_id'))),
 
 
-                        Repeater::make('additional_deductions')
+                        Repeater::make('additional_discounts')
                             ->label('Descontos Adicionais')
                             ->schema([
                                 TextInput::make('description')
@@ -128,8 +135,6 @@ class SellerStatement extends Page
                             ->columnSpanFull()
                             ->reactive()
                             ->visible(fn(callable $get) => !empty($get('seller_id'))),
-
-
                     ]),
 
                 Section::make('Totais')
@@ -143,11 +148,11 @@ class SellerStatement extends Page
                             )
                             ->reactive(),
 
-                        Placeholder::make('total_deductions')
+                        Placeholder::make('total_discounts')
                             ->label('Total de Descontos')
                             ->content(
                                 fn(callable $get) =>
-                                'R$ ' . number_format(collect($get('additional_deductions'))->sum('value'), 2, ',', '.')
+                                'R$ ' . number_format(collect($get('additional_discounts'))->sum('value'), 2, ',', '.')
                             )
                             ->reactive(),
 
@@ -155,14 +160,14 @@ class SellerStatement extends Page
                             ->label('Saldo Final')
                             ->content(function (callable $get) {
                                 $earnings = collect($get('additional_earnings'))->sum('value');
-                                $deductions = collect($get('additional_deductions'))->sum('value');
-                                $balance = $earnings - $deductions;
+                                $discounts = collect($get('additional_discounts'))->sum('value');
+                                $balance = $earnings - $discounts;
                                 return 'R$ ' . number_format($balance, 2, ',', '.');
                             })
                             ->extraAttributes(function (callable $get) {
                                 $earnings = collect($get('additional_earnings'))->sum('value');
-                                $deductions = collect($get('additional_deductions'))->sum('value');
-                                $balance = $earnings - $deductions;
+                                $discounts = collect($get('additional_discounts'))->sum('value');
+                                $balance = $earnings - $discounts;
 
                                 return [
                                     'class' => 'font-bold ' . ($balance >= 0 ? 'text-green-600' : 'text-red-600'),
@@ -178,22 +183,102 @@ class SellerStatement extends Page
             ->statePath('data');
     }
 
-    public function submit(): void
+    public function loadEarningsAndDiscounts()
+    {
+        $eventId = $this->data['event_id'];
+        $sellerId = $this->data['seller_id'];
+
+
+        if ($eventId && $sellerId) {
+            $records = EarningDiscount::where('event_id', $eventId)
+                ->where('client_id', $sellerId)
+                ->get();
+
+            $earnings = $records->where('type', 'earning')->map(fn($item) => [
+                'description' => $item->description,
+                'value' => $item->amount,
+            ])->values()->toArray();
+
+            $discounts = $records->where('type', 'discount')->map(fn($item) => [
+                'description' => $item->description,
+                'value' => $item->amount,
+            ])->values()->toArray();
+
+            $this->form->fill([
+                'event_id' => $eventId,
+                'seller_id' => $sellerId,
+                'additional_earnings' => $earnings,
+                'additional_discounts' => $discounts,
+            ]);
+
+            if (empty($earnings) && empty($discounts)) {
+                Notification::make()
+                    ->title('Nenhum registro encontrado')
+                    ->body('Este vendedor não possui proventos ou descontos cadastrados para este evento.')
+                    ->info()
+                    ->send();
+            }
+        }
+    }
+
+    public function submit()
     {
         $data = $this->form->getState();
 
-        dd($data);
+        $eventId = $data['event_id'] ?? null;
+        $sellerId = $data['seller_id'] ?? null;
+
+        if (!$eventId || !$sellerId) {
+            Notification::make()
+                ->title('Erro')
+                ->body('Evento e Vendedor são obrigatórios.')
+                ->danger()
+                ->send();
+            return;
+        }
 
         try {
+            // Exclui os registros anteriores
+            \App\Models\EarningDiscount::where('event_id', $eventId)
+                ->where('client_id', $sellerId)
+                ->delete();
+
+            // Insere os proventos
+            foreach ($data['additional_earnings'] ?? [] as $earning) {
+                \App\Models\EarningDiscount::create([
+                    'event_id'    => $eventId,
+                    'client_id'   => $sellerId,
+                    'description' => $earning['description'],
+                    'amount'      => $earning['value'],
+                    'type'        => 'earning',
+                ]);
+            }
+
+            // Insere os descontos
+            foreach ($data['additional_discounts'] ?? [] as $discount) {
+                \App\Models\EarningDiscount::create([
+                    'event_id'    => $eventId,
+                    'client_id'   => $sellerId,
+                    'description' => $discount['description'],
+                    'amount'      => $discount['value'],
+                    'type'        => 'discount',
+                ]);
+            }
 
             Notification::make()
                 ->title('Sucesso!')
-                ->body('Dados importados')
+                ->body('Proventos e descontos salvos com sucesso.')
                 ->success()
                 ->send();
-        } catch (Exception $e) {
+
+            return redirect()->route('seller-statement-pdf', [
+                'eventId' => $eventId,
+                'sellerId' => $sellerId,
+            ]);
+
+        } catch (\Exception $e) {
             Notification::make()
-                ->title('Erro ao importar os dados!')
+                ->title('Erro ao salvar')
                 ->body($e->getMessage())
                 ->danger()
                 ->send();

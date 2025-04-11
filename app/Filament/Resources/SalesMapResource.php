@@ -32,6 +32,7 @@ class SalesMapResource extends Resource
 
     protected static ?string $slug = 'mapas-de-vendas';
 
+    protected static ?string $navigationGroup = 'Relatórios';
 
     public static function form(Form $form): Form
     {
