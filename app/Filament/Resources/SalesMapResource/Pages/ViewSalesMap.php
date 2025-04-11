@@ -38,9 +38,13 @@ class ViewSalesMap extends ViewRecord
                         ->label('Vendedor')
                         ->searchable()
                         ->options(
-                            Client::pluck('name', 'id')->toArray()
+                            Client::whereIn('id', function ($query) {
+                                $query->select('seller_id')
+                                    ->from('orders')
+                                    ->where('event_id', $this->record->event_id);
+                            })->pluck('name', 'id')->toArray()
                         )
-                        ->default(request()->query('tableFilters.seller')), // Tenta pegar o filtro da tabela, se existir
+                        ->default(request()->query('tableFilters.seller')),
                 ])
                 ->action(function (array $data) {
                     return redirect()->route('sales-map-pdf', [
