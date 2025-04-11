@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Storage;
 class ImportAnimals extends Page
 {
     use HasPageShield;
-    
+
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.import-animals';
@@ -116,18 +116,22 @@ class ImportAnimals extends Page
                         'name' => $animalTypeName
                     ]);
 
-                    Animal::create([
-                        'name' => strtoupper($name),
-                        'breed_id' => $breed->id,
-                        'animal_type_id' => $animalType->id,
-                        'coat_id' => $coat->id,
-                        'gender' => $gender == 'M' ? 'male' : 'female',
-                        'sbb' => $sbb,
-                        'rb' => $rb,
-                        'mother' => $mother,
-                        'father' => $father,
-                        'birth_date' => $birthDate,
-                    ]);
+                    Animal::firstOrCreate(
+                        [ // Condições de busca
+                            'sbb' => $sbb,
+                            'name' => strtoupper($name),
+                        ],
+                        [ // Dados para criação (caso não encontre)
+                            'breed_id' => $breed->id,
+                            'animal_type_id' => $animalType->id,
+                            'coat_id' => $coat->id,
+                            'gender' => $gender == 'M' ? 'male' : 'female',
+                            'rb' => $rb,
+                            'mother' => $mother,
+                            'father' => $father,
+                            'birth_date' => $birthDate,
+                        ]
+                    );
                 }
             }
 
