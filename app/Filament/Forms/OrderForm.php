@@ -89,7 +89,6 @@ class OrderForm
                 Select::make('event_id')
                     ->label(__('fields.event'))
                     ->required()
-                    ->preload()
                     ->searchable()
                     ->preload()
                     ->live()

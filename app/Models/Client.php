@@ -72,4 +72,9 @@ class Client extends Model
     {
         return $this->hasManyThrough(DocumentType::class, Document::class);
     }
+
+    public function sellerOrders()
+    {
+        return $this->hasMany(\App\Models\Order::class, 'seller_id', 'id');
+    }
 }
