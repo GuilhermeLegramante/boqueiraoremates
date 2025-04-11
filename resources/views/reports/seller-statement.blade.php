@@ -166,12 +166,12 @@
                     <td style="text-align: left;"><strong>Multiplicador:</strong></td>
                     <td>{{ $event->multiplier ?? '-' }}x</td>
                 </tr>
-                <tr>
+                {{-- <tr>
                     <td style="text-align: left;"><strong>Parcelas:</strong></td>
                     <td colspan="3">
                         {{ $event->parcels ?? '-' }}
                     </td>
-                </tr>
+                </tr> --}}
             </tbody>
         </table>
         <br>
