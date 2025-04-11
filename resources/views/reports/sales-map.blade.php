@@ -144,7 +144,7 @@
                     <th class="table-header text-white">Animal</th>
                     <th class="table-header text-white">Vendedor</th>
                     <th class="table-header text-white">Comprador</th>
-                    <th class="table-header text-white" style="width: 15%;">Cidade</th>
+                    <th class="table-header text-white" style="width: 18%;">Cidade</th>
                     <th class="table-header text-white" style="width: 8%;">Parcela</th>
                     <th class="table-header text-white" style="width: 10%;">Faturamento</th>
                 </tr>
