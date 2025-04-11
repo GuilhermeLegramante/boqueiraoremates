@@ -119,10 +119,10 @@ class Client extends Model
     //     return mb_strtoupper($value, 'UTF-8');
     // }
 
-    public function getProfileAttribute($value)
-    {
-        return mb_strtoupper($value, 'UTF-8');
-    }
+    // public function getProfileAttribute($value)
+    // {
+    //     return mb_strtoupper($value, 'UTF-8');
+    // }
 
     public function getNoteAttribute($value)
     {
