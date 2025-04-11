@@ -18,6 +18,8 @@ class Parcel extends Model
         'date',
         'value',
         'paid',
+        'note',
+        'map_note',
     ];
 
     protected $casts = [
@@ -33,6 +35,16 @@ class Parcel extends Model
     public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function getNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getMapNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
     }
 
 

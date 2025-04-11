@@ -18,6 +18,8 @@ class BuyerParcel extends Model
         'date',
         'value',
         'paid',
+        'note',
+        'map_note',
     ];
 
     protected $casts = [
@@ -28,5 +30,15 @@ class BuyerParcel extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class);
+    }
+
+    public function getNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getMapNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
     }
 }

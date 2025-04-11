@@ -218,7 +218,7 @@
                         <td style="text-align: center;">{{ $order->paymentWay->name }}</td>
                         <td style="text-align: right;"> R$ {{ number_format($order->receipt ?? 0, 2, ',', '.') }}
                         </td>
-                        <td style="text-align: center;">RECBTO. TOTAL</td>
+                        <td style="text-align: center;">{{ $order->map_note }}</td>
                     </tr>
                 @endforeach
             </tbody>
