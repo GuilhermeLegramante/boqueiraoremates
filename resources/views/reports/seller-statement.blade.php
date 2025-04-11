@@ -164,7 +164,7 @@
                     </td>
 
                     <td style="text-align: left;"><strong>Multiplicador:</strong></td>
-                    <td>{{ $event->multiplier ?? '-' }}x</td>
+                    <td>{{ $event->multiplier ?? '-' }}</td>
                 </tr>
                 {{-- <tr>
                     <td style="text-align: left;"><strong>Parcelas:</strong></td>
