@@ -16,4 +16,9 @@ class Breed extends Model
     {
         return $this->hasMany(Animal::class);
     }
+
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
 }

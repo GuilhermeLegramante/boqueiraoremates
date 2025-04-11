@@ -10,4 +10,9 @@ class SendingDocsMethod extends Model
     use HasFactory;
 
     protected $fillable = ['name'];
+
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
 }

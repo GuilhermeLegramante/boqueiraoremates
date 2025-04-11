@@ -17,4 +17,14 @@ class Bank extends Model
         return $this->hasMany(Client::class);
     }
 
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getCodeAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
 }

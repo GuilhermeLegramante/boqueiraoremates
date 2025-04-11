@@ -11,4 +11,9 @@ class ServiceType extends Model
 
     protected $fillable = ['name'];
 
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
 }

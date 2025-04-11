@@ -28,4 +28,14 @@ class Event extends Model
         return $this->belongsToMany(Animal::class, 'animal_event');
     }
 
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
 }

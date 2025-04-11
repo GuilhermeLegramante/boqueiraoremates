@@ -77,4 +77,55 @@ class Client extends Model
     {
         return $this->hasMany(\App\Models\Order::class, 'seller_id', 'id');
     }
+
+    // Campos de texto com exibição em maiúsculas
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getMotherAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getFatherAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getOccupationAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getNoteOccupationAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getEstablishmentAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getAuctioneerAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getRegisterOriginAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getProfileAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
 }

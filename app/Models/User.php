@@ -48,4 +48,14 @@ class User extends Authenticatable
         'password' => 'hashed',
         'is_admin' => 'boolean',
     ];
+
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getUsernameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
 }

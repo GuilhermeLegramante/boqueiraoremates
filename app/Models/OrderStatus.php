@@ -10,4 +10,14 @@ class OrderStatus extends Model
     use HasFactory;
 
     protected $fillable = ['name', 'note'];
+
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
+
+    public function getNoteAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
 }

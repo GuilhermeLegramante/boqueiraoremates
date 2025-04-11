@@ -16,4 +16,9 @@ class DocumentType extends Model
     {
         return $this->hasMany(Document::class);
     }
+
+    public function getNameAttribute($value)
+    {
+        return mb_strtoupper($value, 'UTF-8');
+    }
 }
