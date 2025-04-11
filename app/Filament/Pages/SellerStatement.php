@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Storage;
 
 class SellerStatement extends Page
 {
-    // use HasPageShield;
+    use HasPageShield;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -45,7 +45,7 @@ class SellerStatement extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return false;
     }
 
     public function mount(): void
