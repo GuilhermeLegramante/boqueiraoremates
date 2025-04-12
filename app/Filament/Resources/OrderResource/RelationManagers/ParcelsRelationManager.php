@@ -74,8 +74,8 @@ class ParcelsRelationManager extends RelationManager
                 Forms\Components\Select::make('payment_method_id')
                     ->label('Método de Pagamento')
                     ->options(PaymentMethod::all()->pluck('name', 'id'))
-                    ->default(7) // COBRANÇA VIA CABANHA
-                    ->required(),
+                    ->default(7), // COBRANÇA VIA CABANHA
+                    // ->required(),
                 Forms\Components\Toggle::make('paid')
                     ->label('Parcela Paga')
                     ->inline(false)
