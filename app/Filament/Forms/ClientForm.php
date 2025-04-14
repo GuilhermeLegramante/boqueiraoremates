@@ -31,7 +31,7 @@ class ClientForm
         return [
             Section::make('Dados do Cliente')
                 ->description(
-                    fn (string $operation): string => $operation === 'create' || $operation === 'edit' ? 'Informe os campos solicitados' : ''
+                    fn(string $operation): string => $operation === 'create' || $operation === 'edit' ? 'Informe os campos solicitados' : ''
                 )
                 ->schema([
                     Fieldset::make('Informações Pessoais')
@@ -117,13 +117,42 @@ class ClientForm
                                         'state' => 'uf',
                                     ]
                                 ),
-                            TextInput::make('street')->label(__('fields.street'))->columnSpan(1),
-                            TextInput::make('number')->label(__('fields.number')),
-                            TextInput::make('complement')->label(__('fields.complement')),
-                            TextInput::make('reference')->label(__('fields.reference')),
-                            TextInput::make('district')->label(__('fields.district')),
-                            TextInput::make('city')->label(__('fields.city')),
-                            TextInput::make('state')->label(__('fields.state')),
+                            TextInput::make('street')
+                                ->label(__('fields.street'))
+                                ->columnSpan(1)
+                                ->afterStateUpdated(fn($state, callable $set) => $set('street', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
+                            TextInput::make('number')
+                                ->label(__('fields.number'))
+                                ->afterStateUpdated(fn($state, callable $set) => $set('number', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
+                            TextInput::make('complement')
+                                ->label(__('fields.complement'))
+                                ->afterStateUpdated(fn($state, callable $set) => $set('complement', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
+                            TextInput::make('reference')
+                                ->label(__('fields.reference'))
+                                ->afterStateUpdated(fn($state, callable $set) => $set('reference', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
+                            TextInput::make('district')
+                                ->label(__('fields.district'))
+                                ->afterStateUpdated(fn($state, callable $set) => $set('district', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
+                            TextInput::make('city')
+                                ->label(__('fields.city'))
+                                ->afterStateUpdated(fn($state, callable $set) => $set('city', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
+                            TextInput::make('state')
+                                ->label(__('fields.state'))
+                                ->afterStateUpdated(fn($state, callable $set) => $set('state', strtoupper($state)))
+                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+
                         ])
                         ->columns(4),
 
