@@ -105,6 +105,13 @@ class ClientForm
                             Cep::make('postal_code')
                                 ->label(__('fields.cep'))
                                 // ->live(onBlur: true)
+                                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                    // Força os campos preenchidos via ViaCEP a ficarem em MAIÚSCULAS
+                                    $set('street', strtoupper((string) $get('street')));
+                                    $set('district', strtoupper((string) $get('district')));
+                                    $set('city', strtoupper((string) $get('city')));
+                                    $set('state', strtoupper((string) $get('state')));
+                                })
                                 ->viaCep(
                                     mode: 'suffix',
                                     errorMessage: 'CEP inválido.',
