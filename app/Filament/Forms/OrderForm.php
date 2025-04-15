@@ -65,15 +65,22 @@ class OrderForm
                 TextInput::make('number')
                     ->afterStateHydrated(function (TextInput $component, $state, string $operation) {
                         if ($operation === 'create') {
-                            $order = Order::whereRaw('number = (select max(`number`) from orders)')->get()->first();
-                            if (isset($order->number)) {
-                                $component->state($order->number + 1);
+                            $lastOrder = Order::orderByRaw('CAST(number AS DECIMAL(10,2)) DESC')->first();
+
+                            if ($lastOrder && is_numeric($lastOrder->number)) {
+                                $nextNumber = floor((float) $lastOrder->number); // Arredonda pra baixo
+                                $component->state((string) ($nextNumber + 1)); // Próximo inteiro
+                            } else {
+                                $component->state('1');
                             }
                         }
                     })
                     ->required()
                     ->label('Número')
-                    ->numeric(),
+                    ->rule('regex:/^\d+(\.\d+)?$/') // Permite "4", "3.1", "10.25", etc.
+                    ->validationMessages([
+                        'regex' => 'O número deve ser um inteiro ou decimal (ex: 3 ou 3.1).',
+                    ]),
                 DatePicker::make('base_date')
                     ->afterStateHydrated(function (DatePicker $component, $state, string $operation) {
                         if ($operation === 'create') {
