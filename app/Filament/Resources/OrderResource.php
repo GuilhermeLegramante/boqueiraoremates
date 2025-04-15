@@ -163,7 +163,7 @@ class OrderResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('number', 'desc')
+            ->defaultSort('id', 'desc')
             ->groups([
                 Group::make('status.name')
                     ->label('Status')
