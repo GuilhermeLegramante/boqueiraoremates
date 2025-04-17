@@ -137,7 +137,7 @@
 
     <div class="background">
 
-        <table>
+        <table style="margin-bottom: -1%;">
             <tr>
                 <th>
                     <h2>Dados do Vendedor</h2>
@@ -181,6 +181,13 @@
             $receivedTotal = $orders->sum('receipt'); // ajuste aqui se tiver um campo como $order->received_value
         @endphp
 
+        <table style="margin-bottom: -1%;">
+            <tr>
+                <th>
+                    <h2>Proventos 01</h2>
+                </th>
+            </tr>
+        </table>
         <table class="table" style="table-layout: fixed; width: 100%; font-si">
             <thead>
                 <tr>
@@ -238,10 +245,10 @@
             </tfoot>
         </table>
 
-        <table>
+        <table style="margin-bottom: -1%;">
             <tr>
                 <th>
-                    <h2>Proventos Adicionais</h2>
+                    <h2>Proventos 02</h2>
                 </th>
             </tr>
         </table>
@@ -270,10 +277,10 @@
             </tbody>
         </table>
 
-        <table>
+        <table style="margin-bottom: -1%;">
             <tr>
                 <th>
-                    <h2>Descontos Adicionais</h2>
+                    <h2>Descontos</h2>
                 </th>
             </tr>
         </table>
