@@ -19,7 +19,7 @@
             /* border-color: black; */
             /* border-style: solid; */
             border-width: 1px;
-            font-size: 9px;
+            font-size: 8px;
             overflow: hidden;
             padding: 3px 3px;
             word-break: normal;
@@ -29,7 +29,7 @@
             /* border-color: black; */
             /* border-style: solid; */
             border-width: 1px;
-            font-size: 9px;
+            font-size: 8px;
             font-weight: normal;
             overflow: hidden;
             padding: 3px 3px;
@@ -192,9 +192,9 @@
             <thead>
                 <tr>
                     <th class="table-header text-white" style="width: 3%;">OS</th>
-                    <th class="table-header text-white" style="width: 5%;">Lote</th>
-                    <th class="table-header text-white">Animal</th>
-                    <th class="table-header text-white">Comprador</th>
+                    <th class="table-header text-white" style="width: 3%;">Lote</th>
+                    <th class="table-header text-white" style="width: 18%;">Animal</th>
+                    <th class="table-header text-white" style="width: 18%;">Comprador</th>
                     <th class="table-header text-white" style="width: 18%;">Cidade</th>
                     <th class="table-header text-white" style="width: 8%;">Parcela</th>
                     <th class="table-header text-white" style="width: 10%;">Faturamento</th>
