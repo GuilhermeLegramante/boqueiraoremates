@@ -324,7 +324,11 @@
                 <tr>
                     <td style="text-align: center;"><strong>TOTAL DE PROVENTOS</strong></td>
                     <td style="text-align: center;"><strong>TOTAL DE DESCONTOS</strong></td>
-                    <td style="text-align: center;"><strong>VALOR A ENVIAR</strong></td>
+                    <td style="text-align: center;">
+                        <strong>
+                            {{ $balance < 0 ? 'VALOR A RECEBER' : 'VALOR A ENVIAR' }}
+                        </strong>
+                    </td>
                 </tr>
             </thead>
             <tbody>
@@ -336,11 +340,12 @@
                         R$ {{ number_format($totalDiscounts, 2, ',', '.') }}
                     </td>
                     <td style="text-align: center">
-                        <strong>R$ {{ number_format($balance, 2, ',', '.') }}</strong>
+                        <strong>R$ {{ number_format(abs($balance), 2, ',', '.') }}</strong>
                     </td>
                 </tr>
             </tbody>
         </table>
+
         <br><br>
     @endsection
 
