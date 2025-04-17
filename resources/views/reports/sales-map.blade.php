@@ -140,13 +140,13 @@
             <thead>
                 <tr>
                     <th class="table-header text-white" style="width: 3%;">OS</th>
-                    <th class="table-header text-white" style="width: 5%;">Lote</th>
+                    <th class="table-header text-white" style="width: 3%;">Lote</th>
                     <th class="table-header text-white">Animal</th>
                     <th class="table-header text-white">Vendedor</th>
                     <th class="table-header text-white">Comprador</th>
                     <th class="table-header text-white" style="width: 18%;">Cidade</th>
                     <th class="table-header text-white" style="width: 8%;">Parcela</th>
-                    <th class="table-header text-white" style="width: 10%;">Faturamento</th>
+                    <th class="table-header text-white" style="width: 8%;">Faturamento</th>
                 </tr>
             </thead>
             <tbody>
