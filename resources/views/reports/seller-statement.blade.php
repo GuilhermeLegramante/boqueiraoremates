@@ -200,7 +200,7 @@
                     <th class="table-header text-white" style="width: 10%;">Faturamento</th>
                     <th class="table-header text-white" style="width: 10%;">Condição</th>
                     <th class="table-header text-white" style="width: 10%;">Recebido</th>
-                    <th class="table-header text-white" style="width: 10%;">Informação</th>
+                    <th class="table-header text-white" style="width: 18%;">Informação</th>
                 </tr>
             </thead>
             <tbody>
