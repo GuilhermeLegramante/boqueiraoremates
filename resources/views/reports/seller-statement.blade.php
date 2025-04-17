@@ -217,13 +217,13 @@
                                 {{ ' -' }}
                             @endif
                         </td>
-                        <td style="text-align: right;">
+                        <td style="text-align: center;">
                             {{ 'R$ ' .
                                 ($order->multiplier > 0 ? number_format($order->gross_value / $order->multiplier, 2, ',', '.') : '0,00') }}
                         </td>
-                        <td style="text-align: right;">R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}</td>
+                        <td style="text-align: center;">R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}</td>
                         <td style="text-align: center;">{{ $order->paymentWay->name }}</td>
-                        <td style="text-align: right;"> R$ {{ number_format($order->receipt ?? 0, 2, ',', '.') }}
+                        <td style="text-align: center;"> R$ {{ number_format($order->receipt ?? 0, 2, ',', '.') }}
                         </td>
                         <td style="text-align: center;">{{ $order->map_note }}</td>
                     </tr>
