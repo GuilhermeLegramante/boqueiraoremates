@@ -32,10 +32,20 @@ class ViewSalesMapAnimals extends BaseWidget
     {
         return $table
             ->heading($this->record->event->name)
-            ->query(
-                fn() => Order::where('event_id', $this->record->event_id)
-                    ->with(['animal', 'seller.address']) // Garantir que carregamos os relacionamentos necessários
-            )
+            // ->query(
+            //     fn() => Order::where('event_id', $this->record->event_id)
+            //         ->with(['animal', 'seller.address']) // Garantir que carregamos os relacionamentos necessários
+            // )
+            ->query(function () {
+                $orders = Order::where('event_id', $this->record->event_id)
+                    ->with(['animal', 'seller.address']) // Relacionamentos
+                    ->get(); // Executa a query aqui
+
+                // dd($orders->first()); // Exibe o primeiro resultado para inspecionar
+
+                return Order::where('event_id', $this->record->event_id)
+                    ->with(['animal', 'seller.address']);
+            })
             ->columns([
                 TextColumn::make('number')
                     ->label('OS')
@@ -61,7 +71,15 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->default('-'),
 
                 TextColumn::make('parcel_value')
-                    ->label('Parcela')
+                    ->label('Parcela Calculada')
+                    ->formatStateUsing(function ($state, $record) {
+                        // Verifica se os campos estão presentes e realiza o cálculo
+                        if ($record->gross_value && $record->multiplier) {
+                            return $record->gross_value / $record->multiplier;
+                        }
+                        // Se algum valor estiver faltando, retorna 0 ou outro valor padrão
+                        return 0;
+                    })
                     ->numeric()
                     ->money('BRL'),
 
