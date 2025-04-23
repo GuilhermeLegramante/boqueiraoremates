@@ -72,16 +72,15 @@ class ViewSalesMapAnimals extends BaseWidget
 
                 TextColumn::make('parcel_value')
                     ->label('Parcela Calculada')
-                    ->formatStateUsing(function ($state, $record) {
-                        // Verifica se os campos estão presentes e realiza o cálculo
+                    ->getStateUsing(function ($record) {
                         if ($record->gross_value && $record->multiplier) {
                             return $record->gross_value / $record->multiplier;
                         }
-                        // Se algum valor estiver faltando, retorna 0 ou outro valor padrão
                         return 0;
                     })
                     ->numeric()
                     ->money('BRL'),
+
 
                 TextColumn::make('gross_value')
                     ->label('Faturamento')
