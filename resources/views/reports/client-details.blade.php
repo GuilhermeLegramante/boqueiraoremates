@@ -41,6 +41,17 @@
                 <td class="collumn-left"><strong>Estabelecimento:</strong> {{ $client->establishment }}</td>
                 <td class="collumn-right"><strong>Renda:</strong> {{ 'R$ ' . number_format($client->income, 2, ',', '.') }}
                 </td>
+                {{-- <td class="collumn-right" style="text-align: right; white-space: nowrap; padding: 0; height: 10px;">
+                    <table style="width: 100%; margin: 0; padding: 0;">
+                        <tr>
+                            <strong>Renda:</strong>
+                            <td style="text-align: left; width: auto; padding: 0; margin: 0; height: 10px;">R$</td>
+                            <td style="text-align: right; padding: 0; margin: 0; height: 10px;">
+                                {{ number_format($client->income ?? 0, 2, ',', '.') }}
+                            </td>
+                        </tr>
+                    </table>
+                </td> --}}
             </tr>
             <tr class="bg-light" style="font-size: 13px;">
                 <td class="collumn-left"><strong>CPF ou CNPJ:</strong> {{ $client->cpf_cnpj }}</td>

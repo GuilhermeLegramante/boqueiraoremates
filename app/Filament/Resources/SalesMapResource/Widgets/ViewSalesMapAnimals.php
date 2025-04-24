@@ -78,14 +78,14 @@ class ViewSalesMapAnimals extends BaseWidget
                         }
                         return 0;
                     })
+                    ->alignEnd()
                     ->numeric()
                     ->money('BRL'),
-
 
                 TextColumn::make('gross_value')
                     ->label('Faturamento')
                     ->money('BRL')
-
+                    ->alignEnd()
                     ->summarize([
                         Sum::make()->label('Faturamento Total')->money('BRL'),
                         Average::make()->label('Média Geral por Lote')->money('BRL'),

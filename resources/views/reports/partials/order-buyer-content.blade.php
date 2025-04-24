@@ -18,9 +18,12 @@
             <td class="table-0pky">{{ $order->buyer_commission }}%</td>
             <td class="table-0pky"><span style="font-weight:bold">Comissão Boqueirão</span></td>
             </td>
-            <td class="table-0pky">
+            {{-- <td class="table-0pky">
                 {{ 'R$ ' . number_format($buyerComissionValue, 2, ',', '.') }}
-            </td>
+            </td> --}}
+            @include('reports.partials.td-money', [
+                'money_value' => $netValue,
+            ])
             <td class="table-0pky">
                 <span style="font-weight:bold">N° de parcelas</span>
             </td>

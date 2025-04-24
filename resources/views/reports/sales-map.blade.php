@@ -164,12 +164,36 @@
                                 {{ ' -' }}
                             @endif
                         </td>
-                        <td style="text-align: center;">
-                            {{ 'R$ ' .
-                                ($order->multiplier > 0 ? number_format($order->gross_value / $order->multiplier, 2, ',', '.') : '0,00') }}
-                        </td>
-                        <td style="text-align: center;">R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}
-                        </td>
+                        {{-- <td style="text-align: right; white-space: nowrap;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="text-align: left; width: 20px;">R$</td>
+                                    <td style="text-align: right;">
+                                        {{ $order->multiplier > 0 ? number_format($order->gross_value / $order->multiplier, 2, ',', '.') : '0,00' }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td> --}}
+
+                        @include('reports.partials.td-money', [
+                            'money_value' => $order->multiplier > 0 ? $order->gross_value / $order->multiplier : 0,
+                        ])
+
+
+                        @include('reports.partials.td-money', ['money_value' => $order->gross_value])
+
+                        {{-- <td style="text-align: right; white-space: nowrap;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="text-align: left; width: 20px;">R$</td>
+                                    <td style="text-align: right;">
+                                        {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td> --}}
+
+
                     </tr>
                 @endforeach
             </tbody>
@@ -196,12 +220,21 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: center"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td>
+                    {{-- <td style="text-align: center"> R$ {{ number_format($totalRevenue, 2, ',', '.') }}</td> --}}
+                    @include('reports.partials.td-money', ['money_value' => $totalRevenue])
+
                     <td style="text-align: center"> {{ $totalSaleOrders }}</td>
+
                     <td style="text-align: center"> {{ $totalOrders - $totalSaleOrders }}</td>
-                    <td style="text-align: center"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td>
-                    <td style="text-align: center"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td>
-                    <td style="text-align: center"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td>
+
+                    {{-- <td style="text-align: center"> R$ {{ number_format($avgRevenuePerBatch, 2, ',', '.') }}</td> --}}
+                    @include('reports.partials.td-money', ['money_value' => $avgRevenuePerBatch])
+
+                    {{-- <td style="text-align: center"> R$ {{ number_format($avgFemaleRevenue, 2, ',', '.') }}</td> --}}
+                    @include('reports.partials.td-money', ['money_value' => $avgFemaleRevenue])
+
+                    {{-- <td style="text-align: center"> R$ {{ number_format($avgMaleRevenue, 2, ',', '.') }}</td> --}}
+                    @include('reports.partials.td-money', ['money_value' => $avgMaleRevenue])
                 </tr>
             </tbody>
         </table>

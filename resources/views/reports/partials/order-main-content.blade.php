@@ -79,19 +79,28 @@
         </tr>
         <tr>
             <td class="table-fymr">Parcela</td>
-            <td class="table-0pky">
+            {{-- <td class="table-0pky">
                 {{ 'R$ ' . number_format($order->gross_value / $order->multiplier, 2, ',', '.') }}
-            </td>
+            </td> --}}
+            @include('reports.partials.td-money', [
+                'money_value' => $order->gross_value / $order->multiplier,
+            ])
+
             <td class="table-fymr">Multiplicador</td>
             <td class="table-0pky">
                 {{ $order->multiplier }}
             </td>
             <td class="table-fymr">Valor Bruto</td>
-            <td class="table-llyw">
+            {{-- <td class="table-llyw">
                 <strong>
                     {{ 'R$ ' . number_format($order->gross_value, 2, ',', '.') }}
                 </strong>
-            </td>
+            </td> --}}
+            @include('reports.partials.td-money', [
+                'money_value' => $order->gross_value,
+                'td_css' => 'font-weight: bold; background-color: #c0c0c0;',
+            ])
+
         </tr>
         <tr>
             <td class="table-fymr">Prazo Escolhido</td>
@@ -103,11 +112,15 @@
                 {{ $order->discount_percentage }}%
             </td>
             <td class="table-fymr">Valor Líquido</td>
-            <td class="table-llyw">
+            {{-- <td class="table-llyw">
                 <strong>
                     {{ 'R$ ' . number_format($netValue, 2, ',', '.') }}
                 </strong>
-            </td>
+            </td> --}}
+            @include('reports.partials.td-money', [
+                'money_value' => $netValue,
+                'td_css' => 'font-weight: bold; background-color: #c0c0c0;',
+            ])
         </tr>
         <tr>
             <td class="table-fymr">Obs</td>
