@@ -11,6 +11,7 @@ use App\Models\EarningDiscount;
 use App\Models\Event;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Exception;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -68,10 +69,35 @@ class SellerStatement extends Page
                     ])
                     ->description('Selecione um Evento, um Vendedor e informe os Descontos e Proventos adicionais.')
                     ->schema([
+                        DatePicker::make('start_date')
+                            ->label('Data Inicial')
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('event_id', null)),
+
+                        DatePicker::make('end_date')
+                            ->label('Data Final')
+                            ->reactive()
+                            ->afterStateUpdated(fn($state, callable $set) => $set('event_id', null)),
+
                         Select::make('event_id')
                             ->label(__('fields.event'))
                             ->columnSpanFull()
-                            ->options(Event::all()->pluck('name', 'id')->toArray())
+                            ->options(function (callable $get) {
+                                $startDate = $get('start_date');
+                                $endDate = $get('end_date');
+
+                                $query = Event::query();
+
+                                if ($startDate) {
+                                    $query->whereDate('start_date', '>=', $startDate);
+                                }
+
+                                if ($endDate) {
+                                    $query->whereDate('start_date', '<=', $endDate);
+                                }
+
+                                return $query->pluck('name', 'id')->toArray();
+                            })
                             ->reactive()
                             ->required()
                             ->afterStateUpdated(function ($state, callable $set, $get, $livewire) {
@@ -275,7 +301,6 @@ class SellerStatement extends Page
                 'eventId' => $eventId,
                 'sellerId' => $sellerId,
             ]);
-
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Erro ao salvar')
