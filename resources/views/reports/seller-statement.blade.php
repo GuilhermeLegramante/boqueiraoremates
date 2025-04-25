@@ -368,20 +368,20 @@
         <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
-                    <th class="table-header text-white">RESUMO</th>
+                    <th colspan="2" class="table-header text-white">RESUMO</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: right;"><strong>TOTAL DE PROVENTOS</strong></td>
+                    <td style="text-align: right; width: 90%;"><strong>TOTAL DE PROVENTOS</strong></td>
                     @include('reports.partials.td-money', ['money_value' => $totalEarnings])
                 </tr>
                 <tr>
-                    <td style="text-align: right;"><strong>TOTAL DE DESCONTOS</strong></td>
+                    <td style="text-align: right; width: 90%;"><strong>TOTAL DE DESCONTOS</strong></td>
                     @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
                 </tr>
                 <tr>
-                    <td style="text-align: right;"><strong>
+                    <td style="text-align: right; width: 90%;"><strong>
                             {{ $balance < 0 ? 'VALOR A RECEBER' : 'VALOR A ENVIAR' }}
                         </strong>
                     </td>
