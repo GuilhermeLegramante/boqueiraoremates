@@ -46,8 +46,6 @@ class SellerStatement extends Page
 
     public bool $showActionButton = false;
 
-    public string $url = '';
-
     public static function shouldRegisterNavigation(): bool
     {
         return true;
@@ -273,15 +271,11 @@ class SellerStatement extends Page
                 ->success()
                 ->send();
 
-            $this->url = route('seller-statement-pdf', [
+            return redirect()->route('seller-statement-pdf', [
                 'eventId' => $eventId,
                 'sellerId' => $sellerId,
             ]);
 
-            // return redirect()->route('seller-statement-pdf', [
-            //     'eventId' => $eventId,
-            //     'sellerId' => $sellerId,
-            // ]);
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Erro ao salvar')
