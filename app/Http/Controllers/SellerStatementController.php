@@ -58,9 +58,6 @@ class SellerStatementController extends Controller
             $order->map_note = mb_strtoupper(implode(' | ', $notes), 'UTF-8');
         }
 
-
-
-
         $grouped = EarningDiscount::where('event_id', $event->id)
             ->where('client_id', $seller->id)
             ->get()

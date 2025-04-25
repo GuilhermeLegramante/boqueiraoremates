@@ -29,6 +29,8 @@ class ReportFactory
 
         $pdf->loadView($view, $args);
 
+        $pdf->setPaper('a4', $orientation);
+
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();
         }, $fileName);
