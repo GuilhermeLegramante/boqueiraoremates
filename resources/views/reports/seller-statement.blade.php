@@ -368,51 +368,42 @@
         <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
-                    <th class="table-header text-white" colspan="2">RESUMO</th>
+                    <th class="table-header text-white">RESUMO</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: right; width: 10%;"><strong>TOTAL DE PROVENTOS</strong></td>
-                    <td style="width: 90%;"></td> <!-- Coluna vazia -->
+                    <td style="text-align: right;"><strong>TOTAL DE PROVENTOS</strong></td>
                 </tr>
                 <tr>
                     {{-- <td style="text-align: center">
                         R$ {{ number_format($totalEarnings, 2, ',', '.') }}
                     </td> --}}
-                    <td colspan="2">
-                        @include('reports.partials.td-money', ['money_value' => $totalEarnings])
-                    </td>
+                    @include('reports.partials.td-money', ['money_value' => $totalEarnings])
                 </tr>
                 <tr>
-                    <td style="text-align: right; width: 10%;"><strong>TOTAL DE DESCONTOS</strong></td>
-                    <td style="width: 90%;"></td> <!-- Coluna vazia -->
+                    <td style="text-align: right;"><strong>TOTAL DE DESCONTOS</strong></td>
                 </tr>
                 <tr>
                     {{-- <td style="text-align: center">
                         R$ {{ number_format($totalDiscounts, 2, ',', '.') }}
                     </td> --}}
-                    <td colspan="2">
-                        @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
-                    </td>
+                    @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
                 </tr>
                 <tr>
-                    <td style="text-align: right; width: 10%;"><strong>
+                    <td style="text-align: right;"><strong>
                         {{ $balance < 0 ? 'VALOR A RECEBER' : 'VALOR A ENVIAR' }}
                     </strong></td>
-                    <td style="width: 90%;"></td> <!-- Coluna vazia -->
                 </tr>
                 <tr>
                     {{-- <td style="text-align: center">
                         <strong>R$ {{ number_format(abs($balance), 2, ',', '.') }}</strong>
                     </td> --}}
-                    <td colspan="2">
-                        @include('reports.partials.td-money', ['money_value' => abs($balance)])
-                    </td>
+                    @include('reports.partials.td-money', ['money_value' => abs($balance)])
                 </tr>
             </tbody>
         </table>
-        
+
         <br><br>
     @endsection
 
