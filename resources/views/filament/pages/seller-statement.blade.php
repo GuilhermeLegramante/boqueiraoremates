@@ -6,7 +6,8 @@
         <br>
         <br>
 
-        <x-filament::button type="submit" form="submit">
+        <x-filament::button type="button" wire:click="submit"
+            x-on:click="window.open(@js($url), '_blank')">
             Gerar Extrato do Vendedor
         </x-filament::button>
     </form>
