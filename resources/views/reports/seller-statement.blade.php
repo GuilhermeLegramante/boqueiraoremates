@@ -374,32 +374,19 @@
             <tbody>
                 <tr>
                     <td style="text-align: right;"><strong>TOTAL DE PROVENTOS</strong></td>
-                </tr>
-                <tr>
-                    {{-- <td style="text-align: center">
-                        R$ {{ number_format($totalEarnings, 2, ',', '.') }}
-                    </td> --}}
                     @include('reports.partials.td-money', ['money_value' => $totalEarnings])
                 </tr>
                 <tr>
                     <td style="text-align: right;"><strong>TOTAL DE DESCONTOS</strong></td>
-                </tr>
-                <tr>
-                    {{-- <td style="text-align: center">
-                        R$ {{ number_format($totalDiscounts, 2, ',', '.') }}
-                    </td> --}}
                     @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
                 </tr>
                 <tr>
                     <td style="text-align: right;"><strong>
-                        {{ $balance < 0 ? 'VALOR A RECEBER' : 'VALOR A ENVIAR' }}
-                    </strong></td>
-                </tr>
-                <tr>
-                    {{-- <td style="text-align: center">
-                        <strong>R$ {{ number_format(abs($balance), 2, ',', '.') }}</strong>
-                    </td> --}}
+                            {{ $balance < 0 ? 'VALOR A RECEBER' : 'VALOR A ENVIAR' }}
+                        </strong>
+                    </td>
                     @include('reports.partials.td-money', ['money_value' => abs($balance)])
+
                 </tr>
             </tbody>
         </table>
