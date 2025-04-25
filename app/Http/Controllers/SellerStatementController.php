@@ -46,7 +46,7 @@ class SellerStatementController extends Controller
             foreach (['parcels', 'buyer_parcels', 'seller_parcels'] as $table) {
                 $mapNotes = DB::table($table)
                     ->where('order_id', $order->id)
-                    ->where('payment_method_id', 5)
+                    // ->where('payment_method_id', 5) Filtra somente as do tipo MAPA DO REMATE
                     ->whereNotNull('map_note')
                     ->where('map_note', '!=', '')
                     ->pluck('map_note')
@@ -81,6 +81,6 @@ class SellerStatementController extends Controller
             'event' => $event,
         ];
 
-        return ReportFactory::getBasicPdf('landscape', 'reports.seller-statement', $args, $fileName);
+        return ReportFactory::download('landscape', 'reports.seller-statement', $args, $fileName);
     }
 }
