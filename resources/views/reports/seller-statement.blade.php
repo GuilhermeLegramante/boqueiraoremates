@@ -234,7 +234,7 @@
 
                         @include('reports.partials.td-money', ['money_value' => $order->receipt])
 
-                        <td style="text-align: center;">{{ $order->map_note }}</td>
+                        <td style="text-align: left;">{{ $order->map_note }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -275,7 +275,7 @@
             <tbody>
                 @foreach ($earnings as $earning)
                     <tr>
-                        <td>{{ $earning->description }}</td>
+                        <td style="text-align: right;">{{ $earning->description }}</td>
                         {{-- <td style="text-align: right;">
                             R$ {{ number_format($earning->amount, 2, ',', '.') }}
                         </td> --}}
@@ -309,7 +309,7 @@
             <tbody>
                 @foreach ($discounts as $discount)
                     <tr>
-                        <td>{{ $discount->description }}</td>
+                        <td style="text-align: right;">{{ $discount->description }}</td>
                         {{-- <td style="text-align: right;">
                             R$ {{ number_format($discount->amount, 2, ',', '.') }}
                         </td> --}}
@@ -340,7 +340,7 @@
             $balance = $totalEarnings - $totalDiscounts;
         @endphp
 
-        <table class="table" style="table-layout: fixed; width: 100%;">
+        {{-- <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
                     <th colspan="3" class="table-header text-white">RESUMO</th>
@@ -357,14 +357,45 @@
             </thead>
             <tbody>
                 <tr>
+                    @include('reports.partials.td-money', ['money_value' => $totalEarnings])
+                    @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
+                    @include('reports.partials.td-money', ['money_value' => abs($balance)])
+                </tr>
+            </tbody>
+        </table> --}}
+
+
+        <table class="table" style="table-layout: fixed; width: 100%;">
+            <thead>
+                <tr>
+                    <th class="table-header text-white">RESUMO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="text-align: right;"><strong>TOTAL DE PROVENTOS</strong></td>
+                </tr>
+                <tr>
                     {{-- <td style="text-align: center">
                         R$ {{ number_format($totalEarnings, 2, ',', '.') }}
                     </td> --}}
                     @include('reports.partials.td-money', ['money_value' => $totalEarnings])
+                </tr>
+                <tr>
+                    <td style="text-align: right;"><strong>TOTAL DE DESCONTOS</strong></td>
+                </tr>
+                <tr>
                     {{-- <td style="text-align: center">
                         R$ {{ number_format($totalDiscounts, 2, ',', '.') }}
                     </td> --}}
                     @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
+                </tr>
+                <tr>
+                    <td style="text-align: right;"><strong>
+                        {{ $balance < 0 ? 'VALOR A RECEBER' : 'VALOR A ENVIAR' }}
+                    </strong></td>
+                </tr>
+                <tr>
                     {{-- <td style="text-align: center">
                         <strong>R$ {{ number_format(abs($balance), 2, ',', '.') }}</strong>
                     </td> --}}
