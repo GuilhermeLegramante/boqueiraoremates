@@ -131,7 +131,7 @@ class SellerStatement extends Page
                         Section::make('Proventos 01')
                             ->schema([
                                 Placeholder::make('total_earnings_01')
-                                    ->label('Total de Proventos (01 + 02)')
+                                    ->label('Total de Proventos 01')
                                     ->content(
                                         fn(callable $get) =>
                                         'R$ ' . number_format($get('total_earnings_01'), 2, ',', '.')
@@ -203,13 +203,13 @@ class SellerStatement extends Page
                             ->content(function (callable $get) {
                                 $earnings = collect($get('additional_earnings'))->sum('value');
                                 $discounts = collect($get('additional_discounts'))->sum('value');
-                                $balance = $earnings - $discounts;
+                                $balance = $get('total_earnings_01') + $earnings - $discounts;
                                 return 'R$ ' . number_format($balance, 2, ',', '.');
                             })
                             ->extraAttributes(function (callable $get) {
                                 $earnings = collect($get('additional_earnings'))->sum('value');
                                 $discounts = collect($get('additional_discounts'))->sum('value');
-                                $balance = $earnings - $discounts;
+                                $balance = $get('total_earnings_01') + $earnings - $discounts;
 
                                 return [
                                     'class' => 'font-bold ' . ($balance >= 0 ? 'text-green-600' : 'text-red-600'),
