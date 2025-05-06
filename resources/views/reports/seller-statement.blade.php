@@ -206,35 +206,50 @@
             <tbody>
                 @foreach ($orders as $order)
                     <tr>
+                        @php $hasBuyer = $order->buyer && $order->buyer->name; @endphp
+
                         <td style="text-align: center;">{{ $order->number ?? '-' }}</td>
                         <td style="text-align: center;">{{ $order->batch ?? '-' }}</td>
                         <td>{{ strtoupper($order->animal->name) }}</td>
-                        <td>{{ strtoupper($order->buyer->name) ?? 'SEM VENDA' }}</td>
+
+                        <td>
+                            @if ($hasBuyer)
+                                {{ strtoupper($order->buyer->name) }}
+                            @else
+                                <span style="color: red;">SEM VENDA</span>
+                            @endif
+                        </td>
+
                         <td style="text-align: left;">
                             @if (isset($order->buyer->address->city) && isset($order->buyer->address->state))
                                 {{ strtoupper($order->buyer->address->city . ' - ' . $order->buyer->address->state) }}
                             @else
-                                {{ ' -' }}
+                                <span style="color: red;"> -</span>
                             @endif
                         </td>
-                        {{-- <td style="text-align: center;">
-                            {{ 'R$ ' .
-                                ($order->multiplier > 0 ? number_format($order->gross_value / $order->multiplier, 2, ',', '.') : '0,00') }}
-                        </td> --}}
+
                         @include('reports.partials.td-money', [
                             'money_value' => $order->multiplier > 0 ? $order->gross_value / $order->multiplier : 0,
+                            'td_css' => $hasBuyer ? '' : 'color: red;',
                         ])
-                        {{-- <td style="text-align: center;">R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}</td> --}}
-                        @include('reports.partials.td-money', ['money_value' => $order->gross_value])
 
-                        <td style="text-align: center;">{{ $order->paymentWay->name }}</td>
+                        @include('reports.partials.td-money', [
+                            'money_value' => $order->gross_value,
+                            'td_css' => $hasBuyer ? '' : 'color: red;',
+                        ])
 
-                        {{-- <td style="text-align: center;"> R$ {{ number_format($order->receipt ?? 0, 2, ',', '.') }} 
-                        </td> --}}
+                        <td style="text-align: center; {{ !$hasBuyer ? 'color: red;' : '' }}">
+                            {{ $order->paymentWay->name }}
+                        </td>
 
-                        @include('reports.partials.td-money', ['money_value' => $order->receipt])
+                        @include('reports.partials.td-money', [
+                            'money_value' => $order->receipt,
+                            'td_css' => $hasBuyer ? '' : 'color: red;',
+                        ])
 
-                        <td style="text-align: left;">{{ $order->map_note }}</td>
+                        <td style="text-align: left; {{ !$hasBuyer ? 'color: red;' : '' }}">
+                            {{ $order->map_note }}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -373,11 +388,11 @@
             </thead>
             <tbody>
                 <tr>
-                    <td style="text-align: right; width: 90%;"><strong>TOTAL DE PROVENTOS</strong></td>
+                    <td style="text-align: right; width: 90%;"><strong>TOTAL DE PROVENTOS (01 + 02)</strong></td>
                     @include('reports.partials.td-money', ['money_value' => $totalEarnings])
                 </tr>
                 <tr>
-                    <td style="text-align: right; width: 90%;"><strong>TOTAL DE DESCONTOS</strong></td>
+                    <td style="text-align: right; width: 90%; color: red;"><strong>TOTAL DE DESCONTOS</strong></td>
                     @include('reports.partials.td-money', ['money_value' => $totalDiscounts])
                 </tr>
                 <tr>

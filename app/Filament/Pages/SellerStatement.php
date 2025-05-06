@@ -128,7 +128,7 @@ class SellerStatement extends Page
 
 
                         Repeater::make('additional_earnings')
-                            ->label('Proventos Adicionais')
+                            ->label('Proventos 02')
                             ->schema([
                                 TextInput::make('description')
                                     ->label('Descrição')
@@ -146,7 +146,7 @@ class SellerStatement extends Page
 
 
                         Repeater::make('additional_discounts')
-                            ->label('Descontos Adicionais')
+                            ->label('Descontos')
                             ->schema([
                                 TextInput::make('description')
                                     ->label('Descrição')
@@ -167,7 +167,7 @@ class SellerStatement extends Page
                     ->description('Resumo dos valores calculados com base nos campos acima.')
                     ->schema([
                         Placeholder::make('total_earnings')
-                            ->label('Total de Proventos')
+                            ->label('Total de Proventos (01 + 02)')
                             ->content(
                                 fn(callable $get) =>
                                 'R$ ' . number_format(collect($get('additional_earnings'))->sum('value'), 2, ',', '.')

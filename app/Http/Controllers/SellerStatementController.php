@@ -78,6 +78,6 @@ class SellerStatementController extends Controller
             'event' => $event,
         ];
 
-        return ReportFactory::download('landscape', 'reports.seller-statement', $args, $fileName);
+        return ReportFactory::getBasicPdf('landscape', 'reports.seller-statement', $args, $fileName);
     }
 }
