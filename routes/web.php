@@ -42,8 +42,6 @@ Route::get('/teste/{id}', function (string $id) {
     return 'User ' . $id;
 });
 
-Route::get('/salvar-datas-santavitoria', function () {
-
 Route::get('/', function () {
     return redirect(route('filament.admin.pages.dashboard'));
 });
