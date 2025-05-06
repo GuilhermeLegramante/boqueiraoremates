@@ -395,7 +395,7 @@
                     <td style="text-align: right; width: 90%; color: red;"><strong>TOTAL DE DESCONTOS</strong></td>
                     @include('reports.partials.td-money', [
                         'money_value' => $totalDiscounts,
-                        'td_css' => $hasBuyer ? '' : 'color: red;',
+                        'td_css' => 'color: red;',
                     ])
                 </tr>
                 <tr>
