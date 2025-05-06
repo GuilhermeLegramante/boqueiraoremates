@@ -188,7 +188,7 @@
                 </th>
             </tr>
         </table>
-        <table class="table" style="table-layout: fixed; width: 100%; font-si">
+        <table class="table" style="table-layout: fixed; width: 100%;">
             <thead>
                 <tr>
                     <th class="table-header text-white" style="width: 3%;">OS</th>
@@ -212,13 +212,15 @@
                         <td style="text-align: center;">{{ $order->batch ?? '-' }}</td>
                         <td>{{ strtoupper($order->animal->name) }}</td>
 
-                        <td>
-                            @if ($hasBuyer)
+                        @if ($hasBuyer)
+                            <td>
                                 {{ strtoupper($order->buyer->name) }}
-                            @else
-                                {!! '<span style="color: red !important;">SEM VENDA</span>' !!}
-                            @endif
-                        </td>
+                            </td>
+                        @else
+                            <td style="color: red;">
+                                SEM VENDA
+                            </td>
+                        @endif
 
                         <td style="text-align: left;">
                             @if (isset($order->buyer->address->city) && isset($order->buyer->address->state))
