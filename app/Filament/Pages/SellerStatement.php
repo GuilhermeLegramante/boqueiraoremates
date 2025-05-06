@@ -9,6 +9,7 @@ use App\Models\Client;
 use App\Models\Coat;
 use App\Models\EarningDiscount;
 use App\Models\Event;
+use App\Models\Order;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Exception;
 use Filament\Forms\Components\DatePicker;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class SellerStatement extends Page
@@ -127,7 +129,15 @@ class SellerStatement extends Page
                             ->visible(fn(callable $get) => !empty($get('event_id'))),
 
                         Section::make('Proventos 01')
-                            ->schema([])
+                            ->schema([
+                                Placeholder::make('total_earnings_01')
+                                    ->label('Total de Proventos (01 + 02)')
+                                    ->content(
+                                        fn(callable $get) =>
+                                        'R$ ' . number_format($get('total_earnings_01'), 2, ',', '.')
+                                    )
+                                    ->reactive(),
+                            ])
                             ->reactive()
                             ->visible(fn(callable $get) => !empty($get('seller_id')))
                             ->columnSpanFull(),
@@ -220,6 +230,34 @@ class SellerStatement extends Page
         $eventId = $this->data['event_id'];
         $sellerId = $this->data['seller_id'];
 
+        // Calculando os Proventos 01
+        $orders = Order::where('event_id', $eventId)
+            ->with(['seller'])
+            ->whereHas('seller', fn($query) => $query->where('id', $sellerId))
+            ->orderByRaw("batch IS NULL, batch")
+            ->get();
+
+        foreach ($orders as $order) {
+            $receipt1 = DB::table('parcels')
+                ->where('order_id', $order->id)
+                ->where('payment_method_id', 5)
+                ->sum('value');
+
+            $receipt2 = DB::table('buyer_parcels')
+                ->where('order_id', $order->id)
+                ->where('payment_method_id', 5)
+                ->sum('value');
+
+            $receipt3 = DB::table('seller_parcels')
+                ->where('order_id', $order->id)
+                ->where('payment_method_id', 5)
+                ->sum('value');
+
+            $order->receipt = $receipt1 + $receipt2 + $receipt3;
+        }
+
+        $receivedTotal = $orders->sum('receipt');
+
 
         if ($eventId && $sellerId) {
             $records = EarningDiscount::where('event_id', $eventId)
@@ -241,6 +279,7 @@ class SellerStatement extends Page
                 'seller_id' => $sellerId,
                 'additional_earnings' => $earnings,
                 'additional_discounts' => $discounts,
+                'total_earnings_01' => $receivedTotal,
             ]);
 
             if (empty($earnings) && empty($discounts)) {
