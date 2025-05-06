@@ -217,8 +217,10 @@
                                 {{ strtoupper($order->buyer->name) }}
                             </td>
                         @else
-                            <td style="color: red;">
-                                SEM VENDA
+                            <td style="color: red !important;">
+                                <span style="color: red !important;">
+                                    SEM VENDAS
+                                </span>
                             </td>
                         @endif
 
