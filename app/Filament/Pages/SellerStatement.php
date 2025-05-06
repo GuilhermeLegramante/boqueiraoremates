@@ -126,6 +126,11 @@ class SellerStatement extends Page
                             ->afterStateUpdated(fn($state, callable $set, $get, $livewire) => $livewire->loadEarningsAndDiscounts())
                             ->visible(fn(callable $get) => !empty($get('event_id'))),
 
+                        Section::make('Proventos 01')
+                            ->schema([])
+                            ->reactive()
+                            ->visible(fn(callable $get) => !empty($get('seller_id')))
+                            ->columnSpanFull(),
 
                         Repeater::make('additional_earnings')
                             ->label('Proventos 02')
