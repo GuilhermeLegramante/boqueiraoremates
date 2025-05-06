@@ -178,10 +178,10 @@ class SellerStatement extends Page
                             ->label('Total de Descontos')
                             ->content(
                                 fn(callable $get) =>
-                                '<span style="color: red;">R$ ' . number_format(collect($get('additional_discounts'))->sum('value'), 2, ',', '.') . '</span>'
+                                'R$ ' . number_format(collect($get('additional_discounts'))->sum('value'), 2, ',', '.')
                             )
                             ->reactive()
-                            ->html(),
+                            ->extraAttributes(['class' => 'text-red-600']),
 
                         Placeholder::make('final_balance')
                             ->label('Saldo Final')
