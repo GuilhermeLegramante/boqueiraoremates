@@ -180,7 +180,8 @@ class SellerStatement extends Page
                                 fn(callable $get) =>
                                 'R$ ' . number_format(collect($get('additional_discounts'))->sum('value'), 2, ',', '.')
                             )
-                            ->reactive(),
+                            ->reactive()
+                            ->extraAttributes(['class' => 'text-red-600']),
 
                         Placeholder::make('final_balance')
                             ->label('Saldo Final')
