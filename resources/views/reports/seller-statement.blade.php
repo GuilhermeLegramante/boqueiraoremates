@@ -206,51 +206,59 @@
             <tbody>
                 @foreach ($orders as $order)
                     <tr>
-                        @php $hasBuyer = $order->buyer && $order->buyer->name; @endphp
+                        @php
+                            $hasBuyer =
+                                $order->buyer &&
+                                !empty($order->buyer->name) &&
+                                strtoupper($order->buyer->name) !== 'SEM VENDA';
+                        @endphp
 
                         <td style="text-align: center;">{{ $order->number ?? '-' }}</td>
                         <td style="text-align: center;">{{ $order->batch ?? '-' }}</td>
                         <td>{{ strtoupper($order->animal->name) }}</td>
 
-                        @if ($hasBuyer)
-                            <td>
+                        {{-- Comprador --}}
+                        <td>
+                            @if ($hasBuyer)
                                 {{ strtoupper($order->buyer->name) }}
-                            </td>
-                        @else
-                            <td style="color: red !important;">
-                                <span style="color: red !important;">
-                                    SEM VENDAS
-                                </span>
-                            </td>
-                        @endif
+                            @else
+                                <span style="color: red;">SEM VENDA</span>
+                            @endif
+                        </td>
 
+                        {{-- Cidade e estado --}}
                         <td style="text-align: left;">
-                            @if (isset($order->buyer->address->city) && isset($order->buyer->address->state))
+                            @if ($hasBuyer && isset($order->buyer->address->city) && isset($order->buyer->address->state))
                                 {{ strtoupper($order->buyer->address->city . ' - ' . $order->buyer->address->state) }}
                             @else
                                 <span style="color: red;"> -</span>
                             @endif
                         </td>
 
+                        {{-- Valor unitário --}}
                         @include('reports.partials.td-money', [
                             'money_value' => $order->multiplier > 0 ? $order->gross_value / $order->multiplier : 0,
                             'td_css' => $hasBuyer ? '' : 'color: red;',
                         ])
 
+                        {{-- Valor bruto --}}
                         @include('reports.partials.td-money', [
                             'money_value' => $order->gross_value,
                             'td_css' => $hasBuyer ? '' : 'color: red;',
                         ])
 
+                        {{-- Forma de pagamento --}}
                         <td style="text-align: center; {{ !$hasBuyer ? 'color: red;' : '' }}">
                             {{ $order->paymentWay->name }}
                         </td>
 
+                        {{-- Valor recebido --}}
                         @include('reports.partials.td-money', [
                             'money_value' => $order->receipt,
                             'td_css' => $hasBuyer ? '' : 'color: red;',
                         ])
 
+                        {{-- Observações --}}
                         <td style="text-align: left; {{ !$hasBuyer ? 'color: red;' : '' }}">
                             {{ $order->map_note }}
                         </td>
