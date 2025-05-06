@@ -216,7 +216,7 @@
                             @if ($hasBuyer)
                                 {{ strtoupper($order->buyer->name) }}
                             @else
-                                {!! '<span style="color: red;">SEM VENDA</span>' !!}
+                                {!! '<span style="color: red; font-weight: bold; font-family: DejaVu Sans;">SEM VENDA</span>' !!}
                             @endif
                         </td>
 
