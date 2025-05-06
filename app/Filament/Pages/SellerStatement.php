@@ -185,7 +185,7 @@ class SellerStatement extends Page
                             ->label('Total de Proventos (01 + 02)')
                             ->content(
                                 fn(callable $get) =>
-                                'R$ ' . number_format(collect($get('additional_earnings'))->sum('value'), 2, ',', '.')
+                                'R$ ' . number_format(collect($get('additional_earnings'))->sum('value') + $get('total_earnings_01'), 2, ',', '.')
                             )
                             ->reactive(),
 
