@@ -22,7 +22,7 @@
                 {{ 'R$ ' . number_format($buyerComissionValue, 2, ',', '.') }}
             </td> --}}
             @include('reports.partials.td-money', [
-                'money_value' => $netValue,
+                'money_value' => $buyerComissionValue,
             ])
             <td class="table-0pky">
                 <span style="font-weight:bold">N° de parcelas</span>
