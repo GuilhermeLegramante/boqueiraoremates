@@ -223,7 +223,7 @@ class OrderResource extends Resource
                     ->exports([
                         ExcelExport::make()
                             ->fromTable()
-                            ->withFilename(date('d-m-Y') . ' - Faturas de Venda / OS')
+                            ->withFilename(date('d-m-Y') . ' - Faturas de Venda - OS')
                     ])
             ])
             ->actions([
