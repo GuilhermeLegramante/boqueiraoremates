@@ -64,6 +64,7 @@ class Login extends AuthLogin
 
     public function authenticate(): ?LoginResponse
     {
+        dd('a');
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
