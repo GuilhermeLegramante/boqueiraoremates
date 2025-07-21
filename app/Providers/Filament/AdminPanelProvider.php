@@ -88,7 +88,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogoHeight(fn () => auth()->check() ? '3rem' : '6rem')
             ->favicon(asset('img/logo.png'))
             ->plugins([
-                FilamentProgressbarPlugin::make()->color('#29b'),
+                // FilamentProgressbarPlugin::make()->color('#29b'),
                 // ReportsPlugin::make(),
                 // FilamentBackgroundsPlugin::make(),
                 ThemesPlugin::make(),
