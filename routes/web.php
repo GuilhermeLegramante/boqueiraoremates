@@ -16,18 +16,18 @@ use Livewire\Livewire;
 use function PHPUnit\Framework\fileExists;
 
 Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/v2/public/livewire/livewire.js', $handle);
+    return Route::get('/boqueirao/boqueiraoremates/public/livewire/livewire.js', $handle);
 });
 
 Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/v2/public/livewire/update', $handle);
+    return Route::post('/boqueirao/boqueiraoremates/public/livewire/update', $handle);
 });
 
 /**
  * Ao trocar a senha do usuário, o Laravel exige um novo login.
  * Para isso, é necessário informar a rota de login
  */
-Route::redirect('/v2/public/admin/login', '/v2/public/admin/login')->name('login');
+Route::redirect('/boqueirao/boqueiraoremates/public/admin/login', '/boqueirao/boqueiraoremates/public/admin/login')->name('login');
 
 
 Route::middleware(['auth'])->group(function () {
