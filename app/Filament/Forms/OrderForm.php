@@ -22,6 +22,7 @@ use Filament\Forms\Set;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 
 class OrderForm
 {
@@ -103,9 +104,13 @@ class OrderForm
                     ->relationship(name: 'event', titleAttribute: 'name')
                     ->createOptionForm(EventForm::form())
                     ->afterStateUpdated(function (Get $get, Set $set) {
-                        $event = Event::find($get('event_id'));
-                        if (isset($event->multiplier)) {
-                            $set('multiplier', $event->multiplier);
+                        $userId = Auth::id();
+
+                        if (!in_array($userId, [2, 7])) { // Id do Zé e do Rafael
+                            $event = \App\Models\Event::find($get('event_id'));
+                            if (isset($event->multiplier)) {
+                                $set('multiplier', $event->multiplier);
+                            }
                         }
                     })
                     ->columnSpanFull(),
