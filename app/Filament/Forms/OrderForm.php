@@ -165,6 +165,7 @@ class OrderForm
                     // ->disabledOn('edit')
                     ->label(__('fields.multiplier'))
                     ->live()
+                    ->reactive()
                     ->columnSpan(1)
                     ->debounce(600)
                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -182,6 +183,7 @@ class OrderForm
                     ->numeric(),
                 TextInput::make('gross_value')
                     ->readOnly()
+                    ->reactive()
                     ->columnSpan(3)
                     ->prefix('R$')
                     ->numeric()
