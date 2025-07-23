@@ -57,7 +57,10 @@
                 <td class="collumn-left"><strong>CPF ou CNPJ:</strong> {{ $client->cpf_cnpj }}</td>
                 <td class="collumn-right"><strong>RG:</strong> {{ $client->rg }}</td>
             </tr>
-            <tr class="" style="font-size: 13px;">
+            <tr class="bg-light" style="font-size: 13px;">
+                <td class="collumn-left"><strong>Inscrição Estadual:</strong> {{ $client->inscricaoestadual }}</td>
+            </tr>
+            <tr class="bg-light" style="font-size: 13px;">
                 <td class="collumn-left"><strong>Nome da Mãe:</strong> {{ $client->mother }}</td>
                 <td class="collumn-right"><strong>Nome do Pai:</strong> {{ $client->father }}</td>
             </tr>

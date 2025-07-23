@@ -69,6 +69,9 @@ class ClientForm
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic(),
+                            TextInput::make('inscricaoestadual')
+                                ->label('Inscrição Estadual')
+                                ->maxLength(10),
                             TextInput::make('rg')
                                 ->label(__('fields.rg'))
                                 ->numeric(),

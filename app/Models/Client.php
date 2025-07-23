@@ -45,6 +45,7 @@ class Client extends Model
         'register_origin',
         'profile',
         'note',
+        'inscricaoestadual',
     ];
 
     protected $casts = [
