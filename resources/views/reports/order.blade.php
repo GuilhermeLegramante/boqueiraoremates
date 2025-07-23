@@ -115,7 +115,7 @@
         }
 
         .background {
-            background-image: url('https://boqueiraoremates.com/v2/public/img/logo.png');
+            background-image: url('https://sistema.boqueiraoremates.com/img/logo.png');
             /* background-size: ; */
             background-position: center;
             /* position: relative; */

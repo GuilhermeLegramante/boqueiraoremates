@@ -73,7 +73,7 @@ class ImportAnimals extends Page
         $data = $this->form->getState();
 
         try {
-            $file = file_get_contents('https://boqueiraoremates.com/v2/public/storage/' . $data['file']);
+            $file = file_get_contents('https://sistema.boqueiraoremates.com/storage/' . $data['file']);
 
             $animals = explode(PHP_EOL, $file);
 
