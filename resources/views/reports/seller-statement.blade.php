@@ -249,8 +249,9 @@
 
                         {{-- Forma de pagamento --}}
                         <td style="text-align: center; {{ !$hasBuyer ? 'color: red;' : '' }}">
-                            {{ $order->paymentWay->name }}
+                            {{ $order->paymentWay?->name ?? 'N/A' }}
                         </td>
+
 
                         {{-- Valor recebido --}}
                         @include('reports.partials.td-money', [

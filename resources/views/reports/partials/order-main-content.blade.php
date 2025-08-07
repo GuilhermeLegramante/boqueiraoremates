@@ -105,7 +105,7 @@
         <tr>
             <td class="table-fymr">Prazo Escolhido</td>
             <td class="table-0pky">
-                {{ $order->paymentWay->name }}
+                {{ $order->paymentWay?->name ?? 'N/A' }}
             </td>
             <td class="table-fymr">Desconto Obtido</td>
             <td class="table-0pky">
