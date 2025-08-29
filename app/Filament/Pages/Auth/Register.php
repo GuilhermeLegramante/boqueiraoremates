@@ -2,48 +2,183 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Forms\Components\Component;
+use App\Filament\Forms\ClientForm;
+use App\Models\Client;
+use App\Models\Document;
+use App\Models\DocumentType;
+use App\Models\User;
+use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
+use Filament\Events\Auth\Registered;
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
-use Filament\Pages\Auth\Register as AuthRegister;
-use Filament\Pages\Page;
-use Illuminate\Contracts\Validation\ValidationRule;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
+use Filament\Notifications\Notification;
+use Filament\Pages\Auth\Register as BaseRegister;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
 
-class Register extends AuthRegister
+class Register extends BaseRegister
 {
+    protected static string $view = 'register';
+
+    public function getMaxWidth(): MaxWidth | string | null
+    {
+        return '7xl';
+    }
+
+    protected function getFormContainerWidth(): ?string
+    {
+        return 'max-w-full'; // largura total do container do formulário
+    }
+
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                $this->getUsernameFormComponent(),
-                $this->getNameFormComponent(),
-                $this->getEmailFormComponent(),
-                $this->getPasswordFormComponent(),
-                $this->getPasswordConfirmationFormComponent(),
+                Wizard::make([
+                    Step::make('Informações Pessoais')->schema(ClientForm::personalInfo()),
+                    Step::make('Endereço')->schema(ClientForm::address()),
+                    Step::make('Informações Adicionais')
+                        ->schema(array_merge(
+                            ClientForm::extra(),
+                            [
+                                \Filament\Forms\Components\Actions::make([
+                                    \Filament\Forms\Components\Actions\Action::make('register')
+                                        ->label('Criar conta')
+                                        ->submit('register')
+                                        ->color('primary'),
+                                ]),
+                            ]
+                        )),
+                ])
+                    ->columnSpanFull()
+                    ->columns(1)   // opcional, mas recomendado
+                    ->skippable(false)
+                    ->persistStepInQueryString(),
             ])
             ->statePath('data');
     }
 
-    protected function getUsernameFormComponent(): Component
+    public function register(): ?RegistrationResponse
     {
-        return TextInput::make('username')
-            ->label('Login')
-            ->required()
-            ->maxLength(255)
-            ->autofocus();
+        try {
+            $this->rateLimit(2);
+        } catch (TooManyRequestsException $exception) {
+            Notification::make()
+                ->title(__('filament-panels::pages/auth/register.notifications.throttled.title', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]))
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]) : null)
+                ->danger()
+                ->send();
+
+            return null;
+        }
+
+        $data = $this->form->getState();
+
+        $user = $this->handleRegistration($data);
+
+        event(new Registered($user));
+
+        $this->sendEmailVerificationNotification($user);
+
+        Filament::auth()->login($user);
+
+        session()->regenerate();
+
+        return app(RegistrationResponse::class);
     }
 
-    protected function getPasswordFormComponent(): Component
+    protected function handleRegistration(array $data): User
     {
-        return TextInput::make('password')
-            ->label('Senha')
-            ->password()
-            ->required()
-            ->rule('min:4')
-            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-            ->same('passwordConfirmation')
-            ->validationAttribute('senha');
+        return DB::transaction(function () use ($data) {
+            /**
+             * Criar usuário
+             */
+            $user = User::create([
+                'name'     => $data['name'],
+                'username' => $data['cpf_cnpj'],
+                'email'    => $data['email'],
+                'password' => $data['password'], // já vem hasheada do form
+            ]);
+
+            // Atribui a role 'client'
+            $user->assignRole('client');
+
+            /**
+             * Criar endereço
+             */
+            $addressData = collect($data)->only([
+                'postal_code',
+                'street',
+                'number',
+                'complement',
+                'reference',
+                'district',
+                'city',
+                'state',
+            ])->toArray();
+
+            $address = \App\Models\Address::create($addressData);
+
+            /**
+             * Criar cliente
+             */
+            $clientData = collect($data)->except([
+                'username',
+                'password',
+                'passwordConfirmation',
+                'postal_code',
+                'street',
+                'number',
+                'complement',
+                'reference',
+                'district',
+                'city',
+                'state',
+                'cnh_rg',
+                'document_income',
+                'document_residence',
+            ])->toArray();
+
+            $clientData['situation']       = 'disabled';
+            $clientData['register_origin'] = $clientData['register_origin'] ?? 'site';
+            $clientData['address_id']      = $address->id;
+
+            $client = new Client($clientData);
+            $client->registeredUser()->associate($user);
+            $client->save();
+
+            // Mapeamento: input -> nome do tipo
+            $documentsMap = [
+                'cnh_rg'            => 'DOCUMENTO PESSOAL',
+                'document_income'   => 'COMPROVANTE DE RENDA',
+                'document_residence' => 'COMPROVANTE DE RESIDÊNCIA',
+            ];
+
+            foreach ($documentsMap as $input => $docTypeName) {
+                if (!empty($data[$input])) {
+                    $docType = DocumentType::where('name', $docTypeName)->first();
+
+                    Document::create([
+                        'user_id'           => $user->id,
+                        'client_id'         => $client->id,
+                        'document_type_id'  => $docType->id,
+                        'path'              => $data[$input],
+                    ]);
+                }
+            }
+            return $user;
+        });
     }
 }

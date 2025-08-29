@@ -15,6 +15,12 @@ class AnimalForm
     public static function form(): array
     {
         return [
+            FileUpload::make('photo')
+                ->label('Foto')
+                ->image()
+                ->directory('animals/photos') // pasta onde será armazenada
+                ->visibility('public')
+                ->maxSize(2048),
             TextInput::make('name')
                 ->label(__('fields.name'))
                 ->required()
@@ -49,16 +55,16 @@ class AnimalForm
                 ->live()
                 ->nullable()
                 ->unique(ignoreRecord: true)
-                ->visible(fn (Get $get): bool => self::isCrioulo($get('breed_id'))),
+                ->visible(fn(Get $get): bool => self::isCrioulo($get('breed_id'))),
             TextInput::make('rb')
                 ->live()
                 ->label(__('fields.rb'))
-                ->visible(fn (Get $get): bool => self::isCrioulo($get('breed_id'))),
+                ->visible(fn(Get $get): bool => self::isCrioulo($get('breed_id'))),
             TextInput::make('register')
                 ->label(__('fields.register'))
                 ->numeric()
                 ->live()
-                ->visible(fn (Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
+                ->visible(fn(Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
             Radio::make('blood_level')
                 ->label(__('fields.blood_level'))
                 ->live()
@@ -66,12 +72,12 @@ class AnimalForm
                     'pure' => 'Puro',
                     'mixed' => 'Mestiço',
                 ])
-                ->visible(fn (Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
+                ->visible(fn(Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
             TextInput::make('blodd_percentual')
                 ->label(__('fields.blodd_percentual'))
                 ->live()
                 ->numeric()
-                ->visible(fn (Get $get): bool => $get('blood_level') == 'mixed'),
+                ->visible(fn(Get $get): bool => $get('blood_level') == 'mixed'),
             Radio::make('breeding')
                 ->label(__('fields.breeding'))
                 ->live()
@@ -80,7 +86,7 @@ class AnimalForm
                     'whole_male' => 'Macho Inteiro',
                     'castrated' => 'Castrado'
                 ])
-                ->visible(fn (Get $get): bool => $get('gender') == 'male'),
+                ->visible(fn(Get $get): bool => $get('gender') == 'male'),
             TextInput::make('quantity')
                 ->label(__('fields.quantity'))
                 ->numeric(),

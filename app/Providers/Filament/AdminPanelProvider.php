@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\CommissionReport;
 use App\Filament\Resources\ClientResource\Widgets\ClientRegisterOriginChart;
 use App\Filament\Resources\ClientResource\Widgets\ClientSituationChart;
@@ -64,6 +65,8 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            ->passwordReset()
+            ->registration(Register::class)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -85,7 +88,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Boqueirão Remates')
             ->sidebarCollapsibleOnDesktop()
             ->brandLogo(asset('img/logo.png'))
-            ->brandLogoHeight(fn () => auth()->check() ? '3rem' : '6rem')
+            ->brandLogoHeight(fn() => auth()->check() ? '3rem' : '6rem')
             ->favicon(asset('img/logo.png'))
             ->plugins([
                 // FilamentProgressbarPlugin::make()->color('#29b'),

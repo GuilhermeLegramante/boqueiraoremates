@@ -2,6 +2,7 @@
 
 namespace App\Filament\Forms;
 
+use App\Models\Bank;
 use App\Models\City;
 use App\Models\DocumentType;
 use App\Models\State;
@@ -19,6 +20,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Support\Facades\Hash;
 use Leandrocfe\FilamentPtbrFormFields\Cep;
 use Leandrocfe\FilamentPtbrFormFields\Document;
 use Leandrocfe\FilamentPtbrFormFields\Money;
@@ -59,9 +61,8 @@ class ClientForm
                                 ->label(__('fields.occupation')),
                             TextInput::make('note_occupation')
                                 ->label(__('fields.note_occupation')),
-                            TextInput::make('income')
-                                ->numeric()
-                                ->label(__('fields.income')),
+                            // TextInput::make('income')->numeric()->label(__('fields.income')),
+                            Money::make('income')->label(__('fields.income')),
                         ])
                         ->columns(2),
                     Fieldset::make('Documentos')
@@ -213,7 +214,112 @@ class ClientForm
                         ->columns(3),
                 ])
                 ->columns(2)
+        ];
+    }
 
+    public static function personalInfo(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label(__('filament-panels::pages/auth/register.form.name.label'))
+                ->required()
+                ->maxLength(255)
+                ->autofocus(),
+            Document::make('cpf_cnpj')->required()->unique('clients', 'cpf_cnpj')->label(__('fields.cpf_cnpj'))->dynamic(),
+            TextInput::make('email')
+                ->label(__('filament-panels::pages/auth/register.form.email.label'))
+                ->email()
+                ->required()
+                ->maxLength(255)
+                ->unique(table: 'users', column: 'email'),
+            TextInput::make('password')
+                ->label('Senha')
+                ->password()
+                ->required()
+                ->rule('min:4')
+                ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                ->same('passwordConfirmation')
+                ->validationAttribute('senha'),
+            TextInput::make('passwordConfirmation')
+                ->label(__('filament-panels::pages/auth/register.form.password_confirmation.label'))
+                ->password()
+                ->revealable(filament()->arePasswordsRevealable())
+                ->required()
+                ->dehydrated(false),
+            TextInput::make('inscricaoestadual')->label('Inscrição Estadual')->maxLength(10),
+            TextInput::make('rg')->label(__('fields.rg'))->numeric(),
+            DatePicker::make('birth_date')->label('Data de Nascimento')->maxDate(now()),
+            Radio::make('gender')->label(__('fields.gender'))->options(['male' => 'Masculino', 'female' => 'Feminino']),
+            TextInput::make('establishment')->label(__('fields.establishment')),
+            TextInput::make('occupation')->label(__('fields.occupation')),
+            TextInput::make('note_occupation')->label(__('fields.note_occupation')),
+            // TextInput::make('income')->numeric()->label(__('fields.income')),
+            Money::make('income')->label(__('fields.income'))->live(condition: false),
+            PhoneNumber::make('whatsapp')->label(__('fields.whatsapp'))->format('(99) 99999-9999'),
+            PhoneNumber::make('cel_phone')->label(__('fields.cel_phone'))->format('(99) 99999-9999'),
+            PhoneNumber::make('business_phone')->label(__('fields.business_phone'))->format('(99) 9999-9999'),
+            PhoneNumber::make('home_phone')->label(__('fields.home_phone'))->format('(99) 9999-9999'),
+            TextInput::make('mother')->label(__('fields.mother')),
+            TextInput::make('father')->label(__('fields.father')),
+        ];
+    }
+
+    public static function address(): array
+    {
+        return [
+            Cep::make('postal_code')
+                ->label(__('fields.cep'))
+                ->viaCep(
+                    mode: 'suffix',
+                    errorMessage: 'CEP inválido.',
+                    setFields: [
+                        'street' => 'logradouro',
+                        'district' => 'bairro',
+                        'city' => 'localidade',
+                        'state' => 'uf',
+                    ]
+                )
+                ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                    $set('street', strtoupper((string) $get('street')));
+                    $set('district', strtoupper((string) $get('district')));
+                    $set('city', strtoupper((string) $get('city')));
+                    $set('state', strtoupper((string) $get('state')));
+                }),
+            TextInput::make('street')->label(__('fields.street'))->afterStateUpdated(fn($state, $set) => $set('street', strtoupper($state))),
+            TextInput::make('number')->label(__('fields.number'))->afterStateUpdated(fn($state, $set) => $set('number', strtoupper($state))),
+            TextInput::make('complement')->label(__('fields.complement'))->afterStateUpdated(fn($state, $set) => $set('complement', strtoupper($state))),
+            TextInput::make('reference')->label(__('fields.reference'))->afterStateUpdated(fn($state, $set) => $set('reference', strtoupper($state))),
+            TextInput::make('district')->label(__('fields.district'))->afterStateUpdated(fn($state, $set) => $set('district', strtoupper($state))),
+            TextInput::make('city')->label(__('fields.city'))->afterStateUpdated(fn($state, $set) => $set('city', strtoupper($state))),
+            TextInput::make('state')->label(__('fields.state'))->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state))),
+        ];
+    }
+
+    public static function extra(): array
+    {
+        return [
+            Select::make('bank_id')
+                ->label(__('fields.bank'))
+                ->options(Bank::pluck('name', 'id')->toArray())
+                ->preload(),
+            TextInput::make('bank_agency')->label(__('fields.bank_agency')),
+            TextInput::make('current_account')->label(__('fields.current_account')),
+            Radio::make('profile')->label(__('fields.profile'))->options([
+                'purchase' => 'Compra',
+                'sale' => 'Venda',
+                'both' => 'Ambos'
+            ]),
+            Toggle::make('has_register_in_another_auctioneer')->label(__('fields.has_register_in_another_auctioneer')),
+            TextInput::make('auctioneer')->label(__('fields.auctioneer')),
+            FileUpload::make('cnh_rg')
+                ->label('Cópia da CNH ou RG')
+                ->directory('documents'),
+            FileUpload::make('document_income')
+                ->label('Comprovante de Renda')
+                ->directory('documents'),
+            FileUpload::make('document_residence')
+                ->label('Comprovante de Residência')
+                ->directory('documents'),
         ];
     }
 }

@@ -51,7 +51,7 @@ class SellerStatement extends Page
 
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return auth()->check() && ! auth()->user()->hasRole('client');
     }
 
     public function mount(): void

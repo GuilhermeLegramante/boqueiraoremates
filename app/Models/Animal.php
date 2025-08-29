@@ -14,6 +14,7 @@ class Animal extends Model
 
     protected $fillable = [
         'name',
+        'photo',
         'breed_id',
         'animal_type_id',
         'coat_id',
@@ -62,7 +63,9 @@ class Animal extends Model
 
     public function events()
     {
-        return $this->belongsToMany(Event::class, 'animal_event');
+        return $this->belongsToMany(Event::class, 'animal_event')
+            ->withPivot(['lot_number', 'min_value', 'final_value', 'target_value', 'increment_value', 'status'])
+            ->withTimestamps();
     }
 
     public function getNameAttribute($value)

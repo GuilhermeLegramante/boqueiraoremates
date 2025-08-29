@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesMapController;
@@ -15,12 +16,20 @@ use Livewire\Livewire;
 
 use function PHPUnit\Framework\fileExists;
 
+// Livewire::setScriptRoute(function ($handle) {
+//     return Route::get('/boqueirao/boqueiraoremates/public/livewire/livewire.js', $handle);
+// });
+
+// Livewire::setUpdateRoute(function ($handle) {
+//     return Route::post('/boqueirao/boqueiraoremates/public/livewire/update', $handle);
+// });
+
 Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/boqueirao/boqueiraoremates/public/livewire/livewire.js', $handle);
+    return Route::get('/v2/public/livewire/livewire.js', $handle);
 });
 
 Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/boqueirao/boqueiraoremates/public/livewire/update', $handle);
+    return Route::post('/v2/public/livewire/update', $handle);
 });
 
 /**
@@ -45,3 +54,6 @@ Route::get('/teste/{id}', function (string $id) {
 Route::get('/', function () {
     return redirect(route('filament.admin.pages.dashboard'));
 });
+
+Route::get('/site', [HomeController::class, 'index'])->name('home');
+

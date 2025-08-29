@@ -10,7 +10,17 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'start_date', 'finish_date', 'multiplier', 'note'];
+    protected $fillable = [
+        'name',
+        'banner',
+        'start_date',
+        'finish_date',
+        'multiplier',
+        'note',
+        'regulation',
+        'pre_start_date',
+        'pre_finish_date',
+    ];
 
     protected $casts = [
         'start_date' => 'date',
@@ -25,7 +35,9 @@ class Event extends Model
 
     public function animals()
     {
-        return $this->belongsToMany(Animal::class, 'animal_event');
+        return $this->belongsToMany(Animal::class, 'animal_event')
+            ->withPivot(['min_value', 'final_value', 'lot_number', 'increment_value', 'target_value', 'status'])
+            ->withTimestamps();
     }
 
     public function getNameAttribute($value)
@@ -37,5 +49,4 @@ class Event extends Model
     {
         return mb_strtoupper($value, 'UTF-8');
     }
-
 }

@@ -51,7 +51,7 @@ class Client extends Model
     protected $casts = [
         'documents' => 'array',
         'has_register_in_another_auctioneer' => 'boolean',
-        // 'income' => 'double',
+        'income' => 'double',
     ];
 
     public function bank(): BelongsTo
@@ -128,5 +128,11 @@ class Client extends Model
     public function getNoteAttribute($value)
     {
         return mb_strtoupper($value, 'UTF-8');
+    }
+
+    // Usuário vinculado ao cliente (via cadastro no site)
+    public function registeredUser()
+    {
+        return $this->belongsTo(User::class, 'registered_user_id');
     }
 }

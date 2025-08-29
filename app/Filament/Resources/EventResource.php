@@ -11,10 +11,19 @@ use App\Filament\Resources\OrderResource\Pages\EditEvent;
 use App\Filament\Resources\OrderResource\Pages\ListEvents;
 use App\Models\Event;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,56 +49,58 @@ class EventResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(EventForm::form());
+            ->schema([
+                Section::make('Dados do Evento')
+                    ->description(
+                        fn(string $operation): string =>
+                        $operation === 'create' || $operation === 'edit'
+                            ? 'Informe os campos solicitados'
+                            : ''
+                    )
+                    ->schema(function (string $operation) {
+                        return EventForm::form($operation);
+                    })->columns(2),
+            ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->contentGrid(['md' => 2, 'xl' => 3])
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label(__('fields.name'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('start_date')
-                    ->date()
-                    ->sortable()
-                    ->label(__('fields.start_date')),
-                Tables\Columns\TextColumn::make('finish_date')
-                    ->label(__('fields.finish_date'))
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('multiplier')
-                    ->label(__('fields.multiplier'))
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('note')
-                    ->label(__('fields.note'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('fields.created_at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('fields.updated_at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Grid::make()
+                    ->columns(columns: 1)
+                    ->schema([
+                        ImageColumn::make('banner')
+                            ->label('Banner')
+                            ->height(90)
+                            ->columnSpanFull()
+                            ->getStateUsing(fn($record) => $record->banner ? asset('storage/' . $record->banner) : null),
+
+                        ViewColumn::make('event_info')
+                            ->label('Evento')
+                            ->view('event-info-to-list'),
+                    ])
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                ActionGroup::make([
-                    Tables\Actions\EditAction::make()
-                        ->mutateRecordDataUsing(function (array $data): array {
-                            $data['name'] = Str::upper($data['name']);
+                Tables\Actions\ViewAction::make()->label('Detalhes'),
+                Action::make('viewRegulation')
+                    ->label('Regulamento')
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn($record) => $record->regulation ? asset('storage/' . $record->regulation) : null)
+                    ->openUrlInNewTab()
+                    ->visible(fn($record) => $record->regulation !== null),
+                Tables\Actions\EditAction::make()
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['name'] = Str::upper($data['name']);
 
-                            return $data;
-                        }),
-                    Tables\Actions\DeleteAction::make(),
-                ]),
-            ], position: ActionsPosition::BeforeColumns)
+                        return $data;
+                    }),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -110,7 +121,7 @@ class EventResource extends Resource
             'index' => ListEvents::route('/'),
             'create' => CreateEvent::route('/criar'),
             'edit' => EditEvent::route('/{record}/editar'),
-            // 'index' => Pages\ManageEvents::route('/'),
+            'view' => Pages\ViewEvent::route('/{record}'),
         ];
     }
 

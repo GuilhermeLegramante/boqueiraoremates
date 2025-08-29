@@ -8,10 +8,15 @@ use App\Filament\Resources\AnimalResource\RelationManagers;
 use App\Models\Animal;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
@@ -50,6 +55,10 @@ class AnimalResource extends Resource
 
         return $table
             ->columns([
+                ImageColumn::make('photo')
+                    ->label('Foto')
+                    ->height(100)
+                    ->getStateUsing(fn($record) => $record->photo ? asset('storage/' . $record->photo) : null),
                 TextColumn::make('id')
                     ->label(__('fields.code'))
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -75,9 +84,9 @@ class AnimalResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => (($state == 'male' ? 'MACHO' : ($state == 'female' ? 'FÊMEA' : '')))
+                        fn(string $state): string => (($state == 'male' ? 'MACHO' : ($state == 'female' ? 'FÊMEA' : '')))
                     )
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'male' => 'info',
                         'female' => 'danger',
                     }),
@@ -107,9 +116,9 @@ class AnimalResource extends Resource
                     ->badge()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->formatStateUsing(
-                        fn (string $state): string => (($state == 'pure' ? 'PURO' : ($state == 'mixed' ? 'MESTIÇO' : '')))
+                        fn(string $state): string => (($state == 'pure' ? 'PURO' : ($state == 'mixed' ? 'MESTIÇO' : '')))
                     )
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'pure' => 'success',
                         'mixed' => 'warning',
                     }),
@@ -119,9 +128,9 @@ class AnimalResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
-                        fn (string $state): string => (($state == 'breeder' ? 'REPRODUTOR' : ($state == 'whole_male' ? 'MACHO INTEIRO' : ($state == 'castrated' ? 'CASTRADO' : ''))))
+                        fn(string $state): string => (($state == 'breeder' ? 'REPRODUTOR' : ($state == 'whole_male' ? 'MACHO INTEIRO' : ($state == 'castrated' ? 'CASTRADO' : ''))))
                     )
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'breeder' => 'primary',
                         'whole_male' => 'gray',
                         'castrated' => 'danger,'
