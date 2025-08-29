@@ -48,6 +48,7 @@ class AnimalsRelationManager extends RelationManager
         return $form
             ->schema([
                 Placeholder::make('animal_details')
+                    ->label('')
                     ->columnSpanFull()
                     ->content(function ($get) {
                         $animal = Animal::with(['breed', 'coat', 'animalType'])->find($get('animal_id'));
@@ -102,9 +103,10 @@ class AnimalsRelationManager extends RelationManager
             <!-- Dados do animal e lote -->
             <div class='flex-1 grid grid-cols-1 md:grid-cols-2 gap-2'>
                 <h2 class='col-span-2 font-bold text-2xl text-gray-800'>{$animal->name}</h2>
-
+                <br>        
                 <!-- Seção Animal -->
                 <h3 class='col-span-2 font-semibold text-gray-600 mt-2'>Dados do Animal</h3>
+                <br>
                 <p><strong>Raça:</strong> {$breed}</p>
                 <p><strong>Pelagem:</strong> {$coat}</p>
                 <p><strong>Tipo:</strong> {$type}</p>
@@ -120,9 +122,10 @@ class AnimalsRelationManager extends RelationManager
 
                 <!-- Seção Lote -->
                 <h3 class='col-span-2 font-semibold text-gray-600 mt-4'>Dados do Lote</h3>
+                <br>
                 <p><strong>Número do Lote:</strong> {$lotNumber}</p>
                 <p><strong>Lance Mínimo:</strong> {$minValue}</p>
-                <p><strong>Valor Final:</strong> {$finalValue}</p>
+                <!-- <p><strong>Valor Final:</strong> {$finalValue}</p> -->
             </div>
         </div>
         ");
