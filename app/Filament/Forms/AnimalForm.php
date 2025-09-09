@@ -7,6 +7,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 
@@ -16,7 +17,13 @@ class AnimalForm
     {
         return [
             FileUpload::make('photo')
-                ->label('Foto')
+                ->label('Foto (Miniatura)')
+                ->image()
+                ->directory('animals/photos') // pasta onde será armazenada
+                ->visibility('public')
+                ->maxSize(2048),
+            FileUpload::make('photo_full')
+                ->label('Foto (Grande)')
                 ->image()
                 ->directory('animals/photos') // pasta onde será armazenada
                 ->visibility('public')
@@ -93,6 +100,21 @@ class AnimalForm
             DatePicker::make('birth_date')
                 ->maxDate(now())
                 ->label('Data de Nascimento'),
+            Textarea::make('note')
+                ->label('Comentário')
+                ->columnSpanFull()
+                ->rows(4)
+                ->maxLength(65535),
+            TextInput::make('video_link')
+                ->label('Link do Vídeo')
+                ->url() // valida como URL
+                ->placeholder('https://youtube.com/...') // opcional
+                ->columnSpan('full'), // ocupa toda a largura do form
+            TextInput::make('generation_link')
+                ->label('Link da Quinta Geração')
+                ->url() // valida como URL
+                ->placeholder('https://...')
+                ->columnSpan('full')
         ];
     }
 

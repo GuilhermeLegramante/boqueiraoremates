@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\BidController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
@@ -45,6 +48,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/mapa-de-vendas/pdf', [SalesMapController::class, 'getPdf'])->name('sales-map-pdf');
     Route::get('/extrato-do-vendedor/pdf', [SellerStatementController::class, 'getPdf'])->name('seller-statement-pdf');
+
+    Route::post('/bids', [BidController::class, 'store'])->name('bids.store'); // Recebe lance do site
+    Route::post('/bids/{bid}/approve', [BidController::class, 'approve'])->name('bids.approve'); // Aprovar manualmente
 });
 
 Route::get('/teste/{id}', function (string $id) {
@@ -56,4 +62,6 @@ Route::get('/', function () {
 });
 
 Route::get('/site', [HomeController::class, 'index'])->name('home');
-
+Route::get('/eventos/{event}', [EventController::class, 'show'])->name('events.show');
+Route::get('/evento/{event}/animal/{animal}', [AnimalController::class, 'show'])
+    ->name('animals.show');

@@ -31,6 +31,7 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Illuminate\Support\Str;
 use Leandrocfe\FilamentPtbrFormFields\Money;
+use Filament\Support\RawJs;
 
 class AnimalsRelationManager extends RelationManager
 {
@@ -335,18 +336,94 @@ class AnimalsRelationManager extends RelationManager
                                 ->label('Número do Lote')
                                 ->required(),
 
-                            \Leandrocfe\FilamentPtbrFormFields\Money::make('min_value')
+                            Money::make('min_value')
                                 ->label('Lance Mínimo')
-                                ->required(),
+                                ->required()
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if ($state !== null) {
+                                        // força conversão para float e corrige escala
+                                        $set('min_value', (float) $state * 10);
+                                    }
+                                })
+                                ->dehydrateStateUsing(function ($state) {
+                                    if ($state === null) {
+                                        return null;
+                                    }
 
-                            \Leandrocfe\FilamentPtbrFormFields\Money::make('final_value')
-                                ->label('Valor Final'),
+                                    // Se já for número (usuário editou), retorna direto
+                                    if (is_numeric($state)) {
+                                        return (float) $state;
+                                    }
 
-                            \Leandrocfe\FilamentPtbrFormFields\Money::make('increment_value')
-                                ->label('Valor do Incremento'),
+                                    // Se for string formatada, normaliza
+                                    return (float) str_replace(',', '.', str_replace('.', '', $state));
+                                }),
 
-                            \Leandrocfe\FilamentPtbrFormFields\Money::make('target_value')
-                                ->label('Lance Alvo'),
+                            Money::make('final_value')
+                                ->label('Valor Final')
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if ($state !== null) {
+                                        // força conversão para float e corrige escala
+                                        $set('final_value', (float) $state * 10);
+                                    }
+                                })
+                                ->dehydrateStateUsing(function ($state) {
+                                    if ($state === null) {
+                                        return null;
+                                    }
+
+                                    // Se já for número (usuário editou), retorna direto
+                                    if (is_numeric($state)) {
+                                        return (float) $state;
+                                    }
+
+                                    // Se for string formatada, normaliza
+                                    return (float) str_replace(',', '.', str_replace('.', '', $state));
+                                }),
+
+                            Money::make('increment_value')
+                                ->label('Valor do Incremento')
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if ($state !== null) {
+                                        // força conversão para float e corrige escala
+                                        $set('increment_value', (float) $state * 10);
+                                    }
+                                })
+                                ->dehydrateStateUsing(function ($state) {
+                                    if ($state === null) {
+                                        return null;
+                                    }
+
+                                    // Se já for número (usuário editou), retorna direto
+                                    if (is_numeric($state)) {
+                                        return (float) $state;
+                                    }
+
+                                    // Se for string formatada, normaliza
+                                    return (float) str_replace(',', '.', str_replace('.', '', $state));
+                                }),
+
+                            Money::make('target_value')
+                                ->label('Lance Alvo')
+                                ->afterStateUpdated(function ($state, callable $set) {
+                                    if ($state !== null) {
+                                        // força conversão para float e corrige escala
+                                        $set('target_value', (float) $state * 10);
+                                    }
+                                })
+                                ->dehydrateStateUsing(function ($state) {
+                                    if ($state === null) {
+                                        return null;
+                                    }
+
+                                    // Se já for número (usuário editou), retorna direto
+                                    if (is_numeric($state)) {
+                                        return (float) $state;
+                                    }
+
+                                    // Se for string formatada, normaliza
+                                    return (float) str_replace(',', '.', str_replace('.', '', $state));
+                                }),
 
                             Select::make('status')
                                 ->label('Status')
@@ -360,10 +437,6 @@ class AnimalsRelationManager extends RelationManager
                     })
                     // Salva no PIVOT
                     ->action(function ($record, array $data) {
-                        // Se usar o Money do pacote pt-BR, verifique se vem como número/decimal.
-                        // Se vier mascarado como string, desmascare aqui antes:
-                        // $data['min_value'] = str_replace(['.', ','], ['', '.'], $data['min_value'] ?? '');
-
                         $record->pivot->update([
                             'lot_number'      => $data['lot_number'],
                             'min_value'       => $data['min_value'] ?? null,

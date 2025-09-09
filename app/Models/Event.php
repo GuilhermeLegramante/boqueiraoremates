@@ -20,6 +20,9 @@ class Event extends Model
         'regulation',
         'pre_start_date',
         'pre_finish_date',
+        'published',
+        'closed',
+        'show_lots',
     ];
 
     protected $casts = [

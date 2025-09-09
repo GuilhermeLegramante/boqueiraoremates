@@ -15,6 +15,8 @@ class Animal extends Model
     protected $fillable = [
         'name',
         'photo',
+        'photo_full',
+        'note',
         'breed_id',
         'animal_type_id',
         'coat_id',
@@ -28,7 +30,9 @@ class Animal extends Model
         'blood_level',
         'blood_percentual',
         'quantity',
-        'birth_date'
+        'birth_date',
+        'video_link',
+        'generation_link'
     ];
 
     protected $casts = [
@@ -64,7 +68,7 @@ class Animal extends Model
     public function events()
     {
         return $this->belongsToMany(Event::class, 'animal_event')
-            ->withPivot(['lot_number', 'min_value', 'final_value', 'target_value', 'increment_value', 'status'])
+            ->withPivot(['id', 'lot_number', 'min_value', 'final_value', 'target_value', 'increment_value', 'status'])
             ->withTimestamps();
     }
 
@@ -101,5 +105,40 @@ class Animal extends Model
     public function getBreedingAttribute($value)
     {
         return mb_strtoupper($value, 'UTF-8');
+    }
+
+    /**
+     * Último lance aprovado ou não para este animal no evento atual.
+     */
+    public function getCurrentBidAttribute()
+    {
+        if (!isset($this->pivot)) {
+            return 0;
+        }
+
+        // Pega o ID do pivot (animal_event_id)
+        $animalEventId = $this->pivot->id;
+
+        // Busca o maior lance para esse animal_event
+        $bid = Bid::where('animal_event_id', $animalEventId)
+            ->orderByDesc('amount')
+            ->where('status', 1)
+            ->first();
+
+        return $bid ? $bid->amount : 0;
+    }
+
+    /**
+     * Próximo lance mínimo considerando o increment_value da pivot.
+     */
+    public function getNextBidAttribute()
+    {
+        if (!isset($this->pivot)) {
+            return 0;
+        }
+
+        $increment = $this->pivot->increment_value ?? 0;
+
+        return $this->pivot->min_value + $increment;
     }
 }

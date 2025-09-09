@@ -8,6 +8,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 
 class EventForm
@@ -85,7 +86,8 @@ class EventForm
                 ->label(__('fields.note'))
                 ->visible($operation != 'view')
                 ->columnSpanFull()
-                ->maxLength(255),
+                ->rows(4)
+                ->maxLength(65535), // limite do campo text
             FileUpload::make('regulation')
                 ->label('Regulamento (PDF)')
                 ->directory('events/regulations')
@@ -97,6 +99,17 @@ class EventForm
                 ->columnSpanFull()
                 ->visible($operation != 'view')
                 ->nullable(),
+            Toggle::make('published')
+                ->label('Publicado')
+                ->default(false),
+
+            Toggle::make('closed')
+                ->label('Encerrado')
+                ->default(false),
+
+            Toggle::make('show_lots')
+                ->label('Mostrar lotes')
+                ->default(false),
         ];
     }
 }
