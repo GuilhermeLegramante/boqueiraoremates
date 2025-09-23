@@ -19,6 +19,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -110,6 +111,14 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Parâmetros')
                     ->collapsed(),
+            ])
+            ->navigationItems([
+                NavigationItem::make('Site')
+                    ->url(env('APP_URL') . '/site') // sua rota
+                    ->icon('heroicon-o-home')
+                    ->group('Configurações do Site') // opcional: agrupa no menu lateral
+                    ->sort(1) // posição
+                    ->openUrlInNewTab(), // se quiser abrir em nova aba
             ])
             ->middleware([
                 EncryptCookies::class,

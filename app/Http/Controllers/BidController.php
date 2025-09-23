@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Bid;
+use App\Models\Event;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class BidController extends Controller
 {
@@ -23,6 +27,31 @@ class BidController extends Controller
             'amount' => $request->amount,
             'status' => false,
         ]);
+
+        // Busca os dados relacionados
+        $user   = Auth::user();
+        $event  = Event::find($request->event_id);
+
+        // Busca o nome do animal a partir da pivot
+        $animal = DB::table('animal_event')
+            ->join('animals', 'animals.id', '=', 'animal_event.animal_id')
+            ->where('animal_event.id', $request->animal_event_id)
+            ->select('animals.name')
+            ->first();
+
+        // Monta a mensagem personalizada
+        $mensagem = "Usuário: {$user->name}\n\n"
+            . "Evento: {$event->name}\n\n"
+            . "Animal: {$animal->name}\n\n"
+            . "Valor do Lance: R$ " . number_format($request->amount, 2, ',', '.') . "\n\n"
+            . "Lance enviado com sucesso, aguarde validação pela mesa, conforme regulamento do evento.";
+
+
+        Http::withToken('esFDkhJ0D2G0M07nG5K9qCSbQDNC2xUQ5x8IxqHdJYYKHWUi6CxfxbIMfgiq')
+            ->post('https://www.avisaapi.com.br/api/actions/sendMessage', [
+                'number'  => '55999181805',
+                'message' => $mensagem,
+            ]);
 
         return back()->with('success', 'Lance enviado com sucesso!');
     }
