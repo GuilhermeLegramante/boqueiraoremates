@@ -13,6 +13,8 @@ class HomeController extends Controller
         // $events = Event::where('published', 1)->get();
         $events = Event::where('published')->whereNotNull('banner')->get();
 
+        dd($events);
+
         // $banners = Banner::where('visible', true)->get();
 
         return view('site.home', compact('events'));
