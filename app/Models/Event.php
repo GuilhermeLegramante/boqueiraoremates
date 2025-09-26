@@ -13,6 +13,7 @@ class Event extends Model
     protected $fillable = [
         'name',
         'banner',
+        'banner_min',
         'start_date',
         'finish_date',
         'multiplier',

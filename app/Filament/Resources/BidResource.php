@@ -22,7 +22,7 @@ class BidResource extends Resource
     protected static ?string $navigationLabel = 'Lances';
     protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $recordTitleAttribute = 'user.name';
 
     protected static ?string $modelLabel = 'lance';
 
