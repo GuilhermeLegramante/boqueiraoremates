@@ -55,7 +55,7 @@
                 <div class="space-y-4 md:order-2">
                     <!-- Dados técnicos -->
                     <h1 class="text-3xl font-bold">{{ $animal->name }}</h1>
-                    <p><b>Nº / Lote:</b> {{ $animal->lot_number ?? '-' }}</p>
+                    <p><b>Nº / Lote:</b> {{ $animal->pivot->lot_number ?? '-' }}</p>
                     <p><b>Gênero:</b>
                         {{ $animal->gender === 'male' ? 'MACHO' : ($animal->gender === 'female' ? 'FÊMEA' : '-') }}</p>
                     <p><b>RP:</b> {{ $animal->rp ?? '-' }}</p>
