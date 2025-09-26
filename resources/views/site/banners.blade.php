@@ -11,7 +11,7 @@
                          <img src="{{ asset("storage/{$event->banner}") }}" alt="Banner"
                              class="max-w-full max-h-[400px] object-contain">
                      </div>
-                 @endforeachF
+                 @endforeach
              </div>
              <div class="swiper-pagination"></div>
          </div>
