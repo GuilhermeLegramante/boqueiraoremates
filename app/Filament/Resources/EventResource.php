@@ -147,9 +147,4 @@ class EventResource extends Resource
     {
         return static::getModel()::count();
     }
-    
-    public static function shouldRegisterNavigation(): bool
-    {
-        return false;
-    }
 }

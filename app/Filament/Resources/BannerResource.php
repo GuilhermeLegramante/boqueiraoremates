@@ -85,4 +85,9 @@ class BannerResource extends Resource
             'edit' => Pages\EditBanner::route('/{record}/editar'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }
