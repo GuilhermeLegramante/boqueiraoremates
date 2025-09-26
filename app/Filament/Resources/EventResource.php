@@ -83,6 +83,7 @@ class EventResource extends Resource
                     ])
 
             ])
+            ->defaultSort('start_date', 'desc')
             ->filters([
                 //
             ])
