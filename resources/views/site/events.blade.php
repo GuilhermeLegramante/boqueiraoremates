@@ -1,4 +1,6 @@
 <section id="proximos-remates" class="py-20 text-white" style="background:#003333;">
+    <img src="{{ asset('img/proximos.png') }}" alt="Próximos Remates" class="">
+    
     @foreach ($events as $event)
         <div class="max-w-6xl mx-auto my-6 bg-gray-800 rounded-lg overflow-hidden shadow-lg">
             <div
