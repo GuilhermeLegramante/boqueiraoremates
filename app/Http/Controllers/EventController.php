@@ -15,7 +15,7 @@ class EventController extends Controller
         // já carrega os animais relacionados
         $event->load('animals');
         
-        dd($event->animals);
+        // dd($event->animals);
 
         return view('site.events.show', compact('event', 'banners'));
     }
