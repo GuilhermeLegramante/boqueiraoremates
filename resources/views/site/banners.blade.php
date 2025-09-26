@@ -6,12 +6,12 @@
      <div class="relative z-10 max-w-[930px] w-full mx-auto px-4">
          <div class="swiper-container rounded-2xl shadow-2xl overflow-hidden">
              <div class="swiper-wrapper">
-                 @foreach ($banners as $banner)
+                 @foreach ($events as $event)
                      <div class="swiper-slide relative flex justify-center">
-                         <img src="{{ asset("storage/{$banner->image}") }}" alt="Banner"
+                         <img src="{{ asset("storage/{$event->banner}") }}" alt="Banner"
                              class="max-w-full max-h-[400px] object-contain">
                      </div>
-                 @endforeach
+                 @endforeachF
              </div>
              <div class="swiper-pagination"></div>
          </div>
