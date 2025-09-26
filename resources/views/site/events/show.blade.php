@@ -53,7 +53,7 @@
 
                         <div class="p-5">
                             <h3 class="font-bold text-xl text-white mb-2">{{ $animal->name }}</h3>
-                            <p class="text-gray-200 text-sm mb-3">Lote: {{ $animal->lot_number }}</p>
+                            <p class="text-gray-200 text-sm mb-3">Lote: {{ $animal->pivot->lot_number }}</p>
                             <p class="text-white font-bold text-lg">
                                 R$ {{ number_format($animal->min_value, 2, ',', '.') }}
                             </p>
