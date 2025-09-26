@@ -25,6 +25,7 @@ use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -85,7 +86,41 @@ class EventResource extends Resource
             ])
             ->defaultSort('start_date', 'desc')
             ->filters([
-                //
+                Filter::make('start_date')
+                    ->label('Data de Início')
+                    ->form([
+                        Forms\Components\DatePicker::make('from')->label('De'),
+                        Forms\Components\DatePicker::make('until')->label('Até'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn($q, $date) => $q->whereDate('start_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'],
+                                fn($q, $date) => $q->whereDate('start_date', '<=', $date),
+                            );
+                    }),
+
+                Filter::make('finish_date')
+                    ->label('Data de Término')
+                    ->form([
+                        Forms\Components\DatePicker::make('from')->label('De'),
+                        Forms\Components\DatePicker::make('until')->label('Até'),
+                    ])
+                    ->query(function ($query, array $data) {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn($q, $date) => $q->whereDate('finish_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'],
+                                fn($q, $date) => $q->whereDate('finish_date', '<=', $date),
+                            );
+                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Detalhes'),
