@@ -114,7 +114,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Site')
-                    ->url(env('APP_URL') . '/site') // sua rota
+                    ->url(route('home')) // sua rota
                     ->icon('heroicon-o-home')
                     ->group('Configurações do Site') // opcional: agrupa no menu lateral
                     ->sort(1) // posição
