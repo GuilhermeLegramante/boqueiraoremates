@@ -114,7 +114,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 NavigationItem::make('Site')
-                    ->url('https://boqueiraoremates.com/site') // sua rota
+                    ->url('https://sistema.boqueiraoremates.com/site') // sua rota
                     ->icon('heroicon-o-home')
                     ->group('Configurações do Site') // opcional: agrupa no menu lateral
                     ->sort(1) // posição
