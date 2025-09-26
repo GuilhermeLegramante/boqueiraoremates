@@ -50,7 +50,6 @@
                                 {{ $status }}
                             </span>
                         </a>
-                        {{-- {{ dd($animal->pivot->min_value)}} --}}
                         <div class="p-5">
                             <h3 class="font-bold text-xl text-white mb-2">{{ $animal->name }}</h3>
                             <p class="text-gray-200 text-sm mb-3">Lote: {{ $animal->pivot->lot_number }}</p>
@@ -61,7 +60,6 @@
                                 class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
                                 Ver Detalhes
                             </a>
-
                         </div>
                     </div>
                 @endforeach

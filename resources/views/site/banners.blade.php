@@ -8,8 +8,10 @@
              <div class="swiper-wrapper">
                  @foreach ($events as $event)
                      <div class="swiper-slide relative flex justify-center">
-                         <img src="{{ asset("storage/{$event->banner}") }}" alt="Banner"
-                             class="max-w-full max-h-[400px] object-contain">
+                         <a href="{{ route('events.show', $event) }}">
+                             <img src="{{ asset("storage/{$event->banner}") }}" alt="Banner"
+                                 class="max-w-full max-h-[400px] object-contain">
+                         </a>
                      </div>
                  @endforeach
              </div>
