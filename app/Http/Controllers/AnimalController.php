@@ -11,8 +11,7 @@ class AnimalController extends Controller
 {
     public function show(Event $event, Animal $animal)
     {
-        // $banners = Banner::where('visible', true)->get();
-        $events = Event::where('published')->whereNotNull('banner')->get();
+        $events = Event::where('published', 1)->whereNotNull('banner')->get();
 
         // Carrega o animal do evento com a pivot
         $animal = $event->animals()
