@@ -103,24 +103,6 @@ class EventResource extends Resource
                                 fn($q, $date) => $q->whereDate('start_date', '<=', $date),
                             );
                     }),
-
-                Filter::make('finish_date')
-                    ->label('Data de Término')
-                    ->form([
-                        Forms\Components\DatePicker::make('from')->label('De'),
-                        Forms\Components\DatePicker::make('until')->label('Até'),
-                    ])
-                    ->query(function ($query, array $data) {
-                        return $query
-                            ->when(
-                                $data['from'],
-                                fn($q, $date) => $q->whereDate('finish_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['until'],
-                                fn($q, $date) => $q->whereDate('finish_date', '<=', $date),
-                            );
-                    }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()->label('Detalhes'),
