@@ -27,6 +27,7 @@ Livewire::setUpdateRoute(function ($handle) {
     return Route::post('/boqueirao/boqueiraoremates/public/livewire/update', $handle);
 });
 
+
 // Livewire::setScriptRoute(function ($handle) {
 //     return Route::get('/v2/public/livewire/livewire.js', $handle);
 // });
