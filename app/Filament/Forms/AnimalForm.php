@@ -19,12 +19,16 @@ class AnimalForm
             FileUpload::make('photo')
                 ->label('Foto (Miniatura)')
                 ->image()
+                ->openable()
+                ->downloadable()
                 ->directory('animals/photos') // pasta onde será armazenada
                 ->visibility('public')
                 ->maxSize(2048),
             FileUpload::make('photo_full')
                 ->label('Foto (Grande)')
                 ->image()
+                ->openable()
+                ->downloadable()
                 ->directory('animals/photos') // pasta onde será armazenada
                 ->visibility('public')
                 ->maxSize(2048),

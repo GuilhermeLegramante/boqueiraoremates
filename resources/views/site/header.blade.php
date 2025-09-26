@@ -15,19 +15,19 @@
               <!-- Menu -->
               <nav
                   class="hidden md:flex space-x-3 bg-[url('{{ asset('img/wood_texture.png') }}')] bg-white/10 backdrop-blur-md rounded-full px-3 py-1">
-                  <a href="#"
+                  <a href="{{ route('home') }}"
                       class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
                       Início
                   </a>
-                  <a href="#proximos-remates"
+                  <a href="{{ route('home') }}#proximos-remates"
                       class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
                       Próximos Eventos
                   </a>
-                  <a href="#equipe"
+                  <a href="{{ route('home') }}#equipe"
                       class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
                       Equipe
                   </a>
-                  <a href="#contato"
+                  <a href="{{ route('home') }}#contato"
                       class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
                       Contato
                   </a>

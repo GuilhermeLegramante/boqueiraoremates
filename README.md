@@ -27,3 +27,6 @@
     - Mudança do nome da OS
 - 2.8.0
     - Mapa do Remate
+- 2.9.0 (26/09/25)
+    - Site novo
+    - Lances
