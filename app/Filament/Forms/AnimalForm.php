@@ -65,7 +65,7 @@ class AnimalForm
                 ->maxLength(7)
                 ->live()
                 ->nullable()
-                ->unique(ignoreRecord: true)
+                // ->unique(ignoreRecord: true)
                 ->visible(fn(Get $get): bool => self::isCrioulo($get('breed_id'))),
             TextInput::make('rb')
                 ->live()
