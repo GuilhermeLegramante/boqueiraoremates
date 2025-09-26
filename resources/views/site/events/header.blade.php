@@ -3,7 +3,7 @@
 
             <!-- Banner -->
             <div class="flex justify-center lg:justify-start">
-                <img src="{{ asset('storage/' . $event->banner) }}" alt="Banner do evento"
+                <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
                     class="w-72 h-56 object-cover rounded-2xl shadow-xl border-4 border-white/20">
             </div>
 

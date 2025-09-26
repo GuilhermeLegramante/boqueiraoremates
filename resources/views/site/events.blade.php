@@ -26,7 +26,7 @@
             <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
                 <!-- Imagem do evento -->
                 <a href="{{ route('events.show', $event) }}">
-                    <img src="{{ asset('storage/' . $event->banner) }}" alt="Logo do lote"
+                    <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
                         class="w-44 h-36 object-cover rounded">
                 </a>
 
