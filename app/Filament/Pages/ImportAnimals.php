@@ -83,6 +83,8 @@ class ImportAnimals extends Page
             for ($i = 1; $i < count($animals); $i++) { // i=1 para eliminar o cabeçalho
                 $data = explode(';', $animals[$i]);
 
+                dd($data);
+
                 if ($data[0] != '') {
                     $name = trim($data[0]);
                     $breedName = trim($data[1]);
@@ -116,24 +118,26 @@ class ImportAnimals extends Page
                         'name' => $animalTypeName
                     ]);
 
-                    Animal::firstOrCreate(
-                        [ // Condições de busca
-                            'sbb' => $sbb,
-                            'name' => strtoupper($name),
-                        ],
-                        [ // Dados para criação (caso não encontre)
-                            'breed_id' => $breed->id,
-                            'animal_type_id' => $animalType->id,
-                            'coat_id' => $coat->id,
-                            'gender' => $gender == 'M' ? 'male' : 'female',
-                            'rb' => $rb,
-                            'mother' => $mother,
-                            'father' => $father,
-                            'birth_date' => $birthDate,
-                        ]
-                    );
+                    // Animal::firstOrCreate(
+                    //     [ // Condições de busca
+                    //         'sbb' => $sbb,
+                    //         'name' => strtoupper($name),
+                    //     ],
+                    //     [ // Dados para criação (caso não encontre)
+                    //         'breed_id' => $breed->id,
+                    //         'animal_type_id' => $animalType->id,
+                    //         'coat_id' => $coat->id,
+                    //         'gender' => $gender == 'M' ? 'male' : 'female',
+                    //         'rb' => $rb,
+                    //         'mother' => $mother,
+                    //         'father' => $father,
+                    //         'birth_date' => $birthDate,
+                    //     ]
+                    // );
                 }
             }
+
+            dd('sucesso');
 
             Notification::make()
                 ->title('Sucesso!')
@@ -141,6 +145,7 @@ class ImportAnimals extends Page
                 ->success()
                 ->send();
         } catch (Exception $e) {
+            dd($e->getMessage());
             Notification::make()
                 ->title('Erro ao importar os dados!')
                 ->body($e->getMessage())
