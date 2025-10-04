@@ -83,8 +83,6 @@ class ImportAnimals extends Page
             for ($i = 1; $i < count($animals); $i++) { // i=1 para eliminar o cabeçalho
                 $data = explode(';', $animals[$i]);
 
-                dd($data);
-
                 if ($data[0] != '') {
                     $name = trim($data[0]);
                     $breedName = trim($data[1]);
