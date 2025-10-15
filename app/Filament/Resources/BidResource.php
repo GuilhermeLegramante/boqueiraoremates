@@ -152,4 +152,9 @@ class BidResource extends Resource
             'index' => Pages\ListBids::route('/'),
         ];
     }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }
