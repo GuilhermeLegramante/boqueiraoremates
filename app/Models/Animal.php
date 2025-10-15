@@ -139,6 +139,10 @@ class Animal extends Model
 
         $increment = $this->pivot->increment_value ?? 0;
 
-        return $this->pivot->min_value + $increment;
+        if ($this->current_bid > 0) {
+            return $this->current_bid + $increment;
+        } else {
+            return $this->pivot->min_value + $increment;
+        }
     }
 }
