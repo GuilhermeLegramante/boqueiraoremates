@@ -56,6 +56,20 @@ class BuyerParcelResource extends Resource
                     })
                     ->placeholder('Todos os eventos')
                     ->searchable(),
+
+                // Filtro por Parcelas Pagas / Não Pagas
+                SelectFilter::make('paid')
+                    ->label('Situação da Parcela')
+                    ->options([
+                        '1' => 'Pagas',
+                        '0' => 'Não Pagas',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (isset($data['value'])) {
+                            $query->where('paid', $data['value']);
+                        }
+                    })
+                    ->placeholder('Todas'),
             ])
             ->deferFilters()
             ->filtersApplyAction(
