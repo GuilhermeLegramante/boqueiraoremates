@@ -23,12 +23,12 @@
             </div>
 
             <!-- Conteúdo principal -->
-            <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
+            <div class="bg-[#4D6766] p-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
 
                 <!-- Imagem do evento -->
                 <a href="{{ route('events.show', $event) }}">
                     <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
-                        class="w-44 h-36 object-contain bg-white/10 rounded p-1 shadow-md">
+                        class="w-52 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                 </a>
 
                 <!-- Descrição -->
@@ -39,18 +39,18 @@
                 </div>
 
                 <!-- Pré-lance e Regulamento -->
-                <div class="flex justify-center items-center gap-4">
+                <div class="flex justify-center items-center gap-5">
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-36 h-36 object-contain bg-white/10 rounded p-1 shadow-md hover:scale-105 transition-transform duration-300">
+                            class="w-44 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                     </a>
 
-                    <!-- Regulamento (só aparece se existir imagem) -->
+                    <!-- Regulamento -->
                     @if ($event->regulation)
                         <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
                             <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
-                                class="w-36 h-36 object-contain bg-white/10 rounded p-1 shadow-md hover:scale-105 transition-transform duration-300">
+                                class="w-44 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                         </a>
                     @endif
                 </div>
