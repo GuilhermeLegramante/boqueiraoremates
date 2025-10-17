@@ -8,7 +8,7 @@
             <div
                 class="relative rounded-2xl overflow-hidden bg-[url('{{ asset('img/wood_texture.png') }}')] bg-cover bg-center p-1 md:p-2 flex flex-col md:flex-row justify-between items-center text-white max-h-20">
 
-                <!-- Sobreposição para aumentar contraste -->
+                <!-- Sobreposição -->
                 <div class="absolute inset-0 bg-black/30"></div>
 
                 <!-- Cabeçalho -->
@@ -28,7 +28,7 @@
                 <!-- Imagem do evento -->
                 <a href="{{ route('events.show', $event) }}">
                     <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
-                        class="w-44 h-36 object-cover rounded">
+                        class="w-44 h-36 object-contain bg-white/10 rounded p-1 shadow-md">
                 </a>
 
                 <!-- Descrição -->
@@ -43,19 +43,18 @@
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-36 h-36 object-cover rounded shadow-md hover:scale-105 transition-transform duration-300">
+                            class="w-36 h-36 object-contain bg-white/10 rounded p-1 shadow-md hover:scale-105 transition-transform duration-300">
                     </a>
 
                     <!-- Regulamento (só aparece se existir imagem) -->
                     @if ($event->regulation)
                         <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
                             <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
-                                class="w-36 h-36 object-cover rounded shadow-md hover:scale-105 transition-transform duration-300">
+                                class="w-36 h-36 object-contain bg-white/10 rounded p-1 shadow-md hover:scale-105 transition-transform duration-300">
                         </a>
                     @endif
                 </div>
             </div>
-        </div>
         </div>
     @endforeach
 </section>
