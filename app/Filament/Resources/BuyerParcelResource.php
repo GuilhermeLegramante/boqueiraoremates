@@ -76,7 +76,7 @@ class BuyerParcelResource extends Resource
                     ->placeholder('Todas'),
 
                 // Filtro por Boleto Gerado
-                SelectFilter::make('boleto')
+                SelectFilter::make('invoice_generated')
                     ->label('Boleto Gerado')
                     ->options([
                         '1' => 'Sim',
