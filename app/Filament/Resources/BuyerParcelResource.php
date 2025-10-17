@@ -48,6 +48,12 @@ class BuyerParcelResource extends Resource
                     ->relationship('order.event', 'name'),
 
             ])
+            ->deferFilters()
+            ->filtersApplyAction(
+                fn (Action $action) => $action
+                    ->link()
+                    ->label('Aplicar Filtro(s)'),
+            )
             ->actions([
                 // Tables\Actions\EditAction::make(),
             ])
