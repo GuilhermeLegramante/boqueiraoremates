@@ -16,6 +16,7 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Webbingbrasil\FilamentAdvancedFilter\Filters\DateFilter;
 
 class BuyerParcelResource extends Resource
 {
@@ -47,7 +48,7 @@ class BuyerParcelResource extends Resource
                 // Filtro por Evento
                 SelectFilter::make('event')
                     ->label('Evento')
-                    ->options(\App\Models\Event::pluck('name', 'id')->toArray()) // lista de eventos
+                    ->options(\App\Models\Event::pluck('name', 'id')->toArray())
                     ->query(function (Builder $query, array $data) {
                         if (!empty($data['value'])) {
                             $query->whereHas('order', function ($q) use ($data) {
@@ -81,10 +82,33 @@ class BuyerParcelResource extends Resource
                     ])
                     ->query(function (Builder $query, array $data) {
                         if (isset($data['value'])) {
-                            $query->where('boleto_generated', $data['value']);
+                            $query->where('invoice_generated', $data['value']);
                         }
                     })
                     ->placeholder('Todos'),
+
+                // Filtro por Método de Pagamento
+                SelectFilter::make('payment_method_id')
+                    ->label('Método de Pagamento')
+                    ->options(\App\Models\PaymentMethod::pluck('name', 'id')->toArray())
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->where('payment_method_id', $data['value']);
+                        }
+                    })
+                    ->placeholder('Todos'),
+
+                // Filtro por Período de Pagamento
+                DateFilter::make('payment_date')
+                    ->label('Período de Pagamento')
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['start'])) {
+                            $query->whereDate('payment_date', '>=', $data['start']);
+                        }
+                        if (!empty($data['end'])) {
+                            $query->whereDate('payment_date', '<=', $data['end']);
+                        }
+                    }),
             ])
             ->deferFilters()
             ->filtersApplyAction(
