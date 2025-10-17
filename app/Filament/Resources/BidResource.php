@@ -43,7 +43,7 @@ class BidResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
                 // Tables\Columns\TextColumn::make('user.name')->label('Cliente')->sortable(),
-                TextColumn::make('user.client.name')
+                TextColumn::make('user.name')
                     ->label('Cliente')
                     ->url(fn($record) => $record->user && $record->user->client
                         ? route('client-details-pdf', $record->user->client->id)
