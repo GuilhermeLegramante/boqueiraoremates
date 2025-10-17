@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,7 +42,21 @@ class BidResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
-                Tables\Columns\TextColumn::make('user.name')->label('Cliente')->sortable(),
+                // Tables\Columns\TextColumn::make('user.name')->label('Cliente')->sortable(),
+                TextColumn::make('user.client.name')
+                    ->label('Cliente')
+                    ->url(fn($record) => $record->user && $record->user->client
+                        ? route('client-details-pdf', $record->user->client->id)
+                        : null)
+                    ->openUrlInNewTab()
+                    ->color('info')
+                    ->icon('heroicon-o-document-text')
+                    ->formatStateUsing(
+                        fn($state, $record) =>
+                        $record->user && $record->user->client
+                            ? $record->user->client->name
+                            : '—'
+                    ),
                 Tables\Columns\TextColumn::make('event.name')->label('Evento')->sortable(),
                 Tables\Columns\TextColumn::make('animal_name')->label('Animal')->sortable(),
                 Tables\Columns\TextColumn::make('amount')->label('Valor')->money('BRL')->sortable(),
