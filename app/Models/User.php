@@ -58,4 +58,9 @@ class User extends Authenticatable
     {
         return mb_strtoupper($value, 'UTF-8');
     }
+
+    public function client()
+    {
+        return $this->hasOne(Client::class, 'registered_user_id');
+    }
 }

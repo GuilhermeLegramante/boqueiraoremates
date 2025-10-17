@@ -27,7 +27,7 @@ return [
     'document_type' => 'Tipo de Documento',
     'file' => 'Arquivo',
     'cep' => 'CEP',
-    'street' => 'Logradouro (Rua, Av.)',
+    'street' => 'Rua, Av.',
     'number' => 'Número',
     'complement' => 'Complemento',
     'district' => 'Bairro',
