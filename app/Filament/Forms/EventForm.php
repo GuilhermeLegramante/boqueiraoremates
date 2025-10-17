@@ -22,7 +22,7 @@ class EventForm
                 ->visible($operation == 'view')
                 ->view('banner-preview'),
             FileUpload::make('banner')
-                ->label('Banner do Evento')
+                ->label('Banner')
                 ->image()
                 ->previewable()
                 ->openable()
@@ -33,7 +33,7 @@ class EventForm
                 ->columnSpanFull()
                 ->maxSize(4096),
             FileUpload::make('banner_min')
-                ->label('Miniatura do Banner')
+                ->label('Selo')
                 ->image()
                 ->previewable()
                 ->openable()

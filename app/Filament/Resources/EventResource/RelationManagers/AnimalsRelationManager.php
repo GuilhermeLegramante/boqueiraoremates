@@ -337,7 +337,7 @@ class AnimalsRelationManager extends RelationManager
                                 ->required(),
 
                             Money::make('min_value')
-                                ->label('Lance Mínimo')
+                                ->label('Valor Inicial')
                                 ->required()
                                 ->afterStateUpdated(function ($state, callable $set) {
                                     if ($state !== null) {
@@ -359,27 +359,27 @@ class AnimalsRelationManager extends RelationManager
                                     return (float) str_replace(',', '.', str_replace('.', '', $state));
                                 }),
 
-                            Money::make('final_value')
-                                ->label('Valor Final')
-                                ->afterStateUpdated(function ($state, callable $set) {
-                                    if ($state !== null) {
-                                        // força conversão para float e corrige escala
-                                        $set('final_value', (float) $state * 10);
-                                    }
-                                })
-                                ->dehydrateStateUsing(function ($state) {
-                                    if ($state === null) {
-                                        return null;
-                                    }
+                            // Money::make('final_value')
+                            //     ->label('Valor Final')
+                            //     ->afterStateUpdated(function ($state, callable $set) {
+                            //         if ($state !== null) {
+                            //             // força conversão para float e corrige escala
+                            //             $set('final_value', (float) $state * 10);
+                            //         }
+                            //     })
+                            //     ->dehydrateStateUsing(function ($state) {
+                            //         if ($state === null) {
+                            //             return null;
+                            //         }
 
-                                    // Se já for número (usuário editou), retorna direto
-                                    if (is_numeric($state)) {
-                                        return (float) $state;
-                                    }
+                            //         // Se já for número (usuário editou), retorna direto
+                            //         if (is_numeric($state)) {
+                            //             return (float) $state;
+                            //         }
 
-                                    // Se for string formatada, normaliza
-                                    return (float) str_replace(',', '.', str_replace('.', '', $state));
-                                }),
+                            //         // Se for string formatada, normaliza
+                            //         return (float) str_replace(',', '.', str_replace('.', '', $state));
+                            //     }),
 
                             Money::make('increment_value')
                                 ->label('Valor do Incremento')
