@@ -32,4 +32,59 @@
                 <p>{{ $event->note }}</p>
             </div>
         </div>
+
+        <!-- Botões de acesso às imagens -->
+        <div class="mt-8 flex flex-wrap justify-center gap-6 lg:col-span-3">
+            <!-- Botão Regulamento -->
+            <button @click="showRegulation = true"
+                class="flex items-center gap-2 bg-yellow-400 text-[#003333] font-semibold px-5 py-3 rounded-xl shadow-md hover:bg-yellow-300 transition-all">
+                📄 Ver Regulamento
+            </button>
+
+            <!-- Botão Benefícios -->
+            <button @click="showBenefits = true"
+                class="flex items-center gap-2 bg-emerald-500 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:bg-emerald-400 transition-all">
+                🎁 Ver Benefícios
+            </button>
+        </div>
+
+        <!-- Modais -->
+        <div x-data="{ showRegulation: false, showBenefits: false }">
+            <!-- Modal Regulamento -->
+            <template x-if="showRegulation">
+                <div class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6"
+                    @click.self="showRegulation = false">
+                    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-3xl w-full">
+                        <div class="flex justify-between items-center p-4 bg-[#003333] text-white">
+                            <h3 class="text-lg font-bold">📄 Regulamento do Evento</h3>
+                            <button @click="showRegulation = false"
+                                class="text-white text-2xl leading-none">&times;</button>
+                        </div>
+                        <div class="p-4 bg-gray-100 flex justify-center">
+                            <img src="{{ asset('storage/' . $event->regulation_image_path) }}"
+                                alt="Imagem do Regulamento" class="rounded-xl max-h-[80vh] object-contain shadow-md">
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Modal Benefícios -->
+            <template x-if="showBenefits">
+                <div class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6"
+                    @click.self="showBenefits = false">
+                    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-3xl w-full">
+                        <div class="flex justify-between items-center p-4 bg-[#003333] text-white">
+                            <h3 class="text-lg font-bold">🎁 Benefícios do Evento</h3>
+                            <button @click="showBenefits = false"
+                                class="text-white text-2xl leading-none">&times;</button>
+                        </div>
+                        <div class="p-4 bg-gray-100 flex justify-center">
+                            <img src="{{ asset('storage/' . $event->benefits_image_path) }}" alt="Imagem de Benefícios"
+                                class="rounded-xl max-h-[80vh] object-contain shadow-md">
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+
     </section>

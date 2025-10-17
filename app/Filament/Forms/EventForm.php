@@ -110,6 +110,29 @@ class EventForm
                 ->columnSpanFull()
                 ->visible($operation != 'view')
                 ->nullable(),
+
+            FileUpload::make('regulation_image_path')
+                ->label('Regulamento')
+                ->image()
+                ->directory('events/regulations')
+                ->imageEditor() // permite cortar, ajustar, etc.
+                ->imagePreviewHeight('150')
+                ->openable()
+                ->downloadable()
+                ->maxSize(2048) // 2 MB
+                ->helperText('Envie uma imagem ilustrando a parte mais importante do regulamento do evento.'),
+
+            FileUpload::make('benefits_image_path')
+                ->label('Benefícios / Condições de Pagamento')
+                ->image()
+                ->directory('events/benefits')
+                ->imageEditor()
+                ->imagePreviewHeight('150')
+                ->openable()
+                ->downloadable()
+                ->maxSize(2048)
+                ->helperText('Envie uma imagem ilustrando os benefícios do evento.'),
+                
             Toggle::make('published')
                 ->label('Publicado')
                 ->default(false),
