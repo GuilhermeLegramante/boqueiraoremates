@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,7 +43,12 @@ class BuyerParcelResource extends Resource
         return $table
             ->columns(ParcelsTable::table())
             ->filters([
-                //
+                SelectFilter::make('order.event_id')
+                    ->label('Evento')
+                    ->relationship('order.event', 'name')
+                    ->preload()
+                    ->searchable()
+                    ->placeholder('Todos os eventos'),
             ])
             ->actions([
                 // Tables\Actions\EditAction::make(),
