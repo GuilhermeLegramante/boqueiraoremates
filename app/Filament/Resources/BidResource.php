@@ -43,10 +43,10 @@ class BidResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
                 // Tables\Columns\TextColumn::make('user.name')->label('Cliente')->sortable(),
-                TextColumn::make('user.client.name')
+                TextColumn::make('cliente')
                     ->label('Cliente')
                     ->formatStateUsing(
-                        fn($state, $record) =>
+                        fn($record) =>
                         $record->user?->client?->name ?? '—'
                     )
                     ->url(
@@ -57,7 +57,9 @@ class BidResource extends Resource
                     )
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-document-text')
-                    ->color('info'),
+                    ->color('info')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('event.name')->label('Evento')->sortable(),
                 Tables\Columns\TextColumn::make('animal_name')->label('Animal')->sortable(),
                 Tables\Columns\TextColumn::make('amount')->label('Valor')->money('BRL')->sortable(),
