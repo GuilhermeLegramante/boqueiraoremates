@@ -2,6 +2,7 @@
     <div class="max-w-6xl mx-auto">
         <img src="{{ asset('img/proximos.png') }}" alt="Próximos Remates" class="my-6">
     </div>
+
     @foreach ($events as $event)
         <div class="max-w-6xl mx-auto my-6 bg-gray-800 rounded-lg overflow-hidden shadow-lg">
             <div
@@ -10,7 +11,7 @@
                 <!-- Sobreposição para aumentar contraste -->
                 <div class="absolute inset-0 bg-black/30"></div>
 
-                <!-- Conteúdo da div -->
+                <!-- Cabeçalho -->
                 <div class="relative flex flex-col md:flex-row justify-between items-center w-full">
                     <h1 class="text-lg md:text-xl font-bold drop-shadow-lg truncate">
                         {{ $event->name }}
@@ -19,14 +20,14 @@
                         Data / Horário: {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y - H:i') }}hs
                     </span>
                 </div>
-
             </div>
 
             <!-- Conteúdo principal -->
             <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
+
                 <!-- Imagem do evento -->
                 <a href="{{ route('events.show', $event) }}">
-                    <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
+                    <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
                         class="w-44 h-36 object-cover rounded">
                 </a>
 
@@ -37,12 +38,23 @@
                     </p>
                 </div>
 
-                <!-- Pré-lance -->
-                <a href="{{ route('events.show', $event) }}">
-                    <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance" class="w-36 h-36 object-cover rounded">
-                </a>
+                <!-- Ações (Pré-lance e Regulamento) -->
+                <div class="flex flex-col items-center gap-3">
+                    <!-- Pré-lance -->
+                    <a href="{{ route('events.show', $event) }}">
+                        <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
+                            class="w-36 h-36 object-cover rounded hover:scale-105 transition-transform">
+                    </a>
+
+                    <!-- Regulamento (só mostra se houver imagem) -->
+                    @if ($event->regulation)
+                        <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
+                            <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
+                                class="w-36 h-20 object-contain rounded hover:scale-105 transition-transform">
+                        </a>
+                    @endif
+                </div>
             </div>
         </div>
     @endforeach
-
 </section>
