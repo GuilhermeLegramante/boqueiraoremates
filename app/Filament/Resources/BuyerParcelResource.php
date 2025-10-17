@@ -7,10 +7,12 @@ use App\Filament\Resources\BuyerParcelResource\RelationManagers;
 use App\Filament\Tables\ParcelsTable;
 use App\Models\BuyerParcel;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -99,16 +101,22 @@ class BuyerParcelResource extends Resource
                     ->placeholder('Todos'),
 
                 // Filtro por Período de Pagamento
-                DateFilter::make('payment_date')
-                    ->label('Período de Pagamento')
-                    ->query(function (Builder $query, array $data) {
-                        if (!empty($data['start'])) {
-                            $query->whereDate('payment_date', '>=', $data['start']);
-                        }
-                        if (!empty($data['end'])) {
-                            $query->whereDate('payment_date', '<=', $data['end']);
-                        }
-                    }),
+                Filter::make('payment_date')
+                    ->form([
+                        DatePicker::make('created_from')->label('Data de Negociação (Inicial)'),
+                        DatePicker::make('created_until')->label('Data de Negociação (Final)'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('payment_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('payment_date', '<=', $date),
+                            );
+                    })
             ])
             ->deferFilters()
             ->filtersApplyAction(
