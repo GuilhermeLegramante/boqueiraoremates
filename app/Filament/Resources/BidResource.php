@@ -43,23 +43,19 @@ class BidResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
                 // Tables\Columns\TextColumn::make('user.name')->label('Cliente')->sortable(),
-                TextColumn::make('user.client_link')
+                TextColumn::make('client_name')
                     ->label('Cliente')
-                    ->formatStateUsing(function ($state, $record) {
-                        $client = $record->user?->client;
-
-                        return $client ? $client->name : '—';
+                    ->getStateUsing(function ($record) {
+                        return $record->user?->client?->name ?? '—';
                     })
                     ->url(function ($record) {
                         $client = $record->user?->client;
-
                         return $client ? route('client-details-pdf', $client->id) : null;
                     })
                     ->openUrlInNewTab()
-                    ->icon('heroicon-o-document-text')
                     ->color('info')
-                    ->sortable()
-                    ->searchable(),
+                    ->icon('heroicon-o-document-text')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('event.name')->label('Evento')->sortable(),
                 Tables\Columns\TextColumn::make('animal_name')->label('Animal')->sortable(),
                 Tables\Columns\TextColumn::make('amount')->label('Valor')->money('BRL')->sortable(),
