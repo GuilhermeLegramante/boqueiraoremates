@@ -35,22 +35,23 @@
                     </p>
                 </div>
 
-                <!-- Pré-lance e Regulamento lado a lado -->
-                <div class="flex flex-col md:flex-row justify-center md:justify-end items-start gap-4">
+                <!-- Pré-lance e Regulamento lado a lado, sem fundo -->
+                <div class="flex justify-center md:justify-start items-start gap-6 mt-2">
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-68 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+                            class="w-64 h-56 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                     </a>
 
                     <!-- Regulamento -->
                     @if ($event->regulation)
                         <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
                             <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
-                                class="w-68 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+                                class="w-64 h-56 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                         </a>
                     @endif
                 </div>
+
             </div>
         </div>
     @endforeach
