@@ -24,6 +24,8 @@ class Event extends Model
         'published',
         'closed',
         'show_lots',
+        'regulation_image_path',
+        'benefits_image_path'
     ];
 
     protected $casts = [
