@@ -44,6 +44,7 @@ class BuyerParcelResource extends Resource
         return $table
             ->columns(ParcelsTable::table())
             ->filters([
+                // Filtro por Evento
                 SelectFilter::make('event')
                     ->label('Evento')
                     ->options(\App\Models\Event::pluck('name', 'id')->toArray()) // lista de eventos
@@ -70,6 +71,20 @@ class BuyerParcelResource extends Resource
                         }
                     })
                     ->placeholder('Todas'),
+
+                // Filtro por Boleto Gerado
+                SelectFilter::make('boleto')
+                    ->label('Boleto Gerado')
+                    ->options([
+                        '1' => 'Sim',
+                        '0' => 'Não',
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        if (isset($data['value'])) {
+                            $query->where('boleto_generated', $data['value']);
+                        }
+                    })
+                    ->placeholder('Todos'),
             ])
             ->deferFilters()
             ->filtersApplyAction(
