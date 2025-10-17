@@ -103,8 +103,8 @@ class BuyerParcelResource extends Resource
                 // Filtro por Período de Pagamento
                 Filter::make('payment_date')
                     ->form([
-                        DatePicker::make('created_from')->label('Data de Negociação (Inicial)'),
-                        DatePicker::make('created_until')->label('Data de Negociação (Final)'),
+                        DatePicker::make('created_from')->label('Data de Vencimento (Inicial)'),
+                        DatePicker::make('created_until')->label('Data de Vencimento (Final)'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
