@@ -22,7 +22,7 @@ class ParcelsTable
                 ->formatStateUsing(
                     fn(string $state): string => (date('d/m/Y', strtotime($state)))
                 ),
-            TextColumn::make('event.name')
+            TextColumn::make('order.event.name')
                 ->label('Evento')
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->searchable(),
