@@ -50,6 +50,8 @@
         @endif
     </div>
 
+    {{dd($event->regulation_image_path)}}
+
     <!-- Modal Regulamento -->
     <div id="modalRegulation"
         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6 transition-opacity duration-300">
