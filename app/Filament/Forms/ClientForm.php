@@ -104,10 +104,10 @@ class ClientForm
                                 ->format('(99) 99999-9999'),
                             PhoneNumber::make('business_phone')
                                 ->label(__('fields.business_phone'))
-                                ->format('(99) 99999-9999'),
+                                ->format('(99) 9999-9999'),
                             PhoneNumber::make('home_phone')
                                 ->label(__('fields.home_phone'))
-                                ->format('(99) 99999-9999')
+                                ->format('(99) 9999-9999')
                         ])
                         ->columns(4),
                     Fieldset::make('Endereço')
@@ -295,10 +295,10 @@ class ClientForm
                 ->format('(99) 99999-9999'),
             PhoneNumber::make('business_phone')
                 ->label(__('fields.business_phone'))
-                ->format('(99) 9999-9999'),
+                ->format('(99) 99999-9999'),
             PhoneNumber::make('home_phone')
                 ->label(__('fields.home_phone'))
-                ->format('(99) 9999-9999'),
+                ->format('(99) 99999-9999'),
             TextInput::make('mother')->label(__('fields.mother')),
             TextInput::make('father')->label(__('fields.father')),
         ];
