@@ -5,13 +5,10 @@
 
     @foreach ($events as $event)
         <div class="max-w-6xl mx-auto my-6 bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+            <!-- Cabeçalho do evento -->
             <div
-                class="relative rounded-2xl overflow-hidden bg-[url('{{ asset('img/wood_texture.png') }}')] bg-cover bg-center p-1 md:p-2 flex flex-col md:flex-row justify-between items-center text-white max-h-20">
-
-                <!-- Sobreposição -->
+                class="relative rounded-2xl overflow-hidden bg-[url('{{ asset('img/wood_texture.png') }}')] bg-cover bg-center p-2 flex flex-col md:flex-row justify-between items-center text-white max-h-20">
                 <div class="absolute inset-0 bg-black/30"></div>
-
-                <!-- Cabeçalho -->
                 <div class="relative flex flex-col md:flex-row justify-between items-center w-full">
                     <h1 class="text-lg md:text-xl font-bold drop-shadow-lg truncate">
                         {{ $event->name }}
@@ -23,10 +20,10 @@
             </div>
 
             <!-- Conteúdo principal -->
-            <div class="bg-[#4D6766] p-6 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
+            <div class="bg-[#4D6766] grid grid-cols-1 md:grid-cols-5 gap-4 text-white p-4 md:p-6 items-start">
 
-                <!-- Imagem do evento -->
-                <a href="{{ route('events.show', $event) }}">
+                <!-- Banner do evento -->
+                <a href="{{ route('events.show', $event) }}" class="flex justify-center md:justify-start">
                     <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
                         class="w-52 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                 </a>
@@ -38,19 +35,19 @@
                     </p>
                 </div>
 
-                <!-- Pré-lance e Regulamento -->
-                <div class="flex justify-center items-center gap-5">
+                <!-- Pré-lance e Regulamento lado a lado -->
+                <div class="flex flex-col md:flex-row justify-center md:justify-end items-start gap-4">
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-52 h-52 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+                            class="w-44 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                     </a>
 
                     <!-- Regulamento -->
                     @if ($event->regulation)
                         <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
                             <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
-                                class="w-52 h-52 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+                                class="w-44 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                         </a>
                     @endif
                 </div>
