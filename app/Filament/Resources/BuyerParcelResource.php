@@ -44,14 +44,22 @@ class BuyerParcelResource extends Resource
         return $table
             ->columns(ParcelsTable::table())
             ->filters([
-                SelectFilter::make('order.event')
+                SelectFilter::make('event')
                     ->label('Evento')
-                    ->relationship('order.event', 'name'),
-
+                    ->options(\App\Models\Event::pluck('name', 'id')->toArray()) // lista de eventos
+                    ->query(function (Builder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas('order', function ($q) use ($data) {
+                                $q->where('event_id', $data['value']);
+                            });
+                        }
+                    })
+                    ->placeholder('Todos os eventos')
+                    ->searchable(),
             ])
             ->deferFilters()
             ->filtersApplyAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->link()
                     ->label('Aplicar Filtro(s)'),
             )
