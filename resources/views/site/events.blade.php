@@ -38,23 +38,24 @@
                     </p>
                 </div>
 
-                <!-- Ações (Pré-lance e Regulamento) -->
-                <div class="flex flex-col items-center gap-3">
+                <!-- Pré-lance e Regulamento -->
+                <div class="flex justify-center items-center gap-4">
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-36 h-36 object-cover rounded hover:scale-105 transition-transform">
+                            class="w-36 h-36 object-cover rounded shadow-md hover:scale-105 transition-transform duration-300">
                     </a>
 
-                    <!-- Regulamento (só mostra se houver imagem) -->
+                    <!-- Regulamento (só aparece se existir imagem) -->
                     @if ($event->regulation)
                         <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
                             <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
-                                class="w-36 h-20 object-contain rounded hover:scale-105 transition-transform">
+                                class="w-36 h-36 object-cover rounded shadow-md hover:scale-105 transition-transform duration-300">
                         </a>
                     @endif
                 </div>
             </div>
+        </div>
         </div>
     @endforeach
 </section>
