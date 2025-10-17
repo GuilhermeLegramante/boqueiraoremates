@@ -33,22 +33,24 @@
         </div>
     </div>
 
-    <!-- Botões (só aparecem se houver imagem) -->
+    <!-- Botões -->
     <div class="mt-8 flex flex-wrap justify-center gap-6 lg:col-span-3">
         @if ($event->regulation_image_path)
-            <button @click="showRegulation = true"
+            <button id="openRegulation"
                 class="flex items-center gap-2 bg-yellow-400 text-[#003333] font-semibold px-5 py-3 rounded-xl shadow-md hover:bg-yellow-300 transition-all">
                 📄 Ver Regulamento
             </button>
         @endif
 
         @if ($event->benefits_image_path)
-            <button @click="showBenefits = true"
+            <button id="openBenefits"
                 class="flex items-center gap-2 bg-emerald-500 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:bg-emerald-400 transition-all">
                 🎁 Ver Benefícios
             </button>
         @endif
     </div>
+
+
 
     <!-- Modal Regulamento -->
     <div id="modalRegulation"
