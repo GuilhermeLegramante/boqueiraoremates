@@ -43,14 +43,14 @@
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-44 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+                            class="w-52 h-52 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                     </a>
 
                     <!-- Regulamento -->
                     @if ($event->regulation)
                         <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank">
                             <img src="{{ asset('img/regulamento.png') }}" alt="Regulamento"
-                                class="w-44 h-44 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
+                                class="w-52 h-52 object-contain rounded-xl shadow-md hover:scale-105 transition-transform duration-300">
                         </a>
                     @endif
                 </div>
