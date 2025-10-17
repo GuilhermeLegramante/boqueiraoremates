@@ -62,7 +62,14 @@ class ClientForm
                             TextInput::make('note_occupation')
                                 ->label(__('fields.note_occupation')),
                             // TextInput::make('income')->numeric()->label(__('fields.income')),
-                            Money::make('income')->label(__('fields.income')),
+                            // Money::make('income')->label(__('fields.income')),
+                            TextInput::make('income')
+                                ->prefix('R$')
+                                ->numeric()
+                                ->live()
+                                ->debounce(1000)
+                                ->columnSpan(2)
+                                ->label(__('fields.income')),
                         ])
                         ->columns(2),
                     Fieldset::make('Documentos')
@@ -268,9 +275,16 @@ class ClientForm
             TextInput::make('note_occupation')
                 ->label(__('fields.note_occupation')),
             // TextInput::make('income')->numeric()->label(__('fields.income')),
-            Money::make('income')
-                ->label(__('fields.income'))
-                ->live(condition: false),
+            // Money::make('income')
+            //     ->label(__('fields.income'))
+            //     ->live(condition: false),
+            TextInput::make('income')
+                ->prefix('R$')
+                ->numeric()
+                ->live()
+                ->debounce(1000)
+                ->columnSpan(2)
+                ->label(__('fields.income')),
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
                 ->required()
