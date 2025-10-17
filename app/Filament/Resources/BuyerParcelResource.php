@@ -128,12 +128,12 @@ class BuyerParcelResource extends Resource
                 // Tables\Actions\EditAction::make(),
             ])
             ->groups([
-                Group::make('order.number')
-                    ->label('Fatura de Venda / OS')
-                    ->collapsible(),
-                Group::make('order.event.name')
-                    ->label('Evento')
-                    ->collapsible(),
+                // Group::make('order.number')
+                //     ->label('Fatura de Venda / OS')
+                //     ->collapsible(),
+                // Group::make('order.event.name')
+                //     ->label('Evento')
+                //     ->collapsible(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
