@@ -48,7 +48,15 @@
                 🎁 Ver Benefícios
             </button>
         @endif
+
+        @if ($event->regulation)
+            <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
+                class="flex items-center gap-2 bg-blue-500 text-white font-semibold px-5 py-3 rounded-xl shadow-md hover:bg-blue-400 transition-all">
+                📑 Regulamento Completo
+            </a>
+        @endif
     </div>
+
 
 
 
