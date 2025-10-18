@@ -372,20 +372,20 @@ class ClientForm
             FileUpload::make('document_residence')
                 ->label('Comprovante de Residência')
                 ->directory('documents'),
-                
-            TextInput::make('instagram')
-                ->label('Instagram')
-                ->placeholder('Ex: @usuario')
-                ->columnSpanFull()
-                ->prefixIcon('heroicon-o-at-symbol')
-                ->maxLength(100),
 
-            TextInput::make('facebook')
-                ->label('Facebook')
-                ->columnSpanFull()
-                ->placeholder('Ex: facebook.com/usuario')
-                ->prefixIcon('heroicon-o-globe-alt')
-                ->maxLength(100),
+            // TextInput::make('instagram')
+            //     ->label('Instagram')
+            //     ->placeholder('Ex: @usuario')
+            //     ->columnSpanFull()
+            //     ->prefixIcon('heroicon-o-at-symbol')
+            //     ->maxLength(100),
+
+            // TextInput::make('facebook')
+            //     ->label('Facebook')
+            //     ->columnSpanFull()
+            //     ->placeholder('Ex: facebook.com/usuario')
+            //     ->prefixIcon('heroicon-o-globe-alt')
+            //     ->maxLength(100),
         ];
     }
 }
