@@ -33,29 +33,30 @@
         </div>
     </div>
 
-    <!-- Botões -->
-    <div class="mt-4 flex flex-wrap justify-center gap-3 lg:col-span-3 max-w-[300px] mx-auto">
+    <!-- Botões lado a lado -->
+    <div class="mt-4 flex justify-center gap-3 max-w-[300px] mx-auto">
         @if ($event->regulation_image_path)
             <button id="openRegulation"
-                class="flex items-center gap-1 bg-yellow-400 text-[#003333] font-semibold px-3 py-2 rounded-xl shadow-md hover:bg-yellow-300 transition-all text-sm w-full justify-center">
+                class="flex items-center gap-1 bg-yellow-400 text-[#003333] font-semibold px-3 py-2 rounded-xl shadow-md hover:bg-yellow-300 transition-all text-sm">
                 📄 Regulamento
             </button>
         @endif
 
         @if ($event->benefits_image_path)
             <button id="openBenefits"
-                class="flex items-center gap-1 bg-emerald-500 text-white font-semibold px-3 py-2 rounded-xl shadow-md hover:bg-emerald-400 transition-all text-sm w-full justify-center">
+                class="flex items-center gap-1 bg-emerald-500 text-white font-semibold px-3 py-2 rounded-xl shadow-md hover:bg-emerald-400 transition-all text-sm">
                 🎁 Benefícios
             </button>
         @endif
 
         @if ($event->regulation)
             <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
-                class="flex items-center gap-1 bg-blue-500 text-white font-semibold px-3 py-2 rounded-xl shadow-md hover:bg-blue-400 transition-all text-sm w-full justify-center">
-                📑 Regulamento PDF
+                class="flex items-center gap-1 bg-blue-500 text-white font-semibold px-3 py-2 rounded-xl shadow-md hover:bg-blue-400 transition-all text-sm">
+                📑 PDF
             </a>
         @endif
     </div>
+
 
     <!-- Modal Regulamento -->
     <div id="modalRegulation"
