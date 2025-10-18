@@ -323,7 +323,7 @@ class ClientForm
             TextInput::make('facebook')
                 ->label('Facebook')
                 ->placeholder('Ex: facebook.com/usuario')
-                ->prefixIcon('heroicon-o-globe')
+                ->prefixIcon('heroicon-o-globe-alt')
                 ->maxLength(100),
         ];
     }
