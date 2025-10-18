@@ -70,6 +70,18 @@ class ClientForm
                                 ->debounce(1000)
                                 ->columnSpan(2)
                                 ->label(__('fields.income')),
+
+                            TextInput::make('instagram')
+                                ->label('Instagram')
+                                ->placeholder('Ex: @usuario')
+                                ->prefixIcon('heroicon-o-at-symbol')
+                                ->maxLength(100),
+
+                            TextInput::make('facebook')
+                                ->label('Facebook')
+                                ->placeholder('Ex: facebook.com/usuario')
+                                ->prefixIcon('heroicon-o-globe')
+                                ->maxLength(100),
                         ])
                         ->columns(2),
                     Fieldset::make('Documentos')
@@ -353,18 +365,6 @@ class ClientForm
     public static function extra(): array
     {
         return [
-            TextInput::make('instagram')
-                ->label('Instagram')
-                ->placeholder('Ex: @usuario')
-                ->prefixIcon('heroicon-o-at-symbol')
-                ->maxLength(100),
-
-            TextInput::make('facebook')
-                ->label('Facebook')
-                ->placeholder('Ex: facebook.com/usuario')
-                ->prefixIcon('heroicon-o-globe')
-                ->maxLength(100),
-
             Select::make('bank_id')
                 ->label(__('fields.bank'))
                 ->options(Bank::pluck('name', 'id')->toArray())
