@@ -38,21 +38,21 @@
         @if ($event->regulation_image_path)
             <span id="openRegulation"
                 class="cursor-pointer inline-flex items-center gap-1 bg-yellow-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-yellow-300 transition-all">
-                📄 Regulamento
+                Regulamento
             </span>
         @endif
 
         @if ($event->benefits_image_path)
             <span id="openBenefits"
                 class="cursor-pointer inline-flex items-center gap-1 bg-emerald-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-emerald-300 transition-all">
-                🎁 Benefícios
+                 Benefícios / Condições de Pgto
             </span>
         @endif
 
         @if ($event->regulation)
             <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
                 class="inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-blue-300 transition-all">
-                📑 Regulamento PDF
+                Regulamento PDF
             </a>
         @endif
     </div>
