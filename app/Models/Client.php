@@ -46,6 +46,8 @@ class Client extends Model
         'profile',
         'note',
         'inscricaoestadual',
+        'instagram',
+        'facebook',
     ];
 
     protected $casts = [

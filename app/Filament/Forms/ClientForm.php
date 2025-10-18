@@ -301,6 +301,16 @@ class ClientForm
                 ->format('(99) 99999-9999'),
             TextInput::make('mother')->label(__('fields.mother')),
             TextInput::make('father')->label(__('fields.father')),
+            // Novos campos de redes sociais
+            TextInput::make('instagram')
+                ->label('Instagram')
+                ->placeholder('Ex: @usuario')
+                ->maxLength(100),
+
+            TextInput::make('facebook')
+                ->label('Facebook')
+                ->placeholder('Ex: facebook.com/usuario')
+                ->maxLength(100),
         ];
     }
 
@@ -341,6 +351,16 @@ class ClientForm
     public static function extra(): array
     {
         return [
+            TextInput::make('instagram')
+                ->label('Instagram')
+                ->placeholder('Ex: @usuario')
+                ->maxLength(100),
+
+            TextInput::make('facebook')
+                ->label('Facebook')
+                ->placeholder('Ex: facebook.com/usuario')
+                ->maxLength(100),
+                
             Select::make('bank_id')
                 ->label(__('fields.bank'))
                 ->options(Bank::pluck('name', 'id')->toArray())
