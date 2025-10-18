@@ -36,7 +36,7 @@
                 </div>
 
                 <!-- Pré-lance e Regulamento lado a lado -->
-                <div class="flex justify-center md:justify-start items-start gap-6 mt-0">
+                <div class="flex justify-center md:justify-start items-start gap-6 mt-4">
                     <!-- Pré-lance -->
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
