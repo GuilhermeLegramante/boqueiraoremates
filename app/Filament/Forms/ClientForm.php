@@ -295,7 +295,7 @@ class ClientForm
                 ->numeric()
                 ->live()
                 ->debounce(1000)
-                ->columnSpan(2)
+                // ->columnSpan(2)
                 ->label(__('fields.income')),
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
