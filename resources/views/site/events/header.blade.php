@@ -33,29 +33,30 @@
         </div>
     </div>
 
-    <!-- Badges lado a lado -->
-    <div class="mt-4 flex justify-center gap-2 max-w-[300px] mx-auto">
+    <!-- Badges lado a lado sem quebrar linha -->
+    <div class="mt-4 flex flex-nowrap justify-center gap-2 overflow-x-auto">
         @if ($event->regulation_image_path)
             <span id="openRegulation"
-                class="cursor-pointer inline-flex items-center gap-1 bg-yellow-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-yellow-300 transition-all">
+                class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-yellow-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-yellow-300 transition-all whitespace-nowrap">
                 Regulamento
             </span>
         @endif
 
         @if ($event->benefits_image_path)
             <span id="openBenefits"
-                class="cursor-pointer inline-flex items-center gap-1 bg-emerald-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-emerald-300 transition-all">
-                 Benefícios / Condições de Pgto
+                class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-emerald-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-emerald-300 transition-all whitespace-nowrap">
+                Benefícios / Condições de Pgto
             </span>
         @endif
 
         @if ($event->regulation)
             <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
-                class="inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-blue-300 transition-all">
+                class="flex-shrink-0 inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-blue-300 transition-all whitespace-nowrap">
                 Regulamento PDF
             </a>
         @endif
     </div>
+
 
     <!-- Modal Regulamento -->
     <div id="modalRegulation"
