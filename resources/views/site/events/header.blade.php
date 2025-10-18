@@ -52,7 +52,7 @@
         @if ($event->regulation)
             <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
                 class="inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs font-semibold px-2 py-1 rounded-full shadow-sm hover:bg-blue-300 transition-all">
-                📑 PDF
+                📑 Regulamento PDF
             </a>
         @endif
     </div>
