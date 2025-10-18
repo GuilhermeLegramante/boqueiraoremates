@@ -180,9 +180,11 @@ class ClientForm
 
                             TextInput::make('state')
                                 ->label(__('fields.state'))
+                                ->required()
                                 ->maxLength(2)
-                                ->afterStateUpdated(fn($state, callable $set) => $set('state', strtoupper($state)))
-                                ->extraAttributes(['style' => 'text-transform: uppercase;']),
+                                ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
+                                ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
+                                ->helperText('Informe apenas duas letras do estado'),
 
                         ])
                         ->columns(4),
@@ -349,9 +351,14 @@ class ClientForm
             TextInput::make('reference')->label(__('fields.reference'))->afterStateUpdated(fn($state, $set) => $set('reference', strtoupper($state))),
             TextInput::make('district')->required()->label(__('fields.district'))->afterStateUpdated(fn($state, $set) => $set('district', strtoupper($state))),
             TextInput::make('city')->required()->label(__('fields.city'))->afterStateUpdated(fn($state, $set) => $set('city', strtoupper($state))),
+
             TextInput::make('state')
+                ->label(__('fields.state'))
+                ->required()
                 ->maxLength(2)
-            ->required()->label(__('fields.state'))->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state))),
+                ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
+                ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
+                ->helperText('Informe apenas duas letras do estado'),
         ];
     }
 
