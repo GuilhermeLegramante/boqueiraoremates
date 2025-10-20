@@ -40,4 +40,9 @@ class LegadoLeilaoResource extends Resource
             'index' => \App\Filament\Resources\LegadoLeilaoResource\Pages\ListLegadoLeilaos::route('/'),
         ];
     }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }

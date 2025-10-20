@@ -38,4 +38,9 @@ class LegadoClienteResource extends Resource
             'index' => \App\Filament\Resources\LegadoClienteResource\Pages\ListLegadoClientes::route('/'),
         ];
     }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }

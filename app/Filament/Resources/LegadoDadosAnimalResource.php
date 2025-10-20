@@ -38,4 +38,9 @@ class LegadoDadosAnimalResource extends Resource
             'index' => \App\Filament\Resources\LegadoDadosAnimalResource\Pages\ListLegadoDadosAnimals::route('/'),
         ];
     }
+
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }
