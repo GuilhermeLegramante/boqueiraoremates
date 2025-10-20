@@ -35,8 +35,8 @@
         }
     @endphp
 
-    @if ($getState()['photo'])
-        <img src="{{ $getState()['photo'] }}" alt="{{ $getState()['name'] }}"
+    @if ($animal->pivot->photo)
+        <img src="{{ $animal->pivot->photo }}" alt="{{ $getState()['name'] }}"
             class="w-32 h-auto max-h-32 rounded border dark:border-gray-700">
     @endif
 
