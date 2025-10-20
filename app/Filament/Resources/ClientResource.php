@@ -56,11 +56,12 @@ class ClientResource extends Resource
                 TextColumn::make('id')
                     ->label(__('fields.code'))
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('report')
+                TextColumn::make('name')
                     ->label('Nome')
                     ->getStateUsing(function ($record) {
                         return $record->name ?? '—';
                     })
+                    ->searchable()
                     ->url(function ($record) {
                         return route('client-details-pdf', $record->id);
                     })
