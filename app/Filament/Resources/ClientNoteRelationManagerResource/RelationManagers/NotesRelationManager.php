@@ -20,6 +20,7 @@ class ClientNoteRelationManager extends RelationManager
         return $form->schema([
             Forms\Components\Textarea::make('content')
                 ->label('Anotação')
+                ->columnSpanFull()
                 ->required()
                 ->maxLength(500)
                 ->rows(4),
