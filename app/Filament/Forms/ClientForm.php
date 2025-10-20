@@ -251,12 +251,13 @@ class ClientForm
                 ->label(__('fields.cpf_cnpj'))
                 ->dynamic()
                 ->reactive()
+                ->debounce(1000)
                 ->afterStateUpdated(function ($state, callable $set) {
                     if (!$state) return;
 
                     // Busca o cliente pelo CPF/CNPJ já cadastrado
                     $client = \App\Models\Client::where('cpf_cnpj', $state)->first();
-                    dd($client);
+
                     if (!$client) return;
 
                     // Preenche os campos do Wizard/Form
