@@ -58,7 +58,6 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('report')
                     ->label('Nome')
-                    ->copyable()
                     ->getStateUsing(function ($record) {
                         return $record->name ?? '—';
                     })
@@ -71,7 +70,6 @@ class ClientResource extends Resource
                     ->sortable(),
                 TextColumn::make('cpf_cnpj')
                     ->label(__('fields.cpf_cnpj'))
-                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 // TextColumn::make('name')
@@ -79,7 +77,6 @@ class ClientResource extends Resource
                 //     ->searchable(),
                 TextColumn::make('email')
                     ->label(__('fields.email'))
-                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->icon('heroicon-m-envelope'),
                 TextColumn::make('situation')
@@ -123,19 +120,15 @@ class ClientResource extends Resource
                     }),
                 TextColumn::make('whatsapp')
                     ->label('Whatsapp')
-                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('cel_phone')
                     ->label('Celular')
-                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('business_phone')
                     ->label('Tel. Comercial')
-                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('home_phone')
                     ->label('Tel. Res.')
-                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label(__('fields.created_at'))
