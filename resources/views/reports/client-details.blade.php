@@ -185,7 +185,7 @@
                 {{-- Notas --}}
                 <tr style="font-size: 11px;">
                     <td class="collumn-left" colspan="2" style="padding-top: 10px;">
-                        <strong>Notas:</strong>
+                        <strong>Notas</strong>
                         <div
                             style="margin-top: 6px; border: 1px solid #ccc; border-radius: 6px; padding: 6px; background: #f9f9f9;">
                             @if ($client->notes->isEmpty())
