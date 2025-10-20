@@ -57,7 +57,7 @@ class ClientResource extends Resource
                     ->label(__('fields.code'))
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('report')
-                    ->label('Ficha')
+                    ->label('Nome')
                     ->getStateUsing(function ($record) {
                         return $record->name ?? '—';
                     })
@@ -72,9 +72,9 @@ class ClientResource extends Resource
                     ->label(__('fields.cpf_cnpj'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-                TextColumn::make('name')
-                    ->label(__('fields.name'))
-                    ->searchable(),
+                // TextColumn::make('name')
+                //     ->label(__('fields.name'))
+                //     ->searchable(),
                 TextColumn::make('email')
                     ->label(__('fields.email'))
                     ->toggleable(isToggledHiddenByDefault: true)
