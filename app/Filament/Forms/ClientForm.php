@@ -250,7 +250,37 @@ class ClientForm
                 ->required()
                 ->maxLength(255)
                 ->autofocus(),
-            Document::make('cpf_cnpj')->required()->unique('clients', 'cpf_cnpj')->label(__('fields.cpf_cnpj'))->dynamic(),
+                
+            Document::make('cpf_cnpj')
+                ->required()
+                ->unique('clients', 'cpf_cnpj')
+                ->label(__('fields.cpf_cnpj'))
+                ->dynamic()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    if (!$state) return;
+
+                    // Busca o cliente pelo CPF/CNPJ já cadastrado
+                    $client = \App\Models\Client::where('cpf_cnpj', $state)->first();
+                    if (!$client) return;
+
+                    // Preenche os campos do Wizard/Form
+                    $set('name', $client->name);
+                    $set('email', $client->registeredUser?->email);
+                    $set('phone', $client->phone);
+                    $set('postal_code', $client->address?->postal_code);
+                    $set('street', $client->address?->street);
+                    $set('number', $client->address?->number);
+                    $set('complement', $client->address?->complement);
+                    $set('reference', $client->address?->reference);
+                    $set('district', $client->address?->district);
+                    $set('city', $client->address?->city);
+                    $set('state', $client->address?->state);
+
+                    // Campos extras de documentos
+                    $set('cnh_rg', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'DOCUMENTO PESSOAL'))->first()?->path);
+                    $set('document_income', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RENDA'))->first()?->path);
+                    $set('document_residence', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RESIDÊNCIA'))->first()?->path);
+                }),
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
