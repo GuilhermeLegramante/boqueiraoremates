@@ -245,13 +245,7 @@ class ClientForm
     public static function personalInfo(): array
     {
         return [
-            TextInput::make('name')
-                ->label(__('filament-panels::pages/auth/register.form.name.label'))
-                ->required()
-                ->maxLength(255)
-                ->autofocus(),
-
-            Document::make('cpf_cnpj')
+               Document::make('cpf_cnpj')
                 ->required()
                 ->unique('clients', 'cpf_cnpj')
                 ->label(__('fields.cpf_cnpj'))
@@ -282,6 +276,14 @@ class ClientForm
                     $set('document_income', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RENDA'))->first()?->path);
                     $set('document_residence', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RESIDÊNCIA'))->first()?->path);
                 }),
+                
+            TextInput::make('name')
+                ->label(__('filament-panels::pages/auth/register.form.name.label'))
+                ->required()
+                ->maxLength(255)
+                ->autofocus(),
+
+         
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
