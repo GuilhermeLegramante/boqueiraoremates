@@ -62,6 +62,7 @@ class ClientResource extends Resource
                         return $record->name ?? '—';
                     })
                     ->searchable()
+                    ->sortable()
                     ->url(function ($record) {
                         return route('client-details-pdf', $record->id);
                     })
