@@ -13,7 +13,7 @@ class ClientNoteRelationManager extends RelationManager
 {
     protected static string $relationship = 'notes';
 
-    protected static ?string $title = 'Anotações';
+    protected static ?string $title = 'Notas';
 
     public function form(Form $form): Form
     {
@@ -48,7 +48,7 @@ class ClientNoteRelationManager extends RelationManager
                         $data['user_id'] = Auth::id();
                         return $data;
                     })
-                    ->label('Nova Anotação'),
+                    ->label('Nova Nota'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
