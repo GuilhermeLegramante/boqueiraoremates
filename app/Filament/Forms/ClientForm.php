@@ -47,8 +47,10 @@ class ClientForm
                                 ->required()
                                 ->email(),
                             DatePicker::make('birth_date')
-                                ->maxDate(now())
-                                ->label('Data de Nascimento'),
+                                ->label('Data de Nascimento')
+                                ->required()
+                                ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
+                                ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
                             Radio::make('gender')
                                 ->label(__('fields.gender'))
                                 ->options([
@@ -278,7 +280,8 @@ class ClientForm
             DatePicker::make('birth_date')
                 ->label('Data de Nascimento')
                 ->required()
-                ->maxDate(now()),
+                ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
+                ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
             Radio::make('gender')
                 ->label(__('fields.gender'))
                 ->required()
