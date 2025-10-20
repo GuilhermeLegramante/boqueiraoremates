@@ -446,8 +446,17 @@ class AnimalsRelationManager extends RelationManager
 
                         ];
                     })
-                    // Salva no PIVOT
+                    // Salva os dados do Pivot
                     ->action(function ($record, array $data) {
+                        // Armazena o arquivo e captura o path
+                        if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
+                            $data['photo'] = $data['photo']->store('animals/photos', 'public');
+                        }
+
+                        if (isset($data['photo_full']) && $data['photo_full'] instanceof \Illuminate\Http\UploadedFile) {
+                            $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
+                        }
+
                         $record->pivot->update([
                             'lot_number'      => $data['lot_number'],
                             'min_value'       => $data['min_value'] ?? null,
@@ -455,8 +464,13 @@ class AnimalsRelationManager extends RelationManager
                             'increment_value' => $data['increment_value'] ?? null,
                             'target_value'    => $data['target_value'] ?? null,
                             'status'          => $data['status'],
+                            'photo'           => $data['photo'] ?? $record->pivot->photo,
+                            'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
+                            'note'            => $data['note'] ?? $record->pivot->note,
+                            'video_link'      => $data['video_link'] ?? $record->pivot->video_link,
                         ]);
                     }),
+
                 Tables\Actions\Action::make('removerLote')
                     ->label('')
                     ->icon('heroicon-o-trash')
