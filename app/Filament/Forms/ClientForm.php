@@ -250,7 +250,7 @@ class ClientForm
                 ->required()
                 ->maxLength(255)
                 ->autofocus(),
-                
+
             Document::make('cpf_cnpj')
                 ->required()
                 ->unique('clients', 'cpf_cnpj')
@@ -261,6 +261,7 @@ class ClientForm
 
                     // Busca o cliente pelo CPF/CNPJ já cadastrado
                     $client = \App\Models\Client::where('cpf_cnpj', $state)->first();
+                    dd($client);
                     if (!$client) return;
 
                     // Preenche os campos do Wizard/Form
