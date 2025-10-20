@@ -30,17 +30,17 @@ class ClientNoteRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('content')
-                    ->label('Conteúdo')
-                    ->limit(60)
-                    ->wrap(),
-
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Adicionado por'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Data')
                     ->dateTime('d/m/Y H:i'),
+
+                Tables\Columns\TextColumn::make('content')
+                    ->label('Conteúdo')
+                    ->limit(60)
+                    ->wrap(),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
