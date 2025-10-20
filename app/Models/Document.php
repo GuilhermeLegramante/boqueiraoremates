@@ -37,7 +37,7 @@ class Document extends Model
                 ClientNote::create([
                     'client_id' => $document->client_id,
                     'user_id' => Auth::id(),
-                    'content' => "📄 Documento {$document->documentType->name} foi adicionado ao cliente.",
+                    'content' => "Documento {$document->documentType->name} foi adicionado ao cliente.",
                 ]);
             }
         });

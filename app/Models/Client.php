@@ -167,7 +167,7 @@ class Client extends Model
                 ClientNote::create([
                     'client_id' => $client->id,
                     'user_id' => Auth::id(),
-                    'content' => "✏️ Cliente atualizado por " . (Auth::user()?->name ?? 'Sistema') . ". Campos alterados: {$changedFields}.",
+                    'content' => "Cliente atualizado por " . (Auth::user()?->name ?? 'Sistema') . ". Campos alterados: {$changedFields}.",
                 ]);
             }
         });
