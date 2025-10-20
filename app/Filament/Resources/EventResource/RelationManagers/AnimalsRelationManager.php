@@ -129,10 +129,18 @@ class AnimalsRelationManager extends RelationManager
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\AttachAction::make()
+                Tables\Actions\CreateAction::make()
                     ->label('Adicionar Lote')
-                    ->preloadRecordSelect()
-                    ->recordSelectOptionsQuery(fn($query) => $query->whereDoesntHave('events')),
+                    ->modalHeading('Adicionar Lote')
+                    ->form($this->form(app(Forms\Form::class))->getSchema())
+                    ->using(function ($livewire, array $data) {
+                        // Cria a relação pivot manualmente, salvando todos os dados
+                        $livewire->getOwnerRecord()->animals()->attach(
+                            $data['animal_id'],
+                            collect($data)->except('animal_id')->toArray()
+                        );
+                    })
+                    ->successNotificationTitle('Lote adicionado com sucesso!'),
 
                 ExportAction::make()
                     ->label('Exportar')
