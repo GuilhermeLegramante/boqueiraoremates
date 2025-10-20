@@ -14,6 +14,10 @@ class LegadoDadosAnimalResource extends Resource
     protected static ?string $navigationLabel = 'Animais (Site antigo)';
     protected static ?string $navigationGroup = 'Dados Site Antigo';
 
+    protected static ?string $modelLabel = 'Animal (Site antigo)';
+    protected static ?string $pluralModelLabel = 'Animais (Site antigo)';
+    protected static ?string $slug = 'animais-site-antigo';
+
     public static function table(Table $table): Table
     {
         return $table

@@ -14,6 +14,9 @@ class LegadoClienteResource extends Resource
     protected static ?string $navigationLabel = 'Clientes (Site Antigo)';
     protected static ?string $navigationGroup = 'Dados Site Antigo';
 
+    protected static ?string $modelLabel = 'Cliente (Site antigo)';
+    protected static ?string $pluralModelLabel = 'Clientes (Site antigo)';
+    protected static ?string $slug = 'clientes-site-antigo';
 
     public static function table(Table $table): Table
     {

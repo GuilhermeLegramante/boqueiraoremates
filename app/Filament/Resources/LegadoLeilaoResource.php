@@ -14,6 +14,10 @@ class LegadoLeilaoResource extends Resource
     protected static ?string $navigationLabel = 'Leilões (Site antigo)';
     protected static ?string $navigationGroup = 'Dados Site Antigo';
 
+    protected static ?string $modelLabel = 'Leilão (Site antigo)';
+    protected static ?string $pluralModelLabel = 'Leilões (Site antigo)';
+    protected static ?string $slug = 'leiloes-site-antigo';
+
     public static function table(Table $table): Table
     {
         return $table
