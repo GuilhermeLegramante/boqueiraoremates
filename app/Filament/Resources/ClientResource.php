@@ -56,6 +56,18 @@ class ClientResource extends Resource
                 TextColumn::make('id')
                     ->label(__('fields.code'))
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('report')
+                    ->label('Ficha')
+                    ->getStateUsing(function ($record) {
+                        return $record->name ?? '—';
+                    })
+                    ->url(function ($record) {
+                        return route('client-details-pdf', $record->id);
+                    })
+                    ->openUrlInNewTab()
+                    ->color('info')
+                    ->icon('heroicon-o-document-text')
+                    ->sortable(),
                 TextColumn::make('cpf_cnpj')
                     ->label(__('fields.cpf_cnpj'))
                     ->toggleable(isToggledHiddenByDefault: false)
