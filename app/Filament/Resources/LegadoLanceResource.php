@@ -20,7 +20,7 @@ use Filament\Tables\Filters\SelectFilter;
 class LegadoLanceResource extends Resource
 {
     protected static ?string $model = LegadoLance::class;
-    protected static ?string $navigationIcon = 'heroicon-o-collection'; // ícone da sidebar
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack'; // ícone da sidebar
     protected static ?string $navigationLabel = 'Lances (Site antigo)'; // nome na sidebar
     protected static ?string $pluralModelLabel = 'Lances (Site antigo)';
     protected static ?string $modelLabel = 'Lances (Site antigo)';
