@@ -129,27 +129,46 @@ class AnimalsRelationManager extends RelationManager
             ])
             ->filters([])
             ->headerActions([
-                Tables\Actions\CreateAction::make()
+                Tables\Actions\CreateAction::make('criarLote')
                     ->label('Adicionar Lote')
-                    ->modalHeading('Adicionar Lote')
-                    ->form($this->form(app(Forms\Form::class))->getSchema())
-                    ->using(function ($livewire, array $data) {
-                        // Cria a relação pivot manualmente, salvando todos os dados
-                        $livewire->getOwnerRecord()->animals()->attach(
-                            $data['animal_id'],
-                            collect($data)->except('animal_id')->toArray()
-                        );
-                    })
-                    ->successNotificationTitle('Lote adicionado com sucesso!'),
+                    ->modalHeading('Criar Lote')
+                    ->form([
+                        Select::make('animal_id')
+                            ->label('Animal')
+                            ->relationship('animals', 'name')
+                            ->required(),
 
-                ExportAction::make()
-                    ->label('Exportar')
-                    ->exports([
-                        ExcelExport::make()
-                            ->fromTable()
-                            ->withFilename(now()->format('d-m-Y') . ' - Lotes'),
-                    ]),
+                        TextInput::make('lot_number')->label('Número do Lote')->required(),
+                        Money::make('min_value')->label('Lance Mínimo')->required(),
+                        Money::make('final_value')->label('Valor Final'),
+                        Money::make('increment_value')->label('Valor do Incremento'),
+                        Money::make('target_value')->label('Lance Alvo'),
+                        Textarea::make('note')->label('Comentário')->rows(4)->columnSpanFull(),
+                        TextInput::make('video_link')->label('Link do Vídeo')->url()->columnSpanFull(),
+                        Select::make('status')->label('Status')->options([
+                            'disponivel' => 'Disponível',
+                            'vendido' => 'Vendido',
+                            'reservado' => 'Reservado',
+                        ])->default('disponivel'),
+                    ])
+                    ->action(function ($data) {
+                        $event = $this->getOwnerRecord();
+
+                        // Cria o lote diretamente no pivot (ou na tabela intermediária)
+                        $event->animals()->attach($data['animal_id'], [
+                            'lot_number'      => $data['lot_number'],
+                            'min_value'       => $data['min_value'],
+                            'final_value'     => $data['final_value'],
+                            'increment_value' => $data['increment_value'],
+                            'target_value'    => $data['target_value'],
+                            'status'          => $data['status'],
+                            'note'            => $data['note'],
+                            'video_link'      => $data['video_link'],
+                        ]);
+                    })
+                    ->successNotificationTitle('Lote criado com sucesso!'),
             ])
+
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make()
