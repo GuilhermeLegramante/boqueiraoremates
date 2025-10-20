@@ -59,7 +59,7 @@ Route::get('/teste/{id}', function (string $id) {
 });
 
 Route::get('/', function () {
-    return redirect(route('filament.admin.pages.dashboard'));
+    return redirect(route('home'));
 });
 
 Route::get('/site', [HomeController::class, 'index'])->name('home');
