@@ -21,14 +21,7 @@ class LegadoLeilaoResource extends Resource
                 Tables\Columns\TextColumn::make('idleilao')
                     ->label('id')->sortable(),
                 Tables\Columns\TextColumn::make('nomeleilao')
-                    ->getStateUsing(
-                        fn($record) =>
-                        mb_convert_encoding(
-                            mb_convert_encoding($record->nomeleilao, 'ISO-8859-1', 'UTF-8'),
-                            'UTF-8',
-                            'ISO-8859-1'
-                        )
-                    )->label('Nome')->sortable()->searchable(),
+                    ->label('Nome')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('dataleilao')->label('Data'),
                 Tables\Columns\TextColumn::make('publicado'),
             ])
