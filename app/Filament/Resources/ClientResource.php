@@ -122,15 +122,19 @@ class ClientResource extends Resource
                     }),
                 TextColumn::make('whatsapp')
                     ->label('Whatsapp')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('cel_phone')
                     ->label('Celular')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('business_phone')
                     ->label('Tel. Comercial')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('home_phone')
                     ->label('Tel. Res.')
+                    ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label(__('fields.created_at'))
