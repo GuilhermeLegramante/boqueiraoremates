@@ -11,8 +11,8 @@ class LegadoClienteResource extends Resource
 {
     protected static ?string $model = LegadoCliente::class;
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
-    protected static ?string $navigationLabel = 'Clientes';
-    // protected static ?string $navigationGroup = 'Dados Site Antigo';
+    protected static ?string $navigationLabel = 'Clientes (Site Antigo)';
+    protected static ?string $navigationGroup = 'Dados Site Antigo';
 
 
     public static function table(Table $table): Table
