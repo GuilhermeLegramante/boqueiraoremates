@@ -15,6 +15,10 @@ class ClientNoteRelationManager extends RelationManager
 
     protected static ?string $title = 'Notas';
 
+    protected static ?string $label = 'Nota';
+
+    protected static ?string $pluralLabel = 'Notas';
+
     public function form(Form $form): Form
     {
         return $form->schema([
@@ -56,6 +60,11 @@ class ClientNoteRelationManager extends RelationManager
                     ->visible(fn() => auth()->user()?->is_admin),
                 Tables\Actions\DeleteAction::make()
                     ->visible(fn() => auth()->user()?->is_admin),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
             ])
             ->defaultSort('created_at', 'desc');
     }
