@@ -250,6 +250,7 @@ class ClientForm
                 ->unique('clients', 'cpf_cnpj')
                 ->label(__('fields.cpf_cnpj'))
                 ->dynamic()
+                ->reactive()
                 ->afterStateUpdated(function ($state, callable $set) {
                     if (!$state) return;
 
@@ -276,7 +277,7 @@ class ClientForm
                     $set('document_income', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RENDA'))->first()?->path);
                     $set('document_residence', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RESIDÊNCIA'))->first()?->path);
                 }),
-                
+
             TextInput::make('name')
                 ->label(__('filament-panels::pages/auth/register.form.name.label'))
                 ->required()
