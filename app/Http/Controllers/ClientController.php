@@ -9,7 +9,8 @@ class ClientController extends Controller
 {
     public function getPdf($clientId)
     {
-        $client = Client::where('id', $clientId)->get()->first();
+        $client = Client::with('notes.user') // 👈 traz também o usuário autor da nota
+            ->findOrFail($clientId);
 
         $fileName = $client->name . '_FICHA_CADASTRAL';
 

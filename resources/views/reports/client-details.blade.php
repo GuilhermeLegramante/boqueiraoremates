@@ -194,9 +194,26 @@
                         @endswitch
                     </td>
                 </tr>
-                <tr class="" style="font-size: 13px;">
-                    <td class="collumn-left"><strong>Observação:</strong> {{ $client->note }}</td>
-                    <td class="collumn-right"></td>
+                <tr style="font-size: 13px; vertical-align: top;">
+                    <td class="collumn-left" colspan="2">
+                        <strong>Anotações:</strong><br>
+
+                        @if ($client->clientNotes->isEmpty())
+                            <em>Sem anotações registradas.</em>
+                        @else
+                            <ul style="margin: 6px 0 0 10px; padding: 0; list-style-type: disc;">
+                                @foreach ($client->clientNotes as $note)
+                                    <li style="margin-bottom: 3px;">
+                                        {{ $note->content }}
+                                        <small style="color: #666;">
+                                            — {{ optional($note->user)->name ?? 'Sistema' }},
+                                            {{ $note->created_at->format('d/m/Y H:i') }}
+                                        </small>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    </td>
                 </tr>
             </tbody>
         </table>
