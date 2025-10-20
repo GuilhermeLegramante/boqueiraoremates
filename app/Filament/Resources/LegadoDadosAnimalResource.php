@@ -10,7 +10,7 @@ use Filament\Tables;
 class LegadoDadosAnimalResource extends Resource
 {
     protected static ?string $model = LegadoDadosAnimal::class;
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-paw';
     protected static ?string $navigationLabel = 'Animais (Site antigo)';
     protected static ?string $navigationGroup = 'Dados Site Antigo';
 

@@ -10,7 +10,7 @@ use Filament\Tables;
 class LegadoLeilaoResource extends Resource
 {
     protected static ?string $model = LegadoLeilao::class;
-    protected static ?string $navigationIcon = 'heroicon-o-scale';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
     protected static ?string $navigationLabel = 'Leilões (Site antigo)';
     protected static ?string $navigationGroup = 'Dados Site Antigo';
 
