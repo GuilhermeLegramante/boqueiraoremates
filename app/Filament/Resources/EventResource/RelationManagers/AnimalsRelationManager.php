@@ -6,9 +6,11 @@ use App\Filament\Forms\AnimalForm;
 use App\Models\Animal;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
@@ -332,6 +334,24 @@ class AnimalsRelationManager extends RelationManager
                                 }),
 
                             // --- os MESMOS campos do seu AttachAction ---
+                            FileUpload::make('photo')
+                                ->label('Foto (Miniatura)')
+                                ->image()
+                                ->openable()
+                                ->downloadable()
+                                ->directory('animals/photos') // pasta onde será armazenada
+                                ->visibility('public')
+                                ->maxSize(2048),
+
+                            FileUpload::make('photo_full')
+                                ->label('Foto (Grande)')
+                                ->image()
+                                ->openable()
+                                ->downloadable()
+                                ->directory('animals/photos') // pasta onde será armazenada
+                                ->visibility('public')
+                                ->maxSize(2048),
+
                             TextInput::make('lot_number')
                                 ->label('Número do Lote')
                                 ->required(),
@@ -358,28 +378,6 @@ class AnimalsRelationManager extends RelationManager
                                     // Se for string formatada, normaliza
                                     return (float) str_replace(',', '.', str_replace('.', '', $state));
                                 }),
-
-                            // Money::make('final_value')
-                            //     ->label('Valor Final')
-                            //     ->afterStateUpdated(function ($state, callable $set) {
-                            //         if ($state !== null) {
-                            //             // força conversão para float e corrige escala
-                            //             $set('final_value', (float) $state * 10);
-                            //         }
-                            //     })
-                            //     ->dehydrateStateUsing(function ($state) {
-                            //         if ($state === null) {
-                            //             return null;
-                            //         }
-
-                            //         // Se já for número (usuário editou), retorna direto
-                            //         if (is_numeric($state)) {
-                            //             return (float) $state;
-                            //         }
-
-                            //         // Se for string formatada, normaliza
-                            //         return (float) str_replace(',', '.', str_replace('.', '', $state));
-                            //     }),
 
                             Money::make('increment_value')
                                 ->label('Valor do Incremento')
@@ -425,6 +423,18 @@ class AnimalsRelationManager extends RelationManager
                                     return (float) str_replace(',', '.', str_replace('.', '', $state));
                                 }),
 
+                            Textarea::make('note')
+                                ->label('Comentário')
+                                ->columnSpanFull()
+                                ->rows(4)
+                                ->maxLength(65535),
+                                
+                            TextInput::make('video_link')
+                                ->label('Link do Vídeo')
+                                ->url() // valida como URL
+                                ->placeholder('https://youtube.com/...') // opcional
+                                ->columnSpan('full'),
+
                             Select::make('status')
                                 ->label('Status')
                                 ->options([
@@ -433,6 +443,7 @@ class AnimalsRelationManager extends RelationManager
                                     'reservado'  => 'Reservado',
                                 ])
                                 ->default('disponivel'),
+
                         ];
                     })
                     // Salva no PIVOT

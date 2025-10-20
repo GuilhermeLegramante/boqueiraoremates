@@ -31,7 +31,7 @@
                     <div
                         class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <a href="{{ route('animals.show', [$event->id, $animal->id]) }}" class="block relative">
-                            <img src="{{ asset('storage/' . $animal->photo) }}" alt="{{ $animal->name }}"
+                            <img src="{{ asset('storage/' . $animal->pivot->photo) }}" alt="{{ $animal->name }}"
                                 class="w-full h-56 object-cover transition duration-300 hover:scale-105 rounded-lg shadow">
 
                             @php

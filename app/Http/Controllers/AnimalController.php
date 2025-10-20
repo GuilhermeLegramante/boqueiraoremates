@@ -16,7 +16,18 @@ class AnimalController extends Controller
         // Carrega o animal do evento com a pivot
         $animal = $event->animals()
             ->where('animals.id', $animal->id)
-            ->withPivot(['id', 'lot_number', 'min_value', 'increment_value', 'target_value', 'status'])
+            ->withPivot([
+                'id',
+                'lot_number',
+                'min_value',
+                'increment_value',
+                'target_value',
+                'status',
+                'photo',
+                'photo_full',
+                'note',
+                'video_link'
+            ])
             ->firstOrFail();
 
         return view('site.animals.show', compact('event', 'animal', 'events'));

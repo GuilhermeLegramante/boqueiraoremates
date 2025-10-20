@@ -33,16 +33,16 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-8 items-start">
                 <!-- Foto / vídeo (à esquerda) -->
                 <div class="relative flex flex-col items-center md:order-1">
-                    @if ($animal->photo_full)
+                    @if ($animal->pivot->photo_full)
                         <div class="relative w-full flex flex-col items-center">
                             <!-- Imagem do animal com link -->
-                            <a href="{{ $animal->video_link ?? '#' }}" target="_blank" class="w-full">
-                                <img src="{{ asset('storage/' . $animal->photo_full) }}" alt="{{ $animal->name }}"
+                            <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank" class="w-full">
+                                <img src="{{ asset('storage/' . $animal->pivot->photo_full) }}" alt="{{ $animal->name }}"
                                     class="w-full rounded-lg shadow-lg object-cover hover:opacity-90 transition">
                             </a>
 
                             <!-- Plaquinha pendurada -->
-                            <a href="{{ $animal->video_link ?? '#' }}" target="_blank"
+                            <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank"
                                 class="mt-1 inline-block hover:opacity-80 transition">
                                 <img src="{{ asset('img/linkvideo01.png') }}" alt="Ver vídeo do lote"
                                     class="w-32 h-auto shadow-md">
@@ -74,7 +74,7 @@
 
                     <div class="mt-3">
                         <h3 class="text-lg font-semibold">Comentários</h3>
-                        <p class="text-white text-justify">{{ $animal->note }}</p>
+                        <p class="text-white text-justify">{{ $animal->pivot->note }}</p>
                     </div>
 
                     <!-- Card de lance -->
