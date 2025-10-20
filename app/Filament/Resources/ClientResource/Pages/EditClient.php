@@ -31,7 +31,7 @@ class EditClient extends EditRecord
         $data['mother'] = Str::upper($data['mother']);
         $data['father'] = Str::upper($data['father']);
         $data['auctioneer'] = Str::upper($data['auctioneer']);
-        $data['note'] = Str::upper($data['note']);
+        // $data['note'] = Str::upper($data['note']);
 
         return $data;
     }
