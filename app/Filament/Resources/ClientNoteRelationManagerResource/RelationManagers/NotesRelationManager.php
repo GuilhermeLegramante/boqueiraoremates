@@ -52,9 +52,9 @@ class ClientNoteRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->visible(fn($record) => $record->user_id === Auth::id()),
+                    ->visible(fn() => auth()->user()?->is_admin),
                 Tables\Actions\DeleteAction::make()
-                    ->visible(fn($record) => $record->user_id === Auth::id()),
+                    ->visible(fn() => auth()->user()?->is_admin),
             ])
             ->defaultSort('created_at', 'desc');
     }
