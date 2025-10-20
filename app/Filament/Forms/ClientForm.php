@@ -229,9 +229,10 @@ class ClientForm
                                 ->label(__('fields.has_register_in_another_auctioneer')),
                             TextInput::make('auctioneer')
                                 ->label(__('fields.auctioneer')),
-                            Textarea::make('note')
-                                ->label(__('fields.note'))
-                                ->columnSpanFull(),
+
+                            // Textarea::make('note') ANOTAÇÕES AGORA SÃO NO RELATION MANAGER
+                            //     ->label(__('fields.note'))
+                            //     ->columnSpanFull(),
                         ])
                         ->columns(3),
                 ])
