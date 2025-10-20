@@ -198,11 +198,11 @@
                     <td class="collumn-left" colspan="2">
                         <strong>Anotações:</strong><br>
 
-                        @if ($client->clientNotes->isEmpty())
+                        @if ($client->notes->isEmpty())
                             <em>Sem anotações registradas.</em>
                         @else
                             <ul style="margin: 6px 0 0 10px; padding: 0; list-style-type: disc;">
-                                @foreach ($client->clientNotes as $note)
+                                @foreach ($client->notes as $note)
                                     <li style="margin-bottom: 3px;">
                                         {{ $note->content }}
                                         <small style="color: #666;">
