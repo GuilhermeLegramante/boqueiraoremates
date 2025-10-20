@@ -148,7 +148,7 @@
                             @endif
                         @else
                             <p class="text-green-200">Você deve estar logado para dar lances.</p>
-                            <a href="{{ route('login') }}" class="text-green-300 underline">Clique aqui para logar</a>
+                            <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">Clique aqui para logar</a>
                         @endauth
 
                     </div>
