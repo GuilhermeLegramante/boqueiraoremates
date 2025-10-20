@@ -65,16 +65,16 @@ class LegadoLanceResource extends Resource
                                 fn(Builder $query, $date): Builder => $query->whereDate('datalance', '<=', $date),
                             );
                     }),
-                Filter::make('situacao')
-                    ->label('Situação')
-                    ->query(fn(Builder $query, array $data) => $query->where('situacao', $data['value']))
-                    ->form([
-                        SelectFilter::make('value')
-                            ->options([
-                                'aprovado' => 'Aprovado',
-                                'reprovado' => 'Reprovado',
-                            ]),
-                    ]),
+                // Filter::make('situacao')
+                //     ->label('Situação')
+                //     ->query(fn(Builder $query, array $data) => $query->where('situacao', $data['value']))
+                //     ->form([
+                //         SelectFilter::make('value')
+                //             ->options([
+                //                 'aprovado' => 'Aprovado',
+                //                 'reprovado' => 'Reprovado',
+                //             ]),
+                //     ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(), // apenas visualização
