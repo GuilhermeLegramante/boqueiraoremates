@@ -135,7 +135,10 @@ class AnimalsRelationManager extends RelationManager
                     ->form([
                         Select::make('animal_id')
                             ->label('Animal')
-                            ->relationship('animals', 'name')
+                            ->options(function () {
+                                return \App\Models\Animal::all()->pluck('name', 'id');
+                            })
+                            ->searchable()
                             ->required(),
 
                         TextInput::make('lot_number')->label('Número do Lote')->required(),
