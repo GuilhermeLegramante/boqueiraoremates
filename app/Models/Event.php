@@ -26,7 +26,7 @@ class Event extends Model
         'show_lots',
         'regulation_image_path',
         'benefits_image_path',
-        
+
     ];
 
     protected $casts = [
@@ -43,7 +43,18 @@ class Event extends Model
     public function animals()
     {
         return $this->belongsToMany(Animal::class, 'animal_event')
-            ->withPivot(['min_value', 'final_value', 'lot_number', 'increment_value', 'target_value', 'status'])
+            ->withPivot([
+                'lot_number',
+                'min_value',
+                'final_value',
+                'increment_value',
+                'target_value',
+                'status',
+                'photo',
+                'photo_full',
+                'note',
+                'video_link',
+            ])
             ->withTimestamps();
     }
 
