@@ -12,7 +12,7 @@ class LegadoLeilaoResource extends Resource
     protected static ?string $model = LegadoLeilao::class;
     protected static ?string $navigationIcon = 'heroicon-o-scale';
     protected static ?string $navigationLabel = 'Leilões';
-    protected static ?string $navigationGroup = 'Dados Site Antigo';
+    // protected static ?string $navigationGroup = 'Dados Site Antigo';
 
     public static function table(Table $table): Table
     {
