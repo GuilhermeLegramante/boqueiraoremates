@@ -7,6 +7,8 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as AuthLogin;
@@ -36,7 +38,19 @@ class Login extends AuthLogin
             ->label('Login')
             ->required()
             ->maxLength(255)
-            ->autofocus();
+            ->autofocus()
+            ->reactive()
+            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
+                // Remove caracteres não numéricos
+                $onlyNumbers = preg_replace('/\D/', '', $state ?? '');
+
+                // Se começou a digitar 3 números, aplica máscara de CPF
+                if (strlen($onlyNumbers) === 3) {
+                    $set('username', $onlyNumbers); // força atualização
+                }
+            })
+            ->mask(fn($state) => preg_match('/^\d{3}/', $state ?? '') ? '999.999.999-99' : null)
+            ->placeholder('Digite login ou CPF');
     }
 
     protected function getPasswordFormComponent(): Component
