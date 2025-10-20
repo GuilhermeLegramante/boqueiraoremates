@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -176,5 +177,20 @@ class Order extends Model
     public function getTotalCommissionAttribute()
     {
         return ((floatval($this->gross_value) * floatval($this->buyer_commission)) / 100) + ((floatval($this->gross_value) * floatval($this->seller_commission)) / 100);
+    }
+
+    protected static function booted()
+    {
+        static::created(function ($order) {
+            if ($order->buyer_id) {
+                $user = Auth::user()?->name ?? 'Sistema';
+
+                ClientNote::create([
+                    'client_id' => $order->buyer_id,
+                    'user_id' => Auth::id(),
+                    'content' => "🧾 Fatura nº **{$order->number}** foi criada por **{$user}**.",
+                ]);
+            }
+        });
     }
 }

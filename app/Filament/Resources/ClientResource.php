@@ -185,6 +185,7 @@ class ClientResource extends Resource
     {
         return [
             RelationManagers\DocumentsRelationManager::class,
+            RelationManagers\ClientNoteRelationManager::class,
         ];
     }
 

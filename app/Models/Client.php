@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Client extends Model
 {
@@ -136,5 +137,39 @@ class Client extends Model
     public function registeredUser()
     {
         return $this->belongsTo(User::class, 'registered_user_id');
+    }
+
+    public function notes()
+    {
+        return $this->hasMany(ClientNote::class);
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($client) {
+            // Verifica quais atributos foram alterados
+            $changes = $client->getDirty();
+
+            // Remove campos irrelevantes (ex: updated_at)
+            unset($changes['updated_at']);
+
+            // Só cria anotação se houve mudanças reais
+            if (count($changes) > 0) {
+                $changedFields = collect($changes)
+                    ->map(function ($newValue, $field) use ($client) {
+                        $oldValue = $client->getOriginal($field);
+
+                        // formata diferença
+                        return "**{$field}**: '{$oldValue}' → '{$newValue}'";
+                    })
+                    ->implode(", ");
+
+                ClientNote::create([
+                    'client_id' => $client->id,
+                    'user_id' => Auth::id(),
+                    'content' => "✏️ Cliente atualizado por **" . (Auth::user()?->name ?? 'Sistema') . "**. Campos alterados: {$changedFields}.",
+                ]);
+            }
+        });
     }
 }
