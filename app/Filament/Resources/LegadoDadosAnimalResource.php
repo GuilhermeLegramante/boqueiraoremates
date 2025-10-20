@@ -10,9 +10,9 @@ use Filament\Tables;
 class LegadoDadosAnimalResource extends Resource
 {
     protected static ?string $model = LegadoDadosAnimal::class;
-    // protected static ?string $navigationIcon = 'heroicon-o-archive';
-    protected static ?string $navigationLabel = 'Animais';
-    // protected static ?string $navigationGroup = 'Dados Site Antigo';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'Animais (Site antigo)';
+    protected static ?string $navigationGroup = 'Dados Site Antigo';
 
     public static function table(Table $table): Table
     {
