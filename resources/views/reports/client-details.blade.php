@@ -194,25 +194,34 @@
                         @endswitch
                     </td>
                 </tr>
-                <tr style="font-size: 13px; vertical-align: top;">
-                    <td class="collumn-left" colspan="2">
-                        <strong>Anotações:</strong><br>
-
-                        @if ($client->notes->isEmpty())
-                            <em>Sem anotações registradas.</em>
-                        @else
-                            <ul style="margin: 6px 0 0 10px; padding: 0; list-style-type: disc;">
-                                @foreach ($client->notes as $note)
-                                    <li style="margin-bottom: 3px;">
-                                        {{ $note->content }}
-                                        <small style="color: #666;">
-                                            — {{ optional($note->user)->name ?? 'Sistema' }},
-                                            {{ $note->created_at->format('d/m/Y H:i') }}
-                                        </small>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
+                {{-- Seção de Anotações --}}
+                <tr style="font-size: 13px;">
+                    <td class="collumn-left" colspan="2" style="padding-top: 10px;">
+                        <strong>Anotações:</strong>
+                        <div
+                            style="margin-top: 6px; border: 1px solid #ccc; border-radius: 6px; padding: 8px; background: #f9f9f9;">
+                            @if ($client->notes->isEmpty())
+                                <em>Sem anotações registradas.</em>
+                            @else
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <tbody>
+                                        @foreach ($client->notes as $note)
+                                            <tr style="border-bottom: 1px solid #e0e0e0;">
+                                                <td style="padding: 6px 4px;">
+                                                    <div style="font-size: 12px; line-height: 1.4;">
+                                                        {{ $note->content }}
+                                                    </div>
+                                                    <div style="font-size: 11px; color: #666; margin-top: 2px;">
+                                                        — {{ optional($note->user)->name ?? 'Sistema' }},
+                                                        {{ $note->created_at->format('d/m/Y H:i') }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                        </div>
                     </td>
                 </tr>
             </tbody>
