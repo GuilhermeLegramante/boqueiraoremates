@@ -18,6 +18,7 @@ class AnimalController extends Controller
             ->where('animals.id', $animal->id)
             ->withPivot([
                 'id',
+                'name',
                 'lot_number',
                 'min_value',
                 'increment_value',

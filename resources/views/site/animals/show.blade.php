@@ -1,6 +1,6 @@
 @extends('site.master')
 
-@section('title', $animal->name . ' - Detalhes do Lote')
+@section('title', $animal->pivot->name . ' - Detalhes do Lote')
 
 @section('content')
     @include('site.banners')
@@ -16,7 +16,7 @@
                 <a href="{{ route('events.show', $event->id) }}"
                     class="text-green-300 hover:underline">{{ $event->name }}</a>
                 <span class="text-white/50">/</span>
-                <span class="text-white">{{ $animal->name }}</span>
+                <span class="text-white">{{ $animal->pivot->name }}</span>
             </nav>
         </div>
     </section>
@@ -37,7 +37,8 @@
                         <div class="relative w-full flex flex-col items-center">
                             <!-- Imagem do animal com link -->
                             <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank" class="w-full">
-                                <img src="{{ asset('storage/' . $animal->pivot->photo_full) }}" alt="{{ $animal->name }}"
+                                <img src="{{ asset('storage/' . $animal->pivot->photo_full) }}"
+                                    alt="{{ $animal->pivot->name }}"
                                     class="w-full rounded-lg shadow-lg object-cover hover:opacity-90 transition">
                             </a>
 
@@ -54,7 +55,7 @@
                 <!-- Informações e lance (à direita) -->
                 <div class="space-y-4 md:order-2">
                     <!-- Dados técnicos -->
-                    <h1 class="text-3xl font-bold">{{ $animal->name }}</h1>
+                    <h1 class="text-3xl font-bold">{{ $animal->pivot->name }}</h1>
                     <p><b>Nº / Lote:</b> {{ $animal->pivot->lot_number ?? '-' }}</p>
                     <p><b>Gênero:</b>
                         {{ $animal->gender === 'male' ? 'MACHO' : ($animal->gender === 'female' ? 'FÊMEA' : '-') }}</p>
@@ -148,7 +149,8 @@
                             @endif
                         @else
                             <p class="text-green-200">Você deve estar logado para dar lances.</p>
-                            <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">Clique aqui para logar</a>
+                            <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">Clique aqui
+                                para logar</a>
                         @endauth
 
                     </div>

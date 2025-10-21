@@ -107,7 +107,7 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Foto')
                     ->square(),
 
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('pivot.name')
                     ->label('Animal')
                     ->searchable()
                     ->sortable(),
@@ -148,6 +148,7 @@ class AnimalsRelationManager extends RelationManager
                     ->mountUsing(function ($form, $record) {
                         $form->fill([
                             'animal_id'       => $record->id,
+                            'name'            => $record->pivot->name,
                             'lot_number'      => $record->pivot->lot_number,
                             'min_value'       => $record->pivot->min_value,
                             'final_value'     => $record->pivot->final_value,
@@ -172,6 +173,7 @@ class AnimalsRelationManager extends RelationManager
                         }
 
                         $event->animals()->updateExistingPivot($record->id, [
+                            'name'            => $data['name'],
                             'lot_number'      => $data['lot_number'],
                             'min_value'       => $data['min_value'],
                             'final_value'     => $data['final_value'],
@@ -209,6 +211,11 @@ class AnimalsRelationManager extends RelationManager
                 ->options(fn() => Animal::orderBy('name')->pluck('name', 'id'))
                 ->searchable()
                 ->required(),
+
+            TextInput::make('name')
+                ->label('Nome do Animal p/ o Lote')
+                ->required()
+                ->maxLength(255),
 
             TextInput::make('lot_number')
                 ->label('Número do Lote')
