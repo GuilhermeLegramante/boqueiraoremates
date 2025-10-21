@@ -15,6 +15,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -29,6 +30,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class EventResource extends Resource
@@ -105,19 +107,58 @@ class EventResource extends Resource
                     }),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label('Detalhes'),
-                Action::make('viewRegulation')
-                    ->label('Regulamento')
-                    ->icon('heroicon-o-document-text')
-                    ->url(fn($record) => $record->regulation ? asset('storage/' . $record->regulation) : null)
-                    ->openUrlInNewTab()
-                    ->visible(fn($record) => $record->regulation !== null),
+                // Tables\Actions\ViewAction::make()->label('Detalhes'),
                 Tables\Actions\EditAction::make()
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['name'] = Str::upper($data['name']);
 
                         return $data;
                     }),
+                Tables\Actions\Action::make('clone')
+                    ->label('Clonar')
+                    ->icon('heroicon-o-document-duplicate')
+                    ->color('gray')
+                    ->requiresConfirmation()
+                    ->action(function ($record) {
+                        // 🔹 Clona o evento principal
+                        $clone = $record->replicate();
+                        $clone->name = $record->name . ' (Cópia)';
+                        $clone->save();
+
+                        // 🔹 Clona os lotes (tabela pivot animals_event)
+                        foreach ($record->animals as $animal) {
+                            $pivotData = $animal->pivot->toArray();
+
+                            // Remove timestamps para MySQL não reclamar
+                            unset($pivotData['created_at'], $pivotData['updated_at'], $pivotData['animal_id'], $pivotData['event_id']);
+
+                            // Copia fotos se houver
+                            foreach (['photo', 'photo_full'] as $photoField) {
+                                if (!empty($animal->pivot->$photoField) && Storage::disk('public')->exists($animal->pivot->$photoField)) {
+                                    $path = 'animals/copies/' . basename($animal->pivot->$photoField);
+                                    Storage::disk('public')->copy($animal->pivot->$photoField, $path);
+                                    $pivotData[$photoField] = $path;
+                                }
+                            }
+
+                            $clone->animals()->attach($animal->id, $pivotData);
+                        }
+
+
+                        Notification::make()
+                            ->title('Evento clonado com sucesso!')
+                            ->success()
+                            ->send();
+                    }),
+                Tables\Actions\DeleteAction::make(),
+
+                // Action::make('viewRegulation')
+                //     ->label('Regulamento')
+                //     ->icon('heroicon-o-document-text')
+                //     ->url(fn($record) => $record->regulation ? asset('storage/' . $record->regulation) : null)
+                //     ->openUrlInNewTab()
+                //     ->visible(fn($record) => $record->regulation !== null),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
