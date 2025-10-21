@@ -296,10 +296,12 @@ class ClientForm
                     }
 
                     // Preenche documentos de forma dinâmica
-                    $documents = $client->documents->keyBy(fn($doc) => $doc->documentType->name);
+                    $documents = $client->documents ?? collect(); // garante coleção vazia
+                    $documents = $documents->keyBy(fn($doc) => $doc->documentType->name);
+
                     $documentMapping = [
-                        'cnh_rg'            => 'DOCUMENTO PESSOAL',
-                        'document_income'   => 'COMPROVANTE DE RENDA',
+                        'cnh_rg'             => 'DOCUMENTO PESSOAL',
+                        'document_income'    => 'COMPROVANTE DE RENDA',
                         'document_residence' => 'COMPROVANTE DE RESIDÊNCIA',
                     ];
 
