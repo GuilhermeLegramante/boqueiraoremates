@@ -109,8 +109,12 @@ class AnimalsRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('pivot.name')
                     ->label('Animal')
-                    ->searchable()
-                    ->sortable(),
+                    ->sortable(query: function ($query, string $direction) {
+                        $query->orderBy('animal_event.name', $direction); // <-- nome da tabela pivot
+                    })
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('animal_event.name', 'like', "%{$search}%");
+                    }),
 
                 Tables\Columns\TextColumn::make('pivot.lot_number')
                     ->label('Lote')
