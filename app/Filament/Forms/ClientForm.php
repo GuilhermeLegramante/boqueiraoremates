@@ -253,11 +253,12 @@ class ClientForm
                 ->dynamic()
                 ->reactive()
                 ->debounce(1000)
-                ->rule(
-                    fn($get, $record) =>
-                    Rule::unique('clients', 'cpf_cnpj')
-                        ->ignore($record?->id)
-                )->afterStateUpdated(function ($state, callable $set) {
+                // ->rule(
+                //     fn($get, $record) =>
+                //     Rule::unique('clients', 'cpf_cnpj')
+                //         ->ignore($record?->id)
+                // ) SE JÁ TIVER CPF CADASTRADO VAI EDITAR E NÃO CRIAR OUTRO LÁ NO handleRegistration da Register
+                ->afterStateUpdated(function ($state, callable $set) {
                     if (!$state) return;
 
                     // Busca o cliente pelo CPF/CNPJ já cadastrado
