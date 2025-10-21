@@ -253,11 +253,7 @@ class ClientForm
                 ->dynamic()
                 ->reactive()
                 ->debounce(1000)
-                // ->rule(
-                //     fn($get, $record) =>
-                //     Rule::unique('clients', 'cpf_cnpj')
-                //         ->ignore($record?->id)
-                // ) SE JÁ TIVER CPF CADASTRADO VAI EDITAR E NÃO CRIAR OUTRO LÁ NO handleRegistration da Register
+                ->autofocus()
                 ->afterStateUpdated(function ($state, callable $set) {
                     if (!$state) return;
 
@@ -313,15 +309,14 @@ class ClientForm
             TextInput::make('name')
                 ->label(__('filament-panels::pages/auth/register.form.name.label'))
                 ->required()
-                ->maxLength(255)
-                ->autofocus(),
+                ->maxLength(255),
 
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
                 ->required()
                 ->maxLength(255),
-                // ->unique(table: 'users', column: 'email'),
+            // ->unique(table: 'users', column: 'email'),
 
             TextInput::make('password')
                 ->label('Senha')
