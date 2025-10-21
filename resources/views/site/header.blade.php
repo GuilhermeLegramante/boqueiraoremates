@@ -89,40 +89,6 @@
         </div>
     </div>
 
-    <!-- Faixa inferior - visível apenas no desktop -->
-    <div class="hidden md:flex flex-col items-center mt-1 pb-2">
-        <div class="flex space-x-4">
-            <a href="https://wa.me/5555997331395" target="_blank"
-                class="px-4 py-2 bg-green-600 rounded-md text-white hover:bg-green-700 transition">
-                55 99733 1395
-            </a>
-            <a href="https://wa.me/5555996058499" target="_blank"
-                class="px-4 py-2 bg-green-600 rounded-md text-white hover:bg-green-700 transition">
-                55 99605 8499
-            </a>
-
-            @if (auth()->check())
-                <span class="px-3 py-2 text-white">Bem-vindo, {{ auth()->user()->name }}</span>
-                <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
-                    @csrf
-                    <button type="submit"
-                        class="px-4 py-2 bg-red-500 rounded-md text-white hover:bg-red-600 transition">
-                        Sair
-                    </button>
-                </form>
-            @else
-                <a href="{{ route('filament.admin.auth.login') }}"
-                    class="px-4 py-2 bg-yellow-500 rounded-md text-black hover:bg-yellow-600 transition">
-                    Login
-                </a>
-                <a href="{{ route('filament.admin.auth.register') }}"
-                    class="px-4 py-2 bg-yellow-500 rounded-md text-black hover:bg-yellow-600 transition">
-                    Cadastro
-                </a>
-            @endif
-        </div>
-    </div>
-
     <!-- Menu Mobile -->
     <div id="mobile-menu"
         class="hidden absolute top-0 left-0 w-full h-screen bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center space-y-4 text-white text-lg font-semibold">
