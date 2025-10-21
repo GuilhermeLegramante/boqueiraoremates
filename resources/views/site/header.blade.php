@@ -82,7 +82,7 @@
         </div>
 
         <!-- Logo direita + botão mobile -->
-        <div class="flex-shrink-0 mr-4 mt-4 flex items-center">
+        <div class="flex-shrink-0 mr-4 mt-8 flex items-center">
             <!-- Esconde logo em mobile -->
             <img src="{{ asset('img/logo_rodrigo.png') }}" alt="Logo Secundária" class="h-28 md:h-32 hidden sm:block">
 
