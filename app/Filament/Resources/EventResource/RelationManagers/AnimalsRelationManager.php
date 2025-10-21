@@ -33,7 +33,9 @@ class AnimalsRelationManager extends RelationManager
             ->schema([
                 Select::make('animal_id')
                     ->label('Animal')
-                    ->relationship('animals', 'name')
+                    ->options(fn() => Animal::query()
+                        ->orderBy('name')
+                        ->pluck('name', 'id'))
                     ->searchable()
                     ->preload()
                     ->required(),
