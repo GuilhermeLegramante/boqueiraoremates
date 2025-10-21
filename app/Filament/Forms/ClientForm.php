@@ -261,28 +261,51 @@ class ClientForm
                 ->afterStateUpdated(function ($state, callable $set) {
                     if (!$state) return;
 
-                    // Busca o cliente pelo CPF/CNPJ já cadastrado
-                    $client = \App\Models\Client::where('cpf_cnpj', $state)->first();
+                    // Carrega cliente completo
+                    $client = \App\Models\Client::with('address', 'registeredUser', 'documents.documentType')
+                        ->where('cpf_cnpj', $state)
+                        ->first();
 
                     if (!$client) return;
 
-                    // Preenche os campos do Wizard/Form
-                    $set('name', $client->name);
-                    $set('email', $client->registeredUser?->email);
-                    $set('phone', $client->phone);
-                    $set('postal_code', $client->address?->postal_code);
-                    $set('street', $client->address?->street);
-                    $set('number', $client->address?->number);
-                    $set('complement', $client->address?->complement);
-                    $set('reference', $client->address?->reference);
-                    $set('district', $client->address?->district);
-                    $set('city', $client->address?->city);
-                    $set('state', $client->address?->state);
+                    // Preenche automaticamente os campos do $fillable
+                    foreach ($client->getFillable() as $field) {
+                        if ($field === 'address_id') continue; // endereços serão preenchidos separadamente
+                        $set($field, $client->$field);
+                    }
 
-                    // Campos extras de documentos
-                    $set('cnh_rg', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'DOCUMENTO PESSOAL'))->first()?->path);
-                    $set('document_income', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RENDA'))->first()?->path);
-                    $set('document_residence', $client->documents()->whereHas('documentType', fn($q) => $q->where('name', 'COMPROVANTE DE RESIDÊNCIA'))->first()?->path);
+                    // Preenche email do usuário associado
+                    $set('email', $client->registeredUser?->email);
+
+                    // Preenche campos de endereço
+                    if ($client->address) {
+                        foreach (
+                            [
+                                'postal_code',
+                                'street',
+                                'number',
+                                'complement',
+                                'reference',
+                                'district',
+                                'city',
+                                'state'
+                            ] as $field
+                        ) {
+                            $set($field, $client->address->$field ?? null);
+                        }
+                    }
+
+                    // Preenche documentos de forma dinâmica
+                    $documents = $client->documents->keyBy(fn($doc) => $doc->documentType->name);
+                    $documentMapping = [
+                        'cnh_rg'            => 'DOCUMENTO PESSOAL',
+                        'document_income'   => 'COMPROVANTE DE RENDA',
+                        'document_residence' => 'COMPROVANTE DE RESIDÊNCIA',
+                    ];
+
+                    foreach ($documentMapping as $field => $docName) {
+                        $set($field, $documents[$docName]->path ?? null);
+                    }
                 }),
 
             TextInput::make('name')
