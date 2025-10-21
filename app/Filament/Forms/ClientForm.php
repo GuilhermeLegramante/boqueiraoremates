@@ -294,10 +294,10 @@ class ClientForm
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
-                ->required()
+                // ->required()
                 ->maxLength(255)
                 ->unique(table: 'users', column: 'email'),
-                
+
             TextInput::make('password')
                 ->label('Senha')
                 ->password()
