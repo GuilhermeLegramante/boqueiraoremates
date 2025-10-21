@@ -31,7 +31,7 @@
                     <div
                         class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <a href="{{ route('animals.show', [$event->id, $animal->id]) }}" class="block relative">
-                            <img src="{{ asset('storage/' . $animal->pivot->photo) }}" alt="{{ $animal->name }}"
+                            <img src="{{ asset('storage/' . $animal->pivot->photo) }}" alt="{{ $animal->pivot->name }}"
                                 class="w-full h-56 object-cover transition duration-300 hover:scale-105 rounded-lg shadow">
 
                             @php
@@ -51,7 +51,7 @@
                             </span>
                         </a>
                         <div class="p-5">
-                            <h3 class="font-bold text-xl text-white mb-2">{{ $animal->name }}</h3>
+                            <h3 class="font-bold text-xl text-white mb-2">{{ $animal->pivot->name }}</h3>
                             <p class="text-gray-200 text-sm mb-3">Lote: {{ $animal->pivot->lot_number }}</p>
                             <p class="text-white font-bold text-lg">
                                 R$ {{ number_format($animal->pivot->min_value, 2, ',', '.') }}
