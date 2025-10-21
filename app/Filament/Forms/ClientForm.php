@@ -291,13 +291,13 @@ class ClientForm
                 ->maxLength(255)
                 ->autofocus(),
 
-
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
                 ->required()
                 ->maxLength(255)
                 ->unique(table: 'users', column: 'email'),
+                
             TextInput::make('password')
                 ->label('Senha')
                 ->password()
