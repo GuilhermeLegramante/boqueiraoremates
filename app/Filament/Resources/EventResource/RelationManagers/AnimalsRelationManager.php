@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentPtbrFormFields\Money;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
@@ -132,6 +133,30 @@ class AnimalsRelationManager extends RelationManager
                         'warning' => 'reservado',
                         'danger'  => 'vendido',
                     ]),
+
+                Tables\Columns\SelectColumn::make('pivot.status')
+                    ->label('Status')
+                    ->options([
+                        'disponivel' => 'Disponível',
+                        'reservado'  => 'Reservado',
+                        'vendido'    => 'Vendido',
+                    ])
+                    ->selectablePlaceholder(false)
+                    ->getStateUsing(fn($record) => $record->pivot?->status)
+                    ->updateStateUsing(function ($state, $record) {
+                        if ($record->pivot) {
+                            DB::table('animal_event') // <-- coloque o nome real da tabela pivot aqui
+                                ->where('event_id', $record->pivot->event_id)
+                                ->where('animal_id', $record->pivot->animal_id)
+                                ->update(['status' => $state]);
+                        }
+                    })
+                // ->badge()
+                // ->colors([
+                //     'success' => 'disponivel',
+                //     'warning' => 'reservado',
+                //     'danger'  => 'vendido',
+                // ])
             ])
             ->filters([])
 
