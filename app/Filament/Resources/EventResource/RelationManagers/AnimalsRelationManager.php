@@ -124,26 +124,14 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Lance Mínimo')
                     ->money('BRL'),
 
-                Tables\Columns\SelectColumn::make('pivot.status')
+                Tables\Columns\TextColumn::make('pivot.status')
                     ->label('Status')
-                    ->options([
-                        'disponivel' => 'Disponível',
-                        'reservado'  => 'Reservado',
-                        'vendido'    => 'Vendido',
-                    ])
-                    ->selectablePlaceholder(false)
-                    ->sortable()
-                    ->afterStateUpdated(function ($state, $record) {
-                        // Atualiza o status na tabela pivot
-                        $record->pivot->update(['status' => $state]);
-                    })
-                    // ->badge()
+                    ->badge()
                     ->colors([
                         'success' => 'disponivel',
                         'warning' => 'reservado',
                         'danger'  => 'vendido',
                     ]),
-
             ])
             ->filters([])
 
