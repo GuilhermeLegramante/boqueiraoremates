@@ -295,6 +295,7 @@ class AnimalsRelationManager extends RelationManager
         }
 
         $event->animals()->attach($data['animal_id'], collect($data)->only([
+            'name',
             'lot_number',
             'min_value',
             'final_value',
