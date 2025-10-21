@@ -246,6 +246,7 @@ class ClientForm
 
     public static function personalInfo(): array
     {
+
         return [
             Document::make('cpf_cnpj')
                 ->required()
