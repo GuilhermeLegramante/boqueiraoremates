@@ -6,7 +6,16 @@
 
     <div class="relative container mx-auto px-6 py-1 flex justify-between items-start">
         <!-- Logo esquerda -->
-        <div class="flex-shrink-0 ml-4 -mt-2">
+        <div class="flex-shrink-0 ml-4 -mt-2 flex items-center">
+            <!-- Botão menu mobile -->
+            <button id="menu-toggle"
+                class="md:hidden text-white bg-yellow-600 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400 mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </button>
+
             <img src="{{ asset('img/logo_header.png') }}" alt="Logo" class="h-28 md:h-32">
         </div>
 
@@ -57,7 +66,7 @@
 
                 <div class="flex space-x-3">
                     @if (auth()->check())
-                        <span class="px-3 py-1 text-xs font-semibold  text-white rounded-md">
+                        <span class="px-3 py-1 text-xs font-semibold text-white rounded-md">
                             Bem-vindo, {{ auth()->user()->name }}
                         </span>
 
@@ -79,7 +88,6 @@
                         </a>
                     @endif
                 </div>
-
             </div>
         </div>
 
