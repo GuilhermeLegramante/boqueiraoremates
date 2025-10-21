@@ -1,5 +1,5 @@
 <!-- WhatsApp -->
-<a href="https://wa.me/5555997331395?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20a%20Nota%20Premiada%20Cacequi."
+<a href="https://wa.me/5555997331395"
     target="_blank"
     class="fixed bottom-4 right-4 bg-[#047857] hover:bg-[#065f46] text-white px-4 py-3 rounded-full shadow-lg flex items-center gap-2 z-50 transition-all"
     aria-label="Fale conosco no WhatsApp">
