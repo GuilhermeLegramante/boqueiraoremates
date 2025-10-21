@@ -102,64 +102,106 @@ class Register extends BaseRegister
     protected function handleRegistration(array $data): User
     {
         return DB::transaction(function () use ($data) {
-            /**
-             * Criar usuário
-             */
-            $user = User::create([
-                'name'     => $data['name'],
-                'username' => $data['cpf_cnpj'],
-                'email'    => $data['email'],
-                'password' => $data['password'], // já vem hasheada do form
-            ]);
 
-            // Atribui a role 'client'
-            $user->assignRole('client');
+            // Verifica se já existe cliente pelo CPF/CNPJ
+            $client = Client::where('cpf_cnpj', $data['cpf_cnpj'])->first();
 
-            /**
-             * Criar endereço
-             */
-            $addressData = collect($data)->only([
-                'postal_code',
-                'street',
-                'number',
-                'complement',
-                'reference',
-                'district',
-                'city',
-                'state',
-            ])->toArray();
+            if ($client) {
+                // Atualiza o usuário relacionado
+                $user = $client->registeredUser;
+                $user->update([
+                    'name'  => $data['name'],
+                    'username' => $data['cpf_cnpj'],
+                    'email' => $data['email'],
+                    'password' => $data['password'], // já vem hasheada do form
+                ]);
 
-            $address = \App\Models\Address::create($addressData);
+                // Atualiza endereço
+                $addressData = collect($data)->only([
+                    'postal_code',
+                    'street',
+                    'number',
+                    'complement',
+                    'reference',
+                    'district',
+                    'city',
+                    'state',
+                ])->toArray();
 
-            /**
-             * Criar cliente
-             */
-            $clientData = collect($data)->except([
-                'username',
-                'password',
-                'passwordConfirmation',
-                'postal_code',
-                'street',
-                'number',
-                'complement',
-                'reference',
-                'district',
-                'city',
-                'state',
-                'cnh_rg',
-                'document_income',
-                'document_residence',
-            ])->toArray();
+                $client->address()->update($addressData);
 
-            $clientData['situation']       = 'disabled';
-            $clientData['register_origin'] = $clientData['register_origin'] ?? 'site';
-            $clientData['address_id']      = $address->id;
+                // Atualiza dados do cliente
+                $clientData = collect($data)->except([
+                    'username',
+                    'password',
+                    'passwordConfirmation',
+                    'postal_code',
+                    'street',
+                    'number',
+                    'complement',
+                    'reference',
+                    'district',
+                    'city',
+                    'state',
+                    'cnh_rg',
+                    'document_income',
+                    'document_residence',
+                ])->toArray();
 
-            $client = new Client($clientData);
-            $client->registeredUser()->associate($user);
-            $client->save();
+                $client->update($clientData);
+            } else {
+                // Cria novo usuário
+                $user = User::create([
+                    'name'     => $data['name'],
+                    'username' => $data['cpf_cnpj'],
+                    'email'    => $data['email'],
+                    'password' => $data['password'], // já vem hasheada do form
+                ]);
 
-            // Mapeamento: input -> nome do tipo
+                $user->assignRole('client');
+
+                // Cria endereço
+                $addressData = collect($data)->only([
+                    'postal_code',
+                    'street',
+                    'number',
+                    'complement',
+                    'reference',
+                    'district',
+                    'city',
+                    'state',
+                ])->toArray();
+
+                $address = \App\Models\Address::create($addressData);
+
+                // Cria cliente
+                $clientData = collect($data)->except([
+                    'username',
+                    'password',
+                    'passwordConfirmation',
+                    'postal_code',
+                    'street',
+                    'number',
+                    'complement',
+                    'reference',
+                    'district',
+                    'city',
+                    'state',
+                    'cnh_rg',
+                    'document_income',
+                    'document_residence',
+                ])->toArray();
+
+                $clientData['situation']       = 'disabled';
+                $clientData['register_origin'] = $clientData['register_origin'] ?? 'site';
+                $clientData['address_id']      = $address->id;
+
+                $client = new Client($clientData);
+                $client->registeredUser()->associate($user);
+                $client->save();
+            }
+
+            // Salva documentos (substituindo ou criando)
             $documentsMap = [
                 'cnh_rg'            => 'DOCUMENTO PESSOAL',
                 'document_income'   => 'COMPROVANTE DE RENDA',
@@ -170,14 +212,19 @@ class Register extends BaseRegister
                 if (!empty($data[$input])) {
                     $docType = DocumentType::where('name', $docTypeName)->first();
 
-                    Document::create([
-                        'user_id'           => $user->id,
-                        'client_id'         => $client->id,
-                        'document_type_id'  => $docType->id,
-                        'path'              => $data[$input],
-                    ]);
+                    Document::updateOrCreate(
+                        [
+                            'client_id' => $client->id,
+                            'document_type_id' => $docType->id,
+                        ],
+                        [
+                            'user_id' => $user->id,
+                            'path'    => $data[$input],
+                        ]
+                    );
                 }
             }
+
             return $user;
         });
     }

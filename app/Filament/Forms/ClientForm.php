@@ -4,6 +4,7 @@ namespace App\Filament\Forms;
 
 use App\Models\Bank;
 use App\Models\City;
+use App\Models\Client;
 use App\Models\DocumentType;
 use App\Models\State;
 use Filament\Forms\Components\Checkbox;
@@ -21,6 +22,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Leandrocfe\FilamentPtbrFormFields\Cep;
 use Leandrocfe\FilamentPtbrFormFields\Document;
 use Leandrocfe\FilamentPtbrFormFields\Money;
@@ -245,14 +247,17 @@ class ClientForm
     public static function personalInfo(): array
     {
         return [
-               Document::make('cpf_cnpj')
+            Document::make('cpf_cnpj')
                 ->required()
-                ->unique('clients', 'cpf_cnpj')
                 ->label(__('fields.cpf_cnpj'))
                 ->dynamic()
                 ->reactive()
                 ->debounce(1000)
-                ->afterStateUpdated(function ($state, callable $set) {
+                ->rule(
+                    fn($get, $record) =>
+                    Rule::unique('clients', 'cpf_cnpj')
+                        ->ignore($record?->id)
+                )->afterStateUpdated(function ($state, callable $set) {
                     if (!$state) return;
 
                     // Busca o cliente pelo CPF/CNPJ já cadastrado
@@ -285,7 +290,7 @@ class ClientForm
                 ->maxLength(255)
                 ->autofocus(),
 
-         
+
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
