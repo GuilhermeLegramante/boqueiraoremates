@@ -137,7 +137,7 @@ class AnimalsRelationManager extends RelationManager
                         // Atualiza o status na tabela pivot
                         $record->pivot->update(['status' => $state]);
                     })
-                    ->badge()
+                    // ->badge()
                     ->colors([
                         'success' => 'disponivel',
                         'warning' => 'reservado',
