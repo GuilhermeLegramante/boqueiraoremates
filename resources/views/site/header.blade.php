@@ -75,7 +75,8 @@
 
         <!-- Logo direita + botão mobile -->
         <div class="flex-shrink-0 mr-4 -mt-2 flex items-center">
-            <img src="{{ asset('img/logo_rodrigo.png') }}" alt="Logo Secundária" class="h-28 md:h-32">
+            <!-- Esconde logo em mobile -->
+            <img src="{{ asset('img/logo_rodrigo.png') }}" alt="Logo Secundária" class="h-28 md:h-32 hidden sm:block">
 
             <!-- Botão menu mobile (apenas mobile) -->
             <button id="menu-toggle"
@@ -90,7 +91,12 @@
 
     <!-- Menu Mobile -->
     <div id="mobile-menu"
-        class="hidden absolute top-0 left-0 w-full h-screen bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center space-y-4 text-white text-lg font-semibold">
+        class="fixed top-0 left-0 w-full h-screen bg-black/90 backdrop-blur-sm flex flex-col items-center justify-center space-y-4 text-white text-lg font-semibold transform -translate-y-full opacity-0 transition-all duration-300 ease-in-out">
+
+        <!-- Botão fechar -->
+        <button id="menu-close"
+            class="absolute top-4 right-4 text-white text-3xl font-bold focus:outline-none">&times;</button>
+
         <a href="{{ route('home') }}" class="hover:text-yellow-400">Início</a>
         <a href="{{ route('home') }}#proximos-remates" class="hover:text-yellow-400">Próximos Eventos</a>
         <a href="{{ route('home') }}#equipe" class="hover:text-yellow-400">Equipe</a>
@@ -129,9 +135,21 @@
     </div>
 
     <script>
-        document.getElementById('menu-toggle').addEventListener('click', function() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        });
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuClose = document.getElementById('menu-close');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        function openMenu() {
+            mobileMenu.classList.remove('-translate-y-full', 'opacity-0');
+            mobileMenu.classList.add('translate-y-0', 'opacity-100');
+        }
+
+        function closeMenu() {
+            mobileMenu.classList.add('-translate-y-full', 'opacity-0');
+            mobileMenu.classList.remove('translate-y-0', 'opacity-100');
+        }
+
+        menuToggle.addEventListener('click', openMenu);
+        menuClose.addEventListener('click', closeMenu);
     </script>
 </header>
