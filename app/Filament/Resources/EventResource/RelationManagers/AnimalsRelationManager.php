@@ -7,6 +7,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -294,7 +295,7 @@ class AnimalsRelationManager extends RelationManager
                 ->preserveFilenames()
                 ->nullable(),
 
-            Textarea::make('note')
+            RichEditor::make('note')
                 ->label('Comentário')
                 ->rows(4)
                 ->columnSpanFull()
