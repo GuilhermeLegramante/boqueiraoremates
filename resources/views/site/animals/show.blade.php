@@ -75,7 +75,9 @@
 
                     <div class="mt-3">
                         <h3 class="text-lg font-semibold">Comentários</h3>
-                        <p class="text-white text-justify">{!! $animal->pivot->note !!}</p>
+                        <p class="text-white" style="text-align: justify;">
+                            {!! $animal->pivot->note !!}
+                        </p>
                     </div>
 
                     <!-- Card de lance -->
