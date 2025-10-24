@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EventResource\RelationManagers;
 
+use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 use App\Models\Animal;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -295,7 +296,7 @@ class AnimalsRelationManager extends RelationManager
                 ->preserveFilenames()
                 ->nullable(),
 
-            RichEditor::make('note')
+            TinyEditor::make('note')
                 ->label('Comentário')
                 ->columnSpanFull()
                 ->maxLength(65535),
