@@ -296,11 +296,15 @@ class AnimalsRelationManager extends RelationManager
                 ->preserveFilenames()
                 ->nullable(),
 
-            TinyEditor::make('note')
+            // TinyEditor::make('note')
+            //     ->label('Comentário')
+            //     ->profile('default|simple|full|minimal|none|custom')
+            //     ->rtl() // Set RTL or use ->direction('auto|rtl|ltr')
+            //     ->columnSpan('full')
+            //     ->maxLength(65535),
+            RichEditor::make('note')
                 ->label('Comentário')
-                ->profile('default|simple|full|minimal|none|custom')
-                ->rtl() // Set RTL or use ->direction('auto|rtl|ltr')
-                ->columnSpan('full')
+                ->columnSpanFull()
                 ->maxLength(65535),
 
             TextInput::make('video_link')
