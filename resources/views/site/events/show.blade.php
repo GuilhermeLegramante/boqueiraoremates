@@ -31,11 +31,12 @@
                     <div
                         class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                         <a href="{{ route('animals.show', [$event->id, $animal->id]) }}" class="block relative">
-                            <img src="{{ asset('storage/' . $animal->pivot->photo) }}" alt="{{ $animal->pivot->name }}"
-                                class="w-full h-56 object-cover transition duration-300 hover:scale-105 rounded-lg shadow">
+                            <div class="w-full h-[262px] bg-black flex items-center justify-center">
+                                <img src="{{ asset('storage/' . $animal->pivot->photo) }}" alt="{{ $animal->pivot->name }}"
+                                    class="max-w-full max-h-[262px] object-contain transition duration-300 hover:scale-105 rounded-lg shadow">
+                            </div>
 
                             @php
-                                // $animal é um modelo dentro do relacionamento do evento
                                 $status = $animal->pivot->status ?? null;
 
                                 $statusColors = [
