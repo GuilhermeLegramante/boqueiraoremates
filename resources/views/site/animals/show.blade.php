@@ -59,7 +59,7 @@
                     <p><b>Nº / Lote:</b> {{ $animal->pivot->lot_number ?? '-' }}</p>
                     <p><b>Gênero:</b>
                         {{ $animal->gender === 'male' ? 'MACHO' : ($animal->gender === 'female' ? 'FÊMEA' : '-') }}</p>
-                    <p><b>RP:</b> {{ $animal->rp ?? '-' }}</p>
+                    <p><b>RP:</b> {{ $animal->rb ?? '-' }}</p>
                     <p><b>Nascimento:</b> {{ \Carbon\Carbon::parse($animal->birth_date)->format('d/m/Y') }}</p>
                     <p><b>Pelagem:</b> {{ $animal->coat->name ?? '-' }}</p>
                     <p><b>Pai:</b> {{ $animal->father ?? '-' }}</p>
