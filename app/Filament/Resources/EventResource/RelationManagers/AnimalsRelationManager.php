@@ -297,7 +297,6 @@ class AnimalsRelationManager extends RelationManager
 
             RichEditor::make('note')
                 ->label('Comentário')
-                ->rows(4)
                 ->columnSpanFull()
                 ->maxLength(65535),
 
