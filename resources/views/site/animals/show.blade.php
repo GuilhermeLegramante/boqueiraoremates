@@ -73,12 +73,13 @@
                         </p>
                     @endif
 
-                    <div class="mt-3">
+                    <div class="mt-3 text-white">
                         <h3 class="text-lg font-semibold">Comentários</h3>
-                        <p class="text-white" style="text-align: justify;">
-                            {!! $animal->pivot->note !!}
-                        </p>
+                        <div>
+                            {!! str_replace('<p>', '<p style="text-align: justify;">', $animal->pivot->note) !!}
+                        </div>
                     </div>
+
 
                     <!-- Card de lance -->
                     <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
