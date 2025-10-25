@@ -180,6 +180,7 @@ class AnimalsRelationManager extends RelationManager
                         $form->fill([
                             'animal_id'       => $record->id,
                             'name'            => $record->pivot->name,
+                            'situation'       => $record->pivot->situation,
                             'lot_number'      => $record->pivot->lot_number,
                             'min_value'       => $record->pivot->min_value,
                             'increment_value' => $record->pivot->increment_value,
@@ -204,6 +205,7 @@ class AnimalsRelationManager extends RelationManager
 
                         $event->animals()->updateExistingPivot($record->id, [
                             'name'            => $data['name'],
+                            'situation'       => $data['situation'],
                             'lot_number'      => $data['lot_number'],
                             'min_value'       => $data['min_value'],
                             'increment_value' => $data['increment_value'],
