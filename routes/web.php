@@ -63,6 +63,10 @@ Route::get('/', function () {
 });
 
 Route::get('/site', [HomeController::class, 'index'])->name('home');
+
 Route::get('/eventos/{event}', [EventController::class, 'show'])->name('events.show');
-Route::get('/evento/{event}/animal/{animal}', [AnimalController::class, 'show'])
+
+// Route::get('/evento/{event}/animal/{animal}', [AnimalController::class, 'show'])
+//     ->name('animals.show');
+Route::get('/event/{event}/lote/{animalEvent}', [AnimalController::class, 'show'])
     ->name('animals.show');
