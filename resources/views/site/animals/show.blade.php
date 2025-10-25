@@ -5,7 +5,6 @@
 @section('content')
     @include('site.banners')
 
-    @include('site.events.header')
 
     <!-- Breadcrumbs -->
     <section class="py-4 px-4 bg-[#003333] text-white">
@@ -205,5 +204,17 @@
         </div>
     </section>
 
+    @include('site.events.header')
+
+    <!-- Breadcrumbs para página do evento -->
+    <section class="py-4 px-4 bg-[#003333] text-white">
+        <div class="container mx-auto text-sm">
+            <nav class="flex items-center space-x-2" aria-label="Breadcrumb">
+                <a href="{{ route('home') }}" class="text-green-300 hover:underline">Todos os Eventos</a>
+                <span class="text-white/50">/</span>
+                <span class="text-white">{{ $event->name }}</span>
+            </nav>
+        </div>
+    </section>
 
 @endsection
