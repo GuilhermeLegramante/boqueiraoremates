@@ -118,6 +118,12 @@ class Login extends AuthLogin
 
         session()->regenerate();
 
+        // 🔁 Redireciona para troca de senha se for o primeiro acesso
+        $user = Filament::auth()->user();
+        if ($user->first_login) {
+            return app(\App\Http\Responses\RedirectToPasswordChangeResponse::class);
+        }
+
         return app(LoginResponse::class);
     }
 }
