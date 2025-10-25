@@ -89,6 +89,15 @@ class Login extends AuthLogin
         ];
     }
 
+    public function submitForm(): ?LoginResponse
+    {
+        if ($this->firstAccess) {
+            return $this->saveNewPassword();
+        } else {
+            return $this->authenticate();
+        }
+    }
+
     public function authenticate(): ?LoginResponse
     {
         try {
@@ -121,7 +130,7 @@ class Login extends AuthLogin
             session()->regenerate();
 
             if ($user->first_login) {
-                $this->firstAccess = true; // ativa campos de nova senha
+                $this->firstAccess = true;
             }
 
             return $this->firstAccess ? null : app(LoginResponse::class);
@@ -139,16 +148,15 @@ class Login extends AuthLogin
         // Detecta primeiro acesso
         $user = Filament::auth()->user();
         if ($user->first_login) {
-            $this->firstAccess = true; // ativa campos de nova senha
+            $this->firstAccess = true;
             return null; // espera usuário preencher os campos de senha
         }
 
         return app(LoginResponse::class);
     }
 
-    public function saveNewPassword()
+    public function saveNewPassword(): ?LoginResponse
     {
-        dd('saveNewPassword');
         $this->validate([
             'new_password' => 'required|min:6|same:new_password_confirmation',
             'new_password_confirmation' => 'required|min:6',
@@ -165,6 +173,6 @@ class Login extends AuthLogin
             ->success()
             ->send();
 
-        return redirect()->intended(Filament::getPanel()->getUrl());
+        return app(LoginResponse::class);
     }
 }
