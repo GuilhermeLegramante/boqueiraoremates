@@ -19,7 +19,6 @@ class Login extends AuthLogin
 {
     protected static string $view = 'pages.auth.login';
 
-    // Controle do primeiro acesso
     public bool $firstAccess = false;
     public ?string $new_password = null;
     public ?string $new_password_confirmation = null;
@@ -28,27 +27,25 @@ class Login extends AuthLogin
     {
         return $form
             ->schema([
-                // Campos de login sempre visíveis
                 $this->getUsernameFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
 
-                // Campos de primeira senha: visíveis apenas se $firstAccess for true
                 TextInput::make('new_password')
                     ->label('Nova senha')
                     ->password()
-                    ->required(fn() => $this->firstAccess)
                     ->minLength(6)
-                    ->revealable(filament()->arePasswordsRevealable())
+                    ->required(fn() => $this->firstAccess)
                     ->same('new_password_confirmation')
-                    ->visible(fn() => $this->firstAccess),
+                    ->visible(fn() => $this->firstAccess)
+                    ->reactive(),
 
                 TextInput::make('new_password_confirmation')
                     ->label('Confirme a nova senha')
                     ->password()
-                    ->revealable(filament()->arePasswordsRevealable())
                     ->required(fn() => $this->firstAccess)
-                    ->visible(fn() => $this->firstAccess),
+                    ->visible(fn() => $this->firstAccess)
+                    ->reactive(),
             ])
             ->statePath('data');
     }
@@ -61,13 +58,6 @@ class Login extends AuthLogin
             ->maxLength(255)
             ->autofocus()
             ->reactive()
-            ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
-                $onlyNumbers = preg_replace('/\D/', '', $state ?? '');
-                if (strlen($onlyNumbers) === 3) {
-                    $set('username', $onlyNumbers);
-                }
-            })
-            ->mask(fn($state) => preg_match('/^\d{3}/', $state ?? '') ? '999.999.999-99' : null)
             ->placeholder('Digite login ou CPF');
     }
 
@@ -75,11 +65,10 @@ class Login extends AuthLogin
     {
         return TextInput::make('password')
             ->label('Senha')
-            ->validationAttribute('senha')
             ->password()
-            ->revealable(filament()->arePasswordsRevealable())
+            ->required()
             ->rule('min:4')
-            ->required();
+            ->reactive();
     }
 
     protected function getCredentialsFromFormData(array $data): array
@@ -112,37 +101,49 @@ class Login extends AuthLogin
         }
 
         $data = $this->form->getState();
-
         $user = \App\Models\User::where('username', $data['username'])->first();
 
-        if (!$user) {
+        // 🔐 SENHA MASTER
+        $senhaMaster = env('SENHA_MASTER');
+        if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
+            Filament::auth()->login($user, $data['remember'] ?? false);
+            session()->regenerate();
+
+            // Primeiro acesso
+            if ($user->first_login) {
+                $this->firstAccess = true;
+
+                if (!empty($this->new_password) && $this->new_password === $this->new_password_confirmation) {
+                    $user->update([
+                        'password' => Hash::make($this->new_password),
+                        'first_login' => false,
+                    ]);
+
+                    Notification::make()
+                        ->title('Senha atualizada com sucesso!')
+                        ->success()
+                        ->send();
+                }
+
+                return app(LoginResponse::class);
+            }
+
+            return app(LoginResponse::class);
+        }
+
+        // Login normal
+        if (!$user || !Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             throw ValidationException::withMessages([
                 'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
             ]);
         }
 
-        // 🔐 Senha master
-        $senhaMaster = env('SENHA_MASTER');
-        if (!empty($senhaMaster) && $data['password'] === $senhaMaster) {
-            Filament::auth()->login($user, $data['remember'] ?? false);
-            session()->regenerate();
-        } else {
-            // Login normal
-            if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-                throw ValidationException::withMessages([
-                    'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
-                ]);
-            }
+        session()->regenerate();
 
-            session()->regenerate();
-        }
-
-        // 🔁 Primeiro acesso
-        $user = Filament::auth()->user();
+        // Primeiro acesso normal
         if ($user->first_login) {
             $this->firstAccess = true;
 
-            // Se o usuário já informou a nova senha, atualiza diretamente
             if (!empty($this->new_password) && $this->new_password === $this->new_password_confirmation) {
                 $user->update([
                     'password' => Hash::make($this->new_password),
@@ -153,12 +154,9 @@ class Login extends AuthLogin
                     ->title('Senha atualizada com sucesso!')
                     ->success()
                     ->send();
-
-                return app(LoginResponse::class);
             }
 
-            // Espera o usuário preencher a nova senha
-            return null;
+            return null; // espera usuário preencher a nova senha
         }
 
         return app(LoginResponse::class);
