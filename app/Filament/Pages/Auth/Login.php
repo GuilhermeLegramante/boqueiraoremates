@@ -143,26 +143,18 @@ class Login extends AuthLogin
                 return app(LoginResponse::class);
             }
 
-            Notification::make()
-                ->title('Primeiro acesso!')
-                ->body('Bem-vindo à nova plataforma da Boqueirão Remates. Por segurança, defina sua nova senha.')
-                ->info()
-                ->send();
-
             return null; // espera o usuário preencher a nova senha
+        } else {
+            // Login normal
+            if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+                throw ValidationException::withMessages([
+                    'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+                ]);
+            }
+
+            session()->regenerate();
+
+            return app(LoginResponse::class);
         }
-
-
-        // Login normal
-        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-            throw ValidationException::withMessages([
-                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
-            ]);
-        }
-
-        session()->regenerate();
-
-
-        return app(LoginResponse::class);
     }
 }
