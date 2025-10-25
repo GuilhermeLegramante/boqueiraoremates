@@ -166,7 +166,14 @@ class AnimalsRelationManager extends RelationManager
 
             Select::make('animal_id')
                 ->label('Animal')
-                ->options(fn() => Animal::orderBy('name')->pluck('name', 'id'))
+                ->options(function () {
+                    $event = $this->getOwnerRecord(); // pega o evento atual
+                    return Animal::whereDoesntHave('events', function ($query) use ($event) {
+                        $query->where('event_id', $event->id);
+                    })
+                        ->orderBy('name')
+                        ->pluck('name', 'id');
+                })
                 ->searchable()
                 ->required(),
 
