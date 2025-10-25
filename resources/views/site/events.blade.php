@@ -27,7 +27,7 @@
                 <!-- Imagem do evento -->
                 <a href="{{ route('events.show', $event) }}">
                     <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
-                        class="w-44 h-36 object-cover rounded">
+                        class="w-44 h-36 object-contain rounded bg-black">
                 </a>
 
                 <!-- Descrição -->
