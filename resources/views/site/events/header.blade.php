@@ -2,10 +2,12 @@
     <div class="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
 
         <!-- Banner -->
-        <div class="w-72 aspect-[16/9] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
+        <div
+            class="w-72 aspect-[16/9] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden flex items-center justify-center">
             <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
-                class="object-cover w-full h-full">
+                class="object-contain w-full h-full">
         </div>
+
 
 
         <!-- Informações principais -->
