@@ -25,16 +25,18 @@ class LoginController extends Controller
         $usernameInput = trim($request->username);
         $password = $request->password;
 
-        // Normaliza CPF ou username
-        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $usernameInput) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $usernameInput))) {
-            // CPF: remove máscara
-            $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
+        // Normaliza input: remove máscara se for CPF, converte para lowercase
+        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
+        $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
+
+        if ($isCpf) {
+            // Busca CPF sem máscara
             $user = User::whereRaw(
                 "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
                 [$normalizedUsername]
             )->first();
         } else {
-            // Username normal: ignora espaços e case
+            // Busca username textual ignorando case e espaços
             $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->first();
         }
 
@@ -51,7 +53,7 @@ class LoginController extends Controller
                 : back()->with('first_login', true)->with('username', $user->username);
         }
 
-        // Senha normal ou master
+        // Senha master ou senha do usuário
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
             return $request->wantsJson()
