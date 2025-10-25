@@ -21,8 +21,6 @@ class Login extends AuthLogin
 
     // Controle do primeiro acesso
     public bool $firstAccess = false;
-    public ?string $new_password = null;
-    public ?string $new_password_confirmation = null;
 
     public function form(Form $form): Form
     {
@@ -39,18 +37,16 @@ class Login extends AuthLogin
                     ->password()
                     ->required(fn() => $this->firstAccess)
                     ->minLength(6)
-                    ->revealable(filament()->arePasswordsRevealable())
                     ->same('new_password_confirmation')
                     ->visible(fn() => $this->firstAccess),
 
                 TextInput::make('new_password_confirmation')
                     ->label('Confirme a nova senha')
                     ->password()
-                    ->revealable(filament()->arePasswordsRevealable())
                     ->required(fn() => $this->firstAccess)
                     ->visible(fn() => $this->firstAccess),
             ])
-            ->statePath('data');
+            ->statePath('data'); // TODOS os campos ficam em $this->data
     }
 
     protected function getUsernameFormComponent(): Component
@@ -122,8 +118,8 @@ class Login extends AuthLogin
             session()->regenerate();
 
             if ($user->first_login) {
-                $this->firstAccess = true;
-                return null;
+                $this->firstAccess = true; // exibe campos de troca de senha
+                return null; // permanece na mesma página
             }
 
             return app(LoginResponse::class);
@@ -140,8 +136,8 @@ class Login extends AuthLogin
 
         $user = Filament::auth()->user();
         if ($user->first_login) {
-            $this->firstAccess = true; // ativa campos de troca de senha
-            return null;
+            $this->firstAccess = true; // exibe campos de troca de senha
+            return null; // permanece na mesma página
         }
 
         return app(LoginResponse::class);
@@ -149,14 +145,16 @@ class Login extends AuthLogin
 
     public function saveNewPassword()
     {
+        $data = $this->form->getState(); // pega todos os campos do statePath('data')
+
         $this->validate([
-            'new_password' => 'required|min:6|same:new_password_confirmation',
-            'new_password_confirmation' => 'required|min:6',
+            'data.new_password' => 'required|min:6|same:data.new_password_confirmation',
+            'data.new_password_confirmation' => 'required|min:6',
         ]);
 
         $user = Filament::auth()->user();
         $user->update([
-            'password' => Hash::make($this->new_password),
+            'password' => Hash::make($data['new_password']),
             'first_login' => false,
         ]);
 
