@@ -11,7 +11,7 @@
                 @csrf
 
                 {{-- Usuário / CPF --}}
-                <div>
+                <div class="mt-8">
                     <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
                     <input type="text" name="username" id="username"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
