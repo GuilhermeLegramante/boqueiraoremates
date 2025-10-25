@@ -210,7 +210,7 @@
 
                     if (data.success) {
                         // Redireciona para o site externo após login
-                        window.location.href = 'https://sistema.boqueiraoremates.com/site';
+                        window.location.href = 'https://sistema.boqueiraoremates.com/';
                         return;
                     }
 
