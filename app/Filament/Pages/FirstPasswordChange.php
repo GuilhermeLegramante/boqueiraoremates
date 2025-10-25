@@ -16,6 +16,8 @@ class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
     protected static ?string $title = 'Primeiro Acesso - Boqueirão Remates';
     protected static string $view = 'filament.pages.first-password-change';
 
+    protected static ?string $slug = 'primeiro-acesso';
+
     public ?string $password = '';
     public ?string $password_confirmation = '';
 
