@@ -15,7 +15,7 @@ class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
     use Forms\Concerns\InteractsWithForms;
     // use HasLogo;
 
-    protected static string $view = 'filament.pages.auth.first-password-change';
+    protected static string $view = 'filament.pages.first-password-change';
 
     protected static bool $shouldRegisterNavigation = false; // 🚫 não aparece no menu
     protected static ?string $title = 'Definir nova senha';
