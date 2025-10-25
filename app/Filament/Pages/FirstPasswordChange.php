@@ -19,6 +19,8 @@ class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
     public ?string $password = '';
     public ?string $password_confirmation = '';
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public function mount(): void
     {
         abort_unless(auth()->check(), 403);
