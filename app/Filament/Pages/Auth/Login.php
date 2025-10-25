@@ -21,6 +21,8 @@ class Login extends AuthLogin
 
     // Controle do primeiro acesso
     public bool $firstAccess = false;
+    public ?string $new_password = null;
+    public ?string $new_password_confirmation = null;
 
     public function form(Form $form): Form
     {
@@ -37,16 +39,18 @@ class Login extends AuthLogin
                     ->password()
                     ->required(fn() => $this->firstAccess)
                     ->minLength(6)
+                    ->revealable(filament()->arePasswordsRevealable())
                     ->same('new_password_confirmation')
                     ->visible(fn() => $this->firstAccess),
 
                 TextInput::make('new_password_confirmation')
                     ->label('Confirme a nova senha')
                     ->password()
+                    ->revealable(filament()->arePasswordsRevealable())
                     ->required(fn() => $this->firstAccess)
                     ->visible(fn() => $this->firstAccess),
             ])
-            ->statePath('data'); // TODOS os campos ficam em $this->data
+            ->statePath('data');
     }
 
     protected function getUsernameFormComponent(): Component
@@ -117,11 +121,6 @@ class Login extends AuthLogin
             Filament::auth()->login($user, $data['remember'] ?? false);
             session()->regenerate();
 
-            if ($user->first_login) {
-                $this->firstAccess = true; // exibe campos de troca de senha
-                return null; // permanece na mesma página
-            }
-
             return app(LoginResponse::class);
         }
 
@@ -134,35 +133,34 @@ class Login extends AuthLogin
 
         session()->regenerate();
 
-        $user = Filament::auth()->user();
+        // 🔁 Primeiro acesso
         if ($user->first_login) {
-            $this->firstAccess = true; // exibe campos de troca de senha
-            return null; // permanece na mesma página
+            $this->firstAccess = true;
+
+            // Se o usuário já informou a nova senha, atualiza diretamente
+            if (!empty($this->new_password) && $this->new_password === $this->new_password_confirmation) {
+                $user->update([
+                    'password' => Hash::make($this->new_password),
+                    'first_login' => false,
+                ]);
+
+                Notification::make()
+                    ->title('Senha atualizada com sucesso!')
+                    ->success()
+                    ->send();
+
+                return app(LoginResponse::class);
+            }
+
+            Notification::make()
+                ->title('Primeiro acesso!')
+                ->body('Bem-vindo à nova plataforma da Boqueirão Remates. Por segurança, defina sua nova senha.')
+                ->info()
+                ->send();
+
+            return null; // espera o usuário preencher a nova senha
         }
 
         return app(LoginResponse::class);
-    }
-
-    public function saveNewPassword()
-    {
-        $data = $this->form->getState(); // pega todos os campos do statePath('data')
-
-        $this->validate([
-            'data.new_password' => 'required|min:6|same:data.new_password_confirmation',
-            'data.new_password_confirmation' => 'required|min:6',
-        ]);
-
-        $user = Filament::auth()->user();
-        $user->update([
-            'password' => Hash::make($data['new_password']),
-            'first_login' => false,
-        ]);
-
-        Notification::make()
-            ->title('Senha atualizada com sucesso!')
-            ->success()
-            ->send();
-
-        return redirect()->intended(Filament::getPanel()->getUrl());
     }
 }
