@@ -53,21 +53,29 @@
                         </a>
                         <div class="p-5">
                             <h3 class="font-bold text-xl text-white mb-2">{{ $animal->pivot->name }}</h3>
-                            <p class="text-gray-200 text-sm mb-3">
-                                Lote: <span class="text-lg font-semibold">{{ $animal->pivot->lot_number }}</span>
-                            </p>
-                            <p class="text-gray-200 text-sm mb-3">
-                                Lance Atual: <span class="text-lg font-semibold"> R$
-                                    {{ number_format($animal->current_bid, 2, ',', '.') }}</span>
-                            </p>
-                            <p class="text-white font-bold text-lg">
+
+                            <!-- Lote e Lance Atual agrupados -->
+                            <div class="mb-3 space-y-1">
+                                <p class="text-gray-200 text-sm">
+                                    Lote: <span class="text-lg font-semibold">{{ $animal->pivot->lot_number }}</span>
+                                </p>
+                                <p class="text-gray-200 text-sm">
+                                    Lance Atual: <span class="text-lg font-semibold">R$
+                                        {{ number_format($animal->current_bid, 2, ',', '.') }}</span>
+                                </p>
+                            </div>
+
+                            <!-- Próximo lance destacado -->
+                            <p class="text-yellow-400 font-extrabold text-2xl mb-3">
                                 R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
                             </p>
+
                             <a href="{{ route('animals.show', [$event->id, $animal->id]) }}"
                                 class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
                                 Ver Detalhes
                             </a>
                         </div>
+
                     </div>
                 @endforeach
             </div>
