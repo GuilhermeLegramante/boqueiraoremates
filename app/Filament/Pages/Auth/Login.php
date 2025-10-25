@@ -137,7 +137,6 @@ class Login extends AuthLogin
 
     public function saveNewPassword($user): ?LoginResponse
     {
-        dd('NÃO TÁ ENTRANDO AQUI');
         $this->validate([
             'new_password' => 'required|min:6|same:new_password_confirmation',
             'new_password_confirmation' => 'required|min:6',
