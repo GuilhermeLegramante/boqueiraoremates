@@ -5,6 +5,7 @@
 @section('content')
 
     <section class="flex mt-8 justify-center items-start py-16 bg-gray-100 min-h-screen">
+        <br><br><br>
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md flex flex-col overflow-auto">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
 
