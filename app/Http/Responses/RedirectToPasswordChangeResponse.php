@@ -9,6 +9,6 @@ class RedirectToPasswordChangeResponse implements LoginResponse
 {
     public function toResponse($request): RedirectResponse
     {
-        return redirect()->route('filament.pages.first-password-change');
+        return redirect()->route('filament.admin.pages.first-password-change');
     }
 }
