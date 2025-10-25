@@ -243,6 +243,10 @@ class AnimalsRelationManager extends RelationManager
     protected function getLoteForm(): array
     {
         return [
+            TextInput::make('order')
+                ->label('Ordem do Lote')
+                ->numeric(),
+
             Select::make('animal_id')
                 ->label('Animal')
                 ->options(fn() => Animal::orderBy('name')->pluck('name', 'id'))
@@ -263,9 +267,7 @@ class AnimalsRelationManager extends RelationManager
                 ->label('Número do Lote')
                 ->required(),
 
-            TextInput::make('order')
-                ->label('Ordem do Lote')
-                ->numeric(),
+
 
             TextInput::make('min_value')
                 ->prefix('R$')
