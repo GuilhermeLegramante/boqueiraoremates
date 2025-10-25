@@ -3,14 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
-use Illuminate\Database\Eloquent\Model;
 
-class AnimalEvent extends Model
+class AnimalEvent extends Pivot
 {
-    // Se a tabela se chamar diferente do padrão (animal_event)
     protected $table = 'animal_event';
 
-    // Preenchíveis
     protected $fillable = [
         'animal_id',
         'event_id', // se tiver um relacionamento com outro evento
@@ -28,13 +25,15 @@ class AnimalEvent extends Model
         'video_link',
     ];
 
+    public $timestamps = true;
+
     // Relacionamento com Animal
     public function animal()
     {
         return $this->belongsTo(Animal::class);
     }
 
-    // Se houver uma tabela de eventos
+    // Relacionamento com Event
     public function event()
     {
         return $this->belongsTo(Event::class);
