@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="flex justify-center items-center py-16 bg-gray-100 min-h-screen">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md flex flex-col">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md flex flex-col space-y-6">
             <h2 class="text-3xl font-bold text-center mb-6">Acesse sua conta</h2>
 
             {{-- Aviso formal para primeiro acesso --}}
