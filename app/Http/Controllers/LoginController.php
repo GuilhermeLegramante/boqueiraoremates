@@ -25,15 +25,17 @@ class LoginController extends Controller
         $usernameInput = trim($request->username);
         $password = $request->password;
 
-        // Detecta CPF
+        // Normaliza CPF ou username
         if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $usernameInput) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $usernameInput))) {
+            // CPF: remove máscara
             $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
             $user = User::whereRaw(
                 "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
                 [$normalizedUsername]
             )->first();
         } else {
-            $user = User::whereRaw('LOWER(username) = ?', [strtolower($usernameInput)])->first();
+            // Username normal: ignora espaços e case
+            $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->first();
         }
 
         if (!$user) {
@@ -42,7 +44,7 @@ class LoginController extends Controller
                 : back()->withErrors(['username' => 'Usuário não encontrado.']);
         }
 
-        // Primeiro acesso
+        // Primeiro login
         if ($user->first_login) {
             return $request->wantsJson()
                 ? response()->json(['first_login' => true, 'username' => $user->username])
@@ -61,6 +63,7 @@ class LoginController extends Controller
             ? response()->json(['error' => 'Senha incorreta.'], 422)
             : back()->withErrors(['password' => 'Senha incorreta.']);
     }
+
 
     public function validateFirstAccess(Request $request)
     {
