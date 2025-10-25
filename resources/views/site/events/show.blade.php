@@ -61,7 +61,7 @@
                                     {{ number_format($animal->current_bid, 2, ',', '.') }}</span>
                             </p>
                             <p class="text-white font-bold text-lg">
-                                R$ {{ number_format($animal->pivot->next_bid, 2, ',', '.') }}
+                                R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
                             </p>
                             <a href="{{ route('animals.show', [$event->id, $animal->id]) }}"
                                 class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
