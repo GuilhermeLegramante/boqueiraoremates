@@ -90,9 +90,9 @@
                             <input type="checkbox" name="remember" class="mr-2">
                             <span>Lembrar-me</span>
                         </label>
-                        <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">
+                        {{-- <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">
                             Esqueci minha senha
-                        </button>
+                        </button> --}}
                     </div>
 
                     {{-- Botão de login --}}
