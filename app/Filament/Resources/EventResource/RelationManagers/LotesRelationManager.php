@@ -20,7 +20,7 @@ class LotesRelationManager extends RelationManager
 {
     protected static string $relationship = 'lotes';
 
-    protected static ?string $title = 'Lotes ()';
+    protected static ?string $title = 'Lotes';
     protected static ?string $label = 'Lote';
     protected static ?string $pluralLabel = 'Lotes';
 
