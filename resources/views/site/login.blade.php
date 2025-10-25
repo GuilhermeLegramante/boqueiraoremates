@@ -134,22 +134,30 @@
                     const data = await res.json();
 
                     if (data.first_login) {
+                        // Se não houver mãe cadastrada
+                        if (!data.mother_options || data.mother_options.length === 0) {
+                            passwordContainer.classList.add('hidden');
+                            firstAccessFields.classList.add('hidden');
+                            firstAccessFields.style.opacity = 0;
+
+                            formError.textContent =
+                                'Cliente não possui mãe cadastrada. Entre em contato com o suporte.';
+                            formError.classList.remove('hidden');
+                            return;
+                        }
+
+                        // Se houver mãe, exibe os campos do primeiro acesso
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
                         firstAccessFields.style.opacity = 1;
 
-                        if (!data.mother_options || data.mother_options.length === 0) {
-                            formError.textContent = 'Cliente não possui mãe cadastrada.';
-                            formError.classList.remove('hidden');
-                        } else {
-                            formError.classList.add('hidden');
-                            motherOptions.innerHTML = data.mother_options.map(name => `
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="mother" value="${name}" required>
-                            <span>${name}</span>
-                        </label>
-                    `).join('');
-                        }
+                        formError.classList.add('hidden');
+                        motherOptions.innerHTML = data.mother_options.map(name => `
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="mother" value="${name}" required>
+                    <span>${name}</span>
+                </label>
+            `).join('');
                     } else {
                         passwordContainer.classList.remove('hidden');
                         firstAccessFields.classList.add('hidden');
@@ -162,6 +170,7 @@
                     console.error(err);
                 }
             });
+
 
             // Submit do formulário
             loginForm.addEventListener('submit', async (e) => {
