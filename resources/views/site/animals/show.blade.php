@@ -36,7 +36,21 @@
                     @if ($animal->pivot->photo_full)
                         <div class="relative w-full flex flex-col items-center">
                             <!-- Imagem do animal com link -->
-                            <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank" class="w-full">
+                            {{-- <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank" class="w-full">
+                                <img src="{{ asset('storage/' . $animal->pivot->photo_full) }}"
+                                    alt="{{ $animal->pivot->name }}"
+                                    class="w-full rounded-lg shadow-lg object-cover hover:opacity-90 transition">
+                            </a> --}}
+                            @php
+                                $videoUrl = $animal->pivot->video_link ?? '#';
+
+                                // Se por acaso o link estiver em formato embed, converte para o padrão
+                                if (str_contains($videoUrl, 'youtube.com/embed/')) {
+                                    $videoUrl = str_replace('embed/', 'watch?v=', $videoUrl);
+                                }
+                            @endphp
+
+                            <a href="{{ $videoUrl }}" target="_blank" class="w-full">
                                 <img src="{{ asset('storage/' . $animal->pivot->photo_full) }}"
                                     alt="{{ $animal->pivot->name }}"
                                     class="w-full rounded-lg shadow-lg object-cover hover:opacity-90 transition">
