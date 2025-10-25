@@ -2,7 +2,7 @@
     <div class="w-full max-w-md sm:max-w-lg md:max-w-md lg:max-w-md p-6 sm:p-8 bg-gray-800 rounded-2xl shadow-xl">
 
         {{-- Logo --}}
-        <div class="text-center mb-6">
+        {{-- <div class="text-center mb-6">
             <img src="{{ asset('logo.png') }}" alt="Boqueirão Remates" class="mx-auto h-20 sm:h-24">
             <h1 class="text-2xl sm:text-3xl font-bold text-white mt-4">
                 Boqueirão Remates
@@ -10,7 +10,7 @@
             <p class="text-gray-300 mt-1 text-sm sm:text-base">
                 Plataforma moderna e segura para remates digitais
             </p>
-        </div>
+        </div> --}}
 
         {{-- Mensagem de Primeiro Acesso --}}
         @if ($firstAccess)
