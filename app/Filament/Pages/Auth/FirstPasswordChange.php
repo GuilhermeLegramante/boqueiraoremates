@@ -10,7 +10,7 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 
-class FirstPasswordChange extends Login
+class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
