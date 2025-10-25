@@ -15,13 +15,12 @@
                     qualidade no atendimento. Por favor, preencha os dados solicitados com atenção.
                 </div>
 
-                {{-- Botão de contato WhatsApp --}}
+                {{-- Botão de contato WhatsApp (sempre visível) --}}
                 <div class="mt-4 text-center">
                     <a href="https://wa.me/5555997331395" target="_blank"
                         class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-semibold py-3 px-5 rounded-full shadow-lg transition-all transform hover:-translate-y-1 hover:scale-105">
                         <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M20.52 3.48a11.81 11.81 0 0 0-16.68 0 11.74 11.74 0 0 0 0 16.68l-1.55 5.69 5.84-1.53a11.74 11.74 0 0 0 16.89-16.89zm-8.37 17.14c-1.15.05-2.28-.27-3.23-.91l-.23-.15-3.47.91.92-3.38-.15-.24a8.25 8.25 0 0 1 3.15-11.5 8.18 8.18 0 0 1 11.57 3.15 8.25 8.25 0 0 1-3.15 11.57 8.17 8.17 0 0 1-5.21 1.55zm4.68-7.86c-.25-.12-1.48-.73-1.71-.81-.23-.08-.4-.12-.57.12-.17.25-.66.81-.81.97-.15.17-.3.19-.55.07-.25-.12-1.06-.39-2.01-1.23-.74-.66-1.24-1.48-1.39-1.73-.15-.25-.02-.38.11-.5.11-.11.25-.3.37-.45.12-.15.16-.25.25-.42.08-.17.04-.31-.02-.43-.06-.12-.57-1.38-.78-1.88-.2-.5-.4-.43-.57-.44-.15-.01-.32-.01-.49-.01s-.43.06-.66.31c-.23.25-.89.87-.89 2.12 0 1.25.91 2.46 1.03 2.63.12.17 1.77 2.7 4.28 3.78.6.26 1.07.42 1.43.54.6.2 1.15.17 1.58.1.48-.08 1.48-.6 1.69-1.18.21-.58.21-1.08.15-1.19-.06-.12-.23-.17-.48-.29z" />
+                            <path d="M20.52 3.48a11.81 11.81 0 0 0-16.68 0 ..." />
                         </svg>
                         Suporte via WhatsApp
                     </a>
@@ -29,8 +28,6 @@
 
                 <form id="loginForm" class="space-y-5">
                     @csrf
-
-                    {{-- Mensagem geral de erro --}}
                     <p id="formError" class="text-red-500 text-sm mt-1 hidden text-center"></p>
 
                     {{-- Usuário / CPF --}}
@@ -51,7 +48,7 @@
                         <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
 
-                    {{-- Campos do primeiro acesso --}}
+                    {{-- Campos primeiro acesso --}}
                     <div id="firstAccessFields" class="hidden space-y-4 transition-all duration-300 opacity-0">
                         <div>
                             <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -82,19 +79,18 @@
                                 placeholder="Confirme a nova senha">
                             <p id="new_password_confirmationError" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
-
-                        <div class="flex items-center justify-between">
-                            <label class="flex items-center">
-                                <input type="checkbox" name="remember" class="mr-2">
-                                <span>Lembrar-me</span>
-                            </label>
-                            <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">
-                                Esqueci minha senha
-                            </button>
-                        </div>
                     </div>
 
-                    {{-- Botão de login --}}
+                    {{-- Botões --}}
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="remember" class="mr-2">
+                            <span>Lembrar-me</span>
+                        </label>
+                        <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">Esqueci
+                            minha senha</button>
+                    </div>
+
                     <button id="loginBtn" type="submit"
                         class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all flex justify-center items-center relative">
                         <span id="loginText">Entrar</span>
@@ -110,9 +106,7 @@
             </div>
         </div>
     </section>
-@endsection
 
-@section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const usernameInput = document.getElementById('username');
@@ -143,6 +137,7 @@
                 if (!username) return;
 
                 const token = document.querySelector('input[name="_token"]').value;
+
                 try {
                     const res = await fetch('{{ route('check.first_login') }}', {
                         method: 'POST',
@@ -163,9 +158,8 @@
                             passwordContainer.classList.add('hidden');
                             firstAccessFields.classList.add('hidden');
                             firstAccessFields.style.opacity = 0;
-
                             formError.textContent =
-                                'Para sua segurança, precisamos de informações adicionais. Entre em contato com o suporte.';
+                                'Para sua segurança, entre em contato com o suporte.';
                             formError.classList.remove('hidden');
                             return;
                         }
@@ -189,9 +183,9 @@
                         firstAccessNotice.classList.add('hidden');
                     }
                 } catch (err) {
+                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
-                    console.error(err);
                 }
             });
 
@@ -222,11 +216,8 @@
                     }
 
                     const data = await res.json();
-
-                    if (data.error) {
-                        formError.textContent = data.error;
-                        formError.classList.remove('hidden');
-                    }
+                    if (data.error) formError.textContent = data.error;
+                    formError.classList.remove('hidden');
 
                     if (data.errors) {
                         for (const [key, messages] of Object.entries(data.errors)) {
@@ -238,9 +229,9 @@
                         }
                     }
                 } catch (err) {
+                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
-                    console.error(err);
                 } finally {
                     loginText.classList.remove('hidden');
                     loginSpinner.classList.add('hidden');
