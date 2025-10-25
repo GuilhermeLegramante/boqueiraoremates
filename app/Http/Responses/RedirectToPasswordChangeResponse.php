@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 
 class RedirectToPasswordChangeResponse implements LoginResponse
 {
-    public function toResponse($request): RedirectResponse
+    public function toResponse($request)
     {
         return redirect()->route('filament.admin.pages.first-password-change');
     }
