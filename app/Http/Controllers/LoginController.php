@@ -25,7 +25,7 @@ class LoginController extends Controller
         $usernameInput = trim($request->username);
         $password = $request->password;
 
-        // Normaliza input: remove máscara se for CPF, converte para lowercase
+        // Detecta se é CPF
         $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
         $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
 
@@ -36,7 +36,7 @@ class LoginController extends Controller
                 [$normalizedUsername]
             )->first();
         } else {
-            // Busca username textual ignorando case e espaços
+            // Username textual
             $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->first();
         }
 
@@ -53,7 +53,7 @@ class LoginController extends Controller
                 : back()->with('first_login', true)->with('username', $user->username);
         }
 
-        // Senha master ou senha do usuário
+        // Verifica senha ou senha master
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
             return $request->wantsJson()
@@ -66,7 +66,7 @@ class LoginController extends Controller
             : back()->withErrors(['password' => 'Senha incorreta.']);
     }
 
-
+    // Primeiro acesso: valida data de nascimento e mãe
     public function validateFirstAccess(Request $request)
     {
         $request->validate([
@@ -76,11 +76,18 @@ class LoginController extends Controller
             'new_password' => 'required|min:6|confirmed',
         ]);
 
-        $username = preg_replace('/\D/', '', $request->username);
-        $user = User::whereRaw(
-            "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
-            [$username]
-        )->firstOrFail();
+        $usernameInput = trim($request->username);
+        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
+        $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
+
+        if ($isCpf) {
+            $user = User::whereRaw(
+                "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+                [$normalizedUsername]
+            )->firstOrFail();
+        } else {
+            $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->firstOrFail();
+        }
 
         $client = Client::where('registered_user_id', $user->id)->firstOrFail();
 
@@ -97,22 +104,27 @@ class LoginController extends Controller
         return response()->json(['success' => true, 'redirect' => url('/')]);
     }
 
+    // Checa primeiro login e traz opções da mãe
     public function checkFirstLogin(Request $request)
     {
         $request->validate(['username' => 'required']);
-        $input = trim($request->username);
 
-        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $input) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $input))) {
-            $normalizedUsername = preg_replace('/\D/', '', $input);
+        $usernameInput = trim($request->username);
+        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
+        $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
+
+        if ($isCpf) {
             $user = User::whereRaw(
                 "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
                 [$normalizedUsername]
             )->first();
         } else {
-            $user = User::whereRaw('LOWER(username) = ?', [strtolower($input)])->first();
+            $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->first();
         }
 
-        if (!$user || !$user->first_login) return response()->json(['first_login' => false]);
+        if (!$user || !$user->first_login) {
+            return response()->json(['first_login' => false]);
+        }
 
         $client = Client::where('registered_user_id', $user->id)->first();
         if (!$client) return response()->json(['first_login' => false]);

@@ -9,9 +9,6 @@
 
             <form id="loginForm" class="space-y-5">
                 @csrf
-                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                {{-- Username --}}
                 <div>
                     <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
                     <input type="text" name="username" id="username"
@@ -20,8 +17,7 @@
                     <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Senha --}}
-                <div id="passwordContainer">
+                <div id="passwordContainer" class="space-y-2">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
@@ -29,7 +25,6 @@
                     <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Primeiro acesso --}}
                 <div id="firstAccessFields" class="hidden space-y-4">
                     <div>
                         <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -58,14 +53,7 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center">
-                        <input type="checkbox" name="remember" class="mr-2">
-                        <span>Lembrar-me</span>
-                    </label>
-                </div>
-
-                <button id="loginBtn" type="submit"
+                <button type="submit" id="loginBtn"
                     class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all">
                     Entrar
                 </button>
@@ -97,22 +85,20 @@
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
-
                 const token = document.querySelector('input[name="_token"]').value;
+
                 try {
                     const res = await fetch('{{ route('check.first_login') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token,
-                            'X-Requested-With': 'XMLHttpRequest'
+                            'X-CSRF-TOKEN': token
                         },
                         body: JSON.stringify({
                             username
                         })
                     });
                     const data = await res.json();
-
                     if (data.first_login) {
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
@@ -132,12 +118,11 @@
                 }
             });
 
-            // Submit
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const formData = new FormData(loginForm);
                 const isFirstLogin = !firstAccessFields.classList.contains('hidden');
-                let url = isFirstLogin ? '{{ route('first_access.validate') }}' :
+                const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
                     '{{ route('login.submit') }}';
 
                 try {
@@ -149,14 +134,17 @@
                         }
                     });
 
-                    const data = await res.json();
-                    if (data.success && data.redirect) {
-                        window.location.href = data.redirect;
-                    } else if (data.error) {
-                        alert(data.error);
+                    const contentType = res.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const data = await res.json();
+                        if (data.success && data.redirect) window.location.href = data.redirect;
+                        else if (data.error) alert(data.error);
+                    } else if (res.redirected) {
+                        window.location.href = res.url;
                     }
                 } catch (err) {
                     console.error(err);
+                    alert('Erro de comunicação com o servidor.');
                 }
             });
         });

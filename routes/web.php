@@ -80,6 +80,6 @@ Route::post('first-access-validate', [LoginController::class, 'validateFirstAcce
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 // Recuperação de senha
-Route::get('/recover', [LoginController::class, 'showRecoverForm'])->name('recover.form');
-Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
-Route::post('/recover/set-password', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set_password');
+// Route::get('/recover', [LoginController::class, 'showRecoverForm'])->name('recover.form');
+// Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
+// Route::post('/recover/set-password', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set_password');
