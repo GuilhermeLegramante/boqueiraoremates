@@ -105,8 +105,9 @@ class Login extends AuthLogin
         if ($user->first_login) {
             $this->firstAccess = true;
 
-            if ($this->new_password) {
-                return $this->saveNewPassword($user);
+            // verifica se o usuário já preencheu os campos de nova senha
+            if (!empty($data['new_password'])) {
+                return $this->saveNewPassword($user, $data['new_password'], $data['new_password_confirmation']);
             }
 
             // Exibe campos de nova senha
@@ -122,9 +123,7 @@ class Login extends AuthLogin
         }
 
         // Login normal
-        $user = \App\Models\User::where('username', $data['username'])->first();
-
-        if ((!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) && $user->first_login == 0) {
+        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             throw ValidationException::withMessages([
                 'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
             ]);
@@ -135,9 +134,10 @@ class Login extends AuthLogin
         return app(LoginResponse::class);
     }
 
+
     public function saveNewPassword($user): ?LoginResponse
     {
-        dd('edit');
+        dd('NÃO TÁ ENTRANDO AQUI');
         $this->validate([
             'new_password' => 'required|min:6|same:new_password_confirmation',
             'new_password_confirmation' => 'required|min:6',
