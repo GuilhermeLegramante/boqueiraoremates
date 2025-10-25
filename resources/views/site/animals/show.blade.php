@@ -5,7 +5,6 @@
 @section('content')
     @include('site.banners')
 
-
     <!-- Breadcrumbs -->
     <section class="py-4 px-4 bg-[#003333] text-white">
         <div class="container mx-auto text-sm">

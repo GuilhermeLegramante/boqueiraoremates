@@ -5,6 +5,7 @@ use App\Http\Controllers\BidController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesMapController;
@@ -70,3 +71,16 @@ Route::get('/eventos/{event}', [EventController::class, 'show'])->name('events.s
 //     ->name('animals.show');
 Route::get('/event/{event}/lote/{animalEvent}', [AnimalController::class, 'show'])
     ->name('animals.show');
+
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login/check-user', [LoginController::class, 'checkUser'])->name('login.checkUser');
+Route::post('/login/validate-first', [LoginController::class, 'validateFirstAccess'])->name('login.validateFirst');
+Route::post('/login/set-password', [LoginController::class, 'setNewPassword'])->name('login.setNewPassword');
+Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+// 🔹 novas rotas para recuperação
+Route::get('/recuperar-senha', [LoginController::class, 'showRecoverForm'])->name('recover.form');
+Route::post('/recuperar-senha/validar', [LoginController::class, 'recoverValidate'])->name('recover.validate');
+Route::post('/recuperar-senha/alterar', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set');
