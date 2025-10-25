@@ -58,6 +58,7 @@ class Event extends Model
                 'note',
                 'video_link',
             ])
+            ->orderByPivot('order')
             ->withTimestamps();
     }
 
