@@ -123,9 +123,6 @@
             const loginSpinner = document.getElementById('loginSpinner');
             const formError = document.getElementById('formError');
             const firstAccessNotice = document.getElementById('firstAccessNotice');
-            const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-
-            let isForgotPassword = false;
 
             // Máscara CPF
             usernameInput.addEventListener('input', () => {
@@ -141,14 +138,12 @@
 
             // Checar primeiro acesso
             usernameInput.addEventListener('blur', async () => {
-                if (isForgotPassword) return; // Não checar se estiver no fluxo "Esqueci Senha"
-
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
                 try {
                     const token = document.querySelector('input[name="_token"]').value;
-                    const res = await fetch('{{ route('check.first_login') }}', {
+                    const res = await fetch('{{ route('login.submit') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -158,7 +153,6 @@
                             username
                         })
                     });
-
                     const data = await res.json();
 
                     if (data.first_login) {
@@ -190,16 +184,7 @@
                 }
             });
 
-            // Botão "Esqueci minha senha"
-            forgotPasswordBtn.addEventListener('click', () => {
-                isForgotPassword = true;
-                passwordContainer.classList.add('hidden');
-                firstAccessFields.classList.remove('hidden');
-                firstAccessFields.style.opacity = 1;
-                firstAccessNotice.classList.remove('hidden');
-                formError.classList.add('hidden');
-            });
-
+            // Submit do formulário
             // Submit do formulário
             loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
@@ -211,22 +196,21 @@
                 loginSpinner.classList.remove('hidden');
 
                 const formData = new FormData(loginForm);
-                formData.append('_token', document.querySelector('input[name="_token"]').value);
-
-                let url = '{{ route('login.submit') }}';
-                if (!firstAccessFields.classList.contains('hidden') || isForgotPassword) {
-                    url = '{{ route('first_access.validate') }}';
-                }
+                const isFirstLogin = !firstAccessFields.classList.contains('hidden');
+                const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
+                    '{{ route('login.submit') }}';
 
                 try {
                     const res = await fetch(url, {
                         method: 'POST',
                         body: formData
                     });
+
                     const data = await res.json();
 
-                    if (data.success && data.redirect) {
-                        window.location.href = data.redirect;
+                    if (data.success) {
+                        // Redireciona para o site externo após login
+                        window.location.href = 'https://sistema.boqueiraoremates.com/site';
                         return;
                     }
 
@@ -245,16 +229,15 @@
                         }
                     }
                 } catch (err) {
-                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
+                    console.error(err);
                 } finally {
                     loginText.classList.remove('hidden');
                     loginSpinner.classList.add('hidden');
                 }
             });
+
         });
     </script>
-
-
 @endsection
