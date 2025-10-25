@@ -73,20 +73,11 @@ Route::get('/event/{event}/lote/{animalEvent}', [AnimalController::class, 'show'
     ->name('animals.show');
 
 
-// Tela de login
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-
-// Submissão do login normal
-Route::post('/login', [LoginController::class, 'login'])->name('login.submit');
-
-// Logout
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
-// Validação do primeiro acesso
-Route::post('/first-access', [LoginController::class, 'validateFirstAccess'])->name('first_access.validate');
-
-// Rota AJAX para checar se é primeiro login
-Route::post('/check-first-login', [LoginController::class, 'checkFirstLogin'])->name('check.first_login');
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login'])->name('login.submit');
+Route::post('check-first-login', [LoginController::class, 'checkFirstLogin'])->name('check.first_login');
+Route::post('first-access-validate', [LoginController::class, 'validateFirstAccess'])->name('first_access.validate');
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 // Recuperação de senha
 Route::get('/recover', [LoginController::class, 'showRecoverForm'])->name('recover.form');

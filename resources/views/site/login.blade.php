@@ -139,28 +139,32 @@
             // Submit do formulário
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-
                 const formData = new FormData(loginForm);
-                const isFirstLogin = firstAccessFields.classList.contains('hidden') === false;
+                const isFirstLogin = !firstAccessFields.classList.contains('hidden');
                 let url = isFirstLogin ? '{{ route('first_access.validate') }}' :
                     '{{ route('login.submit') }}';
 
                 try {
                     const res = await fetch(url, {
                         method: 'POST',
-                        body: formData
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
                     });
+                    const data = await res.json();
 
-                    if (res.redirected) {
-                        window.location.href = res.url;
+                    if (data.success) {
+                        window.location.href = data.redirect;
                     } else {
-                        const data = await res.json();
                         alert(data.error || 'Erro no login');
                     }
                 } catch (err) {
                     console.error(err);
+                    alert('Erro de comunicação com o servidor.');
                 }
             });
+
         });
     </script>
 @endsection
