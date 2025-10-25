@@ -44,10 +44,12 @@
                             @php
                                 $videoUrl = $animal->pivot->video_link ?? '#';
 
-                                // Se for link curto youtu.be, converte para o formato normal
+                                // Converte qualquer link para o formato watch?v=
                                 if (str_contains($videoUrl, 'youtu.be/')) {
                                     $videoId = last(explode('/', $videoUrl));
                                     $videoUrl = 'https://www.youtube.com/watch?v=' . $videoId;
+                                } elseif (str_contains($videoUrl, 'youtube.com/embed/')) {
+                                    $videoUrl = str_replace('embed/', 'watch?v=', $videoUrl);
                                 }
                             @endphp
 
