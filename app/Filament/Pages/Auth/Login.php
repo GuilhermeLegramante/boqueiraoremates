@@ -107,7 +107,7 @@ class Login extends AuthLogin
 
             // verifica se o usuário já preencheu os campos de nova senha
             if (!empty($data['new_password'])) {
-                return $this->saveNewPassword($user, $data['new_password'], $data['new_password_confirmation']);
+                return $this->saveNewPassword($user, $data);
             }
 
             // Exibe campos de nova senha
@@ -135,15 +135,15 @@ class Login extends AuthLogin
     }
 
 
-    public function saveNewPassword($user, string $newPassword, string $newPasswordConfirmation): ?LoginResponse
+    public function saveNewPassword($user, array $data): ?LoginResponse
     {
         $this->validate([
-            'new_password' => 'required|min:6|same:new_password_confirmation',
-            'new_password_confirmation' => 'required|min:6',
+            'data.new_password' => 'required|min:6|same:data.new_password_confirmation',
+            'data.new_password_confirmation' => 'required|min:6',
         ]);
 
         $user->update([
-            'password' => Hash::make($newPassword),
+            'password' => Hash::make($data['new_password']),
             'first_login' => false,
         ]);
 
