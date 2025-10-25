@@ -176,12 +176,16 @@ class AnimalsRelationManager extends RelationManager
                     ->icon('heroicon-o-pencil')
                     ->form(fn() => $this->getLoteForm()) // <-- reutiliza o formulário centralizado
                     ->mountUsing(function ($form, $record) {
-                        $pivot = $record->pivot;
+                        // Busca o pivot correto pelo ID passado
+                        $pivot = DB::table('animal_event')
+                            ->where('id', $record->pivot_id ?? $record->id) // record->id pode não ser o pivot_id
+                            ->first();
 
-                        // preenche com os dados do pivot (o lote correto)
+                        if (!$pivot) return;
+
                         $form->fill([
                             'pivot_id'        => $pivot->id,
-                            'animal_id'       => $pivot->animal_id, // <- aqui pega do pivot, não do record
+                            'animal_id'       => $pivot->animal_id,
                             'name'            => $pivot->name,
                             'situation'       => $pivot->situation,
                             'lot_number'      => $pivot->lot_number,
