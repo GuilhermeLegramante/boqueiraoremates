@@ -79,6 +79,8 @@ Route::post('check-first-login', [LoginController::class, 'checkFirstLogin'])->n
 Route::post('first-access-validate', [LoginController::class, 'validateFirstAccess'])->name('first_access.validate');
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::post('/forgot-password-validate', [LoginController::class, 'validateFirstAccess'])->name('forgot_password.validate');
+
 // Recuperação de senha
 // Route::get('/recover', [LoginController::class, 'showRecoverForm'])->name('recover.form');
 // Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
