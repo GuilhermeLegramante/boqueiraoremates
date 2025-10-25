@@ -148,8 +148,7 @@ class AnimalsRelationManager extends RelationManager
                     ->updateStateUsing(function ($state, $record) {
                         if ($record->pivot) {
                             DB::table('animal_event') // <-- coloque o nome real da tabela pivot aqui
-                                ->where('event_id', $record->pivot->event_id)
-                                ->where('animal_id', $record->pivot->animal_id)
+                                ->where('id', $record->pivot->id)
                                 ->update(['status' => $state]);
                         }
                     })
@@ -368,8 +367,7 @@ class AnimalsRelationManager extends RelationManager
         }
 
         DB::table('animal_event')
-            ->where('event_id', $record->pivot->event_id)
-            ->where('animal_id', $record->pivot->animal_id)
+            ->where('id', $record->pivot->id)
             ->update(collect($data)->only([
                 'name',
                 'situation',
