@@ -3,205 +3,194 @@
 @section('title', 'Login - Boqueirão Remates')
 
 @section('content')
-    <section class="flex justify-center items-center py-16 bg-gray-100">
+    <section class="flex justify-center items-center py-16 bg-gray-100 min-h-screen">
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
 
-            {{-- Login comum --}}
+            {{-- Formulário principal --}}
             <form id="loginForm" method="POST" action="{{ route('login.submit') }}" class="space-y-5">
                 @csrf
+
+                {{-- Campo username --}}
                 <div>
                     <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
                     <input type="text" name="username" id="username"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                        placeholder="Digite seu usuário" required>
+                        placeholder="Digite seu usuário ou CPF" required>
+                    <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
+                {{-- Campo senha (só aparece se não for primeiro acesso) --}}
                 <div id="passwordContainer">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                        placeholder="Digite sua senha" required>
+                        placeholder="Digite sua senha" minlength="6">
+                    <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                <button type="submit"
+                {{-- Campos extras do primeiro acesso (ocultos inicialmente) --}}
+                <div id="firstAccessFields" class="hidden space-y-4">
+                    <div>
+                        <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
+                        <input type="date" name="birth_date" id="birth_date"
+                            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block font-semibold mb-1">Nome da mãe</label>
+                        <div id="motherOptions" class="space-y-2"></div>
+                    </div>
+
+                    <div>
+                        <label for="new_password" class="block font-semibold mb-1">Nova senha</label>
+                        <input type="password" name="new_password" id="new_password"
+                            class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
+                            placeholder="Crie sua nova senha" minlength="6">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="remember" class="mr-2">
+                        <span>Lembrar-me</span>
+                    </label>
+                    <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">Esqueci
+                        minha senha</button>
+                </div>
+
+                <button id="loginBtn" type="submit"
                     class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all">
                     Entrar
                 </button>
 
-                <div id="errorMessage" class="bg-red-100 text-red-700 p-3 rounded-lg mt-3 hidden"></div>
+                @if ($errors->any())
+                    <div class="bg-red-100 text-red-700 p-3 rounded-lg mt-3">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
             </form>
-
-            {{-- Primeiro acesso --}}
-            <div id="firstLoginSection" class="hidden space-y-4">
-                <p class="text-center text-gray-700 font-semibold mb-2">Primeiro acesso: confirme seus dados</p>
-
-                <label>Data de nascimento</label>
-                <input type="date" id="birth_date"
-                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
-
-                <label>Selecione o nome da mãe</label>
-                <div id="motherOptions" class="grid grid-cols-1 gap-2"></div>
-
-                <button id="confirmFirstAccess"
-                    class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all">
-                    Confirmar
-                </button>
-
-                <p id="firstAccessError" class="text-red-600 text-center hidden"></p>
-            </div>
-
-            {{-- Etapa de redefinição de senha --}}
-            <div id="setPasswordSection" class="hidden space-y-4">
-                <p class="text-center text-gray-700 font-semibold mb-2">Defina sua nova senha</p>
-
-                <input type="password" id="new_password" placeholder="Nova senha"
-                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
-                <input type="password" id="confirm_password" placeholder="Confirme a senha"
-                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
-
-                <button id="saveNewPassword"
-                    class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all">
-                    Salvar e entrar
-                </button>
-
-                <p id="setPasswordError" class="text-red-600 text-center hidden"></p>
-            </div>
         </div>
     </section>
 
+    {{-- 🔹 Modal de Recuperação de Senha --}}
+    <div id="recoverModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 w-full max-w-md shadow-lg relative">
+            <h3 class="text-xl font-bold mb-4 text-center">Recuperar senha</h3>
+
+            <form id="recoverForm" class="space-y-4">
+                <div>
+                    <label for="recover_username" class="block font-semibold mb-1">Usuário ou CPF</label>
+                    <input type="text" id="recover_username" name="recover_username"
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
+                        placeholder="Digite seu usuário ou CPF" required>
+                </div>
+
+                <div>
+                    <label for="recover_birth_date" class="block font-semibold mb-1">Data de nascimento</label>
+                    <input type="date" id="recover_birth_date" name="recover_birth_date"
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none" required>
+                </div>
+
+                <div>
+                    <label class="block font-semibold mb-1">Nome da mãe</label>
+                    <div id="recoverMotherOptions" class="space-y-2"></div>
+                </div>
+
+                <div>
+                    <label for="recover_new_password" class="block font-semibold mb-1">Nova senha</label>
+                    <input type="password" id="recover_new_password" name="recover_new_password"
+                        class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
+                        placeholder="Digite a nova senha" minlength="6" required>
+                </div>
+
+                <div class="flex justify-end space-x-2 mt-6">
+                    <button type="button" id="closeModal"
+                        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">Cancelar</button>
+                    <button type="submit"
+                        class="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {{-- 🔹 Script principal --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const usernameInput = document.getElementById('username');
-            const loginForm = document.getElementById('loginForm');
-            const firstLoginSection = document.getElementById('firstLoginSection');
-            const setPasswordSection = document.getElementById('setPasswordSection');
             const passwordContainer = document.getElementById('passwordContainer');
-            const birthInput = document.getElementById('birth_date');
+            const firstAccessFields = document.getElementById('firstAccessFields');
             const motherOptions = document.getElementById('motherOptions');
-            const confirmFirstAccess = document.getElementById('confirmFirstAccess');
-            const saveNewPassword = document.getElementById('saveNewPassword');
-            const firstAccessError = document.getElementById('firstAccessError');
-            const setPasswordError = document.getElementById('setPasswordError');
+            const loginForm = document.getElementById('loginForm');
 
-            let selectedMother = null;
-            let currentUsername = null;
-
-            // Máscara CPF
+            // Máscara de CPF se começar com número
             usernameInput.addEventListener('input', () => {
-                const value = usernameInput.value.replace(/\D/g, '');
-                if (/^\d+$/.test(usernameInput.value)) {
-                    let cpf = value
+                const value = usernameInput.value;
+                if (/^\d/.test(value)) {
+                    usernameInput.value = value
+                        .replace(/\D/g, '')
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    usernameInput.value = cpf;
                 }
             });
 
-            // Verifica tipo de login ao sair do campo
-            usernameInput.addEventListener('blur', async () => {
+            // Simulação: detecção de primeiro login (via backend real você consultaria)
+            usernameInput.addEventListener('blur', () => {
                 const username = usernameInput.value.trim();
-                if (!username) return;
-                currentUsername = username;
 
-                const res = await fetch('{{ route('login.checkUser') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        username
-                    })
-                });
+                // Exemplo fictício (poderia vir de uma rota AJAX /api/check-user)
+                if (username === '123.456.789-00') {
+                    passwordContainer.classList.add('hidden');
+                    firstAccessFields.classList.remove('hidden');
 
-                const data = await res.json();
-
-                if (data.first_login) {
-                    loginForm.classList.add('hidden');
-                    firstLoginSection.classList.remove('hidden');
-                    motherOptions.innerHTML = '';
-                    data.mother_options.forEach(name => {
-                        const btn = document.createElement('button');
-                        btn.textContent = name;
-                        btn.className = "w-full border py-2 rounded-lg hover:bg-green-100";
-                        btn.onclick = () => {
-                            selectedMother = name;
-                            document.querySelectorAll('#motherOptions button').forEach(b =>
-                                b.classList.remove('bg-green-200'));
-                            btn.classList.add('bg-green-200');
-                        };
-                        motherOptions.appendChild(btn);
-                    });
+                    // Mock das opções da mãe
+                    const options = ['Maria das Dores', 'Joana Silva', 'Ana Souza', 'Carla Oliveira',
+                        'Marta Santos'
+                    ];
+                    motherOptions.innerHTML = options.map(name => `
+                <label class="flex items-center space-x-2 cursor-pointer">
+                    <input type="radio" name="mother_option" value="${name}" required>
+                    <span>${name}</span>
+                </label>
+            `).join('');
+                } else {
+                    passwordContainer.classList.remove('hidden');
+                    firstAccessFields.classList.add('hidden');
                 }
             });
 
-            // Validação de primeiro acesso
-            confirmFirstAccess.addEventListener('click', async () => {
-                firstAccessError.classList.add('hidden');
-                if (!birthInput.value || !selectedMother) {
-                    firstAccessError.textContent = 'Preencha todos os campos.';
-                    firstAccessError.classList.remove('hidden');
-                    return;
-                }
+            // Modal de recuperação
+            const recoverModal = document.getElementById('recoverModal');
+            const forgotBtn = document.getElementById('forgotPasswordBtn');
+            const closeModal = document.getElementById('closeModal');
+            const recoverForm = document.getElementById('recoverForm');
+            const recoverMotherOptions = document.getElementById('recoverMotherOptions');
 
-                const res = await fetch('{{ route('login.validateFirst') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        username: currentUsername,
-                        birth_date: birthInput.value,
-                        mother: selectedMother
-                    })
-                });
+            forgotBtn.addEventListener('click', () => {
+                recoverModal.classList.remove('hidden');
 
-                const data = await res.json();
-
-                if (data.verified) {
-                    firstLoginSection.classList.add('hidden');
-                    setPasswordSection.classList.remove('hidden');
-                } else {
-                    firstAccessError.textContent = data.error || 'Respostas incorretas.';
-                    firstAccessError.classList.remove('hidden');
-                }
+                // Mock das opções da mãe
+                const options = ['Maria das Dores', 'Joana Silva', 'Ana Souza', 'Carla Oliveira',
+                    'Marta Santos'
+                ];
+                recoverMotherOptions.innerHTML = options.map(name => `
+            <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="radio" name="recover_mother_option" value="${name}" required>
+                <span>${name}</span>
+            </label>
+        `).join('');
             });
 
-            // Salvar nova senha
-            saveNewPassword.addEventListener('click', async () => {
-                setPasswordError.classList.add('hidden');
-                const pass1 = document.getElementById('new_password').value;
-                const pass2 = document.getElementById('confirm_password').value;
+            closeModal.addEventListener('click', () => {
+                recoverModal.classList.add('hidden');
+            });
 
-                if (pass1.length < 6 || pass1 !== pass2) {
-                    setPasswordError.textContent = 'Senhas não conferem ou são muito curtas.';
-                    setPasswordError.classList.remove('hidden');
-                    return;
-                }
-
-                const res = await fetch('{{ route('login.setNewPassword') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        username: currentUsername,
-                        password: pass1,
-                        password_confirmation: pass2
-                    })
-                });
-
-                const data = await res.json();
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    setPasswordError.textContent = data.error || 'Erro ao salvar senha.';
-                    setPasswordError.classList.remove('hidden');
-                }
+            // Submissão simulada do formulário de recuperação
+            recoverForm.addEventListener('submit', e => {
+                e.preventDefault();
+                alert('Senha redefinida com sucesso!');
+                recoverModal.classList.add('hidden');
             });
         });
     </script>
