@@ -96,7 +96,6 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Editar Lote')
                     ->form(fn() => $this->getLoteForm())
                     ->mountUsing(function ($form, $record) {
-                        dd($form->getState());
                         $pivot = $record->pivot;
                         if (!$pivot) return;
 
