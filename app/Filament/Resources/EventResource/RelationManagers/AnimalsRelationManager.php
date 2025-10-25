@@ -31,7 +31,6 @@ class AnimalsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->defaultSort('pivot.lot_number') // <--- aqui define a ordenação padrão
             ->columns([
                 Tables\Columns\ImageColumn::make('pivot.photo')
                     ->label('Foto')
@@ -44,7 +43,9 @@ class AnimalsRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('pivot.lot_number')
                     ->label('Lote')
-                    ->sortable(),
+                    ->sortable(query: function ($query, $direction) {
+                        $query->orderBy('animal_event.lot_number', $direction);
+                    }),
 
                 Tables\Columns\TextColumn::make('pivot.min_value')
                     ->label('Lance Mínimo')
@@ -60,6 +61,7 @@ class AnimalsRelationManager extends RelationManager
                     ]),
             ])
             ->filters([])
+            ->defaultSort('pivot.lot_number', 'asc') // apenas para exibição inicial
             ->headerActions([
                 Tables\Actions\CreateAction::make('criarLote')
                     ->label('Adicionar Lote ao Evento')
