@@ -7,7 +7,6 @@
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
 
-            {{-- Formulário principal --}}
             <form id="loginForm" method="POST" action="{{ route('login.submit') }}" class="space-y-5">
                 @csrf
 
@@ -20,8 +19,8 @@
                     <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campo senha (só aparece se não for primeiro acesso) --}}
-                <div id="passwordContainer">
+                {{-- Campo senha (escondido se for primeiro acesso) --}}
+                <div id="passwordContainer" class="space-y-2">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
@@ -29,7 +28,7 @@
                     <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campos extras do primeiro acesso (ocultos inicialmente) --}}
+                {{-- Campos do primeiro acesso (inicialmente ocultos) --}}
                 <div id="firstAccessFields" class="hidden space-y-4">
                     <div>
                         <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -63,17 +62,11 @@
                     class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all">
                     Entrar
                 </button>
-
-                @if ($errors->any())
-                    <div class="bg-red-100 text-red-700 p-3 rounded-lg mt-3">
-                        {{ $errors->first() }}
-                    </div>
-                @endif
             </form>
         </div>
     </section>
 
-    {{-- 🔹 Modal de Recuperação de Senha --}}
+    {{-- Modal de Recuperação de Senha --}}
     <div id="recoverModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
         <div class="bg-white rounded-xl p-8 w-full max-w-md shadow-lg relative">
             <h3 class="text-xl font-bold mb-4 text-center">Recuperar senha</h3>
@@ -114,16 +107,14 @@
         </div>
     </div>
 
-    {{-- 🔹 Script principal --}}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const usernameInput = document.getElementById('username');
             const passwordContainer = document.getElementById('passwordContainer');
             const firstAccessFields = document.getElementById('firstAccessFields');
             const motherOptions = document.getElementById('motherOptions');
-            const loginForm = document.getElementById('loginForm');
 
-            // Máscara de CPF se começar com número
+            // Máscara CPF
             usernameInput.addEventListener('input', () => {
                 const value = usernameInput.value;
                 if (/^\d/.test(value)) {
@@ -135,16 +126,16 @@
                 }
             });
 
-            // Simulação: detecção de primeiro login (via backend real você consultaria)
+            // Verifica se é primeiro acesso via backend (simulação)
             usernameInput.addEventListener('blur', () => {
                 const username = usernameInput.value.trim();
 
-                // Exemplo fictício (poderia vir de uma rota AJAX /api/check-user)
+                // Exemplo de simulação, você pode substituir por AJAX real
                 if (username === '123.456.789-00') {
-                    passwordContainer.classList.add('hidden');
+                    passwordContainer.classList.add('hidden'); // ⚡ esconde campo senha normal
                     firstAccessFields.classList.remove('hidden');
 
-                    // Mock das opções da mãe
+                    // Opções da mãe
                     const options = ['Maria das Dores', 'Joana Silva', 'Ana Souza', 'Carla Oliveira',
                         'Marta Santos'
                     ];
@@ -170,7 +161,6 @@
             forgotBtn.addEventListener('click', () => {
                 recoverModal.classList.remove('hidden');
 
-                // Mock das opções da mãe
                 const options = ['Maria das Dores', 'Joana Silva', 'Ana Souza', 'Carla Oliveira',
                     'Marta Santos'
                 ];
@@ -186,7 +176,6 @@
                 recoverModal.classList.add('hidden');
             });
 
-            // Submissão simulada do formulário de recuperação
             recoverForm.addEventListener('submit', e => {
                 e.preventDefault();
                 alert('Senha redefinida com sucesso!');
