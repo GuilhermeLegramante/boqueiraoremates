@@ -8,14 +8,14 @@
             <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col space-y-6">
                 <h2 class="text-3xl font-bold text-center mb-6">Acesse sua conta</h2>
 
-                {{-- Aviso formal para primeiro acesso --}}
+                {{-- Aviso primeiro acesso --}}
                 <div id="firstAccessNotice"
                     class="hidden mb-6 p-5 bg-blue-50 border-l-4 border-blue-500 text-blue-800 rounded-lg shadow-sm text-sm font-medium transition-all duration-300 hover:shadow-md">
                     <strong>Atenção:</strong> Estamos migrando para uma nova plataforma para garantir mais segurança e
                     qualidade no atendimento. Por favor, preencha os dados solicitados com atenção.
                 </div>
 
-                {{-- Botão de contato WhatsApp --}}
+                {{-- Botão WhatsApp --}}
                 <div class="mt-4 text-center">
                     <a href="https://wa.me/5555997331395" target="_blank"
                         class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-semibold py-3 px-5 rounded-full shadow-lg transition-all transform hover:-translate-y-1 hover:scale-105">
@@ -30,7 +30,7 @@
                 <form id="loginForm" class="space-y-5">
                     @csrf
 
-                    {{-- Mensagem geral de erro --}}
+                    {{-- Erro geral --}}
                     <p id="formError" class="text-red-500 text-sm mt-1 hidden text-center"></p>
 
                     {{-- Usuário / CPF --}}
@@ -42,7 +42,7 @@
                         <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
 
-                    {{-- Senha (login normal, escondida por padrão) --}}
+                    {{-- Senha normal --}}
                     <div id="passwordContainer" class="hidden space-y-2 transition-all duration-300">
                         <label for="password" class="block font-semibold mb-1">Senha</label>
                         <input type="password" name="password" id="password"
@@ -84,7 +84,7 @@
                         </div>
                     </div>
 
-                    {{-- Lembrar e esqueci senha --}}
+                    {{-- Lembrar-me e esqueci senha --}}
                     <div class="flex items-center justify-between">
                         <label class="flex items-center">
                             <input type="checkbox" name="remember" class="mr-2">
@@ -95,7 +95,7 @@
                         </button>
                     </div>
 
-                    {{-- Botão de login sempre visível --}}
+                    {{-- Botão de login --}}
                     <button id="loginBtn" type="submit"
                         class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all flex justify-center items-center relative">
                         <span id="loginText">Entrar</span>
@@ -177,7 +177,6 @@
                         firstAccessFields.style.opacity = 0;
                         firstAccessNotice.classList.add('hidden');
                     }
-
                 } catch (err) {
                     console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
@@ -185,7 +184,7 @@
                 }
             });
 
-            // Submit
+            // Submit do formulário
             loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
                 formError.classList.add('hidden');
@@ -232,5 +231,4 @@
             });
         });
     </script>
-
 @endsection
