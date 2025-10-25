@@ -1,4 +1,10 @@
-<x-filament-panels::page.simple>
+<x-filament-panels::page>
+    @push('filamentScripts')
+        <script>
+            document.querySelector('aside[data-sidebar]').style.display = 'none';
+        </script>
+    @endpush
+    
     <div class="max-w-2xl mx-auto space-y-6">
         <div class="bg-white/5 backdrop-blur-md rounded-2xl p-6 shadow-md border border-white/10">
             <h2 class="text-2xl font-bold text-center mb-4 text-white">Bem-vindo(a) à nova plataforma da Boqueirão
@@ -28,4 +34,4 @@
             </div>
         </div>
     </div>
-</x-filament-panels::page.simple>
+</x-filament-panels::page>
