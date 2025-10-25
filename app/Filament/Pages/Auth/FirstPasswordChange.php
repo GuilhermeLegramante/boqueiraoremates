@@ -2,22 +2,20 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Pages\Auth\Concerns\HasLogo;
 use Filament\Pages\Page;
-use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 
 class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
 
     protected static string $view = 'filament.pages.first-password-change';
-
-    protected static bool $shouldRegisterNavigation = false; // 🚫 não aparece no menu
-    protected static ?string $title = 'Definir nova senha';
+    protected static bool $shouldRegisterNavigation = false;
+    protected static ?string $title = 'Primeiro Acesso - Nova Senha';
 
     protected static ?string $slug = 'primeiro-acesso';
 
@@ -38,6 +36,7 @@ class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
                 ->required()
                 ->rule('min:6')
                 ->same('password_confirmation'),
+
             Forms\Components\TextInput::make('password_confirmation')
                 ->label('Confirme a senha')
                 ->password()
