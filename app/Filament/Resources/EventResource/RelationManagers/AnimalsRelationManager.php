@@ -37,7 +37,7 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Foto')
                     ->square(),
 
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('pivot.name')
                     ->label('Animal')
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
                     ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%")),
@@ -117,6 +117,7 @@ class AnimalsRelationManager extends RelationManager
                         ]);
                     })
                     ->action(function ($record, array $data) {
+                        dd($record->id);
                         $event = $this->getOwnerRecord(); // Pega o evento atual
 
                         // Tratar uploads
