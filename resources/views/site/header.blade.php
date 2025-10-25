@@ -60,7 +60,7 @@
                         <span class="px-3 py-1 text-xs font-semibold text-white rounded-md">
                             Bem-vindo, {{ auth()->user()->name }}
                         </span>
-                        <form method="POST" action="{{ route('logout') }}">
+                        <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
                             @csrf
                             <button type="submit"
                                 class="px-3 py-1 text-xs font-semibold bg-red-500 text-white rounded-md hover:bg-red-600 transition">
@@ -68,7 +68,7 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}"
+                        <a href="{{ route('filament.admin.auth.login') }}"
                             class="px-3 py-1 text-xs font-semibold bg-yellow-500 text-black rounded-md hover:bg-yellow-600 transition">
                             Login
                         </a>
@@ -130,7 +130,7 @@
 
             @if (auth()->check())
                 <span class="text-sm">Bem-vindo, {{ auth()->user()->name }}</span>
-                <form method="POST" action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('filament.admin.auth.logout') }}">
                     @csrf
                     <button type="submit"
                         class="px-4 py-2 bg-red-500 rounded-md text-white hover:bg-red-600 transition">
@@ -138,7 +138,7 @@
                     </button>
                 </form>
             @else
-                <a href="{{ route('login') }}"
+                <a href="{{ route('filament.admin.auth.login') }}"
                     class="px-4 py-2 bg-yellow-500 rounded-md text-black hover:bg-yellow-600 transition">
                     Login
                 </a>
