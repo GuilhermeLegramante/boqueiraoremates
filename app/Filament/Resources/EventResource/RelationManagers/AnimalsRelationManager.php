@@ -174,13 +174,9 @@ class AnimalsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make('editarLote')
                     ->label('Editar Lote')
                     ->icon('heroicon-o-pencil')
-                    ->form(fn() => $this->getLoteForm()) // <-- reutiliza o formulário centralizado
-                    ->mountUsing(function ($form, $record) {
-                        // Busca o pivot correto pelo ID passado
-                        $pivot = DB::table('animal_event')
-                            ->where('id', $record->pivot_id ?? $record->id) // record->id pode não ser o pivot_id
-                            ->first();
-
+                    ->form(fn() => $this->getLoteForm()) // reutiliza o formulário centralizado
+                    ->record(fn($record) => DB::table('animal_event')->where('id', $record->pivot->id)->first()) // garante que o registro pivot correto seja usado
+                    ->mountUsing(function ($form, $pivot) {
                         if (!$pivot) return;
 
                         $form->fill([
@@ -200,8 +196,7 @@ class AnimalsRelationManager extends RelationManager
                             'video_link'      => $pivot->video_link,
                         ]);
                     })
-
-                    ->action(function ($record, $data) {
+                    ->action(function ($pivot, $data) {
                         $pivotId = $data['pivot_id'];
 
                         // Tratar uploads
@@ -216,26 +211,27 @@ class AnimalsRelationManager extends RelationManager
                         $minValue       = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
                         $incrementValue = $data['increment_value'] !== '' ? str_replace(',', '.', $data['increment_value']) : null;
                         $targetValue    = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
+                        $finalValue     = $data['final_value'] !== '' ? str_replace(',', '.', $data['final_value']) : null;
 
                         DB::table('animal_event')
                             ->where('id', $pivotId)
                             ->update([
-                                'animal_id'       => $data['animal_id'], // se quiser permitir trocar o animal
+                                'animal_id'       => $data['animal_id'],
                                 'name'            => $data['name'],
                                 'situation'       => $data['situation'],
                                 'lot_number'      => $data['lot_number'],
                                 'min_value'       => $minValue,
                                 'increment_value' => $incrementValue,
                                 'target_value'    => $targetValue,
+                                'final_value'     => $finalValue,
                                 'status'          => $data['status'],
-                                'photo'           => $data['photo'] ?? $record->pivot->photo,
-                                'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
+                                'photo'           => $data['photo'] ?? $pivot->photo,
+                                'photo_full'      => $data['photo_full'] ?? $pivot->photo_full,
                                 'note'            => $data['note'] ?? null,
                                 'video_link'      => $data['video_link'] ?? null,
                             ]);
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
-
 
                 Tables\Actions\DetachAction::make()
                     ->label('Remover')
