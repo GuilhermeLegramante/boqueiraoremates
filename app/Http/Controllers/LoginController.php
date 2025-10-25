@@ -16,7 +16,6 @@ class LoginController extends Controller
         return view('site.login');
     }
 
-    // Submissão do login
     public function login(Request $request)
     {
         $request->validate([
@@ -24,10 +23,17 @@ class LoginController extends Controller
             'password' => 'nullable|string',
         ]);
 
-        $username = $request->username;
+        $usernameInput = $request->username;
         $password = $request->password;
 
-        $user = User::where('username', $username)->first();
+        // Normaliza o CPF (remove máscara)
+        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
+
+        // Busca usuário, comparando sem máscara
+        $user = User::whereRaw(
+            "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+            [$normalizedUsername]
+        )->first();
 
         if (!$user) {
             return back()->withErrors(['username' => 'Usuário não encontrado.']);
@@ -35,6 +41,7 @@ class LoginController extends Controller
 
         // Se for primeiro login
         if ($user->first_login) {
+            // Retorna para a view com flag first_login = true
             return back()->with('first_login', true)
                 ->with('username', $user->username);
         }
@@ -47,6 +54,7 @@ class LoginController extends Controller
 
         return back()->withErrors(['password' => 'Senha incorreta.']);
     }
+
 
     // Validação do primeiro acesso (data de nascimento + mãe)
     public function validateFirstAccess(Request $request)
