@@ -4,8 +4,14 @@
 
 @section('content')
     <section class="flex justify-center items-center py-16 bg-gray-100 min-h-screen">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md relative">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
+
+            {{-- Loading overlay --}}
+            <div id="loadingOverlay"
+                class="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center hidden rounded-xl">
+                <span class="text-green-700 font-bold">Aguarde...</span>
+            </div>
 
             <form id="loginForm" class="space-y-5">
                 @csrf
@@ -17,7 +23,8 @@
                     <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                <div id="passwordContainer" class="space-y-2">
+                {{-- Campo senha (inicialmente oculto) --}}
+                <div id="passwordContainer" class="space-y-2 hidden">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
@@ -25,6 +32,7 @@
                     <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
+                {{-- Campos do primeiro acesso (inicialmente ocultos) --}}
                 <div id="firstAccessFields" class="hidden space-y-4">
                     <div>
                         <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -68,6 +76,9 @@
             const firstAccessFields = document.getElementById('firstAccessFields');
             const motherOptions = document.getElementById('motherOptions');
             const loginForm = document.getElementById('loginForm');
+            const usernameError = document.getElementById('usernameError');
+            const passwordError = document.getElementById('passwordError');
+            const loadingOverlay = document.getElementById('loadingOverlay');
 
             // Máscara CPF
             usernameInput.addEventListener('input', () => {
@@ -81,10 +92,11 @@
                 }
             });
 
-            // Verifica primeiro acesso
+            // Primeiro acesso
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
+
                 const token = document.querySelector('input[name="_token"]').value;
 
                 try {
@@ -99,6 +111,7 @@
                         })
                     });
                     const data = await res.json();
+
                     if (data.first_login) {
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
@@ -118,8 +131,14 @@
                 }
             });
 
+            // Submit do login
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                usernameError.classList.add('hidden');
+                passwordError.classList.add('hidden');
+
+                loadingOverlay.classList.remove('hidden');
+
                 const formData = new FormData(loginForm);
                 const isFirstLogin = !firstAccessFields.classList.contains('hidden');
                 const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
@@ -135,16 +154,26 @@
                     });
 
                     const contentType = res.headers.get('content-type');
+
                     if (contentType && contentType.includes('application/json')) {
                         const data = await res.json();
-                        if (data.success && data.redirect) window.location.href = data.redirect;
-                        else if (data.error) alert(data.error);
+                        if (data.success && data.redirect) {
+                            window.location.href = data.redirect;
+                        } else if (data.error) {
+                            loadingOverlay.classList.add('hidden');
+                            if (data.error.includes('Usuário')) usernameError.textContent = data.error,
+                                usernameError.classList.remove('hidden');
+                            else passwordError.textContent = data.error, passwordError.classList.remove(
+                                'hidden');
+                        }
                     } else if (res.redirected) {
                         window.location.href = res.url;
                     }
                 } catch (err) {
                     console.error(err);
                     alert('Erro de comunicação com o servidor.');
+                } finally {
+                    loadingOverlay.classList.add('hidden');
                 }
             });
         });
