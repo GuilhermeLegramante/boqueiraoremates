@@ -6,5 +6,5 @@
     @include('site.banners')
     @include('site.events')
     {{-- @include('site.team') --}}
-    @include('site.contact')
+    {{-- @include('site.contact') --}}
 @endsection
