@@ -8,11 +8,11 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Pages\Auth\Register as BaseRegister;
 
-class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
+
+class FirstPasswordChange extends BaseRegister
 {
-    use Forms\Concerns\InteractsWithForms;
-
     protected static string $view = 'filament.pages.first-password-change';
     protected static bool $shouldRegisterNavigation = false;
     protected static ?string $title = 'Primeiro Acesso - Nova Senha';
