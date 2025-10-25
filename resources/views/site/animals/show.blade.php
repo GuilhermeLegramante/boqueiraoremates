@@ -101,71 +101,96 @@
 
                     <!-- Card de lance -->
                     <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
+
                         <h3 class="text-xl font-bold mb-4">Dar lance</h3>
 
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                            <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                <p class="text-green-300">Lance atual</p>
-                                <p class="text-xl font-bold text-white">
+
+                            <!-- Lance atual -->
+                            <div
+                                class="shadow-lg rounded-lg p-4 {{ $animal->pivot->status !== 'disponivel' ? 'bg-gray-700 opacity-60 cursor-not-allowed' : 'bg-[#003333]' }}">
+                                <p
+                                    class="{{ $animal->pivot->status !== 'disponivel' ? 'text-gray-400' : 'text-green-300' }}">
+                                    Lance atual</p>
+                                <p
+                                    class="text-xl font-bold {{ $animal->pivot->status !== 'disponivel' ? 'text-gray-300' : 'text-white' }}">
                                     R$ {{ number_format($animal->current_bid ?? 0, 2, ',', '.') }}
                                 </p>
                             </div>
-                            <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                <p class="text-green-300">Próximo lance mínimo</p>
-                                <p class="text-xl font-bold text-white">
+
+                            <!-- Próximo lance mínimo -->
+                            <div
+                                class="shadow-lg rounded-lg p-4 {{ $animal->pivot->status !== 'disponivel' ? 'bg-gray-700 opacity-60 cursor-not-allowed' : 'bg-[#003333]' }}">
+                                <p
+                                    class="{{ $animal->pivot->status !== 'disponivel' ? 'text-gray-400' : 'text-green-300' }}">
+                                    Próximo lance mínimo</p>
+                                <p
+                                    class="text-xl font-bold {{ $animal->pivot->status !== 'disponivel' ? 'text-gray-300' : 'text-white' }}">
                                     R$ {{ number_format($animal->next_bid ?? 0, 2, ',', '.') }}
                                 </p>
                             </div>
-                            <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                <p class="text-green-300">Lance alvo</p>
+
+                            <!-- Lance alvo -->
+                            <div
+                                class="shadow-lg rounded-lg p-4 {{ $animal->pivot->status !== 'disponivel' ? 'bg-gray-700 opacity-60 cursor-not-allowed' : 'bg-[#003333]' }}">
+                                <p
+                                    class="{{ $animal->pivot->status !== 'disponivel' ? 'text-gray-400' : 'text-green-300' }}">
+                                    Lance alvo</p>
                                 @if ($animal->target_value)
-                                    <p class="text-xl font-bold text-green-300">
+                                    <p
+                                        class="text-xl font-bold {{ $animal->pivot->status !== 'disponivel' ? 'text-gray-300' : 'text-green-300' }}">
                                         R$ {{ number_format($animal->target_value, 2, ',', '.') }}
                                     </p>
                                 @else
-                                    <p class="text-xl font-bold text-green-300">Consulte o regulamento</p>
+                                    <p
+                                        class="text-xl font-bold {{ $animal->pivot->status !== 'disponivel' ? 'text-gray-300' : 'text-green-300' }}">
+                                        Consulte o regulamento</p>
                                 @endif
                             </div>
                         </div>
 
+                        <!-- Formulário de lance -->
                         @auth
                             @php
                                 $client = Auth::user()->client;
                             @endphp
 
-                            @if ($client && $client->situation === 'able')
-                                <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
-                                    @csrf
+                            @if ($animal->pivot->status === 'disponivel')
+                                @if ($client && $client->situation === 'able')
+                                    <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
+                                        @csrf
 
-                                    <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                    <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
+                                        <input type="hidden" name="event_id" value="{{ $event->id }}">
+                                        <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
 
-                                    <div class="relative">
-                                        <!-- Input com R$ -->
-                                        <span
-                                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
-                                        <input type="text" name="amount" id="bidInput"
-                                            class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
-                                            required>
+                                        <div class="relative">
+                                            <!-- Input com R$ -->
+                                            <span
+                                                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
+                                            <input type="text" name="amount" id="bidInput"
+                                                class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
+                                                required>
+                                        </div>
+                                        <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
+                                            O valor do lance não pode ser menor que o lance mínimo (R$
+                                            {{ number_format($animal->next_bid, 2, ',', '.') }}).
+                                        </p>
+
+                                        <button type="submit"
+                                            class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow hover:bg-green-500 transition">
+                                            Confirmar Lance
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg">
+                                        <p><strong>Seu cadastro ainda não está habilitado para dar lances.</strong></p>
+                                        <p class="text-sm mt-1">Por favor, entre em contato com a administração para habilitar
+                                            seu cliente.</p>
                                     </div>
-                                    <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
-                                        O valor do lance não pode ser menor que o lance mínimo (R$
-                                        {{ number_format($animal->next_bid, 2, ',', '.') }}).
-                                    </p>
-
-                                    <button type="submit"
-                                        class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow hover:bg-green-500 transition">
-                                        Confirmar Lance
-                                    </button>
-                                </form>
-
-                                {{-- Mantém o modal e o script abaixo normalmente --}}
-                                @include('site.animals.bid-modal')
+                                @endif
                             @else
-                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg">
-                                    <p><strong>Seu cadastro ainda não está habilitado para dar lances.</strong></p>
-                                    <p class="text-sm mt-1">Por favor, entre em contato com a administração para habilitar seu
-                                        cliente.</p>
+                                <div class="bg-red-600 text-white p-4 rounded-lg">
+                                    <p><strong>Este lote não está disponível para lances no momento.</strong></p>
                                 </div>
                             @endif
                         @else
@@ -173,7 +198,6 @@
                             <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">Clique aqui
                                 para logar</a>
                         @endauth
-
                     </div>
                 </div>
             </div>
