@@ -59,6 +59,7 @@ class AnimalsRelationManager extends RelationManager
                         'danger'  => 'vendido',
                     ]),
             ])
+            ->defaultSort('pivot.lot_number')
             ->filters([])
             ->headerActions([
                 Tables\Actions\CreateAction::make('criarLote')
