@@ -6,6 +6,7 @@ use App\Filament\Forms\EventForm;
 use App\Filament\Resources\EventResource\Pages;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Filament\Resources\EventResource\RelationManagers\AnimalsRelationManager;
+use App\Filament\Resources\EventResource\RelationManagers\LotesRelationManager;
 use App\Filament\Resources\OrderResource\Pages\CreateEvent;
 use App\Filament\Resources\OrderResource\Pages\EditEvent;
 use App\Filament\Resources\OrderResource\Pages\ListEvents;
@@ -171,6 +172,7 @@ class EventResource extends Resource
     {
         return [
             AnimalsRelationManager::class,
+            LotesRelationManager::class,
         ];
     }
 

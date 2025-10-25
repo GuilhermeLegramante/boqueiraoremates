@@ -62,6 +62,10 @@ class Event extends Model
             ->withTimestamps();
     }
 
+    public function lotes()
+    {
+        return $this->hasMany(AnimalEvent::class, 'event_id');
+    }
 
     public function getNameAttribute($value)
     {
