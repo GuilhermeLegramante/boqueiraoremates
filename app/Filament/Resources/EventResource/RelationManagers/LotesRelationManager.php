@@ -73,8 +73,33 @@ class LotesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\ImageColumn::make('photo')
+                    ->label('Foto')
+                    ->square(),
+
+                Tables\Columns\TextColumn::make('name')
+                    ->label('Animal')
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
+                    ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%")),
+
+                Tables\Columns\TextColumn::make('lot_number')
+                    ->label('Lote')
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.lot_number', $direction)),
+
+                Tables\Columns\TextColumn::make('min_value')
+                    ->label('Lance Mínimo')
+                    ->money('BRL'),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->colors([
+                        'success' => 'disponivel',
+                        'warning' => 'reservado',
+                        'danger'  => 'vendido',
+                    ]),
             ])
+            ->defaultSort('lot_number')
             ->filters([
                 //
             ])
