@@ -174,6 +174,7 @@ class AnimalsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make('editarLote')
                     ->label('Editar Lote')
                     ->icon('heroicon-o-pencil')
+                    ->recordKey(fn($record) => $record->pivot->id) // <-- chave única por lote
                     ->form(fn() => $this->getLoteForm()) // reutiliza o formulário centralizado
                     ->mountUsing(function ($form, $record) {
                         $pivot = $record->pivot; // pega o pivot do relacionamento atual
