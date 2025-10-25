@@ -19,6 +19,7 @@ class Login extends AuthLogin
 {
     protected static string $view = 'pages.auth.login';
 
+    // Para controle de primeiro acesso
     public bool $firstAccess = false;
     public ?string $new_password = null;
     public ?string $new_password_confirmation = null;
@@ -27,6 +28,7 @@ class Login extends AuthLogin
     {
         return $form
             ->schema([
+                // Campos de login
                 $this->getUsernameFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),

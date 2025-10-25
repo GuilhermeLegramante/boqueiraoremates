@@ -1,43 +1,36 @@
-<x-filament-panels::page.simple class="bg-gray-900 min-h-screen flex items-center justify-center px-4">
-    <div class="w-full max-w-md sm:max-w-lg md:max-w-md lg:max-w-md p-6 sm:p-8 bg-gray-800 rounded-2xl shadow-xl">
+<x-filament-panels::page.simple>
+    @if (filament()->hasRegistration())
+        <x-slot name="subheading">
+            {{ __('filament-panels::pages/auth/login.actions.register.before') }}
+            {{ $this->registerAction }}
+        </x-slot>
+    @endif
 
-        {{-- Logo --}}
-        {{-- <div class="text-center mb-6">
-            <img src="{{ asset('logo.png') }}" alt="Boqueirão Remates" class="mx-auto h-20 sm:h-24">
-            <h1 class="text-2xl sm:text-3xl font-bold text-white mt-4">
-                Boqueirão Remates
-            </h1>
-            <p class="text-gray-300 mt-1 text-sm sm:text-base">
-                Plataforma moderna e segura para remates digitais
-            </p>
-        </div> --}}
+    {{-- Hook antes do formulário --}}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::auth.login.form.before') }}
 
-        {{-- Mensagem de Primeiro Acesso --}}
+    <x-filament-panels::form wire:submit="{{ $firstAccess ? 'saveNewPassword' : 'authenticate' }}">
+
+        {{-- Exibe campos de login normalmente sempre --}}
+        {{ $this->form->getComponent('username') }}
+        {{ $this->form->getComponent('password') }}
+        {{ $this->form->getComponent('remember') }}
+
+        {{-- Mensagem de primeiro acesso --}}
         @if ($firstAccess)
-            <div class="mb-4 p-4 rounded bg-blue-600 text-white text-center font-semibold text-sm sm:text-base">
+            <div class="mb-4 p-4 rounded bg-blue-600 text-white text-center font-semibold">
                 Você está no seu <strong>primeiro acesso</strong>. Por segurança, defina sua nova senha abaixo.
             </div>
+
+            {{-- Campos de nova senha --}}
+            {{ $this->form->getComponent('new_password')->visible(true) }}
+            {{ $this->form->getComponent('new_password_confirmation')->visible(true) }}
         @endif
 
-        {{-- Formulário --}}
-        {{ $this->form }}
+        <x-filament-panels::form.actions :actions="$this->getCachedFormActions()" :full-width="$this->hasFullWidthFormActions()" />
 
-        {{-- Botão --}}
-        <div class="mt-4">
-            @if ($firstAccess)
-                <x-filament::button wire:click="saveNewPassword" class="w-full text-lg sm:text-xl py-2 sm:py-3">
-                    Salvar nova senha
-                </x-filament::button>
-            @else
-                <x-filament::button type="submit" class="w-full text-lg sm:text-xl py-2 sm:py-3">
-                    Entrar
-                </x-filament::button>
-            @endif
-        </div>
+    </x-filament-panels::form>
 
-        {{-- Rodapé --}}
-        <p class="text-gray-400 text-xs sm:text-sm mt-6 text-center">
-            © {{ date('Y') }} Boqueirão Remates. Todos os direitos reservados.
-        </p>
-    </div>
+    {{-- Hook depois do formulário --}}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::auth.login.form.after') }}
 </x-filament-panels::page.simple>
