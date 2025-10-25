@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-
+                    {{dd($animal->current_bid)}}
                     <!-- Card de lance -->
                     <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
                         <h3 class="text-xl font-bold mb-4">Dar lance</h3>
