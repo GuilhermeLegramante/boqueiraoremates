@@ -46,6 +46,7 @@ class Event extends Model
             ->withPivot([
                 'name',
                 'situation',
+                'order',
                 'lot_number',
                 'min_value',
                 'final_value',

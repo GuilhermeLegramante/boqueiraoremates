@@ -47,6 +47,10 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Número do Lote')
                     ->required(),
 
+                TextInput::make('order')
+                    ->label('Ordem do Lote')
+                    ->numeric(),
+
                 Money::make('min_value')
                     ->label('Lance Mínimo')
                     ->required(),
@@ -181,6 +185,7 @@ class AnimalsRelationManager extends RelationManager
                             'animal_id'       => $record->id,
                             'name'            => $record->pivot->name,
                             'situation'       => $record->pivot->situation,
+                            'order'           => $record->pivot->order,
                             'lot_number'      => $record->pivot->lot_number,
                             'min_value'       => $record->pivot->min_value,
                             'increment_value' => $record->pivot->increment_value,
@@ -206,6 +211,7 @@ class AnimalsRelationManager extends RelationManager
                         $event->animals()->updateExistingPivot($record->id, [
                             'name'            => $data['name'],
                             'situation'       => $data['situation'],
+                            'order'           => $data['order'],
                             'lot_number'      => $data['lot_number'],
                             'min_value'       => $data['min_value'],
                             'increment_value' => $data['increment_value'],
@@ -252,9 +258,14 @@ class AnimalsRelationManager extends RelationManager
                 ->label('Situação do Animal (inteiro, castrado, etc.)')
                 ->maxLength(255),
 
+
             TextInput::make('lot_number')
                 ->label('Número do Lote')
                 ->required(),
+
+            TextInput::make('order')
+                ->label('Ordem do Lote')
+                ->numeric(),
 
             TextInput::make('min_value')
                 ->prefix('R$')
@@ -339,6 +350,7 @@ class AnimalsRelationManager extends RelationManager
         $event->animals()->attach($data['animal_id'], collect($data)->only([
             'name',
             'situation',
+            'order',
             'lot_number',
             'min_value',
             'final_value',
@@ -370,6 +382,7 @@ class AnimalsRelationManager extends RelationManager
         $pivot->update(collect($data)->only([
             'name',
             'situation',
+            'order',
             'lot_number',
             'min_value',
             'final_value',

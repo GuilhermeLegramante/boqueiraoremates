@@ -20,6 +20,7 @@ class AnimalController extends Controller
                 'id',
                 'name',
                 'situation',
+                'order',
                 'lot_number',
                 'min_value',
                 'increment_value',

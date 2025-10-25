@@ -72,6 +72,7 @@ class Animal extends Model
                 'id',
                 'name',
                 'situation',
+                'order',
                 'lot_number',
                 'min_value',
                 'final_value',
