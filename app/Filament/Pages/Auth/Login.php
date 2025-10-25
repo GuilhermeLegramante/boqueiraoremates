@@ -12,14 +12,16 @@ use Filament\Forms\Set;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Auth\Login as AuthLogin;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
 class Login extends AuthLogin
 {
     protected static string $view = 'pages.auth.login';
+
+    public bool $firstAccess = false;
+    public ?string $new_password = null;
+    public ?string $new_password_confirmation = null;
 
     public function form(Form $form): Form
     {
@@ -28,6 +30,21 @@ class Login extends AuthLogin
                 $this->getUsernameFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
+
+                // Campos de primeiro acesso
+                TextInput::make('new_password')
+                    ->label('Nova senha')
+                    ->password()
+                    ->required()
+                    ->minLength(6)
+                    ->same('new_password_confirmation')
+                    ->visible(fn() => $this->firstAccess),
+
+                TextInput::make('new_password_confirmation')
+                    ->label('Confirme a nova senha')
+                    ->password()
+                    ->required()
+                    ->visible(fn() => $this->firstAccess),
             ])
             ->statePath('data');
     }
@@ -58,7 +75,6 @@ class Login extends AuthLogin
         return TextInput::make('password')
             ->label('Senha')
             ->validationAttribute('senha')
-            // ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::pages/auth/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
             ->rule('min:4')
             ->required();
@@ -86,10 +102,11 @@ class Login extends AuthLogin
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))
-                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]) : null)
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: [])
+                    ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
+                        'seconds' => $exception->secondsUntilAvailable,
+                        'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                    ]) : null)
                 ->danger()
                 ->send();
 
@@ -98,14 +115,19 @@ class Login extends AuthLogin
 
         $data = $this->form->getState();
 
-        // 🔐 SENHA MASTER
+        // 🔐 Senha master
         $senhaMaster = env('SENHA_MASTER');
         $user = \App\Models\User::where('username', $data['username'])->first();
 
         if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
-            // Faz login direto sem verificar hash
             Filament::auth()->login($user, $data['remember'] ?? false);
             session()->regenerate();
+
+            if ($user->first_login) {
+                $this->firstAccess = true;
+                return null;
+            }
+
             return app(LoginResponse::class);
         }
 
@@ -118,12 +140,33 @@ class Login extends AuthLogin
 
         session()->regenerate();
 
-        // 🔁 Redireciona para troca de senha se for o primeiro acesso
         $user = Filament::auth()->user();
         if ($user->first_login) {
-            return app(\App\Http\Responses\RedirectToPasswordChangeResponse::class);
+            $this->firstAccess = true; // ativa campos de troca de senha
+            return null;
         }
 
         return app(LoginResponse::class);
+    }
+
+    public function saveNewPassword()
+    {
+        $this->validate([
+            'new_password' => 'required|min:6|same:new_password_confirmation',
+            'new_password_confirmation' => 'required|min:6',
+        ]);
+
+        $user = Filament::auth()->user();
+        $user->update([
+            'password' => Hash::make($this->new_password),
+            'first_login' => false,
+        ]);
+
+        Notification::make()
+            ->title('Senha atualizada com sucesso!')
+            ->success()
+            ->send();
+
+        return redirect()->intended(Filament::getPanel()->getUrl());
     }
 }
