@@ -177,15 +177,18 @@ class AnimalsRelationManager extends RelationManager
                     ->form(fn() => $this->getLoteForm()) // <-- reutiliza o formulário centralizado
                     ->mountUsing(function ($form, $record) {
                         $pivot = $record->pivot;
+
+                        // preenche com os dados do pivot (o lote correto)
                         $form->fill([
-                            'pivot_id'   => $pivot->id,
-                            'animal_id'  => $record->id,
-                            'name'       => $pivot->name,
-                            'situation'  => $pivot->situation,
-                            'lot_number' => $pivot->lot_number,
-                            'min_value'  => $pivot->min_value,
+                            'pivot_id'        => $pivot->id,
+                            'animal_id'       => $pivot->animal_id, // <- aqui pega do pivot, não do record
+                            'name'            => $pivot->name,
+                            'situation'       => $pivot->situation,
+                            'lot_number'      => $pivot->lot_number,
+                            'min_value'       => $pivot->min_value,
                             'increment_value' => $pivot->increment_value,
                             'target_value'    => $pivot->target_value,
+                            'final_value'     => $pivot->final_value,
                             'status'          => $pivot->status,
                             'photo'           => $pivot->photo,
                             'photo_full'      => $pivot->photo_full,
@@ -193,6 +196,7 @@ class AnimalsRelationManager extends RelationManager
                             'video_link'      => $pivot->video_link,
                         ]);
                     })
+
                     ->action(function ($record, $data) {
                         $pivotId = $data['pivot_id'];
 
