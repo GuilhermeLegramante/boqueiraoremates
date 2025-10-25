@@ -174,7 +174,7 @@
                             firstAccessFields.style.opacity = 0;
 
                             formError.textContent =
-                                'Existem dados faltando. Entre em contato com o suporte.';
+                                'Para sua segurança, precisamos de informações adicionais. Entre em contato com o suporte para concluir o acesso.';
                             formError.classList.remove('hidden');
                             return;
                         }
