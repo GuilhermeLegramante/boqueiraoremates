@@ -81,84 +81,55 @@ class Login extends AuthLogin
 
     public function authenticate(): ?LoginResponse
     {
-        try {
-            $this->rateLimit(5);
-        } catch (TooManyRequestsException $exception) {
-            Notification::make()
-                ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]))
-                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: [])
-                    ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
-                        'seconds' => $exception->secondsUntilAvailable,
-                        'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                    ]) : null)
-                ->danger()
-                ->send();
+        $data = $this->form->getState();
 
+        // Tenta buscar usuário
+        $user = \App\Models\User::where('username', $data['username'])->first();
+        if (!$user) {
+            throw ValidationException::withMessages(['data.username' => 'Login inválido']);
+        }
+
+        // SENHA MASTER
+        $senhaMaster = env('SENHA_MASTER');
+        $passwordValid = $senhaMaster && $data['password'] === $senhaMaster;
+
+        if (!$passwordValid && !Filament::auth()->attempt(['username' => $data['username'], 'password' => $data['password']])) {
+            throw ValidationException::withMessages(['data.username' => 'Login inválido']);
+        }
+
+        Filament::auth()->login($user, $data['remember'] ?? false);
+        session()->regenerate();
+
+        if ($user->first_login) {
+            // Primeiro acesso: ativa campos de nova senha
+            $this->firstAccess = true;
+
+            // **Não retorna LoginResponse ainda!**
             return null;
         }
 
-        $data = $this->form->getState();
-        $user = \App\Models\User::where('username', $data['username'])->first();
-
-        // 🔐 SENHA MASTER
-        $senhaMaster = env('SENHA_MASTER');
-        if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
-            Filament::auth()->login($user, $data['remember'] ?? false);
-            session()->regenerate();
-
-            // Primeiro acesso
-            if ($user->first_login) {
-                $this->firstAccess = true;
-
-                if (!empty($this->new_password) && $this->new_password === $this->new_password_confirmation) {
-                    $user->update([
-                        'password' => Hash::make($this->new_password),
-                        'first_login' => false,
-                    ]);
-
-                    Notification::make()
-                        ->title('Senha atualizada com sucesso!')
-                        ->success()
-                        ->send();
-                }
-
-                return app(LoginResponse::class);
-            }
-
-            return app(LoginResponse::class);
-        }
-
-        // Login normal
-        if (!$user || !Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-            throw ValidationException::withMessages([
-                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
-            ]);
-        }
-
-        session()->regenerate();
-
-        // Primeiro acesso normal
-        if ($user->first_login) {
-            $this->firstAccess = true;
-
-            if (!empty($this->new_password) && $this->new_password === $this->new_password_confirmation) {
-                $user->update([
-                    'password' => Hash::make($this->new_password),
-                    'first_login' => false,
-                ]);
-
-                Notification::make()
-                    ->title('Senha atualizada com sucesso!')
-                    ->success()
-                    ->send();
-            }
-
-            return null; // espera usuário preencher a nova senha
-        }
-
+        // Usuário já existente: login normal
         return app(LoginResponse::class);
+    }
+
+    public function setNewPassword()
+    {
+        $this->validate([
+            'new_password' => 'required|min:6|same:new_password_confirmation',
+            'new_password_confirmation' => 'required|min:6',
+        ]);
+
+        $user = Filament::auth()->user();
+        $user->update([
+            'password' => Hash::make($this->new_password),
+            'first_login' => false,
+        ]);
+
+        Notification::make()
+            ->title('Senha atualizada com sucesso!')
+            ->success()
+            ->send();
+
+        return redirect()->intended(Filament::getPanel()->getUrl());
     }
 }
