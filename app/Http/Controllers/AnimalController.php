@@ -19,6 +19,7 @@ class AnimalController extends Controller
             ->withPivot([
                 'id',
                 'name',
+                'situation',
                 'lot_number',
                 'min_value',
                 'increment_value',

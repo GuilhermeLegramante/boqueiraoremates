@@ -246,6 +246,10 @@ class AnimalsRelationManager extends RelationManager
                 ->required()
                 ->maxLength(255),
 
+            TextInput::make('situation')
+                ->label('Situação do Animal (inteiro, castrado, etc.)')
+                ->maxLength(255),
+
             TextInput::make('lot_number')
                 ->label('Número do Lote')
                 ->required(),
@@ -332,6 +336,7 @@ class AnimalsRelationManager extends RelationManager
 
         $event->animals()->attach($data['animal_id'], collect($data)->only([
             'name',
+            'situation',
             'lot_number',
             'min_value',
             'final_value',
@@ -361,6 +366,8 @@ class AnimalsRelationManager extends RelationManager
         }
 
         $pivot->update(collect($data)->only([
+            'name',
+            'situation',
             'lot_number',
             'min_value',
             'final_value',

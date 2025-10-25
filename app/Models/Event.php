@@ -45,6 +45,7 @@ class Event extends Model
         return $this->belongsToMany(Animal::class, 'animal_event')
             ->withPivot([
                 'name',
+                'situation',
                 'lot_number',
                 'min_value',
                 'final_value',
