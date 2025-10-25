@@ -10,7 +10,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $events = Event::where('published', 1)->whereNotNull('banner')->get();
+        $events = Event::where('published', 1)
+                        ->whereNotNull('banner')
+                        ->orderBy('start_date')
+                        ->get();
 
         return view('site.home', compact('events'));
     }
