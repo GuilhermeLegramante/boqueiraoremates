@@ -63,7 +63,8 @@ class LoginController extends Controller
 
         $input = $request->username;
 
-        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $input) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $input))) {
+        // Detecta CPF
+        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $input)) {
             $normalizedUsername = preg_replace('/\D/', '', $input);
             $user = User::whereRaw(
                 "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
@@ -73,15 +74,39 @@ class LoginController extends Controller
             $user = User::where('username', $input)->first();
         }
 
-        if (!$user || !$user->first_login) {
+        if (!$user) {
+            return response()->json([
+                'first_login' => false,
+                'message' => 'Usuário não encontrado.'
+            ]);
+        }
+
+        if (!$user->first_login) {
             return response()->json(['first_login' => false]);
         }
 
         $client = Client::where('registered_user_id', $user->id)->first();
-        if (!$client) return response()->json(['first_login' => false]);
 
-        $correctMother = $client->mother;
+        if (!$client) {
+            return response()->json([
+                'first_login' => false,
+                'message' => 'Cliente não encontrado.'
+            ]);
+        }
+
+        $correctMother = trim($client->mother);
+
+        if (!$correctMother) {
+            return response()->json([
+                'first_login' => false,
+                'message' => 'Não há registro do nome da mãe cadastrado para este usuário.'
+            ]);
+        }
+
+        // Pega 4 mothers aleatórias válidas
         $otherMothers = Client::where('id', '!=', $client->id)
+            ->whereNotNull('mother')
+            ->whereRaw("TRIM(mother) != ''")
             ->inRandomOrder()
             ->limit(4)
             ->pluck('mother')
