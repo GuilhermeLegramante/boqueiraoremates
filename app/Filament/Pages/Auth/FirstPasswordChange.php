@@ -10,10 +10,9 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 
-class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
+class FirstPasswordChange extends Login
 {
     use Forms\Concerns\InteractsWithForms;
-    // use HasLogo;
 
     protected static string $view = 'filament.pages.first-password-change';
 
