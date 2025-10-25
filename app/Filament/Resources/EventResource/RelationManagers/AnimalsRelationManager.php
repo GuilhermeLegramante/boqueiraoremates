@@ -261,8 +261,6 @@ class AnimalsRelationManager extends RelationManager
                 ->label('Número do Lote')
                 ->required(),
 
-
-
             TextInput::make('min_value')
                 ->prefix('R$')
                 ->numeric()
@@ -309,12 +307,6 @@ class AnimalsRelationManager extends RelationManager
                 ->preserveFilenames()
                 ->nullable(),
 
-            // TinyEditor::make('note')
-            //     ->label('Comentário')
-            //     ->profile('default|simple|full|minimal|none|custom')
-            //     ->rtl() // Set RTL or use ->direction('auto|rtl|ltr')
-            //     ->columnSpan('full')
-            //     ->maxLength(65535),
             RichEditor::make('note')
                 ->label('Comentário')
                 ->columnSpanFull()
@@ -375,20 +367,23 @@ class AnimalsRelationManager extends RelationManager
             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
         }
 
-        $pivot->update(collect($data)->only([
-            'name',
-            'situation',
-            'order',
-            'lot_number',
-            'min_value',
-            'final_value',
-            'increment_value',
-            'target_value',
-            'status',
-            'photo',
-            'photo_full',
-            'note',
-            'video_link',
-        ])->toArray());
+        DB::table('animal_event')
+            ->where('event_id', $record->pivot->event_id)
+            ->where('animal_id', $record->pivot->animal_id)
+            ->update(collect($data)->only([
+                'name',
+                'situation',
+                'order',
+                'lot_number',
+                'min_value',
+                'final_value',
+                'increment_value',
+                'target_value',
+                'status',
+                'photo',
+                'photo_full',
+                'note',
+                'video_link',
+            ])->toArray());
     }
 }
