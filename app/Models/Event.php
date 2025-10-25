@@ -43,25 +43,24 @@ class Event extends Model
     public function animals()
     {
         return $this->belongsToMany(Animal::class, 'animal_event')
+            ->using(AnimalEvent::class)  // usa a model do pivot
             ->withPivot([
-                'id',
                 'name',
                 'situation',
-                'order',
                 'lot_number',
                 'min_value',
-                'final_value',
                 'increment_value',
                 'target_value',
+                'final_value',
                 'status',
                 'photo',
                 'photo_full',
                 'note',
                 'video_link',
             ])
-            ->orderByPivot('lot_number')
             ->withTimestamps();
     }
+
 
     public function getNameAttribute($value)
     {

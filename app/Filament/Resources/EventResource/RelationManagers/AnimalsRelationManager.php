@@ -2,132 +2,57 @@
 
 namespace App\Filament\Resources\EventResource\RelationManagers;
 
-use AmidEsfahani\FilamentTinyEditor\TinyEditor;
 use App\Models\Animal;
+use App\Models\AnimalEvent;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\DB;
 use Leandrocfe\FilamentPtbrFormFields\Money;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
-use pxlrbt\FilamentExcel\Exports\ExcelExport;
 
 class AnimalsRelationManager extends RelationManager
 {
     protected static string $relationship = 'animals';
 
     protected static ?string $title = 'Lotes';
-
     protected static ?string $label = 'Lote';
-
     protected static ?string $pluralLabel = 'Lotes';
 
     public function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Select::make('animal_id')
-                    ->label('Animal')
-                    ->options(fn() => Animal::query()
-                        ->orderBy('name')
-                        ->pluck('name', 'id'))
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-
-                TextInput::make('lot_number')
-                    ->label('Número do Lote')
-                    ->required(),
-
-                Money::make('min_value')
-                    ->label('Lance Mínimo')
-                    ->required(),
-
-                Money::make('final_value')
-                    ->label('Valor Final')
-                    ->nullable(),
-
-                Money::make('increment_value')
-                    ->label('Valor do Incremento')
-                    ->nullable(),
-
-                Money::make('target_value')
-                    ->label('Lance Alvo')
-                    ->nullable(),
-
-                Select::make('status')
-                    ->label('Status')
-                    ->options([
-                        'disponivel' => 'Disponível',
-                        'reservado'  => 'Reservado',
-                        'vendido'    => 'Vendido',
-                    ])
-                    ->default('disponivel'),
-
-                FileUpload::make('photo')
-                    ->label('Foto Miniatura')
-                    ->image()
-                    ->directory('animals/photos')
-                    ->visibility('public')
-                    ->dehydrated(true)
-                    ->nullable(),
-
-                FileUpload::make('photo_full')
-                    ->label('Foto Grande')
-                    ->image()
-                    ->directory('animals/photos_full')
-                    ->visibility('public')
-                    ->dehydrated(true)
-                    ->nullable(),
-
-                Textarea::make('note')
-                    ->label('Comentário')
-                    ->rows(4)
-                    ->columnSpanFull()
-                    ->nullable(),
-
-                TextInput::make('video_link')
-                    ->label('Link do Vídeo')
-                    ->url()
-                    ->columnSpanFull()
-                    ->nullable(),
-            ]);
+            ->schema($this->getLoteForm());
     }
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('pivot.photo')
+                Tables\Columns\ImageColumn::make('photo')
                     ->label('Foto')
                     ->square(),
 
-                Tables\Columns\TextColumn::make('pivot.name')
+                Tables\Columns\TextColumn::make('animal.name')
                     ->label('Animal')
-                    ->sortable(query: function ($query, string $direction) {
-                        $query->orderBy('animal_event.name', $direction); // <-- nome da tabela pivot
-                    })
-                    ->searchable(query: function ($query, string $search) {
-                        $query->where('animal_event.name', 'like', "%{$search}%");
-                    }),
+                    ->sortable()
+                    ->searchable(),
 
-                Tables\Columns\TextColumn::make('pivot.lot_number')
+                Tables\Columns\TextColumn::make('lot_number')
                     ->label('Lote')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('pivot.min_value')
+                Tables\Columns\TextColumn::make('min_value')
                     ->label('Lance Mínimo')
                     ->money('BRL'),
 
-                Tables\Columns\TextColumn::make('pivot.status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->colors([
@@ -135,70 +60,15 @@ class AnimalsRelationManager extends RelationManager
                         'warning' => 'reservado',
                         'danger'  => 'vendido',
                     ]),
-
-                Tables\Columns\SelectColumn::make('pivot.status')
-                    ->label('Status')
-                    ->options([
-                        'disponivel' => 'Disponível',
-                        'reservado'  => 'Reservado',
-                        'vendido'    => 'Vendido',
-                    ])
-                    ->selectablePlaceholder(false)
-                    ->getStateUsing(fn($record) => $record->pivot?->status)
-                    ->updateStateUsing(function ($state, $record) {
-                        if ($record->pivot) {
-                            DB::table('animal_event') // <-- coloque o nome real da tabela pivot aqui
-                                ->where('id', $record->pivot->id)
-                                ->update(['status' => $state]);
-                        }
-                    })
-                // ->badge()
-                // ->colors([
-                //     'success' => 'disponivel',
-                //     'warning' => 'reservado',
-                //     'danger'  => 'vendido',
-                // ])
             ])
             ->filters([])
-
             ->headerActions([
                 Tables\Actions\CreateAction::make('criarLote')
                     ->label('Adicionar Lote ao Evento')
-                    ->icon('heroicon-o-plus')
                     ->form(fn() => $this->getLoteForm())
-                    ->action(fn($data) => $this->saveLote($data))
-                    ->successNotificationTitle('Lote criado com sucesso!'),
-            ])
+                    ->action(function ($data) {
+                        $event = $this->getOwnerRecord();
 
-            ->actions([
-                Tables\Actions\EditAction::make('editarLote')
-                    ->label('Editar Lote')
-                    ->icon('heroicon-o-pencil')
-                    ->form(fn() => $this->getLoteForm()) // reutiliza o formulário centralizado
-                    ->mountUsing(function ($form, $record) {
-                        // Pega o pivot da linha clicada
-                        $pivot = $record->pivot;
-
-                        if (!$pivot) return;
-
-                        $form->fill([
-                            'pivot_id'        => $pivot->id,      // Hidden field
-                            'animal_id'       => $record->id,     // ID do animal
-                            'name'            => $pivot->name,
-                            'situation'       => $pivot->situation,
-                            'lot_number'      => $pivot->lot_number,
-                            'min_value'       => $pivot->min_value,
-                            'increment_value' => $pivot->increment_value,
-                            'target_value'    => $pivot->target_value,
-                            'final_value'     => $pivot->final_value,
-                            'status'          => $pivot->status,
-                            'photo'           => $pivot->photo,
-                            'photo_full'      => $pivot->photo_full,
-                            'note'            => $pivot->note,
-                            'video_link'      => $pivot->video_link,
-                        ]);
-                    })
-                    ->action(function ($record, $data) {
                         // Tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
@@ -207,39 +77,76 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // Tratar campos numéricos: vírgula -> ponto e string vazia -> null
-                        $minValue       = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
-                        $incrementValue = $data['increment_value'] !== '' ? str_replace(',', '.', $data['increment_value']) : null;
-                        $targetValue    = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
+                        $event->animals()->attach($data['animal_id'], collect($data)->only([
+                            'name',
+                            'situation',
+                            'lot_number',
+                            'min_value',
+                            'increment_value',
+                            'target_value',
+                            'final_value',
+                            'status',
+                            'photo',
+                            'photo_full',
+                            'note',
+                            'video_link',
+                        ])->toArray());
+                    }),
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make('editarLote')
+                    ->label('Editar Lote')
+                    ->form(fn() => $this->getLoteForm())
+                    ->mountUsing(function ($form, AnimalEvent $record) {
+                        // Agora $record é o pivot correto
+                        $form->fill([
+                            'pivot_id'        => $record->id,
+                            'animal_id'       => $record->animal_id,
+                            'name'            => $record->name,
+                            'situation'       => $record->situation,
+                            'lot_number'      => $record->lot_number,
+                            'min_value'       => $record->min_value,
+                            'increment_value' => $record->increment_value,
+                            'target_value'    => $record->target_value,
+                            'final_value'     => $record->final_value,
+                            'status'          => $record->status,
+                            'photo'           => $record->photo,
+                            'photo_full'      => $record->photo_full,
+                            'note'            => $record->note,
+                            'video_link'      => $record->video_link,
+                        ]);
+                    })
+                    ->action(function (AnimalEvent $record, array $data) {
+                        // Tratar uploads
+                        if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
+                            $data['photo'] = $data['photo']->store('animals/photos', 'public');
+                        }
+                        if (isset($data['photo_full']) && $data['photo_full'] instanceof \Illuminate\Http\UploadedFile) {
+                            $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
+                        }
 
-                        // Atualiza o pivot correto pelo pivot_id
-                        DB::table('animal_event')
-                            ->where('id', $data['pivot_id'])
-                            ->update([
-                                'animal_id'       => $data['animal_id'],
-                                'name'            => $data['name'],
-                                'situation'       => $data['situation'],
-                                'lot_number'      => $data['lot_number'],
-                                'min_value'       => $minValue,
-                                'increment_value' => $incrementValue,
-                                'target_value'    => $targetValue,
-                                'final_value'     => $data['final_value'] ?? null,
-                                'status'          => $data['status'],
-                                'photo'           => $data['photo'] ?? $record->pivot->photo,
-                                'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
-                                'note'            => $data['note'] ?? null,
-                                'video_link'      => $data['video_link'] ?? null,
-                            ]);
+                        $record->update(collect($data)->only([
+                            'animal_id',
+                            'name',
+                            'situation',
+                            'lot_number',
+                            'min_value',
+                            'increment_value',
+                            'target_value',
+                            'final_value',
+                            'status',
+                            'photo',
+                            'photo_full',
+                            'note',
+                            'video_link',
+                        ])->toArray());
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
-
-
 
                 Tables\Actions\DetachAction::make()
                     ->label('Remover')
                     ->requiresConfirmation(),
             ])
-
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     ExportBulkAction::make()->label('Exportar Selecionados'),
@@ -247,9 +154,6 @@ class AnimalsRelationManager extends RelationManager
             ]);
     }
 
-    /**
-     * 🔹 Formulário do Lote (compartilhado entre Criar e Editar)
-     */
     protected function getLoteForm(): array
     {
         return [
@@ -270,31 +174,14 @@ class AnimalsRelationManager extends RelationManager
                 ->label('Situação do Animal (inteiro, castrado, etc.)')
                 ->maxLength(255),
 
-
             TextInput::make('lot_number')
                 ->label('Número do Lote')
                 ->required(),
 
-            TextInput::make('min_value')
-                ->prefix('R$')
-                ->numeric()
-                ->live()
-                ->debounce(1000)
-                ->label('Lance Mínimo'),
-
-            TextInput::make('increment_value')
-                ->prefix('R$')
-                ->numeric()
-                ->live()
-                ->debounce(1000)
-                ->label('Valor do Incremento'),
-
-            TextInput::make('target_value')
-                ->prefix('R$')
-                ->numeric()
-                ->live()
-                ->debounce(1000)
-                ->label('Lance Alvo'),
+            Money::make('min_value')->label('Lance Mínimo')->required(),
+            Money::make('increment_value')->label('Valor do Incremento')->nullable(),
+            Money::make('target_value')->label('Lance Alvo')->nullable(),
+            Money::make('final_value')->label('Valor Final')->nullable(),
 
             Select::make('status')
                 ->label('Status')
@@ -305,98 +192,10 @@ class AnimalsRelationManager extends RelationManager
                 ])
                 ->default('disponivel'),
 
-            FileUpload::make('photo')
-                ->label('Foto (Miniatura)')
-                ->image()
-                ->directory('animals/photos')
-                ->visibility('public')
-                ->preserveFilenames()
-                ->nullable(),
-
-            FileUpload::make('photo_full')
-                ->label('Foto (Grande)')
-                ->image()
-                ->directory('animals/photos_full')
-                ->visibility('public')
-                ->preserveFilenames()
-                ->nullable(),
-
-            RichEditor::make('note')
-                ->label('Comentário')
-                ->columnSpanFull()
-                ->maxLength(65535),
-
-            TextInput::make('video_link')
-                ->label('Link do Vídeo')
-                ->url()
-                ->placeholder('https://youtube.com/...')
-                ->columnSpanFull(),
+            FileUpload::make('photo')->label('Foto (Miniatura)')->image()->directory('animals/photos')->nullable(),
+            FileUpload::make('photo_full')->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
+            RichEditor::make('note')->label('Comentário')->nullable(),
+            TextInput::make('video_link')->label('Link do Vídeo')->url()->nullable(),
         ];
-    }
-
-    /**
-     * 🔹 Cria o Lote (pivot attach)
-     */
-    protected function saveLote(array $data): void
-    {
-        $event = $this->getOwnerRecord();
-
-        if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
-            $data['photo'] = $data['photo']->store('animals/photos', 'public');
-        }
-
-        if (isset($data['photo_full']) && $data['photo_full'] instanceof \Illuminate\Http\UploadedFile) {
-            $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
-        }
-
-        $event->animals()->attach($data['animal_id'], collect($data)->only([
-            'name',
-            'situation',
-            'order',
-            'lot_number',
-            'min_value',
-            'final_value',
-            'increment_value',
-            'target_value',
-            'status',
-            'photo',
-            'photo_full',
-            'note',
-            'video_link',
-        ])->toArray());
-    }
-
-    /**
-     * 🔹 Atualiza o Lote (pivot update)
-     */
-    protected function updateLote($record, array $data): void
-    {
-        $pivot = $record->pivot;
-
-        if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
-            $data['photo'] = $data['photo']->store('animals/photos', 'public');
-        }
-
-        if (isset($data['photo_full']) && $data['photo_full'] instanceof \Illuminate\Http\UploadedFile) {
-            $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
-        }
-
-        DB::table('animal_event')
-            ->where('id', $record->pivot->id)
-            ->update(collect($data)->only([
-                'name',
-                'situation',
-                'order',
-                'lot_number',
-                'min_value',
-                'final_value',
-                'increment_value',
-                'target_value',
-                'status',
-                'photo',
-                'photo_full',
-                'note',
-                'video_link',
-            ])->toArray());
     }
 }

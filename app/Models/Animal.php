@@ -68,21 +68,20 @@ class Animal extends Model
     public function events()
     {
         return $this->belongsToMany(Event::class, 'animal_event')
+            ->using(AnimalEvent::class)  // usa a model do pivot
             ->withPivot([
-                'id',
                 'name',
                 'situation',
-                'order',
                 'lot_number',
                 'min_value',
-                'final_value',
-                'target_value',
                 'increment_value',
+                'target_value',
+                'final_value',
                 'status',
                 'photo',
                 'photo_full',
                 'note',
-                'video_link'
+                'video_link',
             ])
             ->withTimestamps();
     }
