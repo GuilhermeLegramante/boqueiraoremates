@@ -3,7 +3,8 @@
 @section('title', 'Login - Boqueirão Remates')
 
 @section('content')
-    <section class="flex justify-center items-start py-16 bg-gray-100 min-h-screen">
+
+    <section class="flex mt-8 justify-center items-start py-16 bg-gray-100 min-h-screen">
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md flex flex-col overflow-auto">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
 
