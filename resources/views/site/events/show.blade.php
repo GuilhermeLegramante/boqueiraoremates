@@ -5,7 +5,6 @@
 @section('content')
     @include('site.banners')
 
-    @include('site.events.header')
 
     <!-- Breadcrumbs para página do evento -->
     <section class="py-4 px-4 bg-[#003333] text-white">
@@ -68,9 +67,9 @@
                 @endforeach
             </div>
         </div>
-
-
     </section>
+
+    @include('site.events.header')
 
     <!-- Breadcrumbs para página do evento -->
     <section class="py-4 px-4 bg-[#003333] text-white">
