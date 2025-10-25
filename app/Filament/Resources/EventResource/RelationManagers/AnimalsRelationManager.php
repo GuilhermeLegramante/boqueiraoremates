@@ -175,8 +175,9 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Editar Lote')
                     ->icon('heroicon-o-pencil')
                     ->form(fn() => $this->getLoteForm()) // reutiliza o formulário centralizado
-                    ->record(fn($record) => DB::table('animal_event')->where('id', $record->pivot->id)->first()) // garante que o registro pivot correto seja usado
-                    ->mountUsing(function ($form, $pivot) {
+                    ->mountUsing(function ($form, $record) {
+                        $pivot = $record->pivot; // pega o pivot do relacionamento atual
+
                         if (!$pivot) return;
 
                         $form->fill([
@@ -196,10 +197,11 @@ class AnimalsRelationManager extends RelationManager
                             'video_link'      => $pivot->video_link,
                         ]);
                     })
-                    ->action(function ($pivot, $data) {
+                    ->action(function ($record, $data) {
                         $pivotId = $data['pivot_id'];
+                        $pivot = $record->pivot;
 
-                        // Tratar uploads
+                        // uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
                         }
@@ -207,7 +209,6 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // Tratar campos numéricos: vírgula -> ponto e string vazia -> null
                         $minValue       = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
                         $incrementValue = $data['increment_value'] !== '' ? str_replace(',', '.', $data['increment_value']) : null;
                         $targetValue    = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
@@ -232,6 +233,7 @@ class AnimalsRelationManager extends RelationManager
                             ]);
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
+
 
                 Tables\Actions\DetachAction::make()
                     ->label('Remover')
