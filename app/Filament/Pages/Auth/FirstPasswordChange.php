@@ -1,27 +1,29 @@
 <?php
 
-namespace App\Filament\Pages;
+namespace App\Filament\Pages\Auth;
 
-use Filament\Forms;
-use Filament\Pages\Page;
 use Filament\Facades\Filament;
+use Filament\Forms;
+use Filament\Pages\Auth\Concerns\HasLogo;
+use Filament\Pages\Page;
+use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 
 class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
 {
     use Forms\Concerns\InteractsWithForms;
+    // use HasLogo;
 
-    protected static ?string $navigationIcon = null;
-    protected static ?string $title = 'Primeiro Acesso - Boqueirão Remates';
-    protected static string $view = 'filament.pages.first-password-change';
+    protected static string $view = 'filament.pages.auth.first-password-change';
+
+    protected static bool $shouldRegisterNavigation = false; // 🚫 não aparece no menu
+    protected static ?string $title = 'Definir nova senha';
 
     protected static ?string $slug = 'primeiro-acesso';
 
     public ?string $password = '';
     public ?string $password_confirmation = '';
-
-    protected static bool $shouldRegisterNavigation = false;
 
     public function mount(): void
     {
@@ -38,13 +40,13 @@ class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
                 ->rule('min:6')
                 ->same('password_confirmation'),
             Forms\Components\TextInput::make('password_confirmation')
-                ->label('Confirme a nova senha')
+                ->label('Confirme a senha')
                 ->password()
                 ->required(),
         ];
     }
 
-    public function save(): void
+    public function save(): LoginResponse
     {
         $user = Filament::auth()->user();
 
@@ -58,6 +60,6 @@ class FirstPasswordChange extends Page implements Forms\Contracts\HasForms
             ->success()
             ->send();
 
-        $this->redirect(Filament::getUrl());
+        return app(LoginResponse::class);
     }
 }
