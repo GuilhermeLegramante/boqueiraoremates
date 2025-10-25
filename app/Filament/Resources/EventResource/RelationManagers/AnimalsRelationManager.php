@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\EventResource\RelationManagers;
 
 use App\Models\Animal;
+use App\Models\AnimalEvent;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Forms\Components\TextInput;
@@ -43,9 +44,7 @@ class AnimalsRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('pivot.lot_number')
                     ->label('Lote')
-                    ->sortable(query: function ($query, $direction) {
-                        $query->orderBy('animal_event.lot_number', $direction);
-                    }),
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.lot_number', $direction)),
 
                 Tables\Columns\TextColumn::make('pivot.min_value')
                     ->label('Lance Mínimo')
@@ -61,7 +60,6 @@ class AnimalsRelationManager extends RelationManager
                     ]),
             ])
             ->filters([])
-            ->defaultSort('pivot.lot_number', 'asc') // apenas para exibição inicial
             ->headerActions([
                 Tables\Actions\CreateAction::make('criarLote')
                     ->label('Adicionar Lote ao Evento')
@@ -77,23 +75,20 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // Cria ou atualiza pivot (evita duplicidade)
-                        $event->animals()->syncWithoutDetaching([
-                            $data['animal_id'] => collect($data)->only([
-                                'name',
-                                'situation',
-                                'lot_number',
-                                'min_value',
-                                'increment_value',
-                                'target_value',
-                                'final_value',
-                                'status',
-                                'photo',
-                                'photo_full',
-                                'note',
-                                'video_link',
-                            ])->toArray()
-                        ]);
+                        $event->animals()->attach($data['animal_id'], collect($data)->only([
+                            'name',
+                            'situation',
+                            'lot_number',
+                            'min_value',
+                            'increment_value',
+                            'target_value',
+                            'final_value',
+                            'status',
+                            'photo',
+                            'photo_full',
+                            'note',
+                            'video_link',
+                        ])->toArray());
                     }),
             ])
             ->actions([
@@ -101,11 +96,11 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Editar Lote')
                     ->form(fn() => $this->getLoteForm())
                     ->mountUsing(function ($form, $record) {
-                        dd($record->pivot->id);
                         $pivot = $record->pivot;
                         if (!$pivot) return;
 
                         $form->fill([
+                            'pivot_id'        => $pivot->id, // ID do animal_event
                             'animal_id'       => $record->id,
                             'name'            => $pivot->name,
                             'situation'       => $pivot->situation,
@@ -122,7 +117,8 @@ class AnimalsRelationManager extends RelationManager
                         ]);
                     })
                     ->action(function ($record, array $data) {
-                        $event = $this->getOwnerRecord();
+                        $animalEvent = AnimalEvent::find($data['pivot_id']);
+                        if (!$animalEvent) return;
 
                         // Tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
@@ -132,8 +128,9 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // Atualiza o pivot
-                        $event->animals()->updateExistingPivot($data['animal_id'], collect($data)->only([
+                        // Atualiza o pivot correto
+                        $animalEvent->update(collect($data)->only([
+                            'animal_id',
                             'name',
                             'situation',
                             'lot_number',
@@ -164,6 +161,8 @@ class AnimalsRelationManager extends RelationManager
     protected function getLoteForm(): array
     {
         return [
+            Forms\Components\Hidden::make('pivot_id')->required(),
+
             Select::make('animal_id')
                 ->label('Animal')
                 ->options(fn() => Animal::orderBy('name')->pluck('name', 'id'))
