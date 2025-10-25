@@ -68,7 +68,7 @@
                             </button>
                         </form>
                     @else
-                        <a href="{{ route('filament.admin.auth.login') }}"
+                        <a href="{{ route('login') }}"
                             class="px-3 py-1 text-xs font-semibold bg-yellow-500 text-black rounded-md hover:bg-yellow-600 transition">
                             Login
                         </a>
@@ -138,7 +138,7 @@
                     </button>
                 </form>
             @else
-                <a href="{{ route('filament.admin.auth.login') }}"
+                <a href="{{ route('login') }}"
                     class="px-4 py-2 bg-yellow-500 rounded-md text-black hover:bg-yellow-600 transition">
                     Login
                 </a>
