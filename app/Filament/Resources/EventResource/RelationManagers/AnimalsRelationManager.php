@@ -176,16 +176,20 @@ class AnimalsRelationManager extends RelationManager
                     ->icon('heroicon-o-pencil')
                     ->form(fn() => [
                         Forms\Components\Hidden::make('pivot_id')->required(),
+
                         Forms\Components\Select::make('animal_id')
                             ->label('Animal')
                             ->options(fn() => \App\Models\Animal::pluck('name', 'id')->toArray())
                             ->required(),
+
                         Forms\Components\TextInput::make('name')->label('Nome')->required(),
                         Forms\Components\TextInput::make('situation')->label('Situação'),
                         Forms\Components\TextInput::make('lot_number')->label('Número do Lote')->required(),
+
                         Forms\Components\TextInput::make('min_value')->label('Valor Mínimo'),
                         Forms\Components\TextInput::make('increment_value')->label('Valor Incremento'),
                         Forms\Components\TextInput::make('target_value')->label('Valor Alvo'),
+
                         Forms\Components\Select::make('status')
                             ->label('Status')
                             ->options([
@@ -193,8 +197,10 @@ class AnimalsRelationManager extends RelationManager
                                 'reservado'  => 'Reservado',
                                 'vendido'    => 'Vendido',
                             ]),
+
                         Forms\Components\FileUpload::make('photo')->label('Foto Mini'),
                         Forms\Components\FileUpload::make('photo_full')->label('Foto Completa'),
+
                         Forms\Components\Textarea::make('note')->label('Observações'),
                         Forms\Components\TextInput::make('video_link')->label('Link do Vídeo'),
                     ])
@@ -227,15 +233,15 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // Converter campos numéricos
-                        $minValue = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
+                        // Tratar campos numéricos: vírgula -> ponto e string vazia -> null
+                        $minValue       = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
                         $incrementValue = $data['increment_value'] !== '' ? str_replace(',', '.', $data['increment_value']) : null;
-                        $targetValue = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
+                        $targetValue    = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
 
                         DB::table('animal_event')
                             ->where('id', $pivotId)
                             ->update([
-                                'animal_id'       => $data['animal_id'],
+                                'animal_id'       => $data['animal_id'], // se quiser permitir trocar o animal
                                 'name'            => $data['name'],
                                 'situation'       => $data['situation'],
                                 'lot_number'      => $data['lot_number'],
@@ -250,6 +256,7 @@ class AnimalsRelationManager extends RelationManager
                             ]);
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
+
 
                 Tables\Actions\DetachAction::make()
                     ->label('Remover')
