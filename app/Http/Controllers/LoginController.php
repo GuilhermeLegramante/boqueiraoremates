@@ -62,8 +62,6 @@ class LoginController extends Controller
         $request->validate(['username' => 'required']);
 
         $input = $request->username;
-
-        // Detecta CPF
         if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $input)) {
             $normalizedUsername = preg_replace('/\D/', '', $input);
             $user = User::whereRaw(
@@ -75,10 +73,7 @@ class LoginController extends Controller
         }
 
         if (!$user) {
-            return response()->json([
-                'first_login' => false,
-                'message' => 'Usuário não encontrado.'
-            ]);
+            return response()->json(['first_login' => false]);
         }
 
         if (!$user->first_login) {
@@ -86,34 +81,30 @@ class LoginController extends Controller
         }
 
         $client = Client::where('registered_user_id', $user->id)->first();
-
         if (!$client) {
+            return response()->json(['first_login' => false]);
+        }
+
+        // Verifica se a mãe está cadastrada
+        if (empty(trim($client->mother ?? ''))) {
             return response()->json([
-                'first_login' => false,
-                'message' => 'Cliente não encontrado.'
+                'first_login' => true,
+                'mother_options' => [],
+                'error' => 'Cliente não possui mãe cadastrada. Entre em contato com o suporte.'
             ]);
         }
 
-        $correctMother = trim($client->mother);
-
-        if (!$correctMother) {
-            return response()->json([
-                'first_login' => false,
-                'message' => 'Não há registro do nome da mãe cadastrado para este usuário.'
-            ]);
-        }
-
-        // Pega 4 mothers aleatórias válidas
+        // Pega 4 mães aleatórias válidas
         $otherMothers = Client::where('id', '!=', $client->id)
             ->whereNotNull('mother')
-            ->whereRaw("TRIM(mother) != ''")
+            ->where('mother', '!=', '')
             ->inRandomOrder()
             ->limit(4)
             ->pluck('mother')
             ->toArray();
 
         $motherOptions = $otherMothers;
-        $motherOptions[] = $correctMother;
+        $motherOptions[] = $client->mother;
         shuffle($motherOptions);
 
         return response()->json([
