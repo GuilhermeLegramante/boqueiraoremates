@@ -9,8 +9,9 @@
 
             <form id="loginForm" class="space-y-5">
                 @csrf
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                {{-- Campo username --}}
+                {{-- Username --}}
                 <div>
                     <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
                     <input type="text" name="username" id="username"
@@ -19,8 +20,8 @@
                     <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campo senha (para login normal) --}}
-                <div id="passwordContainer" class="space-y-2">
+                {{-- Senha --}}
+                <div id="passwordContainer">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
@@ -28,7 +29,7 @@
                     <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campos do primeiro acesso (inicialmente ocultos) --}}
+                {{-- Primeiro acesso --}}
                 <div id="firstAccessFields" class="hidden space-y-4">
                     <div>
                         <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -62,8 +63,6 @@
                         <input type="checkbox" name="remember" class="mr-2">
                         <span>Lembrar-me</span>
                     </label>
-                    <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">Esqueci
-                        minha senha</button>
                 </div>
 
                 <button id="loginBtn" type="submit"
@@ -94,7 +93,7 @@
                 }
             });
 
-            // Verifica se é primeiro acesso via AJAX
+            // Verifica primeiro acesso
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
@@ -105,7 +104,8 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token
+                            'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: JSON.stringify({
                             username
@@ -117,11 +117,7 @@
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
 
-                        // Opções da mãe
-                        const options = data.mother_options || ['Maria das Dores', 'Joana Silva',
-                            'Ana Souza', 'Carla Oliveira', 'Marta Santos'
-                        ];
-                        motherOptions.innerHTML = options.map(name => `
+                        motherOptions.innerHTML = data.mother_options.map(name => `
                     <label class="flex items-center space-x-2 cursor-pointer">
                         <input type="radio" name="mother" value="${name}" required>
                         <span>${name}</span>
@@ -136,7 +132,7 @@
                 }
             });
 
-            // Submit do formulário
+            // Submit
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const formData = new FormData(loginForm);
@@ -152,19 +148,17 @@
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     });
-                    const data = await res.json();
 
-                    if (data.success) {
+                    const data = await res.json();
+                    if (data.success && data.redirect) {
                         window.location.href = data.redirect;
-                    } else {
-                        alert(data.error || 'Erro no login');
+                    } else if (data.error) {
+                        alert(data.error);
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('Erro de comunicação com o servidor.');
                 }
             });
-
         });
     </script>
 @endsection

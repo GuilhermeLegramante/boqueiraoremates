@@ -25,7 +25,7 @@ class LoginController extends Controller
         $usernameInput = trim($request->username);
         $password = $request->password;
 
-        // CPF?
+        // Detecta CPF
         if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $usernameInput) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $usernameInput))) {
             $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
             $user = User::whereRaw(
@@ -37,36 +37,31 @@ class LoginController extends Controller
         }
 
         if (!$user) {
-            if ($request->wantsJson()) {
-                return response()->json(['error' => 'Usuário não encontrado.'], 422);
-            }
-            return back()->withErrors(['username' => 'Usuário não encontrado.']);
+            return $request->wantsJson()
+                ? response()->json(['error' => 'Usuário não encontrado.'], 422)
+                : back()->withErrors(['username' => 'Usuário não encontrado.']);
         }
 
         // Primeiro acesso
         if ($user->first_login) {
-            if ($request->wantsJson()) {
-                return response()->json(['first_login' => true, 'username' => $user->username]);
-            }
-            return back()->with('first_login', true)->with('username', $user->username);
+            return $request->wantsJson()
+                ? response()->json(['first_login' => true, 'username' => $user->username])
+                : back()->with('first_login', true)->with('username', $user->username);
         }
 
         // Senha normal ou master
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
-            if ($request->wantsJson()) {
-                return response()->json(['success' => true, 'redirect' => url('/')]);
-            }
-            return redirect()->intended('/');
+            return $request->wantsJson()
+                ? response()->json(['success' => true, 'redirect' => url('/')])
+                : redirect()->intended('/');
         }
 
-        if ($request->wantsJson()) {
-            return response()->json(['error' => 'Senha incorreta.'], 422);
-        }
-        return back()->withErrors(['password' => 'Senha incorreta.']);
+        return $request->wantsJson()
+            ? response()->json(['error' => 'Senha incorreta.'], 422)
+            : back()->withErrors(['password' => 'Senha incorreta.']);
     }
 
-    // Primeiro acesso: valida nascimento + mãe + nova senha
     public function validateFirstAccess(Request $request)
     {
         $request->validate([
@@ -97,7 +92,6 @@ class LoginController extends Controller
         return response()->json(['success' => true, 'redirect' => url('/')]);
     }
 
-    // Check primeiro login + opções de mãe
     public function checkFirstLogin(Request $request)
     {
         $request->validate(['username' => 'required']);
@@ -113,9 +107,7 @@ class LoginController extends Controller
             $user = User::whereRaw('LOWER(username) = ?', [strtolower($input)])->first();
         }
 
-        if (!$user || !$user->first_login) {
-            return response()->json(['first_login' => false]);
-        }
+        if (!$user || !$user->first_login) return response()->json(['first_login' => false]);
 
         $client = Client::where('registered_user_id', $user->id)->first();
         if (!$client) return response()->json(['first_login' => false]);
