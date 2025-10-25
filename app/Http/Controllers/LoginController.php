@@ -24,7 +24,7 @@ class LoginController extends Controller
             'password' => 'nullable|string',
         ]);
 
-        $username = preg_replace('/\D/', '', $request->username) ?: $request->username;
+        $username = $request->username;
         $password = $request->password;
 
         $user = User::where('username', $username)->first();
