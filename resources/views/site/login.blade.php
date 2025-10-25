@@ -239,5 +239,20 @@
             });
 
         });
+
+        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
+
+        forgotPasswordBtn.addEventListener('click', () => {
+            // Mostra os campos de first access (CPF/usuário, nascimento, mãe, nova senha)
+            firstAccessNotice.classList.remove('hidden');
+            passwordContainer.classList.add('hidden');
+            firstAccessFields.classList.remove('hidden');
+            firstAccessFields.style.opacity = 1;
+
+            // Limpa inputs e erros
+            loginForm.reset();
+            document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add('hidden'));
+            formError.classList.add('hidden');
+        });
     </script>
 @endsection
