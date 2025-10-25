@@ -209,8 +209,8 @@
                     const data = await res.json();
 
                     if (data.success) {
-                        // Redireciona para a rota home após first login ou login normal
-                        window.location.href = '{{ route('home') }}';
+                        // Redireciona para o site externo após login
+                        window.location.href = 'https://sistema.boqueiraoremates.com/site';
                         return;
                     }
 
