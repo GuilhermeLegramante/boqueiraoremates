@@ -39,12 +39,14 @@ class Login extends AuthLogin
                     ->password()
                     ->required(fn() => $this->firstAccess)
                     ->minLength(6)
+                    ->revealable(filament()->arePasswordsRevealable())
                     ->same('new_password_confirmation')
                     ->visible(fn() => $this->firstAccess),
 
                 TextInput::make('new_password_confirmation')
                     ->label('Confirme a nova senha')
                     ->password()
+                    ->revealable(filament()->arePasswordsRevealable())
                     ->required(fn() => $this->firstAccess)
                     ->visible(fn() => $this->firstAccess),
             ])
@@ -75,6 +77,7 @@ class Login extends AuthLogin
             ->label('Senha')
             ->validationAttribute('senha')
             ->password()
+            ->revealable(filament()->arePasswordsRevealable())
             ->rule('min:4')
             ->required();
     }
