@@ -98,11 +98,9 @@ class AnimalsRelationManager extends RelationManager
                     ->mountUsing(function ($form, $record) {
                         // $record é Animal, pegamos o pivot
                         $pivot = $record->pivot;
-
                         if (!$pivot) return;
 
                         $form->fill([
-                            'pivot_id'        => $pivot->id,
                             'animal_id'       => $record->id,
                             'name'            => $pivot->name,
                             'situation'       => $pivot->situation,
@@ -119,9 +117,7 @@ class AnimalsRelationManager extends RelationManager
                         ]);
                     })
                     ->action(function ($record, array $data) {
-                        $pivot = $record->pivot;
-
-                        if (!$pivot) return;
+                        $event = $this->getOwnerRecord(); // Pega o evento atual
 
                         // Tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
@@ -131,8 +127,8 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        $pivot->update(collect($data)->only([
-                            'animal_id',
+                        // Atualiza o pivot usando updateExistingPivot
+                        $event->animals()->updateExistingPivot($data['animal_id'], collect($data)->only([
                             'name',
                             'situation',
                             'lot_number',
@@ -148,6 +144,7 @@ class AnimalsRelationManager extends RelationManager
                         ])->toArray());
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
+
 
                 Tables\Actions\DetachAction::make()
                     ->label('Remover')
