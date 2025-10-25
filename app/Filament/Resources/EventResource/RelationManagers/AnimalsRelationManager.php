@@ -31,6 +31,7 @@ class AnimalsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('pivot.lot_number') // <--- aqui define a ordenação padrão
             ->columns([
                 Tables\Columns\ImageColumn::make('pivot.photo')
                     ->label('Foto')
