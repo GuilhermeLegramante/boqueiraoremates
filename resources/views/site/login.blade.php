@@ -136,14 +136,14 @@
                 }
             });
 
-            // Verifica primeiro acesso
+            // Checar primeiro acesso
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
-                const token = document.querySelector('input[name="_token"]').value;
                 try {
-                    const res = await fetch('{{ route('check.first_login') }}', {
+                    const token = document.querySelector('input[name="_token"]').value;
+                    const res = await fetch('{{ route('login.submit') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -157,50 +157,40 @@
 
                     if (data.first_login) {
                         firstAccessNotice.classList.remove('hidden');
-
-                        if (!data.mother_options || data.mother_options.length === 0) {
-                            passwordContainer.classList.add('hidden');
-                            firstAccessFields.classList.add('hidden');
-                            firstAccessFields.style.opacity = 0;
-
-                            formError.textContent =
-                                'Para sua segurança, precisamos de informações adicionais. Entre em contato com o suporte para concluir o acesso.';
-                            formError.classList.remove('hidden');
-                            return;
-                        }
-
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
                         firstAccessFields.style.opacity = 1;
                         formError.classList.add('hidden');
 
-                        motherOptions.innerHTML = data.mother_options.map(name => `
-                    <label class="flex items-center space-x-2 cursor-pointer">
-                        <input type="radio" name="mother" value="${name}" required>
-                        <span>${name}</span>
-                    </label>
-                `).join('');
+                        motherOptions.innerHTML = (data.mother_options.length ? data.mother_options : [
+                                'Não informado'
+                            ])
+                            .map(name => `
+                        <label class="flex items-center space-x-2 cursor-pointer">
+                            <input type="radio" name="mother" value="${name}" required>
+                            <span>${name}</span>
+                        </label>
+                    `).join('');
                     } else {
                         passwordContainer.classList.remove('hidden');
                         firstAccessFields.classList.add('hidden');
                         firstAccessFields.style.opacity = 0;
-                        formError.classList.add('hidden');
                         firstAccessNotice.classList.add('hidden');
                     }
+
                 } catch (err) {
+                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
-                    console.error(err);
                 }
             });
 
-            // Submit do formulário
-            loginForm.addEventListener('submit', async (e) => {
+            // Submit
+            loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
-
+                formError.classList.add('hidden');
                 document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
                     'hidden'));
-                formError.classList.add('hidden');
 
                 loginText.classList.add('hidden');
                 loginSpinner.classList.remove('hidden');
@@ -215,18 +205,13 @@
                         method: 'POST',
                         body: formData
                     });
-                    if (res.redirected) {
-                        window.location.href = res.url;
-                        return;
-                    }
+                    if (res.redirected) return window.location.href = res.url;
 
                     const data = await res.json();
-
                     if (data.error) {
                         formError.textContent = data.error;
                         formError.classList.remove('hidden');
                     }
-
                     if (data.errors) {
                         for (const [key, messages] of Object.entries(data.errors)) {
                             const errorElem = document.getElementById(key + 'Error');
@@ -247,4 +232,5 @@
             });
         });
     </script>
+
 @endsection
