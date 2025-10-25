@@ -94,28 +94,57 @@ class LoginController extends Controller
 
     public function checkFirstLogin(Request $request)
     {
-        $request->validate([
-            'username' => 'required',
-        ]);
+        $request->validate(['username' => 'required']);
 
-        // Normaliza CPF
-        $normalizedUsername = preg_replace('/\D/', '', $request->username);
+        $input = $request->username;
 
-        $user = User::whereRaw(
-            "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
-            [$normalizedUsername]
-        )->first();
+        // Detecta CPF
+        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $input)) {
+            $normalizedUsername = preg_replace('/\D/', '', $input);
+            $user = User::whereRaw(
+                "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+                [$normalizedUsername]
+            )->first();
+        } else {
+            $user = User::where('username', $input)->first();
+        }
 
         if (!$user) {
             return response()->json(['first_login' => false]);
         }
 
-        // Retorna se é primeiro login + opções da mãe
+        // Se for primeiro login
+        if (!$user->first_login) {
+            return response()->json(['first_login' => false]);
+        }
+
+        // Pega o client relacionado
+        $client = Client::where('registered_user_id', $user->id)->first();
+
+        if (!$client) {
+            return response()->json(['first_login' => false]);
+        }
+
+        // Pega 4 mothers aleatórias + a mãe correta
+        $correctMother = $client->mother;
+
+        $otherMothers = Client::where('id', '!=', $client->id)
+            ->inRandomOrder()
+            ->limit(4)
+            ->pluck('mother')
+            ->toArray();
+
+        // Junta e embaralha
+        $motherOptions = $otherMothers;
+        $motherOptions[] = $correctMother;
+        shuffle($motherOptions);
+
         return response()->json([
-            'first_login' => (bool) $user->first_login,
-            'mother_options' => ['Maria das Dores', 'Joana Silva', 'Ana Souza', 'Carla Oliveira', 'Marta Santos']
+            'first_login' => true,
+            'mother_options' => $motherOptions
         ]);
     }
+
 
     // Logout
     public function logout()
