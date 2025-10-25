@@ -26,14 +26,18 @@ class LoginController extends Controller
         $usernameInput = $request->username;
         $password = $request->password;
 
-        // Normaliza o CPF (remove máscara)
-        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
+        // Detecta se o username é CPF
+        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $usernameInput) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $usernameInput))) {
+            $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
 
-        // Busca usuário, comparando sem máscara
-        $user = User::whereRaw(
-            "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
-            [$normalizedUsername]
-        )->first();
+            $user = User::whereRaw(
+                "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+                [$normalizedUsername]
+            )->first();
+        } else {
+            // Username normal
+            $user = User::where('username', $usernameInput)->first();
+        }
 
         if (!$user) {
             return back()->withErrors(['username' => 'Usuário não encontrado.']);
@@ -41,7 +45,6 @@ class LoginController extends Controller
 
         // Se for primeiro login
         if ($user->first_login) {
-            // Retorna para a view com flag first_login = true
             return back()->with('first_login', true)
                 ->with('username', $user->username);
         }
@@ -54,6 +57,7 @@ class LoginController extends Controller
 
         return back()->withErrors(['password' => 'Senha incorreta.']);
     }
+
 
 
     // Validação do primeiro acesso (data de nascimento + mãe)
@@ -144,7 +148,6 @@ class LoginController extends Controller
             'mother_options' => $motherOptions
         ]);
     }
-
 
     // Logout
     public function logout()
