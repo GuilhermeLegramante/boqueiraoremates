@@ -7,23 +7,26 @@
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md relative">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
 
+            {{-- Mensagem de erro geral --}}
+            <p id="generalError" class="text-red-500 text-center mb-4 hidden"></p>
+
             <form id="loginForm" class="space-y-5">
                 @csrf
+
+                {{-- Campo username --}}
                 <div>
                     <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
                     <input type="text" name="username" id="username"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                         placeholder="Digite seu usuário ou CPF" required>
-                    <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campo senha (inicialmente oculto) --}}
+                {{-- Campo senha (para login normal) - escondido por padrão --}}
                 <div id="passwordContainer" class="space-y-2 hidden">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                         placeholder="Digite sua senha">
-                    <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
                 {{-- Campos do primeiro acesso (inicialmente ocultos) --}}
@@ -55,19 +58,27 @@
                     </div>
                 </div>
 
-                <button type="submit" id="loginBtn"
-                    class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all flex justify-center items-center">
-                    <span id="btnText">Entrar</span>
-                    <svg id="btnSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor"
-                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 11-8 8h4l-3 3 3 3h-4z"></path>
-                    </svg>
-                </button>
+                <div class="flex items-center justify-between">
+                    <label class="flex items-center">
+                        <input type="checkbox" name="remember" class="mr-2">
+                        <span>Lembrar-me</span>
+                    </label>
+                    <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">Esqueci
+                        minha senha</button>
+                </div>
 
-                <p id="generalError" class="text-red-500 text-sm mt-2 hidden"></p>
+                <button id="loginBtn" type="submit"
+                    class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all relative">
+                    <span id="btnText">Entrar</span>
+                    <span id="btnSpinner" class="hidden absolute right-4 top-1/2 -translate-y-1/2">
+                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                        </svg>
+                    </span>
+                </button>
             </form>
         </div>
     </section>
@@ -79,11 +90,10 @@
             const firstAccessFields = document.getElementById('firstAccessFields');
             const motherOptions = document.getElementById('motherOptions');
             const loginForm = document.getElementById('loginForm');
-            const usernameError = document.getElementById('usernameError');
-            const passwordError = document.getElementById('passwordError');
             const generalError = document.getElementById('generalError');
-            const btnText = document.getElementById('btnText');
+            const loginBtn = document.getElementById('loginBtn');
             const btnSpinner = document.getElementById('btnSpinner');
+            const btnText = document.getElementById('btnText');
 
             // Máscara CPF
             usernameInput.addEventListener('input', () => {
@@ -97,19 +107,19 @@
                 }
             });
 
-            // Primeiro acesso
+            // Verifica se é primeiro acesso via AJAX
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
                 const token = document.querySelector('input[name="_token"]').value;
-
                 try {
                     const res = await fetch('{{ route('check.first_login') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': token
+                            'X-CSRF-TOKEN': token,
+                            'X-Requested-With': 'XMLHttpRequest'
                         },
                         body: JSON.stringify({
                             username
@@ -120,9 +130,12 @@
                     if (data.first_login) {
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
-                        generalError.classList.add('hidden');
 
-                        motherOptions.innerHTML = data.mother_options.map(name => `
+                        // Opções da mãe
+                        const options = data.mother_options || ['Maria das Dores', 'Joana Silva',
+                            'Ana Souza', 'Carla Oliveira', 'Marta Santos'
+                        ];
+                        motherOptions.innerHTML = options.map(name => `
                     <label class="flex items-center space-x-2 cursor-pointer">
                         <input type="radio" name="mother" value="${name}" required>
                         <span>${name}</span>
@@ -137,16 +150,12 @@
                 }
             });
 
-            // Submit do login
+            // Submit do formulário
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                usernameError.classList.add('hidden');
-                passwordError.classList.add('hidden');
                 generalError.classList.add('hidden');
-
-                // Spinner
-                btnText.classList.add('hidden');
                 btnSpinner.classList.remove('hidden');
+                btnText.classList.add('hidden');
 
                 const formData = new FormData(loginForm);
                 const isFirstLogin = !firstAccessFields.classList.contains('hidden');
@@ -162,31 +171,27 @@
                         }
                     });
 
-                    const contentType = res.headers.get('content-type');
-
-                    if (contentType && contentType.includes('application/json')) {
+                    if (res.status === 422) {
                         const data = await res.json();
-                        if (data.success && data.redirect) {
-                            window.location.href = data.redirect;
-                        } else if (data.error) {
-                            // Exibir mensagem adequada
-                            if (data.error.includes('Usuário')) usernameError.textContent = data.error,
-                                usernameError.classList.remove('hidden');
-                            else if (data.error.includes('Senha')) passwordError.textContent = data
-                                .error, passwordError.classList.remove('hidden');
-                            else generalError.textContent = data.error, generalError.classList.remove(
-                                'hidden');
-                        }
-                    } else if (res.redirected) {
-                        window.location.href = res.url;
+                        generalError.textContent = data.error || 'Dados incorretos.';
+                        generalError.classList.remove('hidden');
+                        return;
+                    }
+
+                    const data = await res.json();
+                    if (data.success && data.redirect) {
+                        window.location.href = data.redirect;
+                    } else if (data.error) {
+                        generalError.textContent = data.error;
+                        generalError.classList.remove('hidden');
                     }
                 } catch (err) {
                     console.error(err);
                     generalError.textContent = 'Erro de comunicação com o servidor.';
                     generalError.classList.remove('hidden');
                 } finally {
-                    btnText.classList.remove('hidden');
                     btnSpinner.classList.add('hidden');
+                    btnText.classList.remove('hidden');
                 }
             });
         });
