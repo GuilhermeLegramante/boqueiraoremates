@@ -174,18 +174,16 @@ class AnimalsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make('editarLote')
                     ->label('Editar Lote')
                     ->icon('heroicon-o-pencil')
-                    ->recordKey(fn($record) => $record->pivot->id) // <-- chave única por lote
                     ->form(fn() => $this->getLoteForm()) // reutiliza o formulário centralizado
                     ->mountUsing(function ($form, $record) {
-                        $pivot = $record->pivot; // pega o pivot do relacionamento atual
-
-                        dd($pivot->id);
+                        // Pega o pivot da linha clicada
+                        $pivot = $record->pivot;
 
                         if (!$pivot) return;
 
                         $form->fill([
-                            'pivot_id'        => $pivot->id,
-                            'animal_id'       => $pivot->animal_id,
+                            'pivot_id'        => $pivot->id,      // Hidden field
+                            'animal_id'       => $record->id,     // ID do animal
                             'name'            => $pivot->name,
                             'situation'       => $pivot->situation,
                             'lot_number'      => $pivot->lot_number,
@@ -201,10 +199,7 @@ class AnimalsRelationManager extends RelationManager
                         ]);
                     })
                     ->action(function ($record, $data) {
-                        $pivotId = $data['pivot_id'];
-                        $pivot = $record->pivot;
-
-                        // uploads
+                        // Tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
                         }
@@ -212,13 +207,14 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
+                        // Tratar campos numéricos: vírgula -> ponto e string vazia -> null
                         $minValue       = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
                         $incrementValue = $data['increment_value'] !== '' ? str_replace(',', '.', $data['increment_value']) : null;
                         $targetValue    = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
-                        $finalValue     = $data['final_value'] !== '' ? str_replace(',', '.', $data['final_value']) : null;
 
+                        // Atualiza o pivot correto pelo pivot_id
                         DB::table('animal_event')
-                            ->where('id', $pivotId)
+                            ->where('id', $data['pivot_id'])
                             ->update([
                                 'animal_id'       => $data['animal_id'],
                                 'name'            => $data['name'],
@@ -227,15 +223,16 @@ class AnimalsRelationManager extends RelationManager
                                 'min_value'       => $minValue,
                                 'increment_value' => $incrementValue,
                                 'target_value'    => $targetValue,
-                                'final_value'     => $finalValue,
+                                'final_value'     => $data['final_value'] ?? null,
                                 'status'          => $data['status'],
-                                'photo'           => $data['photo'] ?? $pivot->photo,
-                                'photo_full'      => $data['photo_full'] ?? $pivot->photo_full,
+                                'photo'           => $data['photo'] ?? $record->pivot->photo,
+                                'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
                                 'note'            => $data['note'] ?? null,
                                 'video_link'      => $data['video_link'] ?? null,
                             ]);
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
+
 
 
                 Tables\Actions\DetachAction::make()
