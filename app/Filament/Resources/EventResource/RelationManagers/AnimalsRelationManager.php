@@ -174,36 +174,7 @@ class AnimalsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make('editarLote')
                     ->label('Editar Lote')
                     ->icon('heroicon-o-pencil')
-                    ->form(fn() => [
-                        Forms\Components\Hidden::make('pivot_id')->required(),
-
-                        Forms\Components\Select::make('animal_id')
-                            ->label('Animal')
-                            ->options(fn() => \App\Models\Animal::pluck('name', 'id')->toArray())
-                            ->required(),
-
-                        Forms\Components\TextInput::make('name')->label('Nome')->required(),
-                        Forms\Components\TextInput::make('situation')->label('Situação'),
-                        Forms\Components\TextInput::make('lot_number')->label('Número do Lote')->required(),
-
-                        Forms\Components\TextInput::make('min_value')->numeric()->label('Valor Mínimo'),
-                        Forms\Components\TextInput::make('increment_value')->numeric()->label('Valor Incremento'),
-                        Forms\Components\TextInput::make('target_value')->numeric()->label('Valor Alvo'),
-
-                        Forms\Components\Select::make('status')
-                            ->label('Status')
-                            ->options([
-                                'disponivel' => 'Disponível',
-                                'reservado'  => 'Reservado',
-                                'vendido'    => 'Vendido',
-                            ]),
-
-                        Forms\Components\FileUpload::make('photo')->label('Foto Mini'),
-                        Forms\Components\FileUpload::make('photo_full')->label('Foto Completa'),
-
-                        Forms\Components\Textarea::make('note')->label('Observações'),
-                        Forms\Components\TextInput::make('video_link')->label('Link do Vídeo'),
-                    ])
+                    ->form(fn() => $this->getLoteForm()) // <-- reutiliza o formulário centralizado
                     ->mountUsing(function ($form, $record) {
                         $pivot = $record->pivot;
                         $form->fill([
@@ -276,9 +247,7 @@ class AnimalsRelationManager extends RelationManager
     protected function getLoteForm(): array
     {
         return [
-            // TextInput::make('order')
-            //     ->label('Ordem do Lote')
-            //     ->numeric(),
+            Forms\Components\Hidden::make('pivot_id')->required(),
 
             Select::make('animal_id')
                 ->label('Animal')
