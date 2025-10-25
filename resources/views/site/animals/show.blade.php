@@ -127,53 +127,61 @@
                             </div>
                         </div>
 
-                        @auth
-                            @php
-                                $client = Auth::user()->client;
-                            @endphp
+                        @if ($animal->pivot->status === 'disponivel')
+                            @auth
+                                @php
+                                    $client = Auth::user()->client;
+                                @endphp
 
-                            @if ($client && $client->situation === 'able')
-                                <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
-                                    @csrf
+                                @if ($client && $client->situation === 'able')
+                                    <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
+                                        @csrf
 
-                                    <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                    <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
+                                        <input type="hidden" name="event_id" value="{{ $event->id }}">
+                                        <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
 
-                                    <div class="relative">
-                                        <!-- Input com R$ -->
-                                        <span
-                                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
-                                        <input type="text" name="amount" id="bidInput"
-                                            class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
-                                            required>
+                                        <div class="relative">
+                                            <!-- Input com R$ -->
+                                            <span
+                                                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
+                                            <input type="text" name="amount" id="bidInput"
+                                                class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
+                                                required>
+                                        </div>
+                                        <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
+                                            O valor do lance não pode ser menor que o lance mínimo (R$
+                                            {{ number_format($animal->next_bid, 2, ',', '.') }}).
+                                        </p>
+
+                                        <button type="submit"
+                                            class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow hover:bg-green-500 transition">
+                                            Confirmar Lance
+                                        </button>
+                                    </form>
+
+                                    {{-- Mantém o modal e o script abaixo normalmente --}}
+                                    @include('site.animals.bid-modal')
+                                @else
+                                    <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg">
+                                        <p><strong>Seu cadastro ainda não está habilitado para dar lances.</strong></p>
+                                        <p class="text-sm mt-1">
+                                            Por favor, entre em contato com a administração para habilitar seu cliente.
+                                        </p>
                                     </div>
-                                    <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
-                                        O valor do lance não pode ser menor que o lance mínimo (R$
-                                        {{ number_format($animal->next_bid, 2, ',', '.') }}).
-                                    </p>
-
-                                    <button type="submit"
-                                        class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow hover:bg-green-500 transition">
-                                        Confirmar Lance
-                                    </button>
-                                </form>
-
-                                {{-- Mantém o modal e o script abaixo normalmente --}}
-                                @include('site.animals.bid-modal')
+                                @endif
                             @else
-                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg">
-                                    <p><strong>Seu cadastro ainda não está habilitado para dar lances.</strong></p>
-                                    <p class="text-sm mt-1">Por favor, entre em contato com a administração para habilitar seu
-                                        cliente.</p>
-                                </div>
-                            @endif
+                                <p class="text-green-200">Você deve estar logado para dar lances.</p>
+                                <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">
+                                    Clique aqui para logar
+                                </a>
+                            @endauth
                         @else
-                            <p class="text-green-200">Você deve estar logado para dar lances.</p>
-                            <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">Clique aqui
-                                para logar</a>
-                        @endauth
-
+                            <div class="bg-gray-700 text-gray-300 p-4 rounded-lg text-center">
+                                <p class="font-semibold text-lg">⚠️ Este lote não está disponível para lances.</p>
+                            </div>
+                        @endif
                     </div>
+
                 </div>
             </div>
 
