@@ -64,7 +64,7 @@ class LoginController extends Controller
         $password = $request->password;
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
-            return response()->json(['success' => true, 'redirect' => url('/')]);
+            return response()->json(['success' => true, 'redirect' => route('home')]);
         }
 
         return response()->json(['error' => 'Senha incorreta.'], 422);
