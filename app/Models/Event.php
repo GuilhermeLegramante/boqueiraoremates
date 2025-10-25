@@ -30,7 +30,7 @@ class Event extends Model
     ];
 
     protected $casts = [
-        'start_date' => 'date',
+        'start_date' => 'datetime',
         'finish_date' => 'date',
         'multiplier' => 'double',
     ];
