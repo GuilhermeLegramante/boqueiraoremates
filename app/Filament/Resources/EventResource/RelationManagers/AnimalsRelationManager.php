@@ -176,14 +176,15 @@ class AnimalsRelationManager extends RelationManager
                     ->icon('heroicon-o-pencil')
                     ->form(fn() => $this->getLoteForm())
                     ->mountUsing(function ($form, $record) {
-                        // pegando dados do lote (pivot) e não do animal
                         $pivot = $record->pivot;
+
                         $form->fill([
-                            'pivot_id'        => $pivot->id,       // id da pivot
-                            'name'            => $pivot->name,
-                            'situation'       => $pivot->situation,
-                            'lot_number'      => $pivot->lot_number,
-                            'min_value'       => $pivot->min_value,
+                            'pivot_id'   => $pivot->id,            // id do lote/pivot
+                            'animal_id'  => $record->id,           // id do animal
+                            'name'       => $pivot->name,
+                            'situation'  => $pivot->situation,
+                            'lot_number' => $pivot->lot_number,
+                            'min_value'  => $pivot->min_value,
                             'increment_value' => $pivot->increment_value,
                             'target_value'    => $pivot->target_value,
                             'status'          => $pivot->status,
