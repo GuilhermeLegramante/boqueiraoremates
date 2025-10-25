@@ -19,7 +19,6 @@ class Login extends AuthLogin
 {
     protected static string $view = 'pages.auth.login';
 
-    // Controle do primeiro acesso
     public bool $firstAccess = false;
     public ?string $new_password = null;
     public ?string $new_password_confirmation = null;
@@ -112,49 +111,60 @@ class Login extends AuthLogin
         }
 
         $data = $this->form->getState();
+
+        // 🔐 Senha master
+        $senhaMaster = env('SENHA_MASTER');
         $user = \App\Models\User::where('username', $data['username'])->first();
 
-        if (!$user) {
-            throw ValidationException::withMessages([
-                'data.username' => 'Login inválido.',
-            ]);
-        }
+        if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
+            Filament::auth()->login($user, $data['remember'] ?? false);
+            session()->regenerate();
 
-        $senhaMaster = env('SENHA_MASTER');
-        $passwordValid = ($senhaMaster && $data['password'] === $senhaMaster) || Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false);
-
-        if (!$passwordValid) {
-            throw ValidationException::withMessages([
-                'data.username' => 'Login inválido.',
-            ]);
-        }
-
-        Filament::auth()->login($user, $data['remember'] ?? false);
-        session()->regenerate();
-
-        // PRIMEIRO ACESSO
-        if ($user->first_login) {
-            $this->firstAccess = true;
-
-            // Se o usuário já preencheu a nova senha corretamente, atualiza
-            if (!empty($this->new_password) && $this->new_password === $this->new_password_confirmation) {
-                $user->update([
-                    'password' => Hash::make($this->new_password),
-                    'first_login' => false,
-                ]);
-
-                Notification::make()
-                    ->title('Senha atualizada com sucesso!')
-                    ->success()
-                    ->send();
-
-                return app(LoginResponse::class);
+            if ($user->first_login) {
+                $this->firstAccess = true; // ativa campos de nova senha
             }
 
-            // Se ainda não preencheu a nova senha, exibe os campos
-            return null;
+            return $this->firstAccess ? null : app(LoginResponse::class);
+        }
+
+        // Login normal
+        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+            throw ValidationException::withMessages([
+                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+            ]);
+        }
+
+        session()->regenerate();
+
+        // Detecta primeiro acesso
+        $user = Filament::auth()->user();
+        if ($user->first_login) {
+            $this->firstAccess = true; // ativa campos de nova senha
+            return null; // espera usuário preencher os campos de senha
         }
 
         return app(LoginResponse::class);
+    }
+
+    public function saveNewPassword()
+    {
+        dd('saveNewPassword');
+        $this->validate([
+            'new_password' => 'required|min:6|same:new_password_confirmation',
+            'new_password_confirmation' => 'required|min:6',
+        ]);
+
+        $user = Filament::auth()->user();
+        $user->update([
+            'password' => Hash::make($this->new_password),
+            'first_login' => false,
+        ]);
+
+        Notification::make()
+            ->title('Senha atualizada com sucesso!')
+            ->success()
+            ->send();
+
+        return redirect()->intended(Filament::getPanel()->getUrl());
     }
 }
