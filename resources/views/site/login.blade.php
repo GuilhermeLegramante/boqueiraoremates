@@ -185,6 +185,7 @@
             });
 
             // Submit do formulário
+            // Submit do formulário
             loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
                 formError.classList.add('hidden');
@@ -204,13 +205,20 @@
                         method: 'POST',
                         body: formData
                     });
-                    if (res.redirected) return window.location.href = res.url;
 
                     const data = await res.json();
+
+                    if (data.success) {
+                        // Redireciona para a rota home após first login ou login normal
+                        window.location.href = '{{ route('home') }}';
+                        return;
+                    }
+
                     if (data.error) {
                         formError.textContent = data.error;
                         formError.classList.remove('hidden');
                     }
+
                     if (data.errors) {
                         for (const [key, messages] of Object.entries(data.errors)) {
                             const errorElem = document.getElementById(key + 'Error');
@@ -229,6 +237,7 @@
                     loginSpinner.classList.add('hidden');
                 }
             });
+
         });
     </script>
 @endsection
