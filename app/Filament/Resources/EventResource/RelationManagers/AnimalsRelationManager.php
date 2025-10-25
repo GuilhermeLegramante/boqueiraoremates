@@ -147,6 +147,7 @@ class AnimalsRelationManager extends RelationManager
                     ->getStateUsing(fn($record) => $record->pivot?->status)
                     ->updateStateUsing(function ($state, $record) {
                         if ($record->pivot) {
+                            dd($record->pivot->id);
                             DB::table('animal_event') // <-- coloque o nome real da tabela pivot aqui
                                 ->where('id', $record->pivot->id)
                                 ->update(['status' => $state]);
