@@ -19,7 +19,7 @@ class Login extends AuthLogin
 {
     protected static string $view = 'pages.auth.login';
 
-    // Para controle de primeiro acesso
+    // Controle do primeiro acesso
     public bool $firstAccess = false;
     public ?string $new_password = null;
     public ?string $new_password_confirmation = null;
@@ -28,16 +28,16 @@ class Login extends AuthLogin
     {
         return $form
             ->schema([
-                // Campos de login
+                // Campos de login sempre visíveis
                 $this->getUsernameFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
 
-                // Campos de primeiro acesso
+                // Campos de primeira senha: visíveis apenas se $firstAccess for true
                 TextInput::make('new_password')
                     ->label('Nova senha')
                     ->password()
-                    ->required()
+                    ->required(fn() => $this->firstAccess)
                     ->minLength(6)
                     ->same('new_password_confirmation')
                     ->visible(fn() => $this->firstAccess),
@@ -45,7 +45,7 @@ class Login extends AuthLogin
                 TextInput::make('new_password_confirmation')
                     ->label('Confirme a nova senha')
                     ->password()
-                    ->required()
+                    ->required(fn() => $this->firstAccess)
                     ->visible(fn() => $this->firstAccess),
             ])
             ->statePath('data');
@@ -60,12 +60,9 @@ class Login extends AuthLogin
             ->autofocus()
             ->reactive()
             ->afterStateUpdated(function (Set $set, Get $get, ?string $state) {
-                // Remove caracteres não numéricos
                 $onlyNumbers = preg_replace('/\D/', '', $state ?? '');
-
-                // Se começou a digitar 3 números, aplica máscara de CPF
                 if (strlen($onlyNumbers) === 3) {
-                    $set('username', $onlyNumbers); // força atualização
+                    $set('username', $onlyNumbers);
                 }
             })
             ->mask(fn($state) => preg_match('/^\d{3}/', $state ?? '') ? '999.999.999-99' : null)
@@ -82,10 +79,6 @@ class Login extends AuthLogin
             ->required();
     }
 
-    /**
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
     protected function getCredentialsFromFormData(array $data): array
     {
         return [
@@ -117,7 +110,7 @@ class Login extends AuthLogin
 
         $data = $this->form->getState();
 
-        // 🔐 Senha master
+        // Senha master
         $senhaMaster = env('SENHA_MASTER');
         $user = \App\Models\User::where('username', $data['username'])->first();
 
