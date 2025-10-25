@@ -43,7 +43,7 @@ class Event extends Model
     public function animals()
     {
         return $this->belongsToMany(Animal::class, 'animal_event')
-            ->using(AnimalEvent::class)  // usa a model do pivot
+            ->using(AnimalEvent::class)
             ->withPivot([
                 'name',
                 'situation',
