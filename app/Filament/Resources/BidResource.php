@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,7 +42,9 @@ class BidResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 // Tables\Columns\TextColumn::make('user.name')->label('Cliente')->sortable(),
                 TextColumn::make('client_name')
                     ->label('Cliente')
@@ -116,7 +119,7 @@ class BidResource extends Resource
                     ->label('Ações') // texto do botão do grupo
                     ->icon('heroicon-o-cog-6-tooth')
                     ->color('gray'),
-            ])
+            ], position: ActionsPosition::BeforeColumns)
             ->filters([
                 Tables\Filters\Filter::make('status')
                     ->query(fn($query) => $query->where('status', 1))
