@@ -57,7 +57,8 @@
                                 Lote: <span class="text-lg font-semibold">{{ $animal->pivot->lot_number }}</span>
                             </p>
                             <p class="text-gray-200 text-sm mb-3">
-                                Lance Atual: R$ {{ number_format($animal->pivot->current_bid, 2, ',', '.') }}
+                                Lance Atual: <span class="text-lg font-semibold"> R$
+                                    {{ number_format($animal->pivot->current_bid, 2, ',', '.') }}</span>
                             </p>
                             <p class="text-white font-bold text-lg">
                                 R$ {{ number_format($animal->pivot->min_value, 2, ',', '.') }}
