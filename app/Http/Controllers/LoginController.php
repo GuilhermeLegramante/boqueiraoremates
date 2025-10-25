@@ -52,6 +52,7 @@ class LoginController extends Controller
         // Verifica senha ou senha master
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
+            dd('logou');
             return redirect()->intended('/');
         }
 
