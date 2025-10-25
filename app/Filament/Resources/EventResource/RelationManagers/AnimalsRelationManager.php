@@ -47,10 +47,6 @@ class AnimalsRelationManager extends RelationManager
                     ->label('Número do Lote')
                     ->required(),
 
-                TextInput::make('order')
-                    ->label('Ordem do Lote')
-                    ->numeric(),
-
                 Money::make('min_value')
                     ->label('Lance Mínimo')
                     ->required(),
@@ -185,7 +181,6 @@ class AnimalsRelationManager extends RelationManager
                             'animal_id'       => $record->id,
                             'name'            => $record->pivot->name,
                             'situation'       => $record->pivot->situation,
-                            'order'           => $record->pivot->order,
                             'lot_number'      => $record->pivot->lot_number,
                             'min_value'       => $record->pivot->min_value,
                             'increment_value' => $record->pivot->increment_value,
@@ -211,7 +206,6 @@ class AnimalsRelationManager extends RelationManager
                         $event->animals()->updateExistingPivot($record->id, [
                             'name'            => $data['name'],
                             'situation'       => $data['situation'],
-                            'order'           => $data['order'],
                             'lot_number'      => $data['lot_number'],
                             'min_value'       => $data['min_value'],
                             'increment_value' => $data['increment_value'],
@@ -243,9 +237,9 @@ class AnimalsRelationManager extends RelationManager
     protected function getLoteForm(): array
     {
         return [
-            TextInput::make('order')
-                ->label('Ordem do Lote')
-                ->numeric(),
+            // TextInput::make('order')
+            //     ->label('Ordem do Lote')
+            //     ->numeric(),
 
             Select::make('animal_id')
                 ->label('Animal')

@@ -7,9 +7,6 @@
                 class="w-full h-full object-cover object-center">
         </div>
 
-
-
-
         <!-- Informações principais -->
         <div class="space-y-3 text-center lg:text-left">
             <h2 class="text-3xl font-extrabold tracking-wide">{{ $event->name }}</h2>
