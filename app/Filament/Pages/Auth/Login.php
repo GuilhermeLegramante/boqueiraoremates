@@ -135,7 +135,7 @@ class Login extends AuthLogin
     }
 
 
-    public function saveNewPassword($user): ?LoginResponse
+    public function saveNewPassword($user, string $newPassword, string $newPasswordConfirmation): ?LoginResponse
     {
         $this->validate([
             'new_password' => 'required|min:6|same:new_password_confirmation',
@@ -143,11 +143,10 @@ class Login extends AuthLogin
         ]);
 
         $user->update([
-            'password' => Hash::make($this->new_password),
+            'password' => Hash::make($newPassword),
             'first_login' => false,
         ]);
 
-        // Loga o usuário automaticamente após alterar a senha
         Filament::auth()->login($user);
 
         Notification::make()
