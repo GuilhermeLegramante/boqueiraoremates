@@ -32,25 +32,29 @@ class LotesRelationManager extends RelationManager
                     ->label('Animal')
                     ->options(Animal::all()->pluck('name', 'id'))
                     ->searchable()
+                    ->columnSpanFull()
                     ->required(),
 
                 TextInput::make('name')
                     ->label('Nome do Animal p/ o Lote')
                     ->required()
+                    ->columnSpanFull()
                     ->maxLength(255),
 
                 TextInput::make('situation')
+                    ->columnSpanFull()
                     ->label('Situação do Animal (inteiro, castrado, etc.)')
                     ->maxLength(255),
 
                 TextInput::make('lot_number')
                     ->label('Número do Lote')
+                    ->columnSpanFull()
                     ->required(),
 
-                Money::make('min_value')->label('Lance Mínimo')->required(),
-                Money::make('increment_value')->label('Valor do Incremento')->nullable(),
-                Money::make('target_value')->label('Lance Alvo')->nullable(),
-                Money::make('final_value')->label('Valor Final')->nullable(),
+                Money::make('min_value')->columnSpanFull()->label('Lance Mínimo')->required(),
+                Money::make('increment_value')->columnSpanFull()->label('Valor do Incremento')->nullable(),
+                Money::make('target_value')->columnSpanFull()->label('Lance Alvo')->nullable(),
+                Money::make('final_value')->columnSpanFull()->label('Valor Final')->nullable(),
 
                 Select::make('status')
                     ->label('Status')
@@ -59,12 +63,13 @@ class LotesRelationManager extends RelationManager
                         'vendido'    => 'Vendido',
                         'reservado'  => 'Reservado',
                     ])
+                    ->columnSpanFull()
                     ->default('disponivel'),
 
-                FileUpload::make('photo')->label('Foto (Miniatura)')->image()->directory('animals/photos')->nullable(),
-                FileUpload::make('photo_full')->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
-                RichEditor::make('note')->label('Comentário')->nullable(),
-                TextInput::make('video_link')->label('Link do Vídeo')->url()->nullable(),
+                FileUpload::make('photo')->columnSpanFull()->label('Foto (Miniatura)')->image()->directory('animals/photos')->nullable(),
+                FileUpload::make('photo_full')->columnSpanFull()->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
+                RichEditor::make('note')->columnSpanFull()->label('Comentário')->nullable(),
+                TextInput::make('video_link')->columnSpanFull()->label('Link do Vídeo')->url()->nullable(),
             ]);
     }
 
