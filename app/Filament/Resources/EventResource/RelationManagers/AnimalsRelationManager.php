@@ -89,8 +89,6 @@ class AnimalsRelationManager extends RelationManager
                             'note',
                             'video_link',
                         ])->toArray());
-
-                        return true; // fecha o modal e atualiza a tabela
                     }),
             ])
             ->actions([
@@ -100,6 +98,7 @@ class AnimalsRelationManager extends RelationManager
                     ->mountUsing(function ($form, $record) {
                         // $record é Animal, pegamos o pivot
                         $pivot = $record->pivot;
+
                         if (!$pivot) return;
 
                         $form->fill([
@@ -121,6 +120,7 @@ class AnimalsRelationManager extends RelationManager
                     })
                     ->action(function ($record, array $data) {
                         $pivot = $record->pivot;
+
                         if (!$pivot) return;
 
                         // Tratar uploads
@@ -131,24 +131,21 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // Atualiza pivot
-                        $pivot->update([
-                            'animal_id'       => $data['animal_id'],
-                            'name'            => $data['name'],
-                            'situation'       => $data['situation'],
-                            'lot_number'      => $data['lot_number'],
-                            'min_value'       => $data['min_value'],
-                            'increment_value' => $data['increment_value'],
-                            'target_value'    => $data['target_value'],
-                            'final_value'     => $data['final_value'],
-                            'status'          => $data['status'],
-                            'photo'           => $data['photo'] ?? $pivot->photo,
-                            'photo_full'      => $data['photo_full'] ?? $pivot->photo_full,
-                            'note'            => $data['note'],
-                            'video_link'      => $data['video_link'],
-                        ]);
-
-                        return true; // fecha o modal e atualiza a tabela
+                        $pivot->update(collect($data)->only([
+                            'animal_id',
+                            'name',
+                            'situation',
+                            'lot_number',
+                            'min_value',
+                            'increment_value',
+                            'target_value',
+                            'final_value',
+                            'status',
+                            'photo',
+                            'photo_full',
+                            'note',
+                            'video_link',
+                        ])->toArray());
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
 
