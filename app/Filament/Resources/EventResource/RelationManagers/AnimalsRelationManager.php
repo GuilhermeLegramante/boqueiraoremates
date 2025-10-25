@@ -186,9 +186,9 @@ class AnimalsRelationManager extends RelationManager
                         Forms\Components\TextInput::make('situation')->label('Situação'),
                         Forms\Components\TextInput::make('lot_number')->label('Número do Lote')->required(),
 
-                        Forms\Components\TextInput::make('min_value')->label('Valor Mínimo'),
-                        Forms\Components\TextInput::make('increment_value')->label('Valor Incremento'),
-                        Forms\Components\TextInput::make('target_value')->label('Valor Alvo'),
+                        Forms\Components\TextInput::make('min_value')->numeric()->label('Valor Mínimo'),
+                        Forms\Components\TextInput::make('increment_value')->numeric()->label('Valor Incremento'),
+                        Forms\Components\TextInput::make('target_value')->numeric()->label('Valor Alvo'),
 
                         Forms\Components\Select::make('status')
                             ->label('Status')
