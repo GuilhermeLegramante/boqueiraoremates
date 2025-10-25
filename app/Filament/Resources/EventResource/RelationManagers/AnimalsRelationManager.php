@@ -174,13 +174,35 @@ class AnimalsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make('editarLote')
                     ->label('Editar Lote')
                     ->icon('heroicon-o-pencil')
-                    ->form(fn() => $this->getLoteForm())
+                    ->form(fn() => [
+                        Forms\Components\Hidden::make('pivot_id')->required(),
+                        Forms\Components\Select::make('animal_id')
+                            ->label('Animal')
+                            ->options(fn() => \App\Models\Animal::pluck('name', 'id')->toArray())
+                            ->required(),
+                        Forms\Components\TextInput::make('name')->label('Nome')->required(),
+                        Forms\Components\TextInput::make('situation')->label('Situação'),
+                        Forms\Components\TextInput::make('lot_number')->label('Número do Lote')->required(),
+                        Forms\Components\TextInput::make('min_value')->label('Valor Mínimo'),
+                        Forms\Components\TextInput::make('increment_value')->label('Valor Incremento'),
+                        Forms\Components\TextInput::make('target_value')->label('Valor Alvo'),
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'disponivel' => 'Disponível',
+                                'reservado'  => 'Reservado',
+                                'vendido'    => 'Vendido',
+                            ]),
+                        Forms\Components\FileUpload::make('photo')->label('Foto Mini'),
+                        Forms\Components\FileUpload::make('photo_full')->label('Foto Completa'),
+                        Forms\Components\Textarea::make('note')->label('Observações'),
+                        Forms\Components\TextInput::make('video_link')->label('Link do Vídeo'),
+                    ])
                     ->mountUsing(function ($form, $record) {
                         $pivot = $record->pivot;
-
                         $form->fill([
-                            'pivot_id'   => $pivot->id,            // id do lote/pivot
-                            'animal_id'  => $record->id,           // id do animal
+                            'pivot_id'   => $pivot->id,
+                            'animal_id'  => $record->id,
                             'name'       => $pivot->name,
                             'situation'  => $pivot->situation,
                             'lot_number' => $pivot->lot_number,
@@ -195,10 +217,8 @@ class AnimalsRelationManager extends RelationManager
                         ]);
                     })
                     ->action(function ($record, $data) {
-                        $event = $this->getOwnerRecord();
-                        $pivotId = $data['pivot_id']; // id do lote/pivot
+                        $pivotId = $data['pivot_id'];
 
-                        // tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
                         }
@@ -206,10 +226,10 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        // atualiza apenas o lote correto usando o pivot id
                         DB::table('animal_event')
                             ->where('id', $pivotId)
                             ->update([
+                                'animal_id'       => $data['animal_id'], // se quiser permitir trocar animal
                                 'name'            => $data['name'],
                                 'situation'       => $data['situation'],
                                 'lot_number'      => $data['lot_number'],
