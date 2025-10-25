@@ -219,6 +219,7 @@ class AnimalsRelationManager extends RelationManager
                     ->action(function ($record, $data) {
                         $pivotId = $data['pivot_id'];
 
+                        // Tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
                         }
@@ -226,16 +227,21 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
+                        // Converter campos numéricos
+                        $minValue = $data['min_value'] !== '' ? str_replace(',', '.', $data['min_value']) : null;
+                        $incrementValue = $data['increment_value'] !== '' ? str_replace(',', '.', $data['increment_value']) : null;
+                        $targetValue = $data['target_value'] !== '' ? str_replace(',', '.', $data['target_value']) : null;
+
                         DB::table('animal_event')
                             ->where('id', $pivotId)
                             ->update([
-                                'animal_id'       => $data['animal_id'], // se quiser permitir trocar animal
+                                'animal_id'       => $data['animal_id'],
                                 'name'            => $data['name'],
                                 'situation'       => $data['situation'],
                                 'lot_number'      => $data['lot_number'],
-                                'min_value'       => $data['min_value'],
-                                'increment_value' => $data['increment_value'],
-                                'target_value'    => $data['target_value'],
+                                'min_value'       => $minValue,
+                                'increment_value' => $incrementValue,
+                                'target_value'    => $targetValue,
                                 'status'          => $data['status'],
                                 'photo'           => $data['photo'] ?? $record->pivot->photo,
                                 'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
