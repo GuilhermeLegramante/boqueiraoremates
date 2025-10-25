@@ -92,6 +92,30 @@ class LoginController extends Controller
         return redirect()->intended('/');
     }
 
+    public function checkFirstLogin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+        ]);
+
+        // Normaliza CPF
+        $normalizedUsername = preg_replace('/\D/', '', $request->username);
+
+        $user = User::whereRaw(
+            "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+            [$normalizedUsername]
+        )->first();
+
+        if (!$user) {
+            return response()->json(['first_login' => false]);
+        }
+
+        // Retorna se é primeiro login + opções da mãe
+        return response()->json([
+            'first_login' => (bool) $user->first_login,
+            'mother_options' => ['Maria das Dores', 'Joana Silva', 'Ana Souza', 'Carla Oliveira', 'Marta Santos']
+        ]);
+    }
 
     // Logout
     public function logout()
