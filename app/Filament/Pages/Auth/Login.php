@@ -122,7 +122,9 @@ class Login extends AuthLogin
         }
 
         // Login normal
-        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+        $user = \App\Models\User::where('username', $data['username'])->first();
+
+        if ((!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) && $user->first_login == 0) {
             throw ValidationException::withMessages([
                 'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
             ]);
