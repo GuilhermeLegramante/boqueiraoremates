@@ -4,31 +4,21 @@
 
 @section('content')
     <section class="flex justify-center bg-gray-100 pt-48 pb-16 min-h-screen">
-        <div class="w-full max-w-md">
+        <div id="loginCard" class="w-full max-w-md">
             <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col space-y-6">
                 <h2 class="text-3xl font-bold text-center mb-6">Acesse sua conta</h2>
 
-                {{-- Aviso formal para primeiro acesso --}}
+                {{-- Aviso primeiro acesso --}}
                 <div id="firstAccessNotice"
                     class="hidden mb-6 p-5 bg-blue-50 border-l-4 border-blue-500 text-blue-800 rounded-lg shadow-sm text-sm font-medium transition-all duration-300 hover:shadow-md">
-                    <strong>Atenção:</strong> Estamos migrando para uma nova plataforma para garantir mais segurança e
-                    qualidade no atendimento. Por favor, preencha os dados solicitados com atenção.
+                    <strong>Atenção:</strong> Estamos migrando para uma nova plataforma. Preencha os dados com atenção.
                 </div>
 
-                {{-- Botão de contato WhatsApp (sempre visível) --}}
-                <div class="mt-4 text-center">
-                    <a href="https://wa.me/5555997331395" target="_blank"
-                        class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white font-semibold py-3 px-5 rounded-full shadow-lg transition-all transform hover:-translate-y-1 hover:scale-105">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20.52 3.48a11.81 11.81 0 0 0-16.68 0 ..." />
-                        </svg>
-                        Suporte via WhatsApp
-                    </a>
-                </div>
+                {{-- Mensagem de erro geral --}}
+                <p id="formError" class="text-red-500 text-sm mt-1 hidden text-center"></p>
 
                 <form id="loginForm" class="space-y-5">
                     @csrf
-                    <p id="formError" class="text-red-500 text-sm mt-1 hidden text-center"></p>
 
                     {{-- Usuário / CPF --}}
                     <div>
@@ -48,7 +38,7 @@
                         <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                     </div>
 
-                    {{-- Campos primeiro acesso --}}
+                    {{-- Campos do primeiro acesso --}}
                     <div id="firstAccessFields" class="hidden space-y-4 transition-all duration-300 opacity-0">
                         <div>
                             <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -81,16 +71,18 @@
                         </div>
                     </div>
 
-                    {{-- Botões --}}
+                    {{-- Lembrar e esqueci senha --}}
                     <div class="flex items-center justify-between">
                         <label class="flex items-center">
                             <input type="checkbox" name="remember" class="mr-2">
                             <span>Lembrar-me</span>
                         </label>
-                        <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">Esqueci
-                            minha senha</button>
+                        <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">
+                            Esqueci minha senha
+                        </button>
                     </div>
 
+                    {{-- Botão de login --}}
                     <button id="loginBtn" type="submit"
                         class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all flex justify-center items-center relative">
                         <span id="loginText">Entrar</span>
@@ -118,6 +110,7 @@
             const loginSpinner = document.getElementById('loginSpinner');
             const formError = document.getElementById('formError');
             const firstAccessNotice = document.getElementById('firstAccessNotice');
+            const loginCard = document.getElementById('loginCard');
 
             // Máscara CPF
             usernameInput.addEventListener('input', () => {
@@ -131,13 +124,12 @@
                 }
             });
 
-            // Verifica primeiro acesso
+            // Primeiro acesso
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
                 const token = document.querySelector('input[name="_token"]').value;
-
                 try {
                     const res = await fetch('{{ route('check.first_login') }}', {
                         method: 'POST',
@@ -158,8 +150,8 @@
                             passwordContainer.classList.add('hidden');
                             firstAccessFields.classList.add('hidden');
                             firstAccessFields.style.opacity = 0;
-                            formError.textContent =
-                                'Para sua segurança, entre em contato com o suporte.';
+
+                            formError.textContent = data.error || 'Entre em contato com o suporte.';
                             formError.classList.remove('hidden');
                             return;
                         }
@@ -175,6 +167,12 @@
                         <span>${name}</span>
                     </label>
                 `).join('');
+
+                        // Scroll automático
+                        loginCard.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
                     } else {
                         passwordContainer.classList.remove('hidden');
                         firstAccessFields.classList.add('hidden');
@@ -183,9 +181,9 @@
                         firstAccessNotice.classList.add('hidden');
                     }
                 } catch (err) {
-                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
+                    console.error(err);
                 }
             });
 
@@ -210,28 +208,44 @@
                         method: 'POST',
                         body: formData
                     });
-                    if (res.redirected) {
-                        window.location.href = res.url;
+                    const data = await res.json();
+
+                    if (!res.ok) {
+                        // Erros de validação
+                        if (data.errors) {
+                            for (const [key, messages] of Object.entries(data.errors)) {
+                                const errorElem = document.getElementById(key + 'Error');
+                                if (errorElem) {
+                                    errorElem.textContent = messages.join(', ');
+                                    errorElem.classList.remove('hidden');
+                                }
+                            }
+                        } else if (data.error) {
+                            formError.textContent = data.error;
+                            formError.classList.remove('hidden');
+                        }
+
+                        // Scroll para o card
+                        loginCard.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
                         return;
                     }
 
-                    const data = await res.json();
-                    if (data.error) formError.textContent = data.error;
-                    formError.classList.remove('hidden');
-
-                    if (data.errors) {
-                        for (const [key, messages] of Object.entries(data.errors)) {
-                            const errorElem = document.getElementById(key + 'Error');
-                            if (errorElem) {
-                                errorElem.textContent = messages.join(', ');
-                                errorElem.classList.remove('hidden');
-                            }
-                        }
+                    // Redirecionamento
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
                     }
+
                 } catch (err) {
-                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
+                    loginCard.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                    console.error(err);
                 } finally {
                     loginText.classList.remove('hidden');
                     loginSpinner.classList.add('hidden');
