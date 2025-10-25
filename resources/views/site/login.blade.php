@@ -4,32 +4,28 @@
 
 @section('content')
     <section class="flex justify-center items-center py-16 bg-gray-100 min-h-screen">
-        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md relative">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
-
-            {{-- Mensagem de erro geral --}}
-            <p id="generalError" class="text-red-500 text-center mb-4 hidden"></p>
 
             <form id="loginForm" class="space-y-5">
                 @csrf
 
-                {{-- Campo username --}}
                 <div>
                     <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
                     <input type="text" name="username" id="username"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                         placeholder="Digite seu usuário ou CPF" required>
+                    <p id="usernameError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campo senha (para login normal) - escondido por padrão --}}
                 <div id="passwordContainer" class="space-y-2 hidden">
                     <label for="password" class="block font-semibold mb-1">Senha</label>
                     <input type="password" name="password" id="password"
                         class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                         placeholder="Digite sua senha">
+                    <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                 </div>
 
-                {{-- Campos do primeiro acesso (inicialmente ocultos) --}}
                 <div id="firstAccessFields" class="hidden space-y-4">
                     <div>
                         <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
@@ -58,25 +54,21 @@
                     </div>
                 </div>
 
+                <p id="formError" class="text-red-500 text-sm hidden"></p>
+
                 <div class="flex items-center justify-between">
                     <label class="flex items-center">
                         <input type="checkbox" name="remember" class="mr-2">
                         <span>Lembrar-me</span>
                     </label>
-                    <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">Esqueci
-                        minha senha</button>
                 </div>
 
                 <button id="loginBtn" type="submit"
                     class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all relative">
                     <span id="btnText">Entrar</span>
-                    <span id="btnSpinner" class="hidden absolute right-4 top-1/2 -translate-y-1/2">
-                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                        </svg>
+                    <span id="btnLoading"
+                        class="hidden absolute inset-0 flex justify-center items-center bg-green-700 bg-opacity-70 rounded-lg">
+                        Carregando...
                     </span>
                 </button>
             </form>
@@ -90,10 +82,9 @@
             const firstAccessFields = document.getElementById('firstAccessFields');
             const motherOptions = document.getElementById('motherOptions');
             const loginForm = document.getElementById('loginForm');
-            const generalError = document.getElementById('generalError');
-            const loginBtn = document.getElementById('loginBtn');
-            const btnSpinner = document.getElementById('btnSpinner');
             const btnText = document.getElementById('btnText');
+            const btnLoading = document.getElementById('btnLoading');
+            const formError = document.getElementById('formError');
 
             // Máscara CPF
             usernameInput.addEventListener('input', () => {
@@ -107,12 +98,13 @@
                 }
             });
 
-            // Verifica se é primeiro acesso via AJAX
+            // Verifica primeiro acesso
             usernameInput.addEventListener('blur', async () => {
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
                 const token = document.querySelector('input[name="_token"]').value;
+
                 try {
                     const res = await fetch('{{ route('check.first_login') }}', {
                         method: 'POST',
@@ -125,16 +117,14 @@
                             username
                         })
                     });
+
                     const data = await res.json();
 
                     if (data.first_login) {
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
 
-                        // Opções da mãe
-                        const options = data.mother_options || ['Maria das Dores', 'Joana Silva',
-                            'Ana Souza', 'Carla Oliveira', 'Marta Santos'
-                        ];
+                        const options = data.mother_options || [];
                         motherOptions.innerHTML = options.map(name => `
                     <label class="flex items-center space-x-2 cursor-pointer">
                         <input type="radio" name="mother" value="${name}" required>
@@ -150,16 +140,15 @@
                 }
             });
 
-            // Submit do formulário
             loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                generalError.classList.add('hidden');
-                btnSpinner.classList.remove('hidden');
+                formError.classList.add('hidden');
                 btnText.classList.add('hidden');
+                btnLoading.classList.remove('hidden');
 
                 const formData = new FormData(loginForm);
                 const isFirstLogin = !firstAccessFields.classList.contains('hidden');
-                const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
+                let url = isFirstLogin ? '{{ route('first_access.validate') }}' :
                     '{{ route('login.submit') }}';
 
                 try {
@@ -171,27 +160,20 @@
                         }
                     });
 
-                    if (res.status === 422) {
-                        const data = await res.json();
-                        generalError.textContent = data.error || 'Dados incorretos.';
-                        generalError.classList.remove('hidden');
-                        return;
-                    }
-
                     const data = await res.json();
-                    if (data.success && data.redirect) {
+
+                    if (data.success) {
                         window.location.href = data.redirect;
                     } else if (data.error) {
-                        generalError.textContent = data.error;
-                        generalError.classList.remove('hidden');
+                        formError.textContent = data.error;
+                        formError.classList.remove('hidden');
                     }
                 } catch (err) {
-                    console.error(err);
-                    generalError.textContent = 'Erro de comunicação com o servidor.';
-                    generalError.classList.remove('hidden');
+                    formError.textContent = 'Erro de comunicação com o servidor.';
+                    formError.classList.remove('hidden');
                 } finally {
-                    btnSpinner.classList.add('hidden');
                     btnText.classList.remove('hidden');
+                    btnLoading.classList.add('hidden');
                 }
             });
         });

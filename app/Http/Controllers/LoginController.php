@@ -22,51 +22,81 @@ class LoginController extends Controller
             'password' => 'nullable|string',
         ]);
 
-        $usernameInput = trim($request->username);
+        $usernameInput = $request->username;
         $password = $request->password;
 
-        // Detecta se é CPF
-        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
-        $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
-
-        if ($isCpf) {
-            // Busca CPF sem máscara
+        // Detecta CPF ou username normal
+        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $usernameInput) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $usernameInput))) {
+            $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
             $user = User::whereRaw(
                 "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
                 [$normalizedUsername]
             )->first();
         } else {
-            // Username textual
-            $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->first();
+            $user = User::where('username', $usernameInput)->first();
         }
 
         if (!$user) {
-            return $request->wantsJson()
-                ? response()->json(['error' => 'Usuário não encontrado.'], 422)
-                : back()->withErrors(['username' => 'Usuário não encontrado.']);
+            return response()->json(['error' => 'Usuário não encontrado.'], 422);
         }
 
-        // Primeiro login
+        // Primeiro acesso
         if ($user->first_login) {
-            return $request->wantsJson()
-                ? response()->json(['first_login' => true, 'username' => $user->username])
-                : back()->with('first_login', true)->with('username', $user->username);
+            return response()->json([
+                'first_login' => true,
+                'username' => $user->username
+            ]);
         }
 
         // Verifica senha ou senha master
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
-            return $request->wantsJson()
-                ? response()->json(['success' => true, 'redirect' => url('/')])
-                : redirect()->intended('/');
+            return response()->json(['success' => true, 'redirect' => url('/')]);
         }
 
-        return $request->wantsJson()
-            ? response()->json(['error' => 'Senha incorreta.'], 422)
-            : back()->withErrors(['password' => 'Senha incorreta.']);
+        return response()->json(['error' => 'Senha incorreta.'], 422);
     }
 
-    // Primeiro acesso: valida data de nascimento e mãe
+    public function checkFirstLogin(Request $request)
+    {
+        $request->validate(['username' => 'required']);
+
+        $input = $request->username;
+
+        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $input) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $input))) {
+            $normalizedUsername = preg_replace('/\D/', '', $input);
+            $user = User::whereRaw(
+                "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+                [$normalizedUsername]
+            )->first();
+        } else {
+            $user = User::where('username', $input)->first();
+        }
+
+        if (!$user || !$user->first_login) {
+            return response()->json(['first_login' => false]);
+        }
+
+        $client = Client::where('registered_user_id', $user->id)->first();
+        if (!$client) return response()->json(['first_login' => false]);
+
+        $correctMother = $client->mother;
+        $otherMothers = Client::where('id', '!=', $client->id)
+            ->inRandomOrder()
+            ->limit(4)
+            ->pluck('mother')
+            ->toArray();
+
+        $motherOptions = $otherMothers;
+        $motherOptions[] = $correctMother;
+        shuffle($motherOptions);
+
+        return response()->json([
+            'first_login' => true,
+            'mother_options' => $motherOptions
+        ]);
+    }
+
     public function validateFirstAccess(Request $request)
     {
         $request->validate([
@@ -76,17 +106,16 @@ class LoginController extends Controller
             'new_password' => 'required|min:6|confirmed',
         ]);
 
-        $usernameInput = trim($request->username);
-        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
-        $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
+        $usernameInput = $request->username;
 
-        if ($isCpf) {
+        if (preg_match('/^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/', $usernameInput) || preg_match('/^\d{11}$/', preg_replace('/\D/', '', $usernameInput))) {
+            $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
             $user = User::whereRaw(
                 "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
                 [$normalizedUsername]
             )->firstOrFail();
         } else {
-            $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->firstOrFail();
+            $user = User::where('username', $usernameInput)->firstOrFail();
         }
 
         $client = Client::where('registered_user_id', $user->id)->firstOrFail();
@@ -102,49 +131,6 @@ class LoginController extends Controller
         Auth::login($user);
 
         return response()->json(['success' => true, 'redirect' => url('/')]);
-    }
-
-    // Checa primeiro login e traz opções da mãe
-    public function checkFirstLogin(Request $request)
-    {
-        $request->validate(['username' => 'required']);
-
-        $usernameInput = trim($request->username);
-        $normalizedUsername = preg_replace('/\D/', '', $usernameInput);
-        $isCpf = is_numeric($normalizedUsername) && strlen($normalizedUsername) === 11;
-
-        if ($isCpf) {
-            $user = User::whereRaw(
-                "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
-                [$normalizedUsername]
-            )->first();
-        } else {
-            $user = User::whereRaw('LOWER(TRIM(username)) = ?', [strtolower($usernameInput)])->first();
-        }
-
-        if (!$user || !$user->first_login) {
-            return response()->json(['first_login' => false]);
-        }
-
-        $client = Client::where('registered_user_id', $user->id)->first();
-        if (!$client) return response()->json(['first_login' => false]);
-
-        $correctMother = $client->mother;
-
-        $otherMothers = Client::where('id', '!=', $client->id)
-            ->inRandomOrder()
-            ->limit(4)
-            ->pluck('mother')
-            ->toArray();
-
-        $motherOptions = $otherMothers;
-        $motherOptions[] = $correctMother;
-        shuffle($motherOptions);
-
-        return response()->json([
-            'first_login' => true,
-            'mother_options' => $motherOptions
-        ]);
     }
 
     public function logout()
