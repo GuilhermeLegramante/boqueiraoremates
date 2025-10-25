@@ -123,8 +123,12 @@
             const loginSpinner = document.getElementById('loginSpinner');
             const formError = document.getElementById('formError');
             const firstAccessNotice = document.getElementById('firstAccessNotice');
+            const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
 
-            // Máscara CPF
+            // Variável de controle para "Esqueci Senha"
+            let isForgotPassword = false;
+
+            // --- Máscara CPF ---
             usernameInput.addEventListener('input', () => {
                 let value = usernameInput.value;
                 if (/^\d/.test(value)) {
@@ -136,14 +140,16 @@
                 }
             });
 
-            // Checar primeiro acesso
+            // --- Verifica First Login ---
             usernameInput.addEventListener('blur', async () => {
+                if (isForgotPassword) return; // não dispara no modo esqueci senha
+
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
                 try {
                     const token = document.querySelector('input[name="_token"]').value;
-                    const res = await fetch('{{ route('login.submit') }}', {
+                    const res = await fetch('{{ route('check.first_login') }}', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -184,10 +190,25 @@
                 }
             });
 
-            // Submit do formulário
-            // Submit do formulário
-            loginForm.addEventListener('submit', async e => {
+            // --- Esqueci Senha ---
+            forgotPasswordBtn.addEventListener('click', () => {
+                isForgotPassword = true;
+
+                firstAccessNotice.classList.remove('hidden');
+                passwordContainer.classList.add('hidden');
+                firstAccessFields.classList.remove('hidden');
+                firstAccessFields.style.opacity = 1;
+
+                loginForm.reset();
+                document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
+                    'hidden'));
+                formError.classList.add('hidden');
+            });
+
+            // --- Submit do formulário ---
+            loginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+
                 formError.classList.add('hidden');
                 document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
                     'hidden'));
@@ -196,20 +217,22 @@
                 loginSpinner.classList.remove('hidden');
 
                 const formData = new FormData(loginForm);
-                const isFirstLogin = !firstAccessFields.classList.contains('hidden');
-                const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
-                    '{{ route('login.submit') }}';
+                const isFirstLogin = !firstAccessFields.classList.contains('hidden') && !
+                    isForgotPassword;
+                const url = isForgotPassword ?
+                    '{{ route('forgot_password.validate') }}' :
+                    (isFirstLogin ? '{{ route('first_access.validate') }}' :
+                        '{{ route('login.submit') }}');
 
                 try {
                     const res = await fetch(url, {
                         method: 'POST',
                         body: formData
                     });
-
                     const data = await res.json();
 
                     if (data.success) {
-                        // Redireciona para o site externo após login
+                        // Redireciona para o site externo após login ou troca de senha
                         window.location.href = 'https://sistema.boqueiraoremates.com/site';
                         return;
                     }
@@ -229,30 +252,15 @@
                         }
                     }
                 } catch (err) {
+                    console.error(err);
                     formError.textContent = 'Erro de comunicação com o servidor.';
                     formError.classList.remove('hidden');
-                    console.error(err);
                 } finally {
                     loginText.classList.remove('hidden');
                     loginSpinner.classList.add('hidden');
                 }
             });
-
-        });
-
-        const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
-
-        forgotPasswordBtn.addEventListener('click', () => {
-            // Mostra os campos de first access (CPF/usuário, nascimento, mãe, nova senha)
-            firstAccessNotice.classList.remove('hidden');
-            passwordContainer.classList.add('hidden');
-            firstAccessFields.classList.remove('hidden');
-            firstAccessFields.style.opacity = 1;
-
-            // Limpa inputs e erros
-            loginForm.reset();
-            document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add('hidden'));
-            formError.classList.add('hidden');
         });
     </script>
+
 @endsection
