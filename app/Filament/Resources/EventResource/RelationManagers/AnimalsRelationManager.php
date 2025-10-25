@@ -10,7 +10,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -27,32 +26,31 @@ class AnimalsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema($this->getLoteForm());
+        return $form->schema($this->getLoteForm());
     }
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('photo')
+                Tables\Columns\ImageColumn::make('pivot.photo')
                     ->label('Foto')
                     ->square(),
 
-                Tables\Columns\TextColumn::make('animal.name')
+                Tables\Columns\TextColumn::make('name')
                     ->label('Animal')
-                    ->sortable()
-                    ->searchable(),
+                    ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
+                    ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%")),
 
-                Tables\Columns\TextColumn::make('lot_number')
+                Tables\Columns\TextColumn::make('pivot.lot_number')
                     ->label('Lote')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('min_value')
+                Tables\Columns\TextColumn::make('pivot.min_value')
                     ->label('Lance Mínimo')
                     ->money('BRL'),
 
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\TextColumn::make('pivot.status')
                     ->label('Status')
                     ->badge()
                     ->colors([
@@ -97,26 +95,34 @@ class AnimalsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make('editarLote')
                     ->label('Editar Lote')
                     ->form(fn() => $this->getLoteForm())
-                    ->mountUsing(function ($form, AnimalEvent $record) {
-                        // Agora $record é o pivot correto
+                    ->mountUsing(function ($form, $record) {
+                        // $record é Animal, pegamos o pivot
+                        $pivot = $record->pivot;
+
+                        if (!$pivot) return;
+
                         $form->fill([
-                            'pivot_id'        => $record->id,
-                            'animal_id'       => $record->animal_id,
-                            'name'            => $record->name,
-                            'situation'       => $record->situation,
-                            'lot_number'      => $record->lot_number,
-                            'min_value'       => $record->min_value,
-                            'increment_value' => $record->increment_value,
-                            'target_value'    => $record->target_value,
-                            'final_value'     => $record->final_value,
-                            'status'          => $record->status,
-                            'photo'           => $record->photo,
-                            'photo_full'      => $record->photo_full,
-                            'note'            => $record->note,
-                            'video_link'      => $record->video_link,
+                            'pivot_id'        => $pivot->id,
+                            'animal_id'       => $record->id,
+                            'name'            => $pivot->name,
+                            'situation'       => $pivot->situation,
+                            'lot_number'      => $pivot->lot_number,
+                            'min_value'       => $pivot->min_value,
+                            'increment_value' => $pivot->increment_value,
+                            'target_value'    => $pivot->target_value,
+                            'final_value'     => $pivot->final_value,
+                            'status'          => $pivot->status,
+                            'photo'           => $pivot->photo,
+                            'photo_full'      => $pivot->photo_full,
+                            'note'            => $pivot->note,
+                            'video_link'      => $pivot->video_link,
                         ]);
                     })
-                    ->action(function (AnimalEvent $record, array $data) {
+                    ->action(function ($record, array $data) {
+                        $pivot = $record->pivot;
+
+                        if (!$pivot) return;
+
                         // Tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
@@ -125,7 +131,7 @@ class AnimalsRelationManager extends RelationManager
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        $record->update(collect($data)->only([
+                        $pivot->update(collect($data)->only([
                             'animal_id',
                             'name',
                             'situation',
