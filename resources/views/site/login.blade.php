@@ -125,10 +125,9 @@
             const firstAccessNotice = document.getElementById('firstAccessNotice');
             const forgotPasswordBtn = document.getElementById('forgotPasswordBtn');
 
-            // Variável de controle para "Esqueci Senha"
             let isForgotPassword = false;
 
-            // --- Máscara CPF ---
+            // Máscara CPF
             usernameInput.addEventListener('input', () => {
                 let value = usernameInput.value;
                 if (/^\d/.test(value)) {
@@ -140,9 +139,9 @@
                 }
             });
 
-            // --- Verifica First Login ---
+            // Checar primeiro acesso
             usernameInput.addEventListener('blur', async () => {
-                if (isForgotPassword) return; // não dispara no modo esqueci senha
+                if (isForgotPassword) return; // Não checar se estiver no fluxo "Esqueci Senha"
 
                 const username = usernameInput.value.trim();
                 if (!username) return;
@@ -159,6 +158,7 @@
                             username
                         })
                     });
+
                     const data = await res.json();
 
                     if (data.first_login) {
@@ -190,25 +190,19 @@
                 }
             });
 
-            // --- Esqueci Senha ---
+            // Botão "Esqueci minha senha"
             forgotPasswordBtn.addEventListener('click', () => {
                 isForgotPassword = true;
-
-                firstAccessNotice.classList.remove('hidden');
                 passwordContainer.classList.add('hidden');
                 firstAccessFields.classList.remove('hidden');
                 firstAccessFields.style.opacity = 1;
-
-                loginForm.reset();
-                document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
-                    'hidden'));
+                firstAccessNotice.classList.remove('hidden');
                 formError.classList.add('hidden');
             });
 
-            // --- Submit do formulário ---
-            loginForm.addEventListener('submit', async (e) => {
+            // Submit do formulário
+            loginForm.addEventListener('submit', async e => {
                 e.preventDefault();
-
                 formError.classList.add('hidden');
                 document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
                     'hidden'));
@@ -217,15 +211,12 @@
                 loginSpinner.classList.remove('hidden');
 
                 const formData = new FormData(loginForm);
-                // Adiciona CSRF manualmente
                 formData.append('_token', document.querySelector('input[name="_token"]').value);
 
-                const isFirstLogin = !firstAccessFields.classList.contains('hidden') && !
-                    isForgotPassword;
-                const url = isForgotPassword ?
-                    '{{ route('forgot_password.validate') }}' :
-                    (isFirstLogin ? '{{ route('first_access.validate') }}' :
-                        '{{ route('login.submit') }}');
+                let url = '{{ route('login.submit') }}';
+                if (!firstAccessFields.classList.contains('hidden') || isForgotPassword) {
+                    url = '{{ route('first_access.validate') }}';
+                }
 
                 try {
                     const res = await fetch(url, {
@@ -234,8 +225,8 @@
                     });
                     const data = await res.json();
 
-                    if (data.success) {
-                        window.location.href = 'https://sistema.boqueiraoremates.com/site';
+                    if (data.success && data.redirect) {
+                        window.location.href = data.redirect;
                         return;
                     }
 
