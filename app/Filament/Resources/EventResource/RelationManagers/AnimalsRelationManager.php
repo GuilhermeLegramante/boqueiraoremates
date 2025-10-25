@@ -176,45 +176,51 @@ class AnimalsRelationManager extends RelationManager
                     ->icon('heroicon-o-pencil')
                     ->form(fn() => $this->getLoteForm())
                     ->mountUsing(function ($form, $record) {
+                        // pegando dados do lote (pivot) e não do animal
+                        $pivot = $record->pivot;
                         $form->fill([
-                            'animal_id'       => $record->id,
-                            'name'            => $record->pivot->name,
-                            'situation'       => $record->pivot->situation,
-                            'lot_number'      => $record->pivot->lot_number,
-                            'min_value'       => $record->pivot->min_value,
-                            'increment_value' => $record->pivot->increment_value,
-                            'target_value'    => $record->pivot->target_value,
-                            'status'          => $record->pivot->status,
-                            'photo'           => $record->pivot->photo,
-                            'photo_full'      => $record->pivot->photo_full,
-                            'note'            => $record->pivot->note,
-                            'video_link'      => $record->pivot->video_link,
+                            'pivot_id'        => $pivot->id,       // id da pivot
+                            'name'            => $pivot->name,
+                            'situation'       => $pivot->situation,
+                            'lot_number'      => $pivot->lot_number,
+                            'min_value'       => $pivot->min_value,
+                            'increment_value' => $pivot->increment_value,
+                            'target_value'    => $pivot->target_value,
+                            'status'          => $pivot->status,
+                            'photo'           => $pivot->photo,
+                            'photo_full'      => $pivot->photo_full,
+                            'note'            => $pivot->note,
+                            'video_link'      => $pivot->video_link,
                         ]);
                     })
                     ->action(function ($record, $data) {
                         $event = $this->getOwnerRecord();
+                        $pivotId = $data['pivot_id']; // id do lote/pivot
 
+                        // tratar uploads
                         if (isset($data['photo']) && $data['photo'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo'] = $data['photo']->store('animals/photos', 'public');
                         }
-
                         if (isset($data['photo_full']) && $data['photo_full'] instanceof \Illuminate\Http\UploadedFile) {
                             $data['photo_full'] = $data['photo_full']->store('animals/photos_full', 'public');
                         }
 
-                        $event->animals()->updateExistingPivot($record->id, [
-                            'name'            => $data['name'],
-                            'situation'       => $data['situation'],
-                            'lot_number'      => $data['lot_number'],
-                            'min_value'       => $data['min_value'],
-                            'increment_value' => $data['increment_value'],
-                            'target_value'    => $data['target_value'],
-                            'status'          => $data['status'],
-                            'photo'           => $data['photo'] ?? $record->pivot->photo,
-                            'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
-                            'note'            => $data['note'] ?? null,
-                            'video_link'      => $data['video_link'] ?? null,
-                        ]);
+                        // atualiza apenas o lote correto usando o pivot id
+                        DB::table('animal_event')
+                            ->where('id', $pivotId)
+                            ->update([
+                                'name'            => $data['name'],
+                                'situation'       => $data['situation'],
+                                'lot_number'      => $data['lot_number'],
+                                'min_value'       => $data['min_value'],
+                                'increment_value' => $data['increment_value'],
+                                'target_value'    => $data['target_value'],
+                                'status'          => $data['status'],
+                                'photo'           => $data['photo'] ?? $record->pivot->photo,
+                                'photo_full'      => $data['photo_full'] ?? $record->pivot->photo_full,
+                                'note'            => $data['note'] ?? null,
+                                'video_link'      => $data['video_link'] ?? null,
+                            ]);
                     })
                     ->successNotificationTitle('Lote atualizado com sucesso!'),
 
