@@ -7,12 +7,6 @@
         <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md relative">
             <h2 class="text-2xl font-bold text-center mb-6">Acesse sua conta</h2>
 
-            {{-- Loading overlay --}}
-            <div id="loadingOverlay"
-                class="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center hidden rounded-xl">
-                <span class="text-green-700 font-bold">Aguarde...</span>
-            </div>
-
             <form id="loginForm" class="space-y-5">
                 @csrf
                 <div>
@@ -62,9 +56,18 @@
                 </div>
 
                 <button type="submit" id="loginBtn"
-                    class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all">
-                    Entrar
+                    class="w-full bg-green-700 text-white py-2 rounded-lg font-semibold hover:bg-green-800 transition-all flex justify-center items-center">
+                    <span id="btnText">Entrar</span>
+                    <svg id="btnSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                            stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 11-8 8h4l-3 3 3 3h-4z"></path>
+                    </svg>
                 </button>
+
+                <p id="generalError" class="text-red-500 text-sm mt-2 hidden"></p>
             </form>
         </div>
     </section>
@@ -78,7 +81,9 @@
             const loginForm = document.getElementById('loginForm');
             const usernameError = document.getElementById('usernameError');
             const passwordError = document.getElementById('passwordError');
-            const loadingOverlay = document.getElementById('loadingOverlay');
+            const generalError = document.getElementById('generalError');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
 
             // Máscara CPF
             usernameInput.addEventListener('input', () => {
@@ -115,6 +120,7 @@
                     if (data.first_login) {
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
+                        generalError.classList.add('hidden');
 
                         motherOptions.innerHTML = data.mother_options.map(name => `
                     <label class="flex items-center space-x-2 cursor-pointer">
@@ -136,8 +142,11 @@
                 e.preventDefault();
                 usernameError.classList.add('hidden');
                 passwordError.classList.add('hidden');
+                generalError.classList.add('hidden');
 
-                loadingOverlay.classList.remove('hidden');
+                // Spinner
+                btnText.classList.add('hidden');
+                btnSpinner.classList.remove('hidden');
 
                 const formData = new FormData(loginForm);
                 const isFirstLogin = !firstAccessFields.classList.contains('hidden');
@@ -160,10 +169,12 @@
                         if (data.success && data.redirect) {
                             window.location.href = data.redirect;
                         } else if (data.error) {
-                            loadingOverlay.classList.add('hidden');
+                            // Exibir mensagem adequada
                             if (data.error.includes('Usuário')) usernameError.textContent = data.error,
                                 usernameError.classList.remove('hidden');
-                            else passwordError.textContent = data.error, passwordError.classList.remove(
+                            else if (data.error.includes('Senha')) passwordError.textContent = data
+                                .error, passwordError.classList.remove('hidden');
+                            else generalError.textContent = data.error, generalError.classList.remove(
                                 'hidden');
                         }
                     } else if (res.redirected) {
@@ -171,9 +182,11 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    alert('Erro de comunicação com o servidor.');
+                    generalError.textContent = 'Erro de comunicação com o servidor.';
+                    generalError.classList.remove('hidden');
                 } finally {
-                    loadingOverlay.classList.add('hidden');
+                    btnText.classList.remove('hidden');
+                    btnSpinner.classList.add('hidden');
                 }
             });
         });
