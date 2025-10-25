@@ -178,6 +178,8 @@ class AnimalsRelationManager extends RelationManager
                     ->mountUsing(function ($form, $record) {
                         $pivot = $record->pivot; // pega o pivot do relacionamento atual
 
+                        dd($pivot->id);
+
                         if (!$pivot) return;
 
                         $form->fill([
