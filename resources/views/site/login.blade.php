@@ -217,6 +217,9 @@
                 loginSpinner.classList.remove('hidden');
 
                 const formData = new FormData(loginForm);
+                // Adiciona CSRF manualmente
+                formData.append('_token', document.querySelector('input[name="_token"]').value);
+
                 const isFirstLogin = !firstAccessFields.classList.contains('hidden') && !
                     isForgotPassword;
                 const url = isForgotPassword ?
@@ -232,7 +235,6 @@
                     const data = await res.json();
 
                     if (data.success) {
-                        // Redireciona para o site externo após login ou troca de senha
                         window.location.href = 'https://sistema.boqueiraoremates.com/site';
                         return;
                     }
@@ -262,5 +264,6 @@
             });
         });
     </script>
+
 
 @endsection
