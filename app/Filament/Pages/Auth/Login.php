@@ -124,15 +124,6 @@ class Login extends AuthLogin
             return app(LoginResponse::class);
         }
 
-        // Login normal
-        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-            throw ValidationException::withMessages([
-                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
-            ]);
-        }
-
-        session()->regenerate();
-
         // 🔁 Primeiro acesso
         if ($user->first_login) {
             $this->firstAccess = true;
@@ -160,6 +151,17 @@ class Login extends AuthLogin
 
             return null; // espera o usuário preencher a nova senha
         }
+
+
+        // Login normal
+        if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+            throw ValidationException::withMessages([
+                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+            ]);
+        }
+
+        session()->regenerate();
+
 
         return app(LoginResponse::class);
     }
