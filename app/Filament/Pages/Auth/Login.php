@@ -113,18 +113,32 @@ class Login extends AuthLogin
 
         $data = $this->form->getState();
 
-        // Senha master
-        $senhaMaster = env('SENHA_MASTER');
         $user = \App\Models\User::where('username', $data['username'])->first();
 
-        if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+            ]);
+        }
+
+        // 🔐 Senha master
+        $senhaMaster = env('SENHA_MASTER');
+        if (!empty($senhaMaster) && $data['password'] === $senhaMaster) {
             Filament::auth()->login($user, $data['remember'] ?? false);
             session()->regenerate();
+        } else {
+            // Login normal
+            if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
+                throw ValidationException::withMessages([
+                    'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+                ]);
+            }
 
-            return app(LoginResponse::class);
+            session()->regenerate();
         }
 
         // 🔁 Primeiro acesso
+        $user = Filament::auth()->user();
         if ($user->first_login) {
             $this->firstAccess = true;
 
@@ -143,18 +157,10 @@ class Login extends AuthLogin
                 return app(LoginResponse::class);
             }
 
-            return null; // espera o usuário preencher a nova senha
-        } else {
-            // Login normal
-            if (!Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-                throw ValidationException::withMessages([
-                    'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
-                ]);
-            }
-
-            session()->regenerate();
-
-            return app(LoginResponse::class);
+            // Espera o usuário preencher a nova senha
+            return null;
         }
+
+        return app(LoginResponse::class);
     }
 }
