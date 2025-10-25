@@ -66,11 +66,18 @@ class LoginController extends Controller
             'new_password' => 'required|min:6|confirmed',
         ]);
 
-        $username = preg_replace('/\D/', '', $request->username) ?: $request->username;
-        $user = User::where('username', $username)->firstOrFail();
+        // Normaliza CPF do input
+        $normalizedUsername = preg_replace('/\D/', '', $request->username);
+
+        // Busca usuário, ignorando máscara
+        $user = User::whereRaw(
+            "REPLACE(REPLACE(REPLACE(username, '.', ''), '-', ''), '/', '') = ?",
+            [$normalizedUsername]
+        )->firstOrFail();
 
         $client = Client::where('registered_user_id', $user->id)->firstOrFail();
 
+        // Valida dados de segurança
         if ($client->birth_date !== $request->birth_date || $client->mother !== $request->mother) {
             return back()->withErrors(['username' => 'Dados de verificação incorretos.']);
         }
@@ -84,6 +91,7 @@ class LoginController extends Controller
 
         return redirect()->intended('/');
     }
+
 
     // Logout
     public function logout()
