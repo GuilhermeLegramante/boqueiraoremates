@@ -78,7 +78,7 @@ class Login extends AuthLogin
             ->password()
             ->revealable(filament()->arePasswordsRevealable())
             ->rule('min:4')
-            ->required();
+            ->required(fn() => !$this->firstAccess); // só obrigatório se não for primeiro acesso
     }
 
     protected function getCredentialsFromFormData(array $data): array
@@ -91,49 +91,34 @@ class Login extends AuthLogin
 
     public function submitForm(): ?LoginResponse
     {
-        if ($this->firstAccess) {
-            return $this->saveNewPassword();
-        } else {
-            return $this->authenticate();
+        $data = $this->form->getState();
+
+        $user = \App\Models\User::where('username', $data['username'])->first();
+
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'data.username' => __('filament-panels::pages/auth/login.messages.failed'),
+            ]);
         }
-    }
 
-    public function authenticate(): ?LoginResponse
-    {
-        try {
-            $this->rateLimit(5);
-        } catch (TooManyRequestsException $exception) {
-            Notification::make()
-                ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]))
-                ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: [])
-                    ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
-                        'seconds' => $exception->secondsUntilAvailable,
-                        'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                    ]) : null)
-                ->danger()
-                ->send();
+        // Primeiro acesso
+        if ($user->first_login) {
+            $this->firstAccess = true;
 
+            if ($this->new_password) {
+                return $this->saveNewPassword($user);
+            }
+
+            // Exibe campos de nova senha
             return null;
         }
 
-        $data = $this->form->getState();
-
         // 🔐 Senha master
         $senhaMaster = env('SENHA_MASTER');
-        $user = \App\Models\User::where('username', $data['username'])->first();
-
-        if ($user && !empty($senhaMaster) && $data['password'] === $senhaMaster) {
+        if (!empty($senhaMaster) && $data['password'] === $senhaMaster) {
             Filament::auth()->login($user, $data['remember'] ?? false);
             session()->regenerate();
-
-            if ($user->first_login) {
-                $this->firstAccess = true;
-            }
-
-            return $this->firstAccess ? null : app(LoginResponse::class);
+            return app(LoginResponse::class);
         }
 
         // Login normal
@@ -145,33 +130,30 @@ class Login extends AuthLogin
 
         session()->regenerate();
 
-        // Detecta primeiro acesso
-        $user = Filament::auth()->user();
-        if ($user->first_login) {
-            $this->firstAccess = true;
-            return null; // espera usuário preencher os campos de senha
-        }
-
         return app(LoginResponse::class);
     }
 
-    public function saveNewPassword(): ?LoginResponse
+    public function saveNewPassword($user): ?LoginResponse
     {
         $this->validate([
             'new_password' => 'required|min:6|same:new_password_confirmation',
             'new_password_confirmation' => 'required|min:6',
         ]);
 
-        $user = Filament::auth()->user();
         $user->update([
             'password' => Hash::make($this->new_password),
             'first_login' => false,
         ]);
 
+        // Loga o usuário automaticamente após alterar a senha
+        Filament::auth()->login($user);
+
         Notification::make()
             ->title('Senha atualizada com sucesso!')
             ->success()
             ->send();
+
+        session()->regenerate();
 
         return app(LoginResponse::class);
     }
