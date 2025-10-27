@@ -192,7 +192,7 @@
             @endphp
             <div class="mt-10 flex justify-between max-w-md mx-auto text-sm">
                 @if ($previousAnimal)
-                    <a href="{{ route('animals.show', [$event->id, $previousAnimal->id]) }}"
+                    <a href="{{ route('animals.show', [$event->id, $previousAnimal->pivot->id]) }}"
                         class="inline-block bg-green-800 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition">
                         &laquo; Lote Anterior
                     </a>
@@ -201,7 +201,7 @@
                 @endif
 
                 @if ($nextAnimal)
-                    <a href="{{ route('animals.show', [$event->id, $nextAnimal->id]) }}"
+                    <a href="{{ route('animals.show', [$event->id, $nextAnimal->pivot->id]) }}"
                         class="inline-block bg-green-800 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition">
                         Próximo Lote &raquo;
                     </a>
