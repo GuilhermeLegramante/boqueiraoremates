@@ -48,6 +48,19 @@ class Bid extends Model
         })->first();
     }
 
+    public function animalToFilament(): \Illuminate\Database\Eloquent\Relations\HasOneThrough
+    {
+        return $this->hasOneThrough(
+            \App\Models\Animal::class,    // Modelo final
+            \App\Models\AnimalEvent::class, // Pivot intermediário
+            'id',       // FK do pivot na Bid (animal_event_id)
+            'id',       // FK do animal
+            'animal_event_id', // Local Key do Bid
+            'animal_id'      // Local Key do pivot
+        );
+    }
+
+
     public function getAnimalNameAttribute()
     {
         $animalId = DB::table('animal_event')
