@@ -133,23 +133,16 @@ class BidResource extends Resource
                     ->query(fn($query) => $query->where('status', 2))
                     ->label('Rejeitados'),
 
+                // Select de eventos (publicados ou não)
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
-                    ->options(fn() => [
-                        '' => 'Todos os eventos', // chave vazia = todos
-                        'published' => 'Somente publicados',
-                    ] + \App\Models\Event::pluck('name', 'id')->toArray()) // adiciona os eventos individuais
-                    ->query(function ($query, $value) {
-                        if ($value === 'published') {
-                            // filtra apenas bids cujo evento está publicado
-                            return $query->whereHas('event', fn($q) => $q->where('published', true));
-                        } elseif ($value) {
-                            // filtra por evento específico
-                            return $query->where('event_id', $value);
-                        }
-                        // se o valor for '' ou null, retorna todos
-                        return $query;
-                    }),
+                    ->options(fn() => ['' => 'Todos os eventos'] + \App\Models\Event::pluck('name', 'id')->toArray())
+                    ->query(fn($query, $value) => $value ? $query->where('event_id', $value) : $query),
+
+                // Filtro de apenas eventos publicados
+                Tables\Filters\Filter::make('published_events')
+                    ->label('Somente eventos publicados')
+                    ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
 
 
                 Tables\Filters\SelectFilter::make('user_id')
