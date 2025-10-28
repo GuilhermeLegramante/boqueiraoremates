@@ -52,9 +52,13 @@
                             </span>
                         </a>
                         <div class="p-5">
-                            <h3 class="font-bold text-xl text-white mb-2">Lote: {{ $animal->pivot->lot_number }}</h3>
+                            <h3 class="font-bold text-xl text-white mb-2">
+                                Lote: {{ $animal->pivot->lot_number }}
+                            </h3>
 
-                            <h3 class="font-bold text-xl text-white mb-2">{{ $animal->pivot->name }}</h3>
+                            <h3 class="font-bold text-xl text-white mb-2 min-h-[3rem]">
+                                {{ $animal->pivot->name }}
+                            </h3>
 
                             <div class="mb-3 space-y-1 min-h-[1.5rem]">
                                 <p class="text-gray-200 text-sm">
