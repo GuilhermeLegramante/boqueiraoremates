@@ -10,9 +10,11 @@
         <!-- Informações principais -->
         <div class="space-y-3 text-center lg:text-left">
             <h2 class="text-3xl font-extrabold tracking-wide">{{ $event->name }}</h2>
-            <p class="text-lg font-medium text-yellow-300">
-                {{ $event->start_date->format('d/m/Y H:i') }}
-            </p>
+            @if (!$event->is_permanent)
+                <p class="text-lg font-medium text-yellow-300">
+                    {{ $event->start_date->format('d/m/Y H:i') }}
+                </p>
+            @endif
             <div class="bg-white/10 rounded-xl p-3 text-sm">
                 @if ($event->is_permanent)
                     <p>
