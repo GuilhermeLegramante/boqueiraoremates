@@ -127,20 +127,22 @@ class Animal extends Model
      */
     public function getCurrentBidAttribute()
     {
+        // Se não tiver pivot, retorna o mínimo
         if (!isset($this->pivot)) {
-            return 0;
+            return $this->min_value ?? 0;
         }
 
-        // Pega o ID do pivot (animal_event_id)
         $animalEventId = $this->pivot->id;
 
         // Busca o maior lance para esse animal_event
         $bid = Bid::where('animal_event_id', $animalEventId)
             ->orderByDesc('amount')
-            // ->where('status', 1)
             ->first();
 
-        return $bid ? $bid->amount : 0;
+        $currentBid = $bid ? $bid->amount : 0;
+
+        // Retorna o maior valor entre currentBid e min_value
+        return max($currentBid, $this->min_value ?? 0);
     }
 
     /**
