@@ -25,6 +25,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Grid;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\Filter;
@@ -70,22 +71,34 @@ class EventResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->contentGrid(['md' => 2, 'xl' => 3])
+            // ->contentGrid(['md' => 2, 'xl' => 3])
+            // ->columns([
+            //     Grid::make()
+            //         ->columns(columns: 1)
+            //         ->schema([
+            //             ImageColumn::make('banner')
+            //                 ->label('Banner')
+            //                 ->height(90)
+            //                 ->columnSpanFull()
+            //                 ->getStateUsing(fn($record) => $record->banner ? asset('storage/' . $record->banner) : null),
+
+            //             ViewColumn::make('event_info')
+            //                 ->label('Evento')
+            //                 ->view('event-info-to-list'),
+            //         ])
+
+            // ])
             ->columns([
-                Grid::make()
-                    ->columns(columns: 1)
-                    ->schema([
-                        ImageColumn::make('banner')
-                            ->label('Banner')
-                            ->height(90)
-                            ->columnSpanFull()
-                            ->getStateUsing(fn($record) => $record->banner ? asset('storage/' . $record->banner) : null),
+                ImageColumn::make('banner')
+                    ->label('Banner')
+                    ->height(90)
+                    ->columnSpanFull()
+                    ->getStateUsing(fn($record) => $record->banner ? asset('storage/' . $record->banner) : null),
 
-                        ViewColumn::make('event_info')
-                            ->label('Evento')
-                            ->view('event-info-to-list'),
-                    ])
-
+                TextColumn::make('name')
+                    ->label(__('fields.name'))
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->searchable(),
             ])
             ->defaultSort('start_date', 'desc')
             ->filters([
