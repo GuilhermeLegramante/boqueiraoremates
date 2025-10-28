@@ -29,13 +29,6 @@
             <!-- Conteúdo principal -->
             <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
                 <!-- Imagem do evento -->
-                {{-- <div class="aspect-[4/3] w-44 rounded-lg overflow-hidden bg-black border border-gray-800">
-                    <a href="{{ route('events.show', $event) }}">
-                        <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
-                            class="object-cover w-full h-full object-center">
-                    </a>
-                </div> --}}
-
                 <div
                     class="w-44 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
                     <a href="{{ route('events.show', $event) }}">
@@ -43,8 +36,6 @@
                             class="object-cover w-full h-full object-center">
                     </a>
                 </div>
-
-
 
                 <!-- Descrição -->
                 <div class="md:col-span-3 text-justify">

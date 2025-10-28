@@ -52,13 +52,12 @@
                             </span>
                         </a>
                         <div class="p-5">
+                            <h3 class="font-bold text-xl text-white mb-2">Lote: {{ $animal->pivot->lot_number }}</h3>
+
                             <h3 class="font-bold text-xl text-white mb-2">{{ $animal->pivot->name }}</h3>
 
                             <!-- Lote e Lance Atual agrupados -->
                             <div class="mb-3 space-y-1">
-                                <p class="text-gray-200 text-sm">
-                                    Lote: <span class="text-lg font-semibold">{{ $animal->pivot->lot_number }}</span>
-                                </p>
                                 <p class="text-gray-200 text-sm">
                                     Lance Atual: <span class="text-lg font-semibold">R$
                                         {{ number_format($animal->current_bid, 2, ',', '.') }}</span>
@@ -67,7 +66,7 @@
 
                             <!-- Próximo lance destacado -->
                             <p class="text-yellow-400 font-extrabold text-2xl mb-3">
-                                R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
+                                Lance Alvo R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
                             </p>
 
                             <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
