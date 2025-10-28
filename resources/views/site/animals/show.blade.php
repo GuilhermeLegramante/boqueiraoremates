@@ -116,9 +116,9 @@
                             </div>
                             <div class="bg-[#003333] shadow-lg rounded-lg p-4">
                                 <p class="text-green-300">Lance alvo</p>
-                                @if ($animal->pivot->target_value)
+                                @if ($animal->pivot->target_value && $animal->pivot->target_value != '0.00')
                                     <p class="text-xl font-bold text-green-300">
-                                        R$ {{ number_format($animal->target_value, 2, ',', '.') }}
+                                        R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                     </p>
                                 @else
                                     <p class="text-xl font-bold text-green-300">Consulte o regulamento</p>
