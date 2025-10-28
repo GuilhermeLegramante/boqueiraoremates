@@ -65,9 +65,14 @@
                             </div>
 
                             <!-- Próximo lance destacado -->
-                            <p class="text-yellow-400 font-extrabold text-2xl mb-3">
-                                Lance Alvo R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
+                            <p class="mb-3">
+                                Lance Alvo:
+                                <span
+                                    class="inline-block bg-red-600 text-white font-extrabold text-2xl px-4 py-2 rounded-lg shadow-lg">
+                                    R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
+                                </span>
                             </p>
+
 
                             <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                 class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
