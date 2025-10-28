@@ -65,10 +65,10 @@
                             </div>
 
                             <!-- Próximo lance destacado -->
-                            <p class="mb-3">
-                                Lance Alvo:
+                            <p class="text-yellow-400 font-extrabold text-2xl mb-3">
+                                Lance Alvo
                                 <span
-                                    class="inline-block bg-red-600 text-white font-extrabold text-2xl px-4 py-2 rounded-lg shadow-lg">
+                                    class="inline-block bg-green-600 text-white font-extrabold px-3 py-1 rounded-lg shadow">
                                     R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
                                 </span>
                             </p>
