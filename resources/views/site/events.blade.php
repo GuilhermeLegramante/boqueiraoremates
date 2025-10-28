@@ -27,18 +27,24 @@
             </div>
 
             <!-- Conteúdo principal -->
-            <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-6 text-white">
-
+            <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
                 <!-- Imagem do evento -->
-                <div class="md:col-span-1 flex justify-center md:justify-start">
+                {{-- <div class="aspect-[4/3] w-44 rounded-lg overflow-hidden bg-black border border-gray-800">
                     <a href="{{ route('events.show', $event) }}">
-                        <div
-                            class="w-72 aspect-[1000/720] rounded-2xl shadow-xl border border-white/30 bg-black overflow-hidden">
-                            <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do evento"
-                                class="w-full h-full object-cover object-center">
-                        </div>
+                        <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
+                            class="object-cover w-full h-full object-center">
+                    </a>
+                </div> --}}
+
+                <div
+                    class="w-44 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
+                    <a href="{{ route('events.show', $event) }}">
+                        <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
+                            class="object-cover w-full h-full object-center">
                     </a>
                 </div>
+
+
 
                 <!-- Descrição -->
                 <div class="md:col-span-3 text-justify">
@@ -48,15 +54,10 @@
                 </div>
 
                 <!-- Pré-lance -->
-                <div class="md:col-span-1 flex justify-center md:justify-end">
-                    <a href="{{ route('events.show', $event) }}">
-                        <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-36 h-36 object-contain rounded-xl bg-white/10 p-2 hover:scale-105 transition-transform duration-300">
-                    </a>
-                </div>
-
+                <a href="{{ route('events.show', $event) }}">
+                    <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance" class="w-36 h-36 object-cover rounded">
+                </a>
             </div>
-
         </div>
     @endforeach
 
