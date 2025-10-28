@@ -24,8 +24,6 @@ class AnimalController extends Controller
         // Injeta o pivot no animal, para manter compatibilidade com as views existentes
         $animal->setRelation('pivot', $animalEvent);
 
-        dd($animal);
-
         return view('site.animals.show', compact('event', 'animal', 'events'));
     }
 }
