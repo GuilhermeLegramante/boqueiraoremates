@@ -89,7 +89,7 @@ class EventResource extends Resource
 
             // ])
             ->columns([
-                ImageColumn::make('banner')
+                ImageColumn::make('banner_min')
                     ->label('Banner')
                     ->height(90)
                     ->columnSpanFull()
