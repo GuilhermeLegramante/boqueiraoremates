@@ -30,7 +30,7 @@
                 @foreach ($event->animals as $animal)
                     <div
                         class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                        <a href="{{ route('animals.show', [$event->id, $animal->id]) }}" class="block relative">
+                        <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}" class="block relative">
                             <div class="w-full bg-[#4D6766] flex items-center justify-center">
                                 <img src="{{ asset('storage/' . $animal->pivot->photo) }}" alt="{{ $animal->pivot->name }}"
                                     class="w-full h-auto object-contain transition duration-300 hover:scale-105 rounded-t-2xl shadow">
