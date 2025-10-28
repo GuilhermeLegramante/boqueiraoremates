@@ -190,10 +190,37 @@ class AnimalsRelationManager extends RelationManager
                 ->label('Número do Lote')
                 ->required(),
 
-            Money::make('min_value')->label('Lance Mínimo')->numeric()->required(),
-            Money::make('increment_value')->label('Valor do Incremento')->numeric()->nullable(),
-            Money::make('target_value')->label('Lance Alvo')->numeric()->nullable(),
-            Money::make('final_value')->label('Valor Final')->numeric()->nullable(),
+            TextInput::make('min_value')
+                ->label('Lance Mínimo')
+                ->prefix('R$')
+                ->numeric()
+                ->live()
+                ->debounce(1000)
+                ->required(),
+
+            TextInput::make('increment_value')
+                ->label('Valor do Incremento')
+                ->prefix('R$')
+                ->numeric()
+                ->live()
+                ->debounce(1000)
+                ->nullable(),
+
+            TextInput::make('target_value')
+                ->label('Lance Alvo')
+                ->prefix('R$')
+                ->numeric()
+                ->live()
+                ->debounce(1000)
+                ->nullable(),
+                
+            TextInput::make('final_value')
+                ->label('Valor Final')
+                ->prefix('R$')
+                ->numeric()
+                ->live()
+                ->debounce(1000)
+                ->nullable(),
 
             Select::make('status')
                 ->label('Status')
