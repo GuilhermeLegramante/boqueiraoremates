@@ -135,7 +135,9 @@ class BidResource extends Resource
 
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
-                    ->relationship('event', 'name'),
+                    ->options(fn() => \App\Models\Event::pluck('name', 'id')) // todos os eventos
+                    ->query(fn($query, $value) => $value ? $query->where('event_id', $value) : $query)
+                    ->placeholder('Todos os eventos'),
 
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('Cliente')
