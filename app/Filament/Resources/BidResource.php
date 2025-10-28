@@ -59,8 +59,8 @@ class BidResource extends Resource
                     ->color('info')
                     ->icon('heroicon-o-document-text')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('event.name')->searchable()->label('Evento')->sortable(),
-                Tables\Columns\TextColumn::make('animalToFilament.name')->searchable()->label('Animal')->sortable(),
+                Tables\Columns\TextColumn::make('event.name')->searchable(['events.name'])->label('Evento')->sortable(),
+                Tables\Columns\TextColumn::make('animalToFilament.name')->searchable(['animals.name'])->label('Animal')->sortable(),
                 Tables\Columns\TextColumn::make('amount')->label('Valor')->money('BRL')->sortable(),
                 Tables\Columns\IconColumn::make('status')
                     ->label('Status')
