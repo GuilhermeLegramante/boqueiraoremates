@@ -140,8 +140,10 @@ class BidResource extends Resource
 
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('Cliente')
+                    ->searchable()
                     ->relationship('user', 'name'),
             ])
+            ->deferFilters()
             ->groups([
                 Group::make('event.name')
                     ->label('Evento')
