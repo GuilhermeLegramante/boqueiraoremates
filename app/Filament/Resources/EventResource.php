@@ -93,7 +93,7 @@ class EventResource extends Resource
                     ->label('Banner')
                     ->height(90)
                     ->columnSpanFull()
-                    ->getStateUsing(fn($record) => $record->banner ? asset('storage/' . $record->banner) : null),
+                    ->getStateUsing(fn($record) => $record->banner_min ? asset('storage/' . $record->banner_min) : null),
 
                 TextColumn::make('name')
                     ->label(__('fields.name'))
