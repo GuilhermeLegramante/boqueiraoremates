@@ -53,20 +53,25 @@ class ClientForm
                                 ->required()
                                 ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
                                 ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
+                                
                             Radio::make('gender')
                                 ->label(__('fields.gender'))
                                 ->options([
                                     'male' => 'Masculino',
                                     'female' => 'Feminino',
                                 ]),
+
                             TextInput::make('establishment')
                                 ->label(__('fields.establishment')),
+
                             TextInput::make('occupation')
                                 ->label(__('fields.occupation')),
+
                             TextInput::make('note_occupation')
                                 ->label(__('fields.note_occupation')),
                             // TextInput::make('income')->numeric()->label(__('fields.income')),
                             // Money::make('income')->label(__('fields.income')),
+
                             TextInput::make('income')
                                 ->prefix('R$')
                                 ->numeric()

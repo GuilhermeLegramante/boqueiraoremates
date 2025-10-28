@@ -101,18 +101,18 @@ class Login extends AuthLogin
             ]);
         }
 
-        // Primeiro acesso
-        if ($user->first_login) {
-            $this->firstAccess = true;
+        // // Primeiro acesso
+        // if ($user->first_login) {
+        //     $this->firstAccess = true;
 
-            // verifica se o usuário já preencheu os campos de nova senha
-            if (!empty($data['new_password'])) {
-                return $this->saveNewPassword($user, $data);
-            }
+        //     // verifica se o usuário já preencheu os campos de nova senha
+        //     if (!empty($data['new_password'])) {
+        //         return $this->saveNewPassword($user, $data);
+        //     }
 
-            // Exibe campos de nova senha
-            return null;
-        }
+        //     // Exibe campos de nova senha
+        //     return null;
+        // }
 
         // 🔐 Senha master
         $senhaMaster = env('SENHA_MASTER');
