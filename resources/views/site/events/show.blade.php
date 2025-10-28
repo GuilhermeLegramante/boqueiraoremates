@@ -65,6 +65,8 @@
                                         </span>
                                     </p>
                                 </div>
+                            @else 
+                            <br><br>
                             @endif
 
                             <!-- Próximo lance destacado -->
