@@ -99,6 +99,10 @@ class EventResource extends Resource
                     ->label(__('fields.name'))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+
+                TextColumn::make('start_date')
+                    ->label('Data')
+                    ->date('d/m/Y H:i'),
             ])
             ->defaultSort('start_date', 'desc')
             ->filters([
@@ -121,59 +125,55 @@ class EventResource extends Resource
                     }),
             ])
             ->actions([
-                // Tables\Actions\ViewAction::make()->label('Detalhes'),
-                Tables\Actions\EditAction::make()
-                    ->mutateRecordDataUsing(function (array $data): array {
-                        $data['name'] = Str::upper($data['name']);
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make()
+                        ->mutateRecordDataUsing(function (array $data): array {
+                            $data['name'] = Str::upper($data['name']);
 
-                        return $data;
-                    }),
-                Tables\Actions\Action::make('clone')
-                    ->label('Clonar')
-                    ->icon('heroicon-o-document-duplicate')
-                    ->color('gray')
-                    ->requiresConfirmation()
-                    ->action(function ($record) {
-                        // 🔹 Clona o evento principal
-                        $clone = $record->replicate();
-                        $clone->name = $record->name . ' (Cópia)';
-                        $clone->save();
+                            return $data;
+                        }),
+                    Tables\Actions\Action::make('clone')
+                        ->label('Clonar')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('gray')
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            // 🔹 Clona o evento principal
+                            $clone = $record->replicate();
+                            $clone->name = $record->name . ' (Cópia)';
+                            $clone->save();
 
-                        // 🔹 Clona os lotes (tabela pivot animals_event)
-                        foreach ($record->animals as $animal) {
-                            $pivotData = $animal->pivot->toArray();
+                            // 🔹 Clona os lotes (tabela pivot animals_event)
+                            foreach ($record->animals as $animal) {
+                                $pivotData = $animal->pivot->toArray();
 
-                            // Remove timestamps para MySQL não reclamar
-                            unset($pivotData['created_at'], $pivotData['updated_at'], $pivotData['animal_id'], $pivotData['event_id']);
+                                // Remove timestamps para MySQL não reclamar
+                                unset($pivotData['created_at'], $pivotData['updated_at'], $pivotData['animal_id'], $pivotData['event_id']);
 
-                            // Copia fotos se houver
-                            foreach (['photo', 'photo_full'] as $photoField) {
-                                if (!empty($animal->pivot->$photoField) && Storage::disk('public')->exists($animal->pivot->$photoField)) {
-                                    $path = 'animals/copies/' . basename($animal->pivot->$photoField);
-                                    Storage::disk('public')->copy($animal->pivot->$photoField, $path);
-                                    $pivotData[$photoField] = $path;
+                                // Copia fotos se houver
+                                foreach (['photo', 'photo_full'] as $photoField) {
+                                    if (!empty($animal->pivot->$photoField) && Storage::disk('public')->exists($animal->pivot->$photoField)) {
+                                        $path = 'animals/copies/' . basename($animal->pivot->$photoField);
+                                        Storage::disk('public')->copy($animal->pivot->$photoField, $path);
+                                        $pivotData[$photoField] = $path;
+                                    }
                                 }
+
+                                $clone->animals()->attach($animal->id, $pivotData);
                             }
 
-                            $clone->animals()->attach($animal->id, $pivotData);
-                        }
 
-
-                        Notification::make()
-                            ->title('Evento clonado com sucesso!')
-                            ->success()
-                            ->send();
-                    }),
-                Tables\Actions\DeleteAction::make(),
-
-                // Action::make('viewRegulation')
-                //     ->label('Regulamento')
-                //     ->icon('heroicon-o-document-text')
-                //     ->url(fn($record) => $record->regulation ? asset('storage/' . $record->regulation) : null)
-                //     ->openUrlInNewTab()
-                //     ->visible(fn($record) => $record->regulation !== null),
-
-            ])
+                            Notification::make()
+                                ->title('Evento clonado com sucesso!')
+                                ->success()
+                                ->send();
+                        }),
+                    Tables\Actions\DeleteAction::make(),
+                ])
+                    ->label('Ações') // texto do botão do grupo
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->color('gray'),
+            ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
