@@ -26,7 +26,7 @@ class Event extends Model
         'show_lots',
         'regulation_image_path',
         'benefits_image_path',
-
+        'is_permanent',
     ];
 
     protected $casts = [

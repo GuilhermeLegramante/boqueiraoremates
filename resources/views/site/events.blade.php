@@ -16,7 +16,11 @@
                         {{ $event->name }}
                     </h1>
                     <span class="text-sm md:text-lg font-bold mt-1 md:mt-0 drop-shadow-lg truncate">
-                        Data / Horário: {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y - H:i') }}hs
+                        @if ($event->is_permanent)
+                            VENDA PERMANENTE
+                        @else
+                            Data / Horário: {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y - H:i') }}hs
+                        @endif
                     </span>
                 </div>
 

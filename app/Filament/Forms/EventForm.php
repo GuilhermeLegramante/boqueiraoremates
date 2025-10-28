@@ -132,7 +132,7 @@ class EventForm
                 ->downloadable()
                 ->maxSize(2048)
                 ->helperText('Envie uma imagem ilustrando os benefícios do evento.'),
-                
+
             Toggle::make('published')
                 ->label('Publicado')
                 ->default(false),
@@ -143,6 +143,10 @@ class EventForm
 
             Toggle::make('show_lots')
                 ->label('Mostrar lotes')
+                ->default(false),
+
+            Toggle::make('is_permanent')
+                ->label('Venda Permanente')
                 ->default(false),
         ];
     }

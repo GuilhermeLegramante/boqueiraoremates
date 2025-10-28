@@ -14,16 +14,22 @@
                 {{ $event->start_date->format('d/m/Y H:i') }}
             </p>
             <div class="bg-white/10 rounded-xl p-3 text-sm">
-                <p>
-                    Pré-lance online: <br>
-                    <span class="font-semibold text-yellow-200">
-                        {{ \Carbon\Carbon::parse($event->pre_start_date)->format('d/m/Y H:i') }}
-                    </span>
-                    até
-                    <span class="font-semibold text-yellow-200">
-                        {{ \Carbon\Carbon::parse($event->pre_finish_date)->format('d/m/Y H:i') }}
-                    </span>
-                </p>
+                @if ($event->is_permanent)
+                    <p>
+                        VENDA PERMANENTE
+                    </p>
+                @else
+                    <p>
+                        Pré-lance online: <br>
+                        <span class="font-semibold text-yellow-200">
+                            {{ \Carbon\Carbon::parse($event->pre_start_date)->format('d/m/Y H:i') }}
+                        </span>
+                        até
+                        <span class="font-semibold text-yellow-200">
+                            {{ \Carbon\Carbon::parse($event->pre_finish_date)->format('d/m/Y H:i') }}
+                        </span>
+                    </p>
+                @endif
             </div>
         </div>
 
