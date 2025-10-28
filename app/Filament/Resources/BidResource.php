@@ -136,8 +136,16 @@ class BidResource extends Resource
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
                     ->options(fn() => \App\Models\Event::pluck('name', 'id')) // todos os eventos
-                    ->query(fn($query, $value) => $value ? $query->where('event_id', $value) : $query)
-                    ->placeholder('Todos os eventos'),
+                    ->query(function ($query, $value) {
+                        if ($value === 'published') {
+                            return $query->whereHas('event', fn($q) => $q->where('published', true));
+                        } elseif ($value) {
+                            return $query->where('event_id', $value);
+                        }
+                        return $query; // todos
+                    })
+                    ->placeholder('Todos os eventos')
+                    ->default(null),
 
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('Cliente')
