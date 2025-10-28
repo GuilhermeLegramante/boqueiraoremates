@@ -127,9 +127,9 @@ class Animal extends Model
      */
     public function getCurrentBidAttribute()
     {
-        // Se não tiver pivot, retorna o mínimo
+        // Se não tiver pivot, retorna 0
         if (!isset($this->pivot)) {
-            return $this->min_value ?? 0;
+            return 0;
         }
 
         $animalEventId = $this->pivot->id;
@@ -142,7 +142,7 @@ class Animal extends Model
         $currentBid = $bid ? $bid->amount : 0;
 
         // Retorna o maior valor entre currentBid e min_value
-        return max($currentBid, $this->min_value ?? 0);
+        return max($currentBid, $this->pivot->min_value ?? 0);
     }
 
     /**
