@@ -135,6 +135,7 @@ class BidResource extends Resource
 
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
+                    ->searchable()
                     ->relationship('event', 'name'),
 
                 Tables\Filters\SelectFilter::make('user_id')
