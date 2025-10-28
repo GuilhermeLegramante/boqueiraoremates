@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\BidResource\Pages;
 
 use App\Filament\Resources\BidResource;
+use App\Filament\Resources\PendingBidResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

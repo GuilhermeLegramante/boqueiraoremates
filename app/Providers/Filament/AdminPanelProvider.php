@@ -6,6 +6,7 @@ use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\CommissionReport;
+use App\Filament\Resources\BidResource\Widgets\PendingBidsTotalWidget;
 use App\Filament\Resources\ClientResource\Widgets\ClientRegisterOriginChart;
 use App\Filament\Resources\ClientResource\Widgets\ClientSituationChart;
 use App\Filament\Resources\ClientResource\Widgets\StatsOverview;
@@ -79,8 +80,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             // ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
+                PendingBidsTotalWidget::class,
                 Widgets\AccountWidget::class,
-                VersionWidget::class,
+                // VersionWidget::class,
+                // \App\Filament\Widgets\PendingBidsWidget::class,
                 StatsOverview::class,
                 ClientSituationChart::class,
                 ClientRegisterOriginChart::class,

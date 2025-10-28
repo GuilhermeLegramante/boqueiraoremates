@@ -3,49 +3,35 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\BidResource\Pages;
-use App\Filament\Resources\BidResource\RelationManagers;
+use App\Filament\Resources\PendingBidResource\Pages\ListPendingBids;
 use App\Filament\Tables\BidTable;
 use App\Models\Bid;
-use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Grouping\Group;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class BidResource extends Resource
+
+class PendingBidResource extends Resource
 {
     protected static ?string $model = Bid::class;
+    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationLabel = 'Lances para análise';
+    protected static ?string $pluralLabel = 'Lances para análise';
 
-    protected static ?string $navigationLabel = 'Todos os Lances';
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
-    protected static ?string $recordTitleAttribute = 'user.name';
-
-    protected static ?string $modelLabel = 'lance';
-
-    protected static ?string $pluralModelLabel = 'Todos os Lances';
-
-    protected static ?string $slug = 'lances';
+    protected static ?string $slug = 'lances-para-analise';
 
     protected static ?string $navigationGroup = 'Lances';
 
-    protected static ?int $navigationSort = -3;
-
-    public static function form(Form $form): Form
-    {
-        // Não precisa de formulário, pois os lances vêm do site
-        return $form;
-    }
-
-    public static function table(Table $table): Table
+    public static function table(Tables\Table $table): Tables\Table
     {
         return $table
+            ->modifyQueryUsing(fn(Builder $query) => $query->where('status', 0))
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -90,23 +76,6 @@ class BidResource extends Resource
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
             ->filters([
-                Tables\Filters\Filter::make('status')
-                    ->query(fn($query) => $query->where('status', 1))
-                    ->label('Aprovados'),
-
-                Tables\Filters\Filter::make('pendente')
-                    ->query(fn($query) => $query->where('status', 0))
-                    ->label('Pendentes'),
-
-                Tables\Filters\Filter::make('rejeitado')
-                    ->query(fn($query) => $query->where('status', 2))
-                    ->label('Rejeitados'),
-
-                Tables\Filters\Filter::make('published_events')
-                    ->label('Somente eventos publicados')
-                    ->toggle() // transforma em checkbox
-                    ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
-
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
                     ->searchable()
@@ -140,25 +109,19 @@ class BidResource extends Resource
             ->defaultSort('created_at', 'desc');
     }
 
-    public static function getRelations(): array
-    {
-        return [];
-    }
-
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBids::route('/'),
+            'index' => ListPendingBids::route('/'),
         ];
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
     }
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        $count = static::getModel()::where('status', 0)
+            ->whereHas('event', fn($q) => $q->where('published', true))
+            ->count();
+
+        return $count > 0 ? (string)$count : null;
     }
 }
