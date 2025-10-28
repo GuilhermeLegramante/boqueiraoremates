@@ -76,7 +76,6 @@
                                 </p>
                             </div>
 
-
                             <!-- Próximo lance destacado -->
                             <p class="text-yellow-400 font-extrabold text-2xl mb-3">
                                 Lance Alvo:
