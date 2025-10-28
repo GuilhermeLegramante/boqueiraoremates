@@ -51,10 +51,37 @@ class LotesRelationManager extends RelationManager
                     ->columnSpanFull()
                     ->required(),
 
-                Money::make('min_value')->columnSpanFull()->label('Lance Mínimo')->required(),
-                Money::make('increment_value')->columnSpanFull()->label('Valor do Incremento')->nullable(),
-                Money::make('target_value')->columnSpanFull()->label('Lance Alvo')->nullable(),
-                Money::make('final_value')->columnSpanFull()->label('Valor Final')->nullable(),
+                TextInput::make('min_value')
+                    ->label('Lance Mínimo')
+                    ->prefix('R$')
+                    ->numeric()
+                    ->live()
+                    ->debounce(1000)
+                    ->required(),
+
+                TextInput::make('increment_value')
+                    ->label('Valor do Incremento')
+                    ->prefix('R$')
+                    ->numeric()
+                    ->live()
+                    ->debounce(1000)
+                    ->nullable(),
+
+                TextInput::make('target_value')
+                    ->label('Lance Alvo')
+                    ->prefix('R$')
+                    ->numeric()
+                    ->live()
+                    ->debounce(1000)
+                    ->nullable(),
+
+                TextInput::make('final_value')
+                    ->label('Valor Final')
+                    ->prefix('R$')
+                    ->numeric()
+                    ->live()
+                    ->debounce(1000)
+                    ->nullable(),
 
                 Select::make('status')
                     ->label('Status')
