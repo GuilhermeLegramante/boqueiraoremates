@@ -133,6 +133,11 @@ class BidResource extends Resource
                     ->query(fn($query) => $query->where('status', 2))
                     ->label('Rejeitados'),
 
+                Tables\Filters\Filter::make('published_events')
+                    ->label('Somente eventos publicados')
+                    ->toggle() // transforma em checkbox
+                    ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
+
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
                     ->searchable()
@@ -144,6 +149,11 @@ class BidResource extends Resource
                     ->relationship('user', 'name'),
             ])
             ->deferFilters()
+            ->filtersApplyAction(
+                fn(Action $action) => $action
+                    ->link()
+                    ->label('Aplicar Filtro(s)'),
+            )
             ->groups([
                 Group::make('event.name')
                     ->label('Evento')
