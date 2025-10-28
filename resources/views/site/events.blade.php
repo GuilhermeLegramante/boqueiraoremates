@@ -32,10 +32,9 @@
                 <div class="aspect-[4/3] w-44 rounded overflow-hidden bg-black">
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
-                            class="object-cover w-full h-full">
+                            class="object-contain w-full h-full">
                     </a>
                 </div>
-
 
                 <!-- Descrição -->
                 <div class="md:col-span-3 text-justify">
