@@ -133,11 +133,11 @@ class BidResource extends Resource
                     ->query(fn($query) => $query->where('status', 2))
                     ->label('Rejeitados'),
 
-                // Select de eventos (publicados ou não)
+                // Select de evento (publicados ou não)
                 Tables\Filters\SelectFilter::make('event_id')
                     ->label('Evento')
-                    ->options(fn() => ['' => 'Todos os eventos'] + \App\Models\Event::pluck('name', 'id')->toArray())
-                    ->query(fn($query, $value) => $value ? $query->where('event_id', $value) : $query),
+                    ->options(fn() => \App\Models\Event::pluck('name', 'id')->toArray())
+                    ->query(fn($query, $value) => $query->where('event_id', $value)),
 
                 // Filtro de apenas eventos publicados
                 Tables\Filters\Filter::make('published_events')
