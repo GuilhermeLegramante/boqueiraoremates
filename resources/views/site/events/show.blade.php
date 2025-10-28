@@ -56,17 +56,16 @@
 
                             <h3 class="font-bold text-xl text-white mb-2">{{ $animal->pivot->name }}</h3>
 
-                            <div class="mb-3 space-y-1">
-                                @if (floatval($animal->current_bid) > 0)
+                            @if (floatval($animal->current_bid) > 0)
+                                <div class="mb-3 space-y-1 min-h-[1.5rem]">
                                     <p class="text-gray-200 text-sm">
                                         Lance Atual:
                                         <span class="text-lg font-semibold">
                                             R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
                                         </span>
                                     </p>
-                                @else
-                                @endif
-                            </div>
+                                </div>
+                            @endif
 
 
                             <!-- Próximo lance destacado -->
