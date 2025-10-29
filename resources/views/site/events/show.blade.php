@@ -60,7 +60,8 @@
                                 {{ $animal->pivot->name }}
                             </h3>
 
-                            <div class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md">
+                            <div
+                                class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4">
                                 <!-- Lance Atual -->
                                 @if (floatval($animal->current_bid) > 0)
                                     <span>Lance Atual:</span>
@@ -70,10 +71,13 @@
                                     </span>
                                 @else
                                     <span>&nbsp;</span>
-                                    <span>&nbsp;</span>
+                                    <span
+                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                        R$ 0,00
+                                    </span>
                                 @endif
 
-                                <!-- Próximo Lance -->
+                                <!-- Lance Alvo -->
                                 @if (floatval($animal->pivot->target_value) > 0)
                                     <span>Lance Alvo:</span>
                                     <span
@@ -82,17 +86,20 @@
                                     </span>
                                 @else
                                     <span>&nbsp;</span>
-                                    <span>&nbsp;</span>
+
+                                    <span
+                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                        R$ 0,00
+                                    </span>
                                 @endif
-
                             </div>
-
 
                             <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                 class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
                                 Ver Detalhes / Dar Lance
                             </a>
                         </div>
+
 
                     </div>
                 @endforeach
