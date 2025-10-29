@@ -75,18 +75,18 @@
                                     </span>
                                 @endif
 
-                                <!-- Próximo Lance -->
+                                {{-- <!-- Próximo Lance -->
                                 <span>Próximo Lance:</span>
                                 <span
                                     class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                     R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
-                                </span>
+                                </span> --}}
                             </div>
 
 
                             <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                 class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
-                                Ver Detalhes
+                                Ver Detalhes / Dar Lance
                             </a>
                         </div>
 
