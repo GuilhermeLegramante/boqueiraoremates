@@ -99,8 +99,9 @@ class EventForm
                 ->columnSpanFull()
                 ->rows(4)
                 ->maxLength(65535), // limite do campo text
+
             FileUpload::make('regulation')
-                ->label('Regulamento (PDF)')
+                ->label('Regulamento Completo (PDF)')
                 ->directory('events/regulations')
                 ->visibility('public')
                 ->acceptedFileTypes(['application/pdf'])
@@ -112,7 +113,7 @@ class EventForm
                 ->nullable(),
 
             FileUpload::make('regulation_image_path')
-                ->label('Regulamento')
+                ->label('Condições de Pgto')
                 ->image()
                 ->directory('events/regulations')
                 ->imageEditor() // permite cortar, ajustar, etc.
@@ -123,7 +124,7 @@ class EventForm
                 ->helperText('Envie uma imagem ilustrando a parte mais importante do regulamento do evento.'),
 
             FileUpload::make('benefits_image_path')
-                ->label('Benefícios / Condições de Pagamento')
+                ->label('Benefícios do Pré-lance')
                 ->image()
                 ->directory('events/benefits')
                 ->imageEditor()
