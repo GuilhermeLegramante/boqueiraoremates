@@ -69,7 +69,8 @@
                                         R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
                                     </span>
                                 @else
-                                    &nbsp;
+                                    <span>&nbsp;</span>
+                                    <span>&nbsp;</span>
                                 @endif
 
                                 <!-- Próximo Lance -->
@@ -80,7 +81,8 @@
                                         R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                     </span>
                                 @else
-                                    &nbsp;
+                                    <span>&nbsp;</span>
+                                    <span>&nbsp;</span>
                                 @endif
 
                             </div>
