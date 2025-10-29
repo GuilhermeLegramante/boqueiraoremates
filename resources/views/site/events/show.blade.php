@@ -60,29 +60,28 @@
                                 {{ $animal->pivot->name }}
                             </h3>
 
-                            <div class="mb-3 space-y-1 min-h-[1.5rem]">
-                                <p class="text-gray-200 text-sm">
-                                    @if (floatval($animal->current_bid) > 0)
-                                        Lance Atual:
-                                        <span class="text-lg font-semibold">
-                                            R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                        </span>
-                                    @else
-                                        &nbsp;
-                                        <span class="text-lg font-semibold">
-                                            &nbsp;
-                                        </span>
-                                    @endif
-                                </p>
-                            </div>
+                            <div class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md">
+                                <!-- Lance Atual -->
+                                <span>Lance Atual:</span>
+                                @if (floatval($animal->current_bid) > 0)
+                                    <span
+                                        class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                        R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-block bg-transparent border border-transparent text-transparent px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                        R$ 0,00
+                                    </span>
+                                @endif
 
-                            <!-- Próximo lance destacado -->
-                            <p class="text-yellow-400 font-extrabold text-2xl mb-3">
+                                <!-- Próximo Lance -->
+                                <span>Próximo Lance:</span>
                                 <span
-                                    class="inline-block bg-green-600 text-white font-extrabold px-3 py-1 rounded-lg shadow">
+                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                     R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
                                 </span>
-                            </p>
+                            </div>
 
 
                             <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
