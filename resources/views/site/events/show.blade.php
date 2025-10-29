@@ -62,25 +62,27 @@
 
                             <div class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md">
                                 <!-- Lance Atual -->
-                                <span>Lance Atual:</span>
                                 @if (floatval($animal->current_bid) > 0)
+                                    <span>Lance Atual:</span>
                                     <span
                                         class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                         R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
                                     </span>
                                 @else
-                                    <span
-                                        class="inline-block bg-transparent border border-transparent text-transparent px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                        R$ 0,00
-                                    </span>
+                                    &nbsp;
                                 @endif
 
-                                {{-- <!-- Próximo Lance -->
-                                <span>Próximo Lance:</span>
-                                <span
-                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                    R$ {{ number_format($animal->next_bid, 2, ',', '.') }}
-                                </span> --}}
+                                <!-- Próximo Lance -->
+                                @if (floatval($animal->pivot->target_value) > 0)
+                                    <span>Lance Alvo:</span>
+                                    <span
+                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                        R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
+                                    </span>
+                                @else
+                                    &nbsp;
+                                @endif
+
                             </div>
 
 
