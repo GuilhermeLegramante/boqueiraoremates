@@ -21,6 +21,7 @@ class EventForm
                 ->columnSpanFull()
                 ->visible($operation == 'view')
                 ->view('banner-preview'),
+
             FileUpload::make('banner')
                 ->label('Banner')
                 ->image()
@@ -32,6 +33,7 @@ class EventForm
                 ->visibility('public')
                 ->columnSpanFull()
                 ->maxSize(4096),
+
             FileUpload::make('banner_min')
                 ->label('Selo')
                 ->image()
@@ -43,11 +45,13 @@ class EventForm
                 ->visibility('public')
                 ->columnSpanFull()
                 ->maxSize(4096),
+
             ViewField::make('event_info')
                 ->label('Evento')
                 ->columnSpanFull()
                 ->visible($operation == 'view')
                 ->view('event-info'),
+
             TextInput::make('name')
                 ->label(__('fields.name'))
                 ->columnSpanFull()
@@ -55,6 +59,7 @@ class EventForm
                 ->visible($operation != 'view')
                 ->unique(ignoreRecord: true)
                 ->maxLength(255),
+
             DateTimePicker::make('start_date')
                 ->label('Data do Evento')
                 ->visible($operation != 'view')
@@ -81,18 +86,12 @@ class EventForm
                 ->nullable()
                 ->helperText('Data e hora do término do pré-lance online')
                 ->columnSpan(1),
+
             TextInput::make('multiplier')
                 ->label(__('fields.multiplier'))
                 ->visible($operation != 'view')
                 ->numeric(),
-            // Select::make('animals')
-            //     ->label('Animais')
-            //     ->multiple()
-            //     ->visible($operation != 'view')
-            //     ->relationship('animals', 'name')
-            //     ->preload()
-            //     ->columnSpanFull()
-            //     ->searchable(),
+           
             Textarea::make('note')
                 ->label(__('fields.note'))
                 ->visible($operation != 'view')
