@@ -161,10 +161,15 @@
                                     {{-- Mantém o modal e o script abaixo normalmente --}}
                                     @include('site.animals.bid-modal')
                                 @else
-                                    <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg">
-                                        <p><strong>Seu cadastro ainda não está habilitado para dar lances.</strong></p>
-                                        <p class="text-sm mt-1">
-                                            Por favor, entre em contato com a administração para habilitar seu cliente.
+                                    <div
+                                        class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+                                        <p class="font-semibold">⚠️ Para dar lance, você precisa estar logado.</p>
+                                        <p class="text-sm mt-2">
+                                            Ainda não possui cadastro?
+                                            <a href="{{ route('filament.admin.auth.register') }}"
+                                                class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
+                                                Criar cadastro
+                                            </a>
                                         </p>
                                     </div>
                                 @endif
