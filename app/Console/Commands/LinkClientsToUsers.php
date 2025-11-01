@@ -23,7 +23,7 @@ class LinkClientsToUsers extends Command
 
             // Verifica se já existe usuário com o mesmo username ou email
             $existingUser = User::where('username', $client->cpf_cnpj)
-                ->orWhere('email', $client->email)
+                // ->orWhere('email', $client->email)
                 ->first();
 
             if ($existingUser) {

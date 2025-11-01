@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class Client extends Model
 {
@@ -146,6 +147,31 @@ class Client extends Model
 
     protected static function booted()
     {
+        static::creating(function ($client) {
+            // Remove máscara do CPF ou CNPJ
+            $cpfCnpj = preg_replace('/\D/', '', $client->cpf_cnpj);
+
+            // Define a senha como os 6 primeiros dígitos do CPF (ou CNPJ)
+            $password = substr($cpfCnpj, 0, 6);
+
+            // Define um email fallback se não houver email cadastrado
+            $email = $client->email ?? "{$cpfCnpj}@example.com";
+
+            // Cria o usuário correspondente
+            $user = User::create([
+                'name'     => $client->name,
+                'username' => $cpfCnpj,
+                'email'    => $email,
+                'password' => Hash::make($password),
+            ]);
+
+            // Atribui o papel (role) "client"
+            $user->assignRole('client');
+
+            // Vincula o usuário ao cliente
+            $client->registeredUser()->associate($user);
+        });
+
         static::updated(function ($client) {
             // Verifica quais atributos foram alterados
             $changes = $client->getDirty();
