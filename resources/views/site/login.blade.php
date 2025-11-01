@@ -53,10 +53,18 @@
 
                     {{-- Campos do primeiro acesso --}}
                     <div id="firstAccessFields" class="hidden space-y-4 transition-all duration-300 opacity-0">
-                        <div>
+                        {{-- <div>
                             <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
                             <input type="date" name="birth_date" id="birth_date"
                                 class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                            <p id="birth_dateError" class="text-red-500 text-sm mt-1 hidden"></p>
+                        </div> --}}
+                        <div>
+                            <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
+                            <input type="date" name="birth_date" id="birth_date"
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
+                                onkeydown="this.showPicker?.()" oninput="this.setCustomValidity('')"
+                                oninvalid="this.setCustomValidity('Data inválida')" placeholder="dd/mm/aaaa">
                             <p id="birth_dateError" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
 
