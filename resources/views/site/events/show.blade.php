@@ -20,17 +20,23 @@
 
 
     <!-- Galeria de animais -->
-    <section class="py-16 px-6 bg-gradient-to-b from-[#003333] to-[#001a1a]">
+    <section x-data="{ search: '' }" class="py-16 px-6 bg-gradient-to-b from-[#003333] to-[#001a1a]">
         <div class="container mx-auto">
             <h2 class="text-3xl font-bold mb-10 text-center text-white tracking-wide">
                 Lotes do Evento
             </h2>
 
+            <!-- 🔍 Campo de busca -->
+            <div class="max-w-md mx-auto mb-8">
+                <input x-model="search" type="text" placeholder="Buscar animal pelo nome..."
+                    class="w-full px-4 py-2 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
             @if ($event->show_lots)
                 @if ($event->animals->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                         @foreach ($event->animals as $animal)
-                            <div
+                            <div x-show="{{ Str::of($animal->pivot->name)->jsonSerialize() }}.toLowerCase().includes(search.toLowerCase())"
                                 class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                                 <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                     class="block relative">
@@ -42,7 +48,6 @@
 
                                     @php
                                         $status = $animal->pivot->status ?? null;
-
                                         $statusColors = [
                                             'disponivel' => 'bg-green-600',
                                             'reservado' => 'bg-yellow-500',
@@ -66,7 +71,6 @@
 
                                     <div
                                         class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4">
-                                        <!-- Lance Atual -->
                                         @if (floatval($animal->current_bid) > 0)
                                             <span>Lance Atual:</span>
                                             <span
@@ -81,7 +85,6 @@
                                             </span>
                                         @endif
 
-                                        <!-- Lance Alvo -->
                                         @if (floatval($animal->pivot->target_value) > 0)
                                             <span>Lance Alvo:</span>
                                             <span
@@ -117,6 +120,7 @@
             @endif
         </div>
     </section>
+
 
 
     <!-- Breadcrumbs para página do evento -->
