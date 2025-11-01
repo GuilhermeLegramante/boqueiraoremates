@@ -53,18 +53,11 @@
 
                     {{-- Campos do primeiro acesso --}}
                     <div id="firstAccessFields" class="hidden space-y-4 transition-all duration-300 opacity-0">
-                        {{-- <div>
-                            <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
-                            <input type="date" name="birth_date" id="birth_date"
-                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
-                            <p id="birth_dateError" class="text-red-500 text-sm mt-1 hidden"></p>
-                        </div> --}}
                         <div>
                             <label for="birth_date" class="block font-semibold mb-1">Data de nascimento</label>
-                            <input type="date" name="birth_date" id="birth_date"
-                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                                onkeydown="this.showPicker?.()" oninput="this.setCustomValidity('')"
-                                oninvalid="this.setCustomValidity('Data inválida')" placeholder="dd/mm/aaaa">
+                            <input type="text" name="birth_date" id="birth_date" placeholder="dd/mm/aaaa" maxlength="10"
+                                inputmode="numeric"
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
                             <p id="birth_dateError" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
 
@@ -122,6 +115,47 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+
+            const input = document.getElementById('birth_date');
+            const error = document.getElementById('birth_dateError');
+
+            // Aplica máscara
+            input.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length > 8) value = value.slice(0, 8);
+
+                if (value.length > 4) {
+                    value = value.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
+                } else if (value.length > 2) {
+                    value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+                }
+
+                e.target.value = value;
+            });
+
+            // Validação simples
+            input.addEventListener('blur', () => {
+                const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+                if (input.value && !regex.test(input.value)) {
+                    error.textContent = 'Data inválida. Use o formato dd/mm/aaaa.';
+                    error.classList.remove('hidden');
+                } else {
+                    error.classList.add('hidden');
+                }
+            });
+
+            // Converte para formato do banco (YYYY-MM-DD) antes de enviar o form
+            const form = input.closest('form');
+            if (form) {
+                form.addEventListener('submit', () => {
+                    const parts = input.value.split('/');
+                    if (parts.length === 3) {
+                        input.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    }
+                });
+            }
+
+
             const usernameInput = document.getElementById('username');
             const passwordContainer = document.getElementById('passwordContainer');
             const firstAccessFields = document.getElementById('firstAccessFields');
