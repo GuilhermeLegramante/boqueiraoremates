@@ -22,14 +22,24 @@
     <!-- Galeria de animais -->
     <section x-data="{
         search: '',
-        animals: {{ $event->animals->toJson() }},
-        get filteredAnimals() {
-            if (this.search.trim() === '') return this.animals;
-            return this.animals.filter(a =>
-                a.pivot.name.toLowerCase().includes(this.search.toLowerCase())
-            );
-        }
-    }" class="py-16 px-6 bg-gradient-to-b from-[#003333] to-[#001a1a]">
+        filterCards() {
+            const query = this.search.toLowerCase().trim();
+            const cards = $refs.cards.querySelectorAll('[data-animal]');
+            let visibleCount = 0;
+    
+            cards.forEach(card => {
+                const name = card.dataset.name;
+                const isVisible = query === '' || name.includes(query);
+                card.classList.toggle('hidden', !isVisible);
+                if (isVisible) visibleCount++;
+            });
+    
+            this.filteredCount = visibleCount;
+            this.noResults = visibleCount === 0;
+        },
+        filteredCount: {{ $event->animals->count() }},
+        noResults: false,
+    }" x-init="filterCards" class="py-16 px-6 bg-gradient-to-b from-[#003333] to-[#001a1a]">
         <div class="container mx-auto">
 
             <h2 class="text-3xl font-bold mb-6 text-center text-white tracking-wide">
@@ -38,18 +48,18 @@
 
             <!-- Campo de busca -->
             <div class="flex justify-center mb-8">
-                <input type="text" x-model="search" placeholder="🔍 Pesquisar por nome do animal..."
+                <input type="text" x-model="search" @input="filterCards" placeholder="🔍 Pesquisar por nome do animal..."
                     class="w-full max-w-md px-4 py-2 rounded-lg text-gray-800 focus:ring-2 focus:ring-green-500 focus:outline-none" />
             </div>
 
             <!-- Contador dinâmico -->
             <p class="text-center text-gray-300 mb-10">
-                <span x-text="filteredAnimals.length"></span> lote(s) encontrado(s)
+                <span x-text="filteredCount"></span> lote(s) encontrado(s)
             </p>
 
-            <!-- ⚠️ Nenhum resultado -->
+            <!-- Mensagem de nenhum resultado -->
             <template x-if="noResults">
-                <p class="text-red-400 text-sm mt-2 font-semibold">
+                <p class="text-red-400 text-sm mt-2 font-semibold text-center">
                     Nenhum lote encontrado com esse nome.
                 </p>
             </template>
@@ -141,7 +151,6 @@
                 Os lotes deste evento ainda não estão disponíveis para exibição.
             </p>
         @endif
-        </div>
     </section>
 
     <!-- Breadcrumbs para página do evento -->
