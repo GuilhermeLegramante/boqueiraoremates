@@ -48,7 +48,7 @@
 
             <!-- Campo de busca -->
             <div class="flex justify-center mb-8">
-                <input type="text" x-model="search" @input="filterCards" placeholder="🔍 Pesquisar por nome do animal..."
+                <input type="text" x-model="search" @input="filterCards" placeholder="🔍 Pesquisar por nome..."
                     class="w-full max-w-md px-4 py-2 rounded-lg text-gray-800 focus:ring-2 focus:ring-green-500 focus:outline-none" />
             </div>
 
