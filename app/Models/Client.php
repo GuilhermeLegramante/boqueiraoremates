@@ -148,28 +148,38 @@ class Client extends Model
     protected static function booted()
     {
         static::creating(function ($client) {
-            // Remove máscara do CPF ou CNPJ
+            // Remove máscara do CPF/CNPJ
             $cpfCnpj = preg_replace('/\D/', '', $client->cpf_cnpj);
 
-            // Define a senha como os 6 primeiros dígitos do CPF (ou CNPJ)
+            // Define senha com os 6 primeiros dígitos
             $password = substr($cpfCnpj, 0, 6);
 
-            // Define um email fallback se não houver email cadastrado
+            // Email fallback
             $email = $client->email ?? "{$cpfCnpj}@example.com";
 
-            // Cria o usuário correspondente
-            $user = User::create([
-                'name'     => $client->name,
-                'username' => $cpfCnpj,
-                'email'    => $email,
-                'password' => Hash::make($password),
-            ]);
+            // Busca usuário existente com mesmo username (com ou sem máscara)
+            $existingUser = User::where('username', $cpfCnpj)
+                ->orWhere('username', $client->cpf_cnpj)
+                ->first();
 
-            // Atribui o papel (role) "client"
-            $user->assignRole('client');
+            if ($existingUser) {
+                // Já existe, apenas vincula
+                $client->registeredUser()->associate($existingUser);
+            } else {
+                // Cria novo usuário
+                $user = User::create([
+                    'name'     => $client->name,
+                    'username' => $cpfCnpj, // sempre salvo sem máscara
+                    'email'    => $email,
+                    'password' => Hash::make($password),
+                ]);
 
-            // Vincula o usuário ao cliente
-            $client->registeredUser()->associate($user);
+                // Atribui o papel (role)
+                $user->assignRole('client');
+
+                // Vincula o usuário ao cliente
+                $client->registeredUser()->associate($user);
+            }
         });
 
         static::updated(function ($client) {
