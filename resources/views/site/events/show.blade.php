@@ -20,23 +20,59 @@
 
 
     <!-- Galeria de animais -->
-    <section x-data="{ search: '' }" class="py-16 px-6 bg-gradient-to-b from-[#003333] to-[#001a1a]">
+    <section x-data="{
+        search: '',
+        total: {{ $event->animals->count() }},
+        noResults: false,
+        filter() {
+            const term = this.search.toLowerCase();
+            const cards = this.$refs.cards.querySelectorAll('[data-animal]');
+            let visibleCount = 0;
+    
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                const isVisible = name.includes(term);
+                card.style.display = isVisible ? '' : 'none';
+                if (isVisible) visibleCount++;
+            });
+    
+            this.noResults = visibleCount === 0;
+        },
+        get filteredCount() {
+            const cards = Array.from(this.$refs.cards.querySelectorAll('[data-animal]'));
+            return cards.filter(card => card.style.display !== 'none').length;
+        }
+    }" class="py-16 px-6 bg-gradient-to-b from-[#003333] to-[#001a1a]">
         <div class="container mx-auto">
             <h2 class="text-3xl font-bold mb-10 text-center text-white tracking-wide">
                 Lotes do Evento
             </h2>
 
             <!-- 🔍 Campo de busca -->
-            <div class="max-w-md mx-auto mb-8">
-                <input x-model="search" type="text" placeholder="Buscar animal pelo nome..."
+            <div class="max-w-md mx-auto mb-6 text-center">
+                <input x-model="search" @input="filter()" type="text" placeholder="Buscar animal pelo nome..."
                     class="w-full px-4 py-2 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500">
+
+                <!-- 📊 Contador de resultados -->
+                <template x-if="!noResults">
+                    <p class="text-gray-300 text-sm mt-2">
+                        <span x-text="filteredCount"></span> de <span x-text="total"></span> lotes encontrados
+                    </p>
+                </template>
+
+                <!-- ⚠️ Nenhum resultado -->
+                <template x-if="noResults">
+                    <p class="text-red-400 text-sm mt-2 font-semibold">
+                        Nenhum lote encontrado com esse nome.
+                    </p>
+                </template>
             </div>
 
             @if ($event->show_lots)
                 @if ($event->animals->count() > 0)
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <div x-ref="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                         @foreach ($event->animals as $animal)
-                            <div x-show="{{ Str::of($animal->pivot->name)->jsonSerialize() }}.toLowerCase().includes(search.toLowerCase())"
+                            <div data-animal data-name="{{ strtolower($animal->pivot->name) }}"
                                 class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                                 <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                     class="block relative">
@@ -60,6 +96,7 @@
                                         {{ $status }}
                                     </span>
                                 </a>
+
                                 <div class="p-5">
                                     <h3 class="font-bold text-xl text-white mb-2">
                                         Lote: {{ $animal->pivot->lot_number }}
@@ -120,8 +157,6 @@
             @endif
         </div>
     </section>
-
-
 
     <!-- Breadcrumbs para página do evento -->
     <section class="py-4 px-4 bg-[#003333] text-white">
