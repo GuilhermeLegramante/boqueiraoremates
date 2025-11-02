@@ -8,6 +8,14 @@
             <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col space-y-6">
                 <h2 class="text-3xl font-bold text-center mb-6">Acesse sua conta</h2>
 
+                <p class="text-center text-gray-600 mb-6">
+                    Ainda não tem uma conta?
+                    <a href="{{ route('filament.admin.auth.register') }}"
+                        class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                        Cadastre-se aqui
+                    </a>
+                </p>
+
                 {{-- Aviso primeiro acesso --}}
                 <div id="firstAccessNotice"
                     class="hidden mb-6 p-5 bg-blue-50 border-l-4 border-blue-500 text-blue-800 rounded-lg shadow-sm text-sm font-medium transition-all duration-300 hover:shadow-md">
