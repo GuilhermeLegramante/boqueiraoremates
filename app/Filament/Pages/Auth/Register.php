@@ -26,6 +26,15 @@ class Register extends BaseRegister
 {
     protected static string $view = 'register';
 
+    public function mount(): void
+    {
+        parent::mount();
+
+        if (auth()->check()) {
+            redirect()->route('home');
+        }
+    }
+
     public function getMaxWidth(): MaxWidth | string | null
     {
         return '7xl';
