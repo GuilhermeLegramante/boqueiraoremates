@@ -182,7 +182,7 @@
                                 {{-- ⚠️ NÃO LOGADO --}}
                                 <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
                                     <p class="font-semibold">⚠️ Você deve estar logado para dar lances.</p>
-                                    <a href="{{ route('filament.admin.auth.login') }}"
+                                    <a href="{{ route('login') }}"
                                         class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
                                         Clique aqui para logar
                                     </a>
