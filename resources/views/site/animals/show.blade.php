@@ -130,7 +130,7 @@
                             @auth
                                 @php
                                     $client = Auth::user()->client;
-                                    dd($client);
+                                    // dd($client);
                                     
                                 @endphp
 
