@@ -133,20 +133,20 @@
                                 @endphp
 
                                 @if ($client && $client->situation === 'able')
+                                    {{-- ✅ FORMULÁRIO DE LANCE --}}
                                     <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
                                         @csrf
-
                                         <input type="hidden" name="event_id" value="{{ $event->id }}">
                                         <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
 
                                         <div class="relative">
-                                            <!-- Input com R$ -->
                                             <span
                                                 class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
                                             <input type="text" name="amount" id="bidInput"
                                                 class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
                                                 required>
                                         </div>
+
                                         <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
                                             O valor do lance não pode ser menor que o lance mínimo (R$
                                             {{ number_format($animal->next_bid, 2, ',', '.') }}).
@@ -158,32 +158,41 @@
                                         </button>
                                     </form>
 
-                                    {{-- Mantém o modal e o script abaixo normalmente --}}
                                     @include('site.animals.bid-modal')
                                 @else
+                                    {{-- ⚠️ CLIENTE NÃO HABILITADO --}}
+                                    {{-- <div
+                                        class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+                                        <p class="font-semibold">⚠️ Sua conta precisa estar habilitada para dar lances.</p>
+                                    </div> --}}
                                     <div
                                         class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
                                         <p class="font-semibold">⚠️ Para dar lance, você precisa estar logado.</p>
-                                        <p class="text-sm mt-2">
-                                            Ainda não possui cadastro?
-                                            <a href="{{ route('filament.admin.auth.register') }}"
+                                        <p class="text-sm mt-2"> Ainda não possui cadastro? <a
+                                                href="{{ route('filament.admin.auth.register') }}"
                                                 class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
-                                                Criar cadastro
-                                            </a>
-                                        </p>
+                                                Criar cadastro </a> </p>
                                     </div>
                                 @endif
-                            @else
-                                <p class="text-green-200">Você deve estar logado para dar lances.</p>
-                                <a href="{{ route('filament.admin.auth.login') }}" class="text-green-300 underline">
-                                    Clique aqui para logar
-                                </a>
                             @endauth
+
+                            @guest
+                                {{-- ⚠️ NÃO LOGADO --}}
+                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+                                    <p class="font-semibold">⚠️ Você deve estar logado para dar lances.</p>
+                                    <a href="{{ route('filament.admin.auth.login') }}"
+                                        class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
+                                        Clique aqui para logar
+                                    </a>
+                                </div>
+                            @endguest
                         @else
+                            {{-- ⚠️ LOTE INDISPONÍVEL --}}
                             <div class="bg-gray-700 text-gray-300 p-4 rounded-lg text-center">
                                 <p class="font-semibold text-lg">⚠️ Este lote não está disponível para lances.</p>
                             </div>
                         @endif
+
                     </div>
 
                 </div>
