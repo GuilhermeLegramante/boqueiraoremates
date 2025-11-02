@@ -36,8 +36,10 @@
             </div>
 
             <!-- Badges -->
+            <!-- Badges -->
             <div
-                class="mt-3 flex flex-wrap md:flex-nowrap justify-center md:justify-start gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-[#003333]/30 px-2 py-1">
+                class="mt-3 flex flex-wrap justify-center md:justify-start gap-2
+            md:max-h-[4.5rem] md:overflow-hidden">
                 @if ($event->regulation_image_path)
                     <span id="openRegulation"
                         class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-yellow-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-yellow-300 transition-all whitespace-nowrap">
@@ -59,6 +61,7 @@
                     </a>
                 @endif
             </div>
+
         </div>
 
         <!-- Observações -->
