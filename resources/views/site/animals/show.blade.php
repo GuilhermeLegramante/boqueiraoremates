@@ -130,7 +130,8 @@
                             @auth
                                 @php
                                     $client = Auth::user()->client;
-                                    // dd($client->situation);
+                                    dd($client);
+                                    
                                 @endphp
 
                                 @if ($client && $client->situation === 'able')
