@@ -65,10 +65,11 @@
         </div>
 
         <!-- Observações -->
-        <div
-            class="bg-white/10 rounded-xl p-5 text-sm md:text-base leading-relaxed shadow-md mt-6 lg:mt-0 text-justify">
+        <div class="bg-white/10 rounded-xl p-5 text-sm md:text-base leading-relaxed shadow-md mt-6 lg:mt-0"
+            style="text-align: justify;">
             <p>{{ $event->note }}</p>
         </div>
+
 
     </div>
 
