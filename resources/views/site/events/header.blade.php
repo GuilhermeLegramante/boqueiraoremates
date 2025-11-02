@@ -1,26 +1,26 @@
 <section class="bg-[#003333] text-white py-12 px-6">
-    <div class="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 items-center">
+    <div class="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
 
         <!-- Banner -->
-        <div class="w-72 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
+        <div
+            class="w-72 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden mx-auto lg:mx-0">
             <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
                 class="w-full h-full object-cover object-center">
         </div>
 
-
-        <!-- Informações principais -->
+        <!-- Informações principais + Badges -->
         <div class="space-y-3 text-center lg:text-left">
             <h2 class="text-3xl font-extrabold tracking-wide">{{ $event->name }}</h2>
+
             @if (!$event->is_permanent)
                 <p class="text-lg font-medium text-yellow-300">
                     {{ $event->start_date->format('d/m/Y H:i') }}
                 </p>
             @endif
+
             <div class="bg-white/10 rounded-xl p-3 text-sm">
                 @if ($event->is_permanent)
-                    <p>
-                        VENDA PERMANENTE
-                    </p>
+                    <p>VENDA PERMANENTE</p>
                 @else
                     <p>
                         Pré-lance online: <br>
@@ -34,43 +34,40 @@
                     </p>
                 @endif
             </div>
+
+            <!-- Badges -->
+            <div
+                class="mt-3 flex flex-wrap md:flex-nowrap justify-center md:justify-start gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-[#003333]/30 px-2 py-1">
+                @if ($event->regulation_image_path)
+                    <span id="openRegulation"
+                        class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-yellow-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-yellow-300 transition-all whitespace-nowrap">
+                        Condições de Pgto
+                    </span>
+                @endif
+
+                @if ($event->benefits_image_path)
+                    <span id="openBenefits"
+                        class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-emerald-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-emerald-300 transition-all whitespace-nowrap">
+                        Benefícios do Pré-lance
+                    </span>
+                @endif
+
+                @if ($event->regulation)
+                    <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
+                        class="flex-shrink-0 inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-blue-300 transition-all whitespace-nowrap">
+                        Regulamento Completo
+                    </a>
+                @endif
+            </div>
         </div>
 
         <!-- Observações -->
-        <div class="bg-white/10 rounded-xl p-5 text-sm md:text-base leading-relaxed shadow-md">
+        <div class="bg-white/10 rounded-xl p-5 text-sm md:text-base leading-relaxed shadow-md mt-6 lg:mt-0">
             <p>{{ $event->note }}</p>
         </div>
     </div>
 
-    <!-- Badges lado a lado sem quebrar linha -->
-    <div
-        class="mt-4 flex flex-wrap md:flex-nowrap justify-center md:justify-start gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-[#003333]/30 px-2 py-1">
-
-        @if ($event->regulation_image_path)
-            <span id="openRegulation"
-                class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-yellow-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-yellow-300 transition-all whitespace-nowrap">
-                Condições de Pgto
-            </span>
-        @endif
-
-        @if ($event->benefits_image_path)
-            <span id="openBenefits"
-                class="flex-shrink-0 cursor-pointer inline-flex items-center gap-1 bg-emerald-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-emerald-300 transition-all whitespace-nowrap">
-                Benefícios do Pré-lance
-            </span>
-        @endif
-
-        @if ($event->regulation)
-            <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
-                class="flex-shrink-0 inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-blue-300 transition-all whitespace-nowrap">
-                Regulamento Completo
-            </a>
-        @endif
-    </div>
-
-
-
-    <!-- Modal Regulamento -->
+    <!-- Modais permanecem iguais -->
     <div id="modalRegulation"
         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-3xl w-full animate-fadeIn">
@@ -85,7 +82,6 @@
         </div>
     </div>
 
-    <!-- Modal Benefícios -->
     <div id="modalBenefits"
         class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-6 transition-opacity duration-300">
         <div class="bg-white rounded-2xl shadow-2xl overflow-hidden max-w-3xl w-full animate-fadeIn">
@@ -100,6 +96,7 @@
         </div>
     </div>
 </section>
+
 
 <!-- JS -->
 <script>
