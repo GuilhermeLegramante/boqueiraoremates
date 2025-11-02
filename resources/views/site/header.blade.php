@@ -7,8 +7,9 @@
     <div class="relative container mx-auto px-6 py-1 flex justify-between items-start">
         <!-- Logo esquerda -->
         <div class="flex-shrink-0 ml-4 -mt-2">
-            <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo" class="h-28 md:h-32">
+            <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo" class="h-16 md:h-20">
         </div>
+
 
         <!-- Conteúdo centralizado (menu + Whats/Login) -->
         <div class="flex flex-col items-center space-y-2 mt-6 md:flex md:items-center">
