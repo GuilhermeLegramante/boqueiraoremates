@@ -51,6 +51,36 @@ class BidResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->filters([
+                SelectFilter::make('event_id')
+                    ->label('Evento')
+                    ->options(fn() => \App\Models\Event::where('published', true)->pluck('name', 'id')->toArray())
+                    ->searchable()
+                    ->placeholder('Selecione um evento'),
+
+                SelectFilter::make('animal_event_id')
+                    ->label('Lote')
+                    ->options(fn(callable $get) => $get('event_id')
+                        ? \App\Models\AnimalEvent::where('event_id', $get('event_id'))->pluck('name', 'id')->toArray()
+                        : [])
+                    ->searchable()
+                    ->placeholder('Selecione um lote'),
+
+                SelectFilter::make('user_id')
+                    ->label('Cliente')
+                    ->options(fn() => \App\Models\User::pluck('name', 'id')->toArray())
+                    ->searchable()
+                    ->placeholder('Selecione um cliente'),
+
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        0 => 'Pendente',
+                        1 => 'Aprovado',
+                        2 => 'Reprovado',
+                    ])
+                    ->placeholder('Todos os status'),
+            ])
             ->headerActions([
                 Action::make('filtros')
                     ->label('Filtrar')
