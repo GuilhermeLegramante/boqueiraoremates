@@ -19,7 +19,7 @@
             onchange="this.form.submit()">
             <option value="">Selecione um evento</option>
             @foreach ($events as $id => $name)
-                <option value="{{ $id }}" @selected($selectedEventId == $id)>{{ $name }}</option>
+                <option value="{{ $id }}" @selected((string) $selectedEventId === (string) $id)>{{ $name }}</option>
             @endforeach
         </select>
     </div>

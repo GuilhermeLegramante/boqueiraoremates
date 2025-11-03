@@ -9,9 +9,8 @@ class FilamentFilterController extends Controller
     public function update(Request $request)
     {
         $resource = $request->input('resource');
-        $clear = $request->query('clear', false);
 
-        if ($clear) {
+        if ($request->has('clear')) {
             session()->forget("{$resource}.selected_event_id");
             session()->forget("{$resource}.selected_lot_id");
             session()->forget("{$resource}.selected_client_id");
@@ -19,13 +18,15 @@ class FilamentFilterController extends Controller
             return redirect()->back();
         }
 
-        session(["{$resource}.selected_event_id" => $request->input('selected_event_id')]);
-        session(["{$resource}.selected_lot_id" => $request->input('selected_lot_id')]);
-        session(["{$resource}.selected_client_id" => $request->input('selected_client_id')]);
-        session(["{$resource}.selected_status_id" => $request->input('selected_status_id')]);
+        // Salva sempre como string
+        session(["{$resource}.selected_event_id" => (string) $request->input('selected_event_id')]);
+        session(["{$resource}.selected_lot_id" => (string) $request->input('selected_lot_id')]);
+        session(["{$resource}.selected_client_id" => (string) $request->input('selected_client_id')]);
+        session(["{$resource}.selected_status_id" => (string) $request->input('selected_status_id')]);
 
         return redirect()->back();
     }
+
 
     public function lots($eventId)
     {
