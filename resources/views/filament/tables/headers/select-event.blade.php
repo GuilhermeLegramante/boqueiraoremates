@@ -17,7 +17,7 @@
 
 <div class="flex flex-col items-center justify-center gap-3 mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
     <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 text-center">
-        Filtrar Lances Aprovados - Evento ATIVO
+        Filtrar Lances Aprovados
     </h2>
 
     <form method="POST" action="{{ route('filament.set-bid-filters') }}"
@@ -38,7 +38,7 @@
         <select name="lot_id"
             class="filament-forms-select w-full sm:w-48 text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Todos os lotes' })" onchange="this.form.submit()" @disabled(!$selectedEvent)>
-            <option value="">Todos os lotes</option>
+            <option value="">Todos os Lotes</option>
             @foreach ($lots as $id => $lot)
                 <option value="{{ $id }}" @selected(session('selected_lot_id') == $id)>Lote {{ $lot }}</option>
             @endforeach
@@ -48,7 +48,7 @@
         <select name="client_id"
             class="filament-forms-select w-full sm:w-56 text-sm rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Todos os clientes' })" onchange="this.form.submit()">
-            <option value="">Todos os clientes</option>
+            <option value="">Todos os Clientes</option>
             @foreach ($clients as $id => $name)
                 <option value="{{ $id }}" @selected(session('selected_client_id') == $id)>{{ $name }}</option>
             @endforeach
