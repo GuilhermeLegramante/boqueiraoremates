@@ -6,7 +6,10 @@ use App\Filament\Resources\BidResource\Pages;
 use App\Filament\Resources\BidResource\RelationManagers;
 use App\Filament\Tables\BidTable;
 use App\Filament\Traits\HasBidFilters;
+use App\Models\AnimalEvent;
 use App\Models\Bid;
+use App\Models\Event;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -23,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class BidResource extends Resource
 {
     use HasBidFilters;
-    
+
     protected static ?string $model = Bid::class;
 
     protected static ?string $navigationLabel = 'Todos os Lances';
@@ -46,17 +49,52 @@ class BidResource extends Resource
         return $form;
     }
 
+    /**
+     * Gera o nome qualificado do Resource (para isolar sessões).
+     */
+    protected static function sessionKey(string $key): string
+    {
+        return static::class . '.' . $key;
+    }
+
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn($query) => (new static)->applyBidFilters($query))
+            /**
+             * 🔹 Header com o filtro customizado
+             */
             ->header(function () {
                 return view('filament.tables.headers.bid-filters', [
-                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
-                    'lotsQuery' => \App\Models\AnimalEvent::query(),
-                    'usersQuery' => \App\Models\User::query(),
+                    'eventsQuery' => Event::query()->where('published', true),
+                    'lotsQuery' => AnimalEvent::query(),
+                    'usersQuery' => User::query(),
                     'statusOptions' => [0, 1, 2],
                 ]);
+            })
+
+            /**
+             * 🔹 Filtro aplicado automaticamente com base nas sessões
+             */
+            ->modifyQueryUsing(function (Builder $query) {
+                $resource = static::class;
+
+                $eventId = session("{$resource}.selected_event_id");
+                $lotId = session("{$resource}.selected_lot_id");
+                $clientId = session("{$resource}.selected_client_id");
+                $statusId = session("{$resource}.selected_status_id");
+
+                // Nenhum evento selecionado → não mostra nada
+                if (!$eventId) {
+                    return $query->whereRaw('1 = 0');
+                }
+
+                // Filtros
+                $query->where('event_id', $eventId)
+                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
+                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
+                    ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
+
+                return $query;
             })
             ->columns(BidTable::columns())
             ->actions([
@@ -101,49 +139,6 @@ class BidResource extends Resource
                     ->icon('heroicon-o-cog-6-tooth')
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
-            ->filters([
-                // Tables\Filters\Filter::make('status')
-                //     ->query(fn($query) => $query->where('status', 1))
-                //     ->label('Aprovados'),
-
-                // Tables\Filters\Filter::make('pendente')
-                //     ->query(fn($query) => $query->where('status', 0))
-                //     ->label('Pendentes'),
-
-                // Tables\Filters\Filter::make('rejeitado')
-                //     ->query(fn($query) => $query->where('status', 2))
-                //     ->label('Rejeitados'),
-
-                // Tables\Filters\Filter::make('published_events')
-                //     ->label('Somente eventos publicados')
-                //     ->toggle() // transforma em checkbox
-                //     ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
-
-                // Tables\Filters\SelectFilter::make('event_id')
-                //     ->label('Evento')
-                //     ->searchable()
-                //     ->relationship('event', 'name'),
-
-                // Tables\Filters\SelectFilter::make('user_id')
-                //     ->label('Cliente')
-                //     ->searchable()
-                //     ->relationship('user', 'name'),
-            ])
-            ->deferFilters()
-            ->filtersApplyAction(
-                fn(Action $action) => $action
-                    ->link()
-                    ->label('Aplicar Filtro(s)'),
-            )
-            ->groups([
-                // Group::make('event.name')
-                //     ->label('Evento')
-                //     ->collapsible(),
-
-                // Group::make('user.name')
-                //     ->label('Cliente')
-                //     ->collapsible(),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

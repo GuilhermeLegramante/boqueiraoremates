@@ -4,6 +4,7 @@ use App\Http\Controllers\AnimalController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\FilamentFilterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\OrderController;
@@ -88,21 +89,8 @@ Route::post('/forgot-password-validate', [LoginController::class, 'validateFirst
 // Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
 // Route::post('/recover/set-password', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set_password');
 
-Route::post('/filament/set-bid-filters', function (\Illuminate\Http\Request $request) {
-    if ($request->has('clear_filters')) {
-        session()->forget([
-            'selected_event_id',
-            'selected_lot_id',
-            'selected_client_id',
-            'selected_status_id',
-        ]);
-    } else {
-        session([
-            'selected_event_id' => $request->event_id,
-            'selected_lot_id' => $request->lot_id,
-            'selected_client_id' => $request->client_id,
-            'selected_status_id' => $request->status_id,
-        ]);
-    }
-    return back();
-})->name('filament.set-bid-filters');
+Route::post('/filament/filters/update', [FilamentFilterController::class, 'update'])
+    ->name('filament.filters.update');
+
+Route::get('/filament/filters/lots/{eventId}', [FilamentFilterController::class, 'lots'])
+    ->name('filament.filters.lots');

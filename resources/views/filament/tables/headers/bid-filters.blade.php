@@ -1,99 +1,115 @@
-@props([
-    'eventsQuery' => null, // Query builder para eventos (Event::query())
-    'lotsQuery' => null, // Query builder para lotes (AnimalEvent::query())
-    'usersQuery' => null, // Query builder para clientes (User::query())
-    'showPublished' => true, // Filtrar apenas eventos publicados
-    'statusOptions' => [0, 1, 2], // Status exibidos
-])
-
 @php
-    use App\Models\AnimalEvent;
-    use App\Models\User;
-
-    // Eventos
-    $eventsQuery = $eventsQuery ?? \App\Models\Event::query();
-    if ($showPublished) {
-        $eventsQuery->where('published', true);
-    }
-    $events = $eventsQuery->pluck('name', 'id');
-
-    // Seleções da sessão
-    $selectedEvent = session('selected_event_id');
-    $selectedLot = session('selected_lot_id');
-    $selectedClient = session('selected_client_id');
-    $selectedStatus = session('selected_status_id');
-
-    // Lotes dependentes do evento selecionado
-    $lotsQuery = $lotsQuery ?? AnimalEvent::query();
-    $lots = $selectedEvent ? $lotsQuery->where('event_id', $selectedEvent)->pluck('lot_number', 'id') : collect();
-
-    // Clientes dependentes do evento selecionado
-    $usersQuery = $usersQuery ?? User::query();
-    $clients = $usersQuery
-        ->whereHas('bids', function ($q) use ($selectedEvent) {
-            if ($selectedEvent) {
-                $q->where('event_id', $selectedEvent);
-            }
-        })
-        ->pluck('name', 'id');
+    $namespace = "App\\Filament\\Resources\\{$resource}";
 @endphp
 
-<div class="flex flex-col items-center justify-center gap-3 mt-4 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-    <form method="POST" action="{{ route('filament.set-bid-filters') }}"
-        class="flex flex-wrap items-center justify-center gap-3 w-full">
-        @csrf
+<form method="POST" action="{{ route('filament.filters.update') }}" class="flex flex-wrap items-center gap-3 p-4">
+    @csrf
+    <input type="hidden" name="resource" value="{{ $resource }}">
 
-        {{-- Evento --}}
-        <select name="event_id"
-            class="filament-forms-select w-full sm:w-64 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Selecione um evento...' })" onchange="this.form.submit()">
-            <option value="">Selecione um evento...</option>
-            @foreach ($events as $id => $name)
-                <option value="{{ $id }}" @selected($selectedEvent !== null && $selectedEvent == $id)>{{ $name }}</option>
+    {{-- Evento --}}
+    <div class="flex flex-col">
+        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Evento</label>
+        <select id="eventSelect" name="selected_event_id"
+            class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            x-data x-init="new TomSelect($el, { placeholder: 'Selecione um evento', plugins: ['clear_button'], allowEmptyOption: true })" onchange="updateLots(this.value)">
+            <option value="">Selecione um evento</option>
+            @foreach ($eventsQuery->pluck('name', 'id') as $id => $name)
+                <option value="{{ $id }}" @selected(session("{$namespace}.selected_event_id") == $id)>
+                    {{ $name }}
+                </option>
             @endforeach
         </select>
+    </div>
 
-        {{-- Status --}}
-        <select name="status_id"
-            class="filament-forms-select w-full sm:w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { placeholder: 'Todos os status' })" onchange="this.form.submit()">
-            <option value="" @selected(is_null($selectedStatus))>Todos os status</option>
-            @foreach ($statusOptions as $status)
-                @php
-                    $text = match ($status) {
-                        0 => 'Pendente',
-                        1 => 'Aprovado',
-                        2 => 'Reprovado',
-                    };
-                @endphp
-                <option value="{{ $status }}" @selected($selectedStatus !== null && $selectedStatus == $status)>{{ $text }}</option>
-            @endforeach
-        </select>
-
-        {{-- Lote --}}
-        <select name="lot_id"
-            class="filament-forms-select w-full sm:w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Todos os lotes' })" onchange="this.form.submit()" @disabled(!$selectedEvent)>
+    {{-- Lote --}}
+    <div class="flex flex-col">
+        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Lote</label>
+        <select id="lotSelect" name="selected_lot_id"
+            class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            x-data x-init="window.lotSelect = new TomSelect($el, { placeholder: 'Todos os lotes', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
             <option value="">Todos os lotes</option>
-            @foreach ($lots as $id => $lot)
-                <option value="{{ $id }}" @selected($selectedLot == $id)>Lote {{ $lot }}</option>
+            @foreach ($lotsQuery->pluck('name', 'id') as $id => $name)
+                <option value="{{ $id }}" @selected(session("{$namespace}.selected_lot_id") == $id)>
+                    {{ $name }}
+                </option>
             @endforeach
         </select>
+    </div>
 
-        {{-- Cliente --}}
-        <select name="client_id"
-            class="filament-forms-select w-full sm:w-56 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Todos os clientes' })" onchange="this.form.submit()">
+    {{-- Cliente --}}
+    <div class="flex flex-col">
+        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cliente</label>
+        <select name="selected_client_id"
+            class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            x-data x-init="new TomSelect($el, { placeholder: 'Todos os clientes', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
             <option value="">Todos os clientes</option>
-            @foreach ($clients as $id => $name)
-                <option value="{{ $id }}" @selected($selectedClient == $id)>{{ $name }}</option>
+            @foreach ($usersQuery->pluck('name', 'id') as $id => $name)
+                <option value="{{ $id }}" @selected(session("{$namespace}.selected_client_id") == $id)>
+                    {{ $name }}
+                </option>
             @endforeach
         </select>
+    </div>
 
-        {{-- Limpar filtros --}}
-        <button type="submit" name="clear_filters" value="1"
-            class="px-3 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-100 dark:border-gray-600 dark:hover:bg-gray-700 dark:text-gray-200 whitespace-nowrap">
+    {{-- Status --}}
+    @if (!empty($statusOptions))
+        <div class="flex flex-col">
+            <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status</label>
+            <select name="selected_status_id"
+                class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                x-data x-init="new TomSelect($el, { placeholder: 'Todos os status', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
+                <option value="">Todos os status</option>
+                @foreach ($statusOptions as $status)
+                    @php
+                        $text = match ($status) {
+                            0 => 'Pendente',
+                            1 => 'Aprovado',
+                            2 => 'Reprovado',
+                        };
+                    @endphp
+                    <option value="{{ $status }}" @selected(session("{$namespace}.selected_status_id") == (string) $status)>
+                        {{ $text }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+    @endif
+
+    {{-- Limpar filtros --}}
+    <div class="mt-6 sm:mt-0">
+        <button type="button"
+            onclick="window.location.href='{{ route('filament.filters.update') }}?clear={{ $resource }}'"
+            class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-600">
             Limpar filtros
         </button>
-    </form>
-</div>
+    </div>
+</form>
+
+{{-- Script AJAX para atualizar lotes dinamicamente --}}
+<script>
+    function updateLots(eventId) {
+        lotSelect.clearOptions();
+        lotSelect.addOption({
+            value: '',
+            text: 'Todos os lotes'
+        });
+
+        if (!eventId) {
+            document.querySelector('form').submit();
+            return;
+        }
+
+        fetch(`/filament/filters/lots/${eventId}`)
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(lot => {
+                    lotSelect.addOption({
+                        value: lot.id,
+                        text: lot.name
+                    });
+                });
+                lotSelect.refreshOptions(false);
+            })
+            .finally(() => document.querySelector('form').submit());
+    }
+</script>
