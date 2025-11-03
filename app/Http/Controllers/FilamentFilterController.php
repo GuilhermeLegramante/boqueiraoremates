@@ -16,7 +16,6 @@ class FilamentFilterController extends Controller
             session()->forget("{$resource}.selected_lot_id");
             session()->forget("{$resource}.selected_client_id");
             session()->forget("{$resource}.selected_status_id");
-
             return redirect()->back();
         }
 
