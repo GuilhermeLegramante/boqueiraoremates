@@ -65,9 +65,10 @@ class BidResource extends Resource
              */
             ->header(function () {
                 return view('filament.tables.headers.bid-filters', [
-                    'eventsQuery' => Event::query()->where('published', true),
-                    'lotsQuery' => AnimalEvent::query(),
-                    'usersQuery' => User::query(),
+                    'resource' => class_basename(static::class), // ex: "BidResource" ou "ApprovedActiveBidResource"
+                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
+                    'lotsQuery'   => \App\Models\AnimalEvent::query(),
+                    'usersQuery'  => \App\Models\User::query(),
                     'statusOptions' => [0, 1, 2],
                 ]);
             })
