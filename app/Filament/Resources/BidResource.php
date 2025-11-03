@@ -43,43 +43,9 @@ class BidResource extends Resource
         return $form;
     }
 
-    protected static ?string $sessionPrefix = '_approved_inactive_';
-
-    public static function table(Tables\Table $table): Tables\Table
+    public static function table(Table $table): Table
     {
         return $table
-            ->header(fn() => view('filament.tables.headers.bid-filters', [
-                'sessionPrefix' => self::$sessionPrefix,
-                'events' => \App\Models\Event::pluck('name', 'id'),
-                'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
-                'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
-                'statusOptions' => [0, 1, 2],
-                'statusDefault' => null,
-                'selectedEventId' => session(self::$sessionPrefix . "selected_event_id"),
-                'selectedLotId' => session(self::$sessionPrefix . "selected_lot_id"),
-                'selectedClientId' => session(self::$sessionPrefix . "selected_client_id"),
-                'selectedStatusId' => session(self::$sessionPrefix . "selected_status_id"),
-            ]))
-
-            ->modifyQueryUsing(function (Builder $query) use ($table) {
-                $eventId  = session(self::$sessionPrefix . "selected_event_id");
-                $lotId    = session(self::$sessionPrefix . "selected_lot_id");
-                $clientId = session(self::$sessionPrefix . "selected_client_id");
-                $statusId = session(self::$sessionPrefix . "selected_status_id");
-
-                // Se nenhum evento selecionado → retorna query vazia
-                // if (!$eventId) {
-                //     return $query->whereRaw('1=0');
-                // }
-
-                // Aplica os filtros
-                $query->where('event_id', $eventId)
-                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
-                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
-                    ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
-
-                return $query;
-            })
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
