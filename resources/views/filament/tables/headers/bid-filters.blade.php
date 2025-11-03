@@ -2,15 +2,16 @@
     $namespace = "App\\Filament\\Resources\\{$resource}";
 @endphp
 
-<form method="POST" action="{{ route('filament.filters.update') }}" class="flex flex-wrap items-center gap-3 p-4">
+<form method="POST" action="{{ route('filament.filters.update') }}"
+    class="flex flex-wrap items-end gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
     @csrf
     <input type="hidden" name="resource" value="{{ $resource }}">
 
     {{-- Evento --}}
-    <div class="flex flex-col">
+    <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Evento</label>
         <select id="eventSelect" name="selected_event_id"
-            class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
             x-data x-init="new TomSelect($el, { placeholder: 'Selecione um evento', plugins: ['clear_button'], allowEmptyOption: true })" onchange="updateLots(this.value)">
             <option value="">Selecione um evento</option>
             @foreach ($eventsQuery->pluck('name', 'id') as $id => $name)
@@ -22,10 +23,10 @@
     </div>
 
     {{-- Lote --}}
-    <div class="flex flex-col">
+    <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Lote</label>
         <select id="lotSelect" name="selected_lot_id"
-            class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
             x-data x-init="window.lotSelect = new TomSelect($el, { placeholder: 'Todos os lotes', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
             <option value="">Todos os lotes</option>
             @foreach ($lotsQuery->pluck('name', 'id') as $id => $name)
@@ -37,10 +38,10 @@
     </div>
 
     {{-- Cliente --}}
-    <div class="flex flex-col">
+    <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cliente</label>
         <select name="selected_client_id"
-            class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
             x-data x-init="new TomSelect($el, { placeholder: 'Todos os clientes', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
             <option value="">Todos os clientes</option>
             @foreach ($usersQuery->pluck('name', 'id') as $id => $name)
@@ -53,10 +54,10 @@
 
     {{-- Status --}}
     @if (!empty($statusOptions))
-        <div class="flex flex-col">
+        <div class="flex flex-col w-full sm:w-48">
             <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status</label>
             <select name="selected_status_id"
-                class="filament-forms-select w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 focus:ring-primary-500 focus:border-primary-500"
                 x-data x-init="new TomSelect($el, { placeholder: 'Todos os status', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
                 <option value="">Todos os status</option>
                 @foreach ($statusOptions as $status)
@@ -76,10 +77,10 @@
     @endif
 
     {{-- Limpar filtros --}}
-    <div class="mt-6 sm:mt-0">
+    <div class="flex items-end">
         <button type="button"
             onclick="window.location.href='{{ route('filament.filters.update') }}?clear={{ $resource }}'"
-            class="px-3 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-gray-300 dark:border-gray-600">
+            class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
             Limpar filtros
         </button>
     </div>
