@@ -72,14 +72,11 @@
     </div>
 
     {{-- Limpar filtros --}}
-    <form method="POST" action="{{ route('filament.filters.update') }}">
-        @csrf
-        <input type="hidden" name="resource" value="{{ $resource }}">
-        <input type="hidden" name="clear" value="1">
-        <button type="submit"
+    <div class="flex items-end">
+        <button type="button"
+            onclick="window.location.href='{{ route('filament.filters.update') }}?clear={{ $resource }}'"
             class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
             Limpar filtros
         </button>
-    </form>
-
+    </div>
 </form>
