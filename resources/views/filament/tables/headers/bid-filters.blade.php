@@ -1,5 +1,6 @@
 @php
     $namespace = "App\\Filament\\Resources\\{$resource}";
+    $selectedEventId = session("{$namespace}.selected_event_id");
 @endphp
 
 <form method="POST" action="{{ route('filament.filters.update') }}"
@@ -27,8 +28,12 @@
             class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
             onchange="this.form.submit()">
             <option value="">Todos os lotes</option>
-            @foreach ($lots as $id => $name)
-                <option value="{{ $id }}" @selected(session("{$namespace}.selected_lot_id") == $id)>{{ $name }}</option>
+            @foreach ($lots as $lot)
+                @if (!$selectedEventId || $lot->event_id == $selectedEventId)
+                    <option value="{{ $lot->id }}" @selected(session("{$namespace}.selected_lot_id") == $lot->id)>
+                        {{ $lot->name }}
+                    </option>
+                @endif
             @endforeach
         </select>
     </div>
