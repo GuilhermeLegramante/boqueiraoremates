@@ -207,5 +207,16 @@ class Client extends Model
                 ]);
             }
         });
+
+        // Excluindo cliente
+        static::deleting(function ($client) {
+            // Excluir documentos relacionados
+            $client->documents()->delete();
+
+            // Excluir usuário vinculado
+            if ($client->registeredUser) {
+                $client->registeredUser->delete();
+            }
+        });
     }
 }
