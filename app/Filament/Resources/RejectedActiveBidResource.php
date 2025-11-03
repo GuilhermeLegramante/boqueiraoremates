@@ -23,35 +23,44 @@ class RejectedActiveBidResource extends Resource
 
     protected static ?string $navigationGroup = 'Lances';
 
+    protected static ?string $sessionPrefix = '_rejected_active_';
+
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
-          ->modifyQueryUsing(function (Builder $query) {
-                $eventId = session('selected_event_id');
-                $lotId = session('selected_lot_id');
-                $clientId = session('selected_client_id');
-                $statusId = session('selected_status_id');
+            ->header(fn() => view('filament.tables.headers.bid-filters', [
+                'sessionPrefix' => self::$sessionPrefix,
+                'events' => \App\Models\Event::where('published', true)->pluck('name', 'id'),
+                'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
+                'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
+                'statusOptions' => [0, 1, 2],
+                'statusDefault' => 2,
+                'selectedEventId' => session(self::$sessionPrefix . "selected_event_id"),
+                'selectedLotId' => session(self::$sessionPrefix . "selected_lot_id"),
+                'selectedClientId' => session(self::$sessionPrefix . "selected_client_id"),
+                'selectedStatusId' => session(self::$sessionPrefix . "selected_status_id"),
+            ]))
 
-                // Se nenhum evento selecionado, não retorna nenhum lance
+            ->modifyQueryUsing(function (Builder $query) use ($table) {
+                $eventId  = session(self::$sessionPrefix . "selected_event_id");
+                $lotId    = session(self::$sessionPrefix . "selected_lot_id");
+                $clientId = session(self::$sessionPrefix . "selected_client_id");
+                $statusId = session(self::$sessionPrefix . "selected_status_id");
+
+                // Se nenhum evento selecionado → retorna query vazia
                 if (!$eventId) {
-                    return $query->whereRaw('1 = 0'); // força query vazia
+                    return $query->whereRaw('1=0');
                 }
 
-                $query->when($eventId, fn($q) => $q->where('event_id', $eventId))
+                // Aplica os filtros
+                $query->where('event_id', $eventId)
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
-                    ->when($statusId !== null, fn($q) => $q->where('status', $statusId));
+                    ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
 
                 return $query;
             })
-            ->header(function () {
-                return view('filament.tables.headers.bid-filters', [
-                    'eventsQuery' => \App\Models\Event::query()->where('status', 2)->where('published', false),
-                    'lotsQuery' => \App\Models\AnimalEvent::query(),
-                    'usersQuery' => \App\Models\User::query(),
-                    'statusOptions' => [0, 1, 2],
-                ]);
-            })
+
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([

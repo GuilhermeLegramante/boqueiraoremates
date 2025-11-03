@@ -28,10 +28,43 @@ class PendingBidResource extends Resource
 
     protected static ?string $navigationGroup = 'Lances';
 
+    protected static ?string $sessionPrefix = '_pending_';
+
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query->where('status', 0))
+            ->header(fn() => view('filament.tables.headers.bid-filters', [
+                'sessionPrefix' => self::$sessionPrefix,
+                'events' => \App\Models\Event::where('published', true)->pluck('name', 'id'),
+                'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
+                'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
+                'statusOptions' => [0, 1, 2],
+                'statusDefault' => 0,
+                'selectedEventId' => session(self::$sessionPrefix . "selected_event_id"),
+                'selectedLotId' => session(self::$sessionPrefix . "selected_lot_id"),
+                'selectedClientId' => session(self::$sessionPrefix . "selected_client_id"),
+                'selectedStatusId' => session(self::$sessionPrefix . "selected_status_id"),
+            ]))
+
+            ->modifyQueryUsing(function (Builder $query) use ($table) {
+                $eventId  = session(self::$sessionPrefix . "selected_event_id");
+                $lotId    = session(self::$sessionPrefix . "selected_lot_id");
+                $clientId = session(self::$sessionPrefix . "selected_client_id");
+                $statusId = session(self::$sessionPrefix . "selected_status_id");
+
+                // Se nenhum evento selecionado → retorna query vazia
+                // if (!$eventId) {
+                //     return $query->whereRaw('1=0');
+                // }
+
+                // Aplica os filtros
+                $query->where('event_id', $eventId)
+                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
+                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
+                    ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
+
+                return $query;
+            })
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -75,32 +108,6 @@ class PendingBidResource extends Resource
                     ->icon('heroicon-o-cog-6-tooth')
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
-            ->filters([
-                Tables\Filters\SelectFilter::make('event_id')
-                    ->label('Evento')
-                    ->searchable()
-                    ->relationship('event', 'name'),
-
-                Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->relationship('user', 'name'),
-            ])
-            ->deferFilters()
-            ->filtersApplyAction(
-                fn(Action $action) => $action
-                    ->link()
-                    ->label('Aplicar Filtro(s)'),
-            )
-            ->groups([
-                Group::make('event.name')
-                    ->label('Evento')
-                    ->collapsible(),
-
-                Group::make('user.name')
-                    ->label('Cliente')
-                    ->collapsible(),
-            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

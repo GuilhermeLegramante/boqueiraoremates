@@ -6,7 +6,6 @@ use App\Filament\Resources\ApprovedActiveBidResource\Pages\ListApprovedActiveBid
 use App\Filament\Resources\BidResource\Pages;
 use App\Filament\Resources\PendingBidResource\Pages\ListPendingBids;
 use App\Filament\Tables\BidTable;
-use App\Filament\Traits\HasBidFilters;
 use App\Models\Bid;
 use App\Models\Event;
 use Filament\Resources\Resource;
@@ -22,8 +21,6 @@ use Illuminate\Support\Facades\Cache;
 
 class ApprovedActiveBidResource extends Resource
 {
-    use HasBidFilters;
-
     protected static ?string $model = Bid::class;
     protected static ?string $navigationIcon = 'heroicon-o-check';
     protected static ?string $navigationLabel = 'Aprovados - Leilões ATIVOS';

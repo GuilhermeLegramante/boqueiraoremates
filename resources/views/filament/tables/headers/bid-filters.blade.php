@@ -25,6 +25,28 @@
         </select>
     </div>
 
+    {{-- Status --}}
+    <div class="flex flex-col w-full sm:w-48">
+        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status</label>
+        <select name="selected_status_id"
+            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            onchange="this.form.submit()">
+            <option value="">Todos os status</option>
+            @foreach ($statusOptions as $status)
+                @php
+                    $text = match ($status) {
+                        0 => 'Pendente',
+                        1 => 'Aprovado',
+                        2 => 'Reprovado',
+                    };
+                    // Usa $statusDefault se $selectedStatusId estiver vazio
+                    $isSelected = (string) ($selectedStatusId ?? $statusDefault) === (string) $status;
+                @endphp
+                <option value="{{ $status }}" @selected($isSelected)>{{ $text }}</option>
+            @endforeach
+        </select>
+    </div>
+
     {{-- Lote --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Lote</label>
@@ -60,27 +82,7 @@
         </select>
     </div>
 
-    {{-- Status --}}
-    <div class="flex flex-col w-full sm:w-48">
-        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status</label>
-        <select name="selected_status_id"
-            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-            onchange="this.form.submit()">
-            <option value="">Todos os status</option>
-            @foreach ($statusOptions as $status)
-                @php
-                    $text = match ($status) {
-                        0 => 'Pendente',
-                        1 => 'Aprovado',
-                        2 => 'Reprovado',
-                    };
-                    // Usa $statusDefault se $selectedStatusId estiver vazio
-                    $isSelected = (string) ($selectedStatusId ?? $statusDefault) === (string) $status;
-                @endphp
-                <option value="{{ $status }}" @selected($isSelected)>{{ $text }}</option>
-            @endforeach
-        </select>
-    </div>
+
 
     {{-- Limpar filtros --}}
     <div class="flex items-end">
