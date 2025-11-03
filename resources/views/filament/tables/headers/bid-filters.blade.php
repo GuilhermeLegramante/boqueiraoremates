@@ -95,8 +95,19 @@
             text: 'Todos os lotes'
         });
 
+        // Cria um formData para enviar
+        const form = document.querySelector('form');
+        const formData = new FormData(form);
+
         if (!eventId) {
-            document.querySelector('form').submit();
+            fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': form.querySelector('input[name=_token]').value
+                    }
+                })
+                .then(() => location.reload()); // recarrega tabela após limpar
             return;
         }
 
@@ -111,6 +122,15 @@
                 });
                 lotSelect.refreshOptions(false);
             })
-            .finally(() => document.querySelector('form').submit());
+            .finally(() => {
+                fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': form.querySelector('input[name=_token]').value
+                        }
+                    })
+                    .then(() => location.reload()); // força atualizar a tabela
+            });
     }
 </script>

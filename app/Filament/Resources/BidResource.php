@@ -78,22 +78,20 @@ class BidResource extends Resource
              */
             ->modifyQueryUsing(function (Builder $query) {
                 $resource = static::class;
-
-                $eventId = session("{$resource}.selected_event_id");
-                $lotId = session("{$resource}.selected_lot_id");
+                $eventId  = session("{$resource}.selected_event_id");
+                $lotId    = session("{$resource}.selected_lot_id");
                 $clientId = session("{$resource}.selected_client_id");
                 $statusId = session("{$resource}.selected_status_id");
 
-                // Nenhum evento selecionado → não mostra nada
                 if (!$eventId) {
-                    return $query->whereRaw('1 = 0');
+                    return $query->whereRaw('1=0'); // tabela vazia
                 }
 
-                // Filtros
                 $query->where('event_id', $eventId)
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
                     ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
+
 
                 return $query;
             })
