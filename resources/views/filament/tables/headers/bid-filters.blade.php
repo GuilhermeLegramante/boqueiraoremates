@@ -73,10 +73,11 @@
                         0 => 'Pendente',
                         1 => 'Aprovado',
                         2 => 'Reprovado',
-                        default => $statusDefault,
                     };
+                    // Usa $statusDefault se $selectedStatusId estiver vazio
+                    $isSelected = (string) ($selectedStatusId ?? $statusDefault) === (string) $status;
                 @endphp
-                <option value="{{ $status }}" @selected((string) $selectedStatusId === (string) $status)>{{ $text }}</option>
+                <option value="{{ $status }}" @selected($isSelected)>{{ $text }}</option>
             @endforeach
         </select>
     </div>
