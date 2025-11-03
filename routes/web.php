@@ -88,7 +88,16 @@ Route::post('/forgot-password-validate', [LoginController::class, 'validateFirst
 // Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
 // Route::post('/recover/set-password', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set_password');
 
-Route::post('/filament/set-event-filter', function (Request $request) {
-    session(['selected_event_id' => $request->event_id]);
+Route::post('/filament/set-bid-filters', function (Request $request) {
+    if ($request->has('clear_filters')) {
+        session()->forget(['selected_event_id', 'selected_lot_id', 'selected_client_id']);
+    } else {
+        session([
+            'selected_event_id' => $request->event_id,
+            'selected_lot_id' => $request->lot_id,
+            'selected_client_id' => $request->client_id,
+        ]);
+    }
+
     return back();
-})->name('filament.set-event-filter');
+})->name('filament.set-bid-filters');

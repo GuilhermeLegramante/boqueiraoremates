@@ -45,6 +45,8 @@ class ApprovedActiveBidResource extends Resource
              */
             ->modifyQueryUsing(function (Builder $query) {
                 $eventId = session('selected_event_id');
+                $lotId = session('selected_lot_id');
+                $clientId = session('selected_client_id');
 
                 $query->where('status', 1)
                     ->whereHas('event', fn($q) => $q->where('published', true));
@@ -52,11 +54,20 @@ class ApprovedActiveBidResource extends Resource
                 if ($eventId) {
                     $query->where('event_id', $eventId);
                 } else {
-                    $query->whereRaw('1 = 0');
+                    $query->whereRaw('1 = 0'); // não mostra nada sem evento
+                }
+
+                if ($lotId) {
+                    $query->where('animal_event_id', $lotId);
+                }
+
+                if ($clientId) {
+                    $query->where('user_id', $clientId);
                 }
 
                 return $query;
             })
+
             ->emptyStateHeading('Selecione um evento para visualizar os lances.')
             ->emptyStateIcon('heroicon-o-information-circle')
 
@@ -112,10 +123,10 @@ class ApprovedActiveBidResource extends Resource
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
             ->filters([
-                Tables\Filters\SelectFilter::make('event_id')
-                    ->label('Evento')
-                    ->searchable()
-                    ->relationship('event', 'name'),
+                // Tables\Filters\SelectFilter::make('event_id')
+                //     ->label('Evento')
+                //     ->searchable()
+                //     ->relationship('event', 'name'),
 
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label('Cliente')
