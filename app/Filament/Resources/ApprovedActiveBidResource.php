@@ -44,7 +44,8 @@ class ApprovedActiveBidResource extends Resource
                     return $query->whereRaw('1 = 0'); // força query vazia
                 }
 
-                $query->when($eventId, fn($q) => $q->where('event_id', $eventId))
+                // Aplica filtros
+                $query->where('event_id', $eventId)
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
                     ->when($statusId !== null, fn($q) => $q->where('status', $statusId));
