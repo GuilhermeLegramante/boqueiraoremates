@@ -5,10 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BidResource\Pages;
 use App\Filament\Resources\BidResource\RelationManagers;
 use App\Filament\Tables\BidTable;
-use App\Models\AnimalEvent;
 use App\Models\Bid;
-use App\Models\Event;
-use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -17,7 +14,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -47,72 +43,9 @@ class BidResource extends Resource
         return $form;
     }
 
-
     public static function table(Table $table): Table
     {
         return $table
-            ->filters([
-                SelectFilter::make('event_id')
-                    ->label('Evento')
-                    ->options(fn() => \App\Models\Event::where('published', true)->pluck('name', 'id')->toArray())
-                    ->searchable()
-                    ->placeholder('Selecione um evento'),
-
-                SelectFilter::make('animal_event_id')
-                    ->label('Lote')
-                    ->options(fn(callable $get) => $get('event_id')
-                        ? \App\Models\AnimalEvent::where('event_id', $get('event_id'))->pluck('name', 'id')->toArray()
-                        : [])
-                    ->searchable()
-                    ->placeholder('Selecione um lote'),
-
-                SelectFilter::make('user_id')
-                    ->label('Cliente')
-                    ->options(fn() => \App\Models\User::pluck('name', 'id')->toArray())
-                    ->searchable()
-                    ->placeholder('Selecione um cliente'),
-
-                SelectFilter::make('status')
-                    ->label('Status')
-                    ->options([
-                        0 => 'Pendente',
-                        1 => 'Aprovado',
-                        2 => 'Reprovado',
-                    ])
-                    ->placeholder('Todos os status'),
-            ])
-            ->headerActions([
-                Action::make('filtros')
-                    ->label('Filtrar')
-                    ->icon('heroicon-o-funnel')
-                    ->form([
-                        SelectFilter::make('event_id')
-                            ->label('Evento')
-                            ->options(fn() => \App\Models\Event::where('published', true)->pluck('name', 'id')->toArray())
-                            ->searchable(),
-                        SelectFilter::make('animal_event_id')
-                            ->label('Lote')
-                            ->options(fn(callable $get) => $get('event_id')
-                                ? \App\Models\AnimalEvent::where('event_id', $get('event_id'))->pluck('name', 'id')->toArray()
-                                : [])
-                            ->searchable(),
-                        SelectFilter::make('user_id')
-                            ->label('Cliente')
-                            ->options(fn() => \App\Models\User::pluck('name', 'id')->toArray())
-                            ->searchable(),
-                        SelectFilter::make('status')
-                            ->label('Status')
-                            ->options([
-                                0 => 'Pendente',
-                                1 => 'Aprovado',
-                                2 => 'Reprovado',
-                            ]),
-                    ]),
-            ])
-            // ->modifyQueryUsing(fn(Builder $query) => $query
-            //     ->where('status', 2)
-            //     ->whereHas('event', fn($q) => $q->where('published', false)))
-
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -156,6 +89,49 @@ class BidResource extends Resource
                     ->icon('heroicon-o-cog-6-tooth')
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
+            ->filters([
+                Tables\Filters\Filter::make('status')
+                    ->query(fn($query) => $query->where('status', 1))
+                    ->label('Aprovados'),
+
+                Tables\Filters\Filter::make('pendente')
+                    ->query(fn($query) => $query->where('status', 0))
+                    ->label('Pendentes'),
+
+                Tables\Filters\Filter::make('rejeitado')
+                    ->query(fn($query) => $query->where('status', 2))
+                    ->label('Rejeitados'),
+
+                Tables\Filters\Filter::make('published_events')
+                    ->label('Somente eventos publicados')
+                    ->toggle() // transforma em checkbox
+                    ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
+
+                Tables\Filters\SelectFilter::make('event_id')
+                    ->label('Evento')
+                    ->searchable()
+                    ->relationship('event', 'name'),
+
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->relationship('user', 'name'),
+            ])
+            ->deferFilters()
+            ->filtersApplyAction(
+                fn(Action $action) => $action
+                    ->link()
+                    ->label('Aplicar Filtro(s)'),
+            )
+            ->groups([
+                Group::make('event.name')
+                    ->label('Evento')
+                    ->collapsible(),
+
+                Group::make('user.name')
+                    ->label('Cliente')
+                    ->collapsible(),
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
