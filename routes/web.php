@@ -11,6 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesMapController;
 use App\Http\Controllers\SellerStatementController;
 use App\Models\Client;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -86,3 +87,8 @@ Route::post('/forgot-password-validate', [LoginController::class, 'validateFirst
 // Route::get('/recover', [LoginController::class, 'showRecoverForm'])->name('recover.form');
 // Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
 // Route::post('/recover/set-password', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set_password');
+
+Route::post('/filament/set-event-filter', function (Request $request) {
+    session(['selected_event_id' => $request->event_id]);
+    return back();
+})->name('filament.set-event-filter');

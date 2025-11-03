@@ -7,6 +7,7 @@ use App\Filament\Resources\BidResource\Pages;
 use App\Filament\Resources\PendingBidResource\Pages\ListPendingBids;
 use App\Filament\Tables\BidTable;
 use App\Models\Bid;
+use App\Models\Event;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -32,6 +33,38 @@ class ApprovedActiveBidResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
+            ->header(function () {
+                return view('filament.tables.headers.select-event', [
+                    'events' => Event::where('published', true)->pluck('name', 'id'),
+                    'selected' => session('selected_event_id'),
+                ]);
+            })
+
+            /**
+             * ✅ Filtra conforme evento selecionado
+             */
+            ->modifyQueryUsing(function (Builder $query) {
+                $eventId = session('selected_event_id');
+
+                $query->where('status', 1)
+                    ->whereHas('event', fn($q) => $q->where('published', true));
+
+                if ($eventId) {
+                    $query->where('event_id', $eventId);
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+
+                return $query;
+            })
+            ->emptyStateHeading('Selecione um evento para visualizar os lances.')
+            ->emptyStateIcon('heroicon-o-information-circle')
+
+            ->columns(BidTable::columns())
+            ->actions([], position: ActionsPosition::BeforeColumns)
+            ->emptyStateHeading('Selecione um evento para visualizar os lances.')
+            ->emptyStateIcon('heroicon-o-information-circle')
+            ->defaultSort('created_at', 'desc')
             ->modifyQueryUsing(fn(Builder $query) => $query
                 ->where('status', 1)
                 ->whereHas('event', fn($q) => $q->where('published', true)))
@@ -118,13 +151,4 @@ class ApprovedActiveBidResource extends Resource
             'index' => ListApprovedActiveBids::route('/'),
         ];
     }
-
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     $count = static::getModel()::where('status', 1)
-    //         ->whereHas('event', fn($q) => $q->where('published', true))
-    //         ->count();
-
-    //     return $count > 0 ? (string)$count : null;
-    // }
 }
