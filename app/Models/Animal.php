@@ -163,7 +163,6 @@ class Animal extends Model
             // Busca o maior lance para esse animal_event
             $bid = Bid::where('animal_event_id', $animalEventId)
                 ->orderByDesc('amount')
-                ->where('status', 1) // Pega só lance aprovado
                 ->first();
 
             $currentBid = $bid ? $bid->amount : 0;
