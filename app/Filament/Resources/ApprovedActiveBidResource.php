@@ -38,9 +38,9 @@ class ApprovedActiveBidResource extends Resource
         return $table
             ->header(fn() => view('filament.tables.headers.bid-filters', [
                 'resource' => static::class,
-                'eventsQuery' => \App\Models\Event::where('published', true)->get(),
-                'lotsQuery' => \App\Models\AnimalEvent::query(),
-                'usersQuery' => \App\Models\User::query(),
+                'events' => \App\Models\Event::where('published', true)->pluck('name', 'id'),
+                'lots' => \App\Models\AnimalEvent::pluck('name', 'id'),
+                'users' => \App\Models\User::pluck('name', 'id'),
                 'statusOptions' => [0, 1, 2],
             ]))
             ->modifyQueryUsing(function (Builder $query) {
@@ -51,9 +51,9 @@ class ApprovedActiveBidResource extends Resource
                 $clientId = session("{$resource}.selected_client_id");
                 $statusId = session("{$resource}.selected_status_id");
 
-                // Se nenhum evento selecionado → nenhum lance
+                // Sem evento selecionado → tabela vazia
                 if (!$eventId) {
-                    return $query->whereRaw('1 = 0');
+                    return $query->whereRaw('1=0');
                 }
 
                 $query->where('event_id', $eventId)
