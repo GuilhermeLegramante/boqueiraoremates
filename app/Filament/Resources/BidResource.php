@@ -79,12 +79,9 @@ class BidResource extends Resource
                             ]),
                     ]),
             ])
-            ->modifyQueryUsing(function (Builder $query, array $data) {
-                if (empty($data['event_id'])) {
-                    return $query->whereRaw('1=0'); // não mostra nada até escolher evento
-                }
-                return $query;
-            })
+            // ->modifyQueryUsing(fn(Builder $query) => $query
+            //     ->where('status', 2)
+            //     ->whereHas('event', fn($q) => $q->where('published', false)))
 
             ->columns(BidTable::columns())
             ->actions([
