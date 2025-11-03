@@ -157,18 +157,17 @@ class Animal extends Model
 
         $increment = $this->pivot->increment_value ?? 0;
 
-        if ($this->current_bid > 0) {
-            $animalEventId = $this->pivot->id;
+        $animalEventId = $this->pivot->id;
 
-            // Busca o maior lance para esse animal_event
-            $bid = Bid::where('animal_event_id', $animalEventId)
-                ->orderByDesc('amount')
-                ->first();
+        // Busca o maior lance para esse animal_event
+        $bid = Bid::where('animal_event_id', $animalEventId)
+            ->orderByDesc('amount')
+            ->first();
 
-            $currentBid = $bid ? $bid->amount : 0;
+        $currentBid = $bid ? $bid->amount : 0;
 
-            // return $currentBid + $increment;
-            return 1;
+        if ($currentBid > 0) {
+            return $currentBid + $increment;
         } else {
             return $this->pivot->min_value + $increment;
         }
