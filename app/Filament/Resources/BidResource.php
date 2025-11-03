@@ -47,13 +47,6 @@ class BidResource extends Resource
         return $form;
     }
 
-    /**
-     * Gera o nome qualificado do Resource (para isolar sessões).
-     */
-    protected static function sessionKey(string $key): string
-    {
-        return static::class . '.' . $key;
-    }
 
     public static function table(Table $table): Table
     {
@@ -84,8 +77,7 @@ class BidResource extends Resource
                                 1 => 'Aprovado',
                                 2 => 'Reprovado',
                             ]),
-                    ])
-                    ->submitActionLabel('Aplicar'),
+                    ]),
             ])
             ->modifyQueryUsing(function (Builder $query, array $data) {
                 if (empty($data['event_id'])) {
