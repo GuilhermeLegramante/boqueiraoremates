@@ -10,12 +10,12 @@
     {{-- Evento --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Evento</label>
-        <select id="eventSelect" name="selected_event_id"
+        <select name="selected_event_id"
             class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { placeholder: 'Selecione um evento', plugins: ['clear_button'], allowEmptyOption: true })" onchange="updateLots(this.value)">
+            onchange="this.form.submit()">
             <option value="">Selecione um evento</option>
-            @foreach ($eventsQuery as $event)
-                <option value="{{ $event->id }}" @selected(session("{$namespace}.selected_event_id") == $event->id)>{{ $event->name }}</option>
+            @foreach ($events as $id => $name)
+                <option value="{{ $id }}" @selected(session("{$namespace}.selected_event_id") == $id)>{{ $name }}</option>
             @endforeach
         </select>
     </div>
@@ -23,11 +23,11 @@
     {{-- Lote --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Lote</label>
-        <select id="lotSelect" name="selected_lot_id"
+        <select name="selected_lot_id"
             class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-            x-data x-init="window.lotSelect = new TomSelect($el, { placeholder: 'Todos os lotes', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
+            onchange="this.form.submit()">
             <option value="">Todos os lotes</option>
-            @foreach ($lotsQuery->pluck('name', 'id') as $id => $name)
+            @foreach ($lots as $id => $name)
                 <option value="{{ $id }}" @selected(session("{$namespace}.selected_lot_id") == $id)>{{ $name }}</option>
             @endforeach
         </select>
@@ -38,9 +38,9 @@
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cliente</label>
         <select name="selected_client_id"
             class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { placeholder: 'Todos os clientes', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
+            onchange="this.form.submit()">
             <option value="">Todos os clientes</option>
-            @foreach ($usersQuery->pluck('name', 'id') as $id => $name)
+            @foreach ($users as $id => $name)
                 <option value="{{ $id }}" @selected(session("{$namespace}.selected_client_id") == $id)>{{ $name }}</option>
             @endforeach
         </select>
@@ -51,7 +51,7 @@
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status</label>
         <select name="selected_status_id"
             class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-            x-data x-init="new TomSelect($el, { placeholder: 'Todos os status', plugins: ['clear_button'], allowEmptyOption: true })" onchange="this.form.submit()">
+            onchange="this.form.submit()">
             <option value="">Todos os status</option>
             @foreach ($statusOptions as $status)
                 @php
@@ -75,35 +75,3 @@
         </button>
     </div>
 </form>
-
-<!-- TomSelect CSS e JS via CDN -->
-<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-
-<script>
-    function updateLots(eventId) {
-        lotSelect.clearOptions();
-        lotSelect.addOption({
-            value: '',
-            text: 'Todos os lotes'
-        });
-
-        if (!eventId) {
-            document.querySelector('form').submit();
-            return;
-        }
-
-        fetch(`/filament/filters/lots/${eventId}`)
-            .then(res => res.json())
-            .then(data => {
-                data.forEach(lot => {
-                    lotSelect.addOption({
-                        value: lot.id,
-                        text: lot.name
-                    });
-                });
-                lotSelect.refreshOptions(false);
-            })
-            .finally(() => document.querySelector('form').submit());
-    }
-</script>
