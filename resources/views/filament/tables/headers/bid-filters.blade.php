@@ -57,7 +57,11 @@
         <select name="status_id"
             class="filament-forms-select w-full sm:w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             x-data x-init="new TomSelect($el, { placeholder: 'Todos os status' })" onchange="this.form.submit()">
-            <option value="">Todos os status</option>
+
+            {{-- Todos --}}
+            <option value="" @selected(is_null($selectedStatus))>Todos os status</option>
+
+            {{-- Status --}}
             @foreach ($statusOptions as $status)
                 @php
                     $text = match ($status) {
@@ -66,9 +70,10 @@
                         2 => 'Reprovado',
                     };
                 @endphp
-                <option value="{{ $status }}" @selected($selectedStatus == $status)>{{ $text }}</option>
+                <option value="{{ $status }}" @selected($selectedStatus !== null && $selectedStatus == $status)>{{ $text }}</option>
             @endforeach
         </select>
+
 
         {{-- Lote --}}
         <select name="lot_id"
