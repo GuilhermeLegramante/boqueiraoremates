@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Cache;
 class ApprovedActiveBidResource extends Resource
 {
     use HasBidFilters;
-    
+
     protected static ?string $model = Bid::class;
     protected static ?string $navigationIcon = 'heroicon-o-check';
     protected static ?string $navigationLabel = 'Aprovados - Leilões ATIVOS';
@@ -39,7 +39,7 @@ class ApprovedActiveBidResource extends Resource
             ->modifyQueryUsing(fn($query) => (new static)->applyBidFilters($query))
             ->header(function () {
                 return view('filament.tables.headers.bid-filters', [
-                    'eventsQuery' => \App\Models\Event::query()->where('status', 1)->where('published', true),
+                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
                     'lotsQuery' => \App\Models\AnimalEvent::query(),
                     'usersQuery' => \App\Models\User::query(),
                     'statusOptions' => [0, 1, 2],
