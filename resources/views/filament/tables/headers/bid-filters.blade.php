@@ -9,6 +9,9 @@
     class="flex flex-wrap items-end gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
     @csrf
 
+    {{-- Session Prefix hidden --}}
+    <input type="hidden" name="session_prefix" value="{{ $sessionPrefix }}">
+
     {{-- Evento --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Evento</label>

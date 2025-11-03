@@ -6,26 +6,32 @@ use Illuminate\Http\Request;
 
 class FilamentFilterController extends Controller
 {
-    // Salvar filtros ou limpar
     public function update(Request $request)
     {
-        // Se vier ?clear=1 → limpar filtros
-        if ($request->query('clear') == 1) {
-            session()->forget('selected_event_id');
-            session()->forget('selected_lot_id');
-            session()->forget('selected_client_id');
-            session()->forget('selected_status_id');
+        // Recupera o prefixo enviado pelo formulário ou usa padrão
+        $prefix = $request->input('session_prefix', 'default_');
+
+        // Se o parâmetro 'clear' estiver presente, limpa todas as sessões relacionadas
+        if ($request->has('clear')) {
+            $keys = [
+                'selected_event_id',
+                'selected_lot_id',
+                'selected_client_id',
+                'selected_status_id',
+            ];
+
+            foreach ($keys as $key) {
+                $request->session()->forget($prefix . $key);
+            }
 
             return redirect()->back();
         }
 
-        // Salvar filtros
-        session([
-            'selected_event_id'  => $request->input('selected_event_id'),
-            'selected_lot_id'    => $request->input('selected_lot_id'),
-            'selected_client_id' => $request->input('selected_client_id'),
-            'selected_status_id' => $request->input('selected_status_id'),
-        ]);
+        // Atualiza os filtros na sessão
+        $request->session()->put($prefix . 'selected_event_id', $request->input('selected_event_id'));
+        $request->session()->put($prefix . 'selected_lot_id', $request->input('selected_lot_id'));
+        $request->session()->put($prefix . 'selected_client_id', $request->input('selected_client_id'));
+        $request->session()->put($prefix . 'selected_status_id', $request->input('selected_status_id'));
 
         return redirect()->back();
     }
