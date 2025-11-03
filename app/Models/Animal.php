@@ -169,7 +169,7 @@ class Animal extends Model
 
             return $currentBid + $increment;
         } else {
-            return (float) $this->pivot->min_value + $increment;
+            return (float) $this->pivot->min_value ;
         }
     }
 }
