@@ -89,5 +89,6 @@ Route::post('/forgot-password-validate', [LoginController::class, 'validateFirst
 // Route::post('/recover/validate', [LoginController::class, 'recoverValidate'])->name('recover.validate');
 // Route::post('/recover/set-password', [LoginController::class, 'recoverSetNewPassword'])->name('recover.set_password');
 
-Route::post('/filament/filters/update', [FilamentFilterController::class, 'update'])->name('filament.filters.update');
+Route::match(['get', 'post'], 'filament/filters/update', [FilamentFilterController::class, 'update'])
+    ->name('filament.filters.update');
 Route::get('/filament/filters/lots/{eventId}', [FilamentFilterController::class, 'lots']);

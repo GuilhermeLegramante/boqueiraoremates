@@ -57,8 +57,6 @@
         </select>
     </div>
 
-
-
     {{-- Status --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Status</label>
