@@ -157,7 +157,7 @@ class Animal extends Model
 
         $increment = $this->pivot->increment_value ?? 0;
 
-        if ($this->current_bid > 0) {
+        if ($this->current_bid > 1) {
             $animalEventId = $this->pivot->id;
 
             // Busca o maior lance para esse animal_event
