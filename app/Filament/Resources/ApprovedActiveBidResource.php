@@ -44,6 +44,7 @@ class ApprovedActiveBidResource extends Resource
                 'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
                 'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
                 'statusOptions' => [0, 1, 2],
+                'statusDefault' => 1,
                 'selectedEventId' => session(self::$sessionPrefix . "selected_event_id"),
                 'selectedLotId' => session(self::$sessionPrefix . "selected_lot_id"),
                 'selectedClientId' => session(self::$sessionPrefix . "selected_client_id"),
