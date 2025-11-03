@@ -75,7 +75,7 @@
     </div>
 
     {{-- Limpar filtros --}}
-    <div class="flex items-end">
+    {{-- <div class="flex items-end">
         <button type="button"
             onclick="event.preventDefault(); 
                      const f = document.createElement('form'); 
@@ -101,5 +101,5 @@
             class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
             Limpar filtros
         </button>
-    </div>
+    </div> --}}
 </form>
