@@ -64,7 +64,6 @@
                         0 => 'Pendente',
                         1 => 'Aprovado',
                         2 => 'Reprovado',
-                        default => $status,
                     };
                 @endphp
                 <option value="{{ $status }}" @selected($selectedStatus == $status)>{{ $text }}</option>
