@@ -1,6 +1,9 @@
 @php
     $namespace = "App\\Filament\\Resources\\{$resource}";
     $selectedEventId = session("{$namespace}.selected_event_id");
+    $selectedLotId = session("{$namespace}.selected_lot_id");
+    $selectedClientId = session("{$namespace}.selected_client_id");
+    $selectedStatusId = session("{$namespace}.selected_status_id");
 @endphp
 
 <form method="POST" action="{{ route('filament.filters.update') }}"
@@ -16,7 +19,7 @@
             onchange="this.form.submit()">
             <option value="">Selecione um evento</option>
             @foreach ($events as $id => $name)
-                <option value="{{ $id }}" @selected(session("{$namespace}.selected_event_id") == $id)>{{ $name }}</option>
+                <option value="{{ $id }}" @selected($selectedEventId == $id)>{{ $name }}</option>
             @endforeach
         </select>
     </div>
@@ -30,7 +33,7 @@
             <option value="">Todos os lotes</option>
             @foreach ($lots as $lot)
                 @if (!$selectedEventId || $lot->event_id == $selectedEventId)
-                    <option value="{{ $lot->id }}" @selected(session("{$namespace}.selected_lot_id") == $lot->id)>
+                    <option value="{{ $lot->id }}" @selected($selectedLotId == $lot->id)>
                         {{ $lot->lot_number ?? ($lot->name ?? 'Lote ' . $lot->id) }}
                     </option>
                 @endif
@@ -46,7 +49,7 @@
             onchange="this.form.submit()">
             <option value="">Todos os clientes</option>
             @foreach ($users as $id => $name)
-                <option value="{{ $id }}" @selected(session("{$namespace}.selected_client_id") == $id)>{{ $name }}</option>
+                <option value="{{ $id }}" @selected($selectedClientId == $id)>{{ $name }}</option>
             @endforeach
         </select>
     </div>
@@ -66,7 +69,7 @@
                         2 => 'Reprovado',
                     };
                 @endphp
-                <option value="{{ $status }}" @selected(session("{$namespace}.selected_status_id") == (string) $status)>{{ $text }}</option>
+                <option value="{{ $status }}" @selected((string) $selectedStatusId === (string) $status)>{{ $text }}</option>
             @endforeach
         </select>
     </div>
@@ -74,7 +77,27 @@
     {{-- Limpar filtros --}}
     <div class="flex items-end">
         <button type="button"
-            onclick="window.location.href='{{ route('filament.filters.update') }}?clear={{ $resource }}'"
+            onclick="event.preventDefault(); 
+                     const f = document.createElement('form'); 
+                     f.method = 'POST'; 
+                     f.action = '{{ route('filament.filters.update') }}'; 
+                     const token = document.createElement('input'); 
+                     token.type = 'hidden'; 
+                     token.name = '_token'; 
+                     token.value = '{{ csrf_token() }}'; 
+                     f.appendChild(token); 
+                     const r = document.createElement('input'); 
+                     r.type = 'hidden'; 
+                     r.name = 'resource'; 
+                     r.value = '{{ $resource }}'; 
+                     f.appendChild(r); 
+                     const c = document.createElement('input'); 
+                     c.type = 'hidden'; 
+                     c.name = 'clear'; 
+                     c.value = '1'; 
+                     f.appendChild(c); 
+                     document.body.appendChild(f); 
+                     f.submit();"
             class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
             Limpar filtros
         </button>
