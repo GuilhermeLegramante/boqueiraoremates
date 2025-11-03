@@ -39,6 +39,11 @@ class ApprovedActiveBidResource extends Resource
                 $clientId = session('selected_client_id');
                 $statusId = session('selected_status_id');
 
+                // Se nenhum evento selecionado, não retorna nenhum lance
+                if (!$eventId) {
+                    return $query->whereRaw('1 = 0'); // força query vazia
+                }
+
                 $query->when($eventId, fn($q) => $q->where('event_id', $eventId))
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
