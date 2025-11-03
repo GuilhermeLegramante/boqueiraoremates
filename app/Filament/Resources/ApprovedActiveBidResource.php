@@ -44,12 +44,10 @@ class ApprovedActiveBidResource extends Resource
                 'statusOptions' => [0, 1, 2],
             ]))
             ->modifyQueryUsing(function (Builder $query) {
-                $resource = static::class;
-
-                $eventId  = session("{$resource}.selected_event_id");
-                $lotId    = session("{$resource}.selected_lot_id");
-                $clientId = session("{$resource}.selected_client_id");
-                $statusId = session("{$resource}.selected_status_id");
+                $eventId  = session("selected_event_id");
+                $lotId    = session("selected_lot_id");
+                $clientId = session("selected_client_id");
+                $statusId = session("selected_status_id");
 
                 // Se nenhum evento selecionado → retorna query vazia
                 if (!$eventId) {
