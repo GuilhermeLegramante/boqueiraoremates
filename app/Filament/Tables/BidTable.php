@@ -38,8 +38,8 @@ class BidTable
                 ->sortable(['events.name']),
 
             TextColumn::make('lot_number')
-                ->searchable()
-                ->sortable()
+                // ->searchable()
+                // ->sortable()
                 ->label('Lote'),
 
             TextColumn::make('animalToFilament.name')
