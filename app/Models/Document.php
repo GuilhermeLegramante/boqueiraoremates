@@ -36,7 +36,7 @@ class Document extends Model
             if ($document->client_id && $document->documentType) {
                 ClientNote::create([
                     'client_id' => $document->client_id,
-                    'user_id' => Auth::id(),
+                    'user_id' =>  auth()->id() ?? 1,
                     'content' => "Documento {$document->documentType->name} foi adicionado ao cliente.",
                 ]);
             }
