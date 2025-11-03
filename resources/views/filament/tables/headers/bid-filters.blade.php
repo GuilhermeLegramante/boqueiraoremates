@@ -47,11 +47,16 @@
         <select name="event_id"
             class="filament-forms-select w-full sm:w-64 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Selecione um evento...' })" onchange="this.form.submit()">
+
+            {{-- Nenhum evento selecionado por padrão --}}
             <option value="">Selecione um evento...</option>
+
+            {{-- Lista de eventos --}}
             @foreach ($events as $id => $name)
-                <option value="{{ $id }}" @selected($selectedEvent == $id)>{{ $name }}</option>
+                <option value="{{ $id }}" @selected($selectedEvent !== null && $selectedEvent == $id)>{{ $name }}</option>
             @endforeach
         </select>
+
 
         {{-- Status --}}
         <select name="status_id"
