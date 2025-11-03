@@ -51,11 +51,12 @@ class ApprovedActiveBidResource extends Resource
                 $clientId = session("{$resource}.selected_client_id");
                 $statusId = session("{$resource}.selected_status_id");
 
-                // Sem evento selecionado → tabela vazia
+                // Se nenhum evento selecionado → retorna query vazia
                 if (!$eventId) {
                     return $query->whereRaw('1=0');
                 }
 
+                // Aplica os filtros
                 $query->where('event_id', $eventId)
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
@@ -63,6 +64,7 @@ class ApprovedActiveBidResource extends Resource
 
                 return $query;
             })
+
 
             ->emptyStateHeading('Selecione um evento para visualizar os lances.')
             ->emptyStateIcon('heroicon-o-information-circle')
