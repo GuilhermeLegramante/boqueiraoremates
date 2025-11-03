@@ -46,6 +46,15 @@ class BidResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query) => (new static)->applyBidFilters($query))
+            ->header(function () {
+                return view('filament.tables.headers.bid-filters', [
+                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
+                    'lotsQuery' => \App\Models\AnimalEvent::query(),
+                    'usersQuery' => \App\Models\User::query(),
+                    'statusOptions' => [0, 1, 2],
+                ]);
+            })
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -90,32 +99,32 @@ class BidResource extends Resource
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
             ->filters([
-                Tables\Filters\Filter::make('status')
-                    ->query(fn($query) => $query->where('status', 1))
-                    ->label('Aprovados'),
+                // Tables\Filters\Filter::make('status')
+                //     ->query(fn($query) => $query->where('status', 1))
+                //     ->label('Aprovados'),
 
-                Tables\Filters\Filter::make('pendente')
-                    ->query(fn($query) => $query->where('status', 0))
-                    ->label('Pendentes'),
+                // Tables\Filters\Filter::make('pendente')
+                //     ->query(fn($query) => $query->where('status', 0))
+                //     ->label('Pendentes'),
 
-                Tables\Filters\Filter::make('rejeitado')
-                    ->query(fn($query) => $query->where('status', 2))
-                    ->label('Rejeitados'),
+                // Tables\Filters\Filter::make('rejeitado')
+                //     ->query(fn($query) => $query->where('status', 2))
+                //     ->label('Rejeitados'),
 
-                Tables\Filters\Filter::make('published_events')
-                    ->label('Somente eventos publicados')
-                    ->toggle() // transforma em checkbox
-                    ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
+                // Tables\Filters\Filter::make('published_events')
+                //     ->label('Somente eventos publicados')
+                //     ->toggle() // transforma em checkbox
+                //     ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
 
-                Tables\Filters\SelectFilter::make('event_id')
-                    ->label('Evento')
-                    ->searchable()
-                    ->relationship('event', 'name'),
+                // Tables\Filters\SelectFilter::make('event_id')
+                //     ->label('Evento')
+                //     ->searchable()
+                //     ->relationship('event', 'name'),
 
-                Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->relationship('user', 'name'),
+                // Tables\Filters\SelectFilter::make('user_id')
+                //     ->label('Cliente')
+                //     ->searchable()
+                //     ->relationship('user', 'name'),
             ])
             ->deferFilters()
             ->filtersApplyAction(
@@ -124,13 +133,13 @@ class BidResource extends Resource
                     ->label('Aplicar Filtro(s)'),
             )
             ->groups([
-                Group::make('event.name')
-                    ->label('Evento')
-                    ->collapsible(),
+                // Group::make('event.name')
+                //     ->label('Evento')
+                //     ->collapsible(),
 
-                Group::make('user.name')
-                    ->label('Cliente')
-                    ->collapsible(),
+                // Group::make('user.name')
+                //     ->label('Cliente')
+                //     ->collapsible(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

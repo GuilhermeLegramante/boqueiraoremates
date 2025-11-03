@@ -33,28 +33,10 @@ class ApprovedActiveBidResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $eventId = session('selected_event_id');
-                $lotId = session('selected_lot_id');
-                $clientId = session('selected_client_id');
-                $statusId = session('selected_status_id');
-
-                // Nenhum evento selecionado → nenhum lance
-                if (!$eventId) {
-                    return $query->whereRaw('1 = 0');
-                }
-
-                // Aplica filtros
-                $query->where('event_id', $eventId)
-                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
-                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
-                    ->when($statusId !== null, fn($q) => $q->where('status', $statusId));
-
-                return $query;
-            })
+            ->modifyQueryUsing(fn($query) => (new static)->applyBidFilters($query))
             ->header(function () {
                 return view('filament.tables.headers.bid-filters', [
-                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
+                    'eventsQuery' => \App\Models\Event::query()->where('status', 1)->where('published', true),
                     'lotsQuery' => \App\Models\AnimalEvent::query(),
                     'usersQuery' => \App\Models\User::query(),
                     'statusOptions' => [0, 1, 2],
