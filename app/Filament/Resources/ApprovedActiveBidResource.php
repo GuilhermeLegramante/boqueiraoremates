@@ -69,9 +69,6 @@ class ApprovedActiveBidResource extends Resource
             ->emptyStateHeading('Selecione um evento para visualizar os lances.')
             ->emptyStateIcon('heroicon-o-information-circle')
             ->defaultSort('created_at', 'desc')
-            ->modifyQueryUsing(fn(Builder $query) => $query
-                ->where('status', 1)
-                ->whereHas('event', fn($q) => $q->where('published', true)))
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
