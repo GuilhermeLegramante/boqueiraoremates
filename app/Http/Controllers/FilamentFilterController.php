@@ -12,7 +12,8 @@ class FilamentFilterController extends Controller
         $prefix = $request->input('session_prefix', 'default_');
 
         // Se o parâmetro 'clear' estiver presente, limpa todas as sessões relacionadas
-        if ($request->has('clear')) {
+        $clear = $request->input('clear'); // pega do GET ou POST
+        if ($clear) {
             $keys = [
                 'selected_event_id',
                 'selected_lot_id',
