@@ -18,6 +18,7 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\Position;
 
 class BidResource extends Resource
 {
@@ -43,53 +44,130 @@ class BidResource extends Resource
         return $form;
     }
 
+    // public static function table(Table $table): Table
+    // {
+    //     return $table
+    //         ->columns(BidTable::columns())
+    //         ->actions([
+    //             Tables\Actions\ActionGroup::make([
+    //                 // Aprovar
+    //                 Tables\Actions\Action::make('aprovar')
+    //                     ->label('Aprovar')
+    //                     ->color('success')
+    //                     ->icon('heroicon-o-check')
+    //                     ->visible(fn(Bid $record) => $record->status === 0) // só pendente
+    //                     ->requiresConfirmation()
+    //                     ->action(fn(Bid $record) => $record->update([
+    //                         'status' => 1,
+    //                         'approved_by' => auth()->id(),
+    //                     ])),
+
+    //                 // Rejeitar
+    //                 Tables\Actions\Action::make('rejeitar')
+    //                     ->label('Rejeitar')
+    //                     ->color('danger')
+    //                     ->icon('heroicon-o-x-circle')
+    //                     ->visible(fn(Bid $record) => $record->status === 0) // só pendente
+    //                     ->requiresConfirmation()
+    //                     ->action(fn(Bid $record) => $record->update([
+    //                         'status' => 2,
+    //                         'approved_by' => auth()->id(),
+    //                     ])),
+
+    //                 // Reverter
+    //                 Tables\Actions\Action::make('reverter')
+    //                     ->label('Reverter para pendente')
+    //                     ->color('warning')
+    //                     ->icon('heroicon-o-arrow-path')
+    //                     ->visible(fn(Bid $record) => in_array($record->status, [1, 2]))
+    //                     ->requiresConfirmation()
+    //                     ->action(fn(Bid $record) => $record->update([
+    //                         'status' => 0,
+    //                         'approved_by' => null,
+    //                     ])),
+    //             ])
+    //                 ->label('Ações') // texto do botão do grupo
+    //                 ->icon('heroicon-o-cog-6-tooth')
+    //                 ->color('gray'),
+    //         ], position: ActionsPosition::BeforeColumns)
+    //         ->filters([
+    //             Tables\Filters\Filter::make('status')
+    //                 ->query(fn($query) => $query->where('status', 1))
+    //                 ->label('Aprovados'),
+
+    //             Tables\Filters\Filter::make('pendente')
+    //                 ->query(fn($query) => $query->where('status', 0))
+    //                 ->label('Pendentes'),
+
+    //             Tables\Filters\Filter::make('rejeitado')
+    //                 ->query(fn($query) => $query->where('status', 2))
+    //                 ->label('Rejeitados'),
+
+    //             Tables\Filters\Filter::make('published_events')
+    //                 ->label('Somente eventos publicados')
+    //                 ->toggle() // transforma em checkbox
+    //                 ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
+
+    //             Tables\Filters\SelectFilter::make('event_id')
+    //                 ->label('Evento')
+    //                 ->searchable()
+    //                 ->relationship('event', 'name'),
+
+    //             Tables\Filters\SelectFilter::make('user_id')
+    //                 ->label('Cliente')
+    //                 ->searchable()
+    //                 ->relationship('user', 'name'),
+    //         ])
+    //         ->deferFilters()
+    //         ->filtersApplyAction(
+    //             fn(Action $action) => $action
+    //                 ->link()
+    //                 ->label('Aplicar Filtro(s)'),
+    //         )
+    //         ->groups([
+    //             Group::make('event.name')
+    //                 ->label('Evento')
+    //                 ->collapsible(),
+
+    //             Group::make('user.name')
+    //                 ->label('Cliente')
+    //                 ->collapsible(),
+    //         ])
+    //         ->bulkActions([
+    //             Tables\Actions\BulkActionGroup::make([
+    //                 Tables\Actions\DeleteBulkAction::make(),
+    //             ]),
+    //         ])
+    //         ->defaultSort('created_at', 'desc');
+    // }
+
     public static function table(Table $table): Table
     {
         return $table
             ->columns(BidTable::columns())
-            ->actions([
-                Tables\Actions\ActionGroup::make([
-                    // Aprovar
-                    Tables\Actions\Action::make('aprovar')
-                        ->label('Aprovar')
-                        ->color('success')
-                        ->icon('heroicon-o-check')
-                        ->visible(fn(Bid $record) => $record->status === 0) // só pendente
-                        ->requiresConfirmation()
-                        ->action(fn(Bid $record) => $record->update([
-                            'status' => 1,
-                            'approved_by' => auth()->id(),
-                        ])),
-
-                    // Rejeitar
-                    Tables\Actions\Action::make('rejeitar')
-                        ->label('Rejeitar')
-                        ->color('danger')
-                        ->icon('heroicon-o-x-circle')
-                        ->visible(fn(Bid $record) => $record->status === 0) // só pendente
-                        ->requiresConfirmation()
-                        ->action(fn(Bid $record) => $record->update([
-                            'status' => 2,
-                            'approved_by' => auth()->id(),
-                        ])),
-
-                    // Reverter
-                    Tables\Actions\Action::make('reverter')
-                        ->label('Reverter para pendente')
-                        ->color('warning')
-                        ->icon('heroicon-o-arrow-path')
-                        ->visible(fn(Bid $record) => in_array($record->status, [1, 2]))
-                        ->requiresConfirmation()
-                        ->action(fn(Bid $record) => $record->update([
-                            'status' => 0,
-                            'approved_by' => null,
-                        ])),
-                ])
-                    ->label('Ações') // texto do botão do grupo
-                    ->icon('heroicon-o-cog-6-tooth')
-                    ->color('gray'),
-            ], position: ActionsPosition::BeforeColumns)
+            ->filtersPosition('above-content') // filtros ficam visíveis no topo
+            ->deferFilters(false) // aplica imediatamente
             ->filters([
+                // Filtro obrigatório de evento (não mostra lances até selecionar)
+                Tables\Filters\SelectFilter::make('event_id')
+                    ->label('Evento')
+                    ->searchable()
+                    ->relationship('event', 'name')
+                    ->required()
+                    ->query(
+                        fn(Builder $query, array $data) =>
+                        empty($data['event_id'])
+                            ? $query->whereRaw('1=0') // nada retorna até selecionar
+                            : $query->where('event_id', $data['event_id'])
+                    ),
+
+                // Filtro de cliente
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->label('Cliente')
+                    ->searchable()
+                    ->relationship('user', 'name'),
+
+                // Filtros de status
                 Tables\Filters\Filter::make('status')
                     ->query(fn($query) => $query->where('status', 1))
                     ->label('Aprovados'),
@@ -102,22 +180,12 @@ class BidResource extends Resource
                     ->query(fn($query) => $query->where('status', 2))
                     ->label('Rejeitados'),
 
+                // Filtro toggle para eventos publicados
                 Tables\Filters\Filter::make('published_events')
                     ->label('Somente eventos publicados')
-                    ->toggle() // transforma em checkbox
+                    ->toggle()
                     ->query(fn($query) => $query->whereHas('event', fn($q) => $q->where('published', true))),
-
-                Tables\Filters\SelectFilter::make('event_id')
-                    ->label('Evento')
-                    ->searchable()
-                    ->relationship('event', 'name'),
-
-                Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->relationship('user', 'name'),
             ])
-            ->deferFilters()
             ->filtersApplyAction(
                 fn(Action $action) => $action
                     ->link()
@@ -132,6 +200,45 @@ class BidResource extends Resource
                     ->label('Cliente')
                     ->collapsible(),
             ])
+            ->actions([
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('aprovar')
+                        ->label('Aprovar')
+                        ->color('success')
+                        ->icon('heroicon-o-check')
+                        ->visible(fn(Bid $record) => $record->status === 0)
+                        ->requiresConfirmation()
+                        ->action(fn(Bid $record) => $record->update([
+                            'status' => 1,
+                            'approved_by' => auth()->id(),
+                        ])),
+
+                    Tables\Actions\Action::make('rejeitar')
+                        ->label('Rejeitar')
+                        ->color('danger')
+                        ->icon('heroicon-o-x-circle')
+                        ->visible(fn(Bid $record) => $record->status === 0)
+                        ->requiresConfirmation()
+                        ->action(fn(Bid $record) => $record->update([
+                            'status' => 2,
+                            'approved_by' => auth()->id(),
+                        ])),
+
+                    Tables\Actions\Action::make('reverter')
+                        ->label('Reverter para pendente')
+                        ->color('warning')
+                        ->icon('heroicon-o-arrow-path')
+                        ->visible(fn(Bid $record) => in_array($record->status, [1, 2]))
+                        ->requiresConfirmation()
+                        ->action(fn(Bid $record) => $record->update([
+                            'status' => 0,
+                            'approved_by' => null,
+                        ])),
+                ])
+                    ->label('Ações')
+                    ->icon('heroicon-o-cog-6-tooth')
+                    ->color('gray'),
+            ], position: ActionsPosition::BeforeColumns)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -139,6 +246,8 @@ class BidResource extends Resource
             ])
             ->defaultSort('created_at', 'desc');
     }
+
+
 
     public static function getRelations(): array
     {
