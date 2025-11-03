@@ -1,15 +1,14 @@
 @php
-    $namespace = "App\\Filament\\Resources\\{$resource}";
-    $selectedEventId = session("{$namespace}.selected_event_id", '');
-    $selectedLotId = session("{$namespace}.selected_lot_id", '');
-    $selectedClientId = session("{$namespace}.selected_client_id", '');
-    $selectedStatusId = session("{$namespace}.selected_status_id", '');
+    // Nomes simples na session
+    $selectedEventId = session('selected_event_id', '');
+    $selectedLotId = session('selected_lot_id', '');
+    $selectedClientId = session('selected_client_id', '');
+    $selectedStatusId = session('selected_status_id', '');
 @endphp
 
 <form method="POST" action="{{ route('filament.filters.update') }}"
     class="flex flex-wrap items-end gap-4 p-4 bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
     @csrf
-    <input type="hidden" name="resource" value="{{ $resource }}">
 
     {{-- Evento --}}
     <div class="flex flex-col w-full sm:w-48">
@@ -76,8 +75,7 @@
 
     {{-- Limpar filtros --}}
     <div class="flex items-end">
-        <button type="button"
-            onclick="window.location.href='{{ route('filament.filters.update') }}?clear={{ $resource }}'"
+        <button type="button" onclick="window.location.href='{{ route('filament.filters.update') }}?clear=1'"
             class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
             Limpar filtros
         </button>

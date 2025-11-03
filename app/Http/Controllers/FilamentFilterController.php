@@ -6,27 +6,29 @@ use Illuminate\Http\Request;
 
 class FilamentFilterController extends Controller
 {
+    // Salvar filtros ou limpar
     public function update(Request $request)
     {
-        $resource = $request->input('resource');
+        // Se vier ?clear=1 → limpar filtros
+        if ($request->query('clear') == 1) {
+            session()->forget('selected_event_id');
+            session()->forget('selected_lot_id');
+            session()->forget('selected_client_id');
+            session()->forget('selected_status_id');
 
-        if ($request->has('clear')) {
-            session()->forget("{$resource}.selected_event_id");
-            session()->forget("{$resource}.selected_lot_id");
-            session()->forget("{$resource}.selected_client_id");
-            session()->forget("{$resource}.selected_status_id");
             return redirect()->back();
         }
 
-        // Salva sempre como string
-        session(["{$resource}.selected_event_id" => (string) $request->input('selected_event_id')]);
-        session(["{$resource}.selected_lot_id" => (string) $request->input('selected_lot_id')]);
-        session(["{$resource}.selected_client_id" => (string) $request->input('selected_client_id')]);
-        session(["{$resource}.selected_status_id" => (string) $request->input('selected_status_id')]);
+        // Salvar filtros
+        session([
+            'selected_event_id'  => $request->input('selected_event_id'),
+            'selected_lot_id'    => $request->input('selected_lot_id'),
+            'selected_client_id' => $request->input('selected_client_id'),
+            'selected_status_id' => $request->input('selected_status_id'),
+        ]);
 
         return redirect()->back();
     }
-
 
     public function lots($eventId)
     {
