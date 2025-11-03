@@ -33,25 +33,28 @@ class ApprovedActiveBidResource extends Resource
 
     protected static ?string $navigationGroup = 'Lances';
 
+    protected static ?string $sessionPrefix = '_approved_active_';
+
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
             ->header(fn() => view('filament.tables.headers.bid-filters', [
+                'sessionPrefix' => $this->sessionPrefix,
                 'events' => \App\Models\Event::where('published', true)->pluck('name', 'id'),
                 'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
                 'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
                 'statusOptions' => [0, 1, 2],
-                'selectedEventId' => session('selected_event_id'),
-                'selectedLotId' => session('selected_lot_id'),
-                'selectedClientId' => session('selected_client_id'),
-                'selectedStatusId' => session('selected_status_id'),
+                'selectedEventId' => session("{$this->sessionPrefix}selected_event_id"),
+                'selectedLotId' => session("{$this->sessionPrefix}selected_lot_id"),
+                'selectedClientId' => session("{$this->sessionPrefix}selected_client_id"),
+                'selectedStatusId' => session("{$this->sessionPrefix}selected_status_id"),
             ]))
 
             ->modifyQueryUsing(function (Builder $query) {
-                $eventId  = session("selected_event_id");
-                $lotId    = session("selected_lot_id");
-                $clientId = session("selected_client_id");
-                $statusId = session("selected_status_id");
+                $eventId  = session("{$this->sessionPrefix}selected_event_id");
+                $lotId    = session("{$this->sessionPrefix}selected_lot_id");
+                $clientId = session("{$this->sessionPrefix}selected_client_id");
+                $statusId = session("{$this->sessionPrefix}selected_status_id");
 
                 // Se nenhum evento selecionado → retorna query vazia
                 if (!$eventId) {

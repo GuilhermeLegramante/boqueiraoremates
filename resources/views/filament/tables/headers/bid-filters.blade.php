@@ -1,8 +1,8 @@
 @php
-    $selectedEventId = session('selected_event_id', '');
-    $selectedLotId = session('selected_lot_id', '');
-    $selectedClientId = session('selected_client_id', '');
-    $selectedStatusId = session('selected_status_id', '');
+    $selectedEventId = session("{$sessionPrefix}selected_event_id", '');
+    $selectedLotId = session("{$sessionPrefix}selected_lot_id", '');
+    $selectedClientId = session("{$sessionPrefix}selected_client_id", '');
+    $selectedStatusId = session("{$sessionPrefix}selected_status_id", '');
 @endphp
 
 <form method="POST" action="{{ route('filament.filters.update') }}"
