@@ -192,7 +192,6 @@ class ClientResource extends Resource
                             ->withFilename(date('d-m-Y') . ' - Clientes')
                     ])
             ])
-            ->defaultSort('created_at', 'desc')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

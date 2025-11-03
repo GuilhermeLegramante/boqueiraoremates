@@ -86,6 +86,7 @@ class DocumentResource extends Resource
                     ->label(__('fields.client'))
                     ->collapsible(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
