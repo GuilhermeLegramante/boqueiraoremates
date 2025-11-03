@@ -39,7 +39,7 @@ class ApprovedActiveBidResource extends Resource
             ->header(fn() => view('filament.tables.headers.bid-filters', [
                 'resource' => static::class,
                 'events' => \App\Models\Event::where('published', true)->pluck('name', 'id'),
-                'lots' => \App\Models\AnimalEvent::pluck('name', 'id'),
+                'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
                 'users' => \App\Models\User::pluck('name', 'id'),
                 'statusOptions' => [0, 1, 2],
             ]))
