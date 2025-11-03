@@ -31,7 +31,7 @@
             @foreach ($lots as $lot)
                 @if (!$selectedEventId || $lot->event_id == $selectedEventId)
                     <option value="{{ $lot->id }}" @selected(session("{$namespace}.selected_lot_id") == $lot->id)>
-                        {{ $lot->name }}
+                        {{ $lot->lot_number ?? ($lot->name ?? 'Lote ' . $lot->id) }}
                     </option>
                 @endif
             @endforeach
