@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\BidResource\Pages;
 use App\Filament\Resources\BidResource\RelationManagers;
 use App\Filament\Tables\BidTable;
+use App\Filament\Traits\HasBidFilters;
 use App\Models\Bid;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BidResource extends Resource
 {
+    use HasBidFilters;
+    
     protected static ?string $model = Bid::class;
 
     protected static ?string $navigationLabel = 'Todos os Lances';
