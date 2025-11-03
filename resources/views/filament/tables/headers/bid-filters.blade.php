@@ -72,11 +72,30 @@
     </div>
 
     {{-- Limpar filtros --}}
-    <div class="flex items-end">
-        <button type="button"
-            onclick="window.location.href='{{ route('filament.filters.update') }}?clear={{ $resource }}'"
-            class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
-            Limpar filtros
-        </button>
-    </div>
+    <button type="button"
+        onclick="event.preventDefault(); 
+             const f = document.createElement('form'); 
+             f.method = 'POST'; 
+             f.action = '{{ route('filament.filters.update') }}'; 
+             const token = document.createElement('input'); 
+             token.type = 'hidden'; 
+             token.name = '_token'; 
+             token.value = '{{ csrf_token() }}'; 
+             f.appendChild(token); 
+             const r = document.createElement('input'); 
+             r.type = 'hidden'; 
+             r.name = 'resource'; 
+             r.value = '{{ $resource }}'; 
+             f.appendChild(r); 
+             const c = document.createElement('input'); 
+             c.type = 'hidden'; 
+             c.name = 'clear'; 
+             c.value = '1'; 
+             f.appendChild(c); 
+             document.body.appendChild(f); 
+             f.submit();"
+        class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600 transition-colors duration-150">
+        Limpar filtros
+    </button>
+
 </form>
