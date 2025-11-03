@@ -51,12 +51,10 @@ class ApprovedActiveBidResource extends Resource
             ]))
 
             ->modifyQueryUsing(function (Builder $query) use ($table) {
-                $sessionPrefix = $this->sessionPrefix; // captura antes do callback
-
-                $eventId  = session("{$sessionPrefix}selected_event_id");
-                $lotId    = session("{$sessionPrefix}selected_lot_id");
-                $clientId = session("{$sessionPrefix}selected_client_id");
-                $statusId = session("{$sessionPrefix}selected_status_id");
+                $eventId  = session(self::$sessionPrefix . "selected_event_id");
+                $lotId    = session(self::$sessionPrefix . "selected_lot_id");
+                $clientId = session(self::$sessionPrefix . "selected_client_id");
+                $statusId = session(self::$sessionPrefix . "selected_status_id");
 
                 // Se nenhum evento selecionado → retorna query vazia
                 if (!$eventId) {
