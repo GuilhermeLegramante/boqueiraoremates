@@ -106,3 +106,4 @@ Route::post('/filament/set-bid-filters', function (\Illuminate\Http\Request $req
     }
     return back();
 })->name('filament.set-bid-filters');
+

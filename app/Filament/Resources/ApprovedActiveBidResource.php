@@ -39,9 +39,9 @@ class ApprovedActiveBidResource extends Resource
                 $clientId = session('selected_client_id');
                 $statusId = session('selected_status_id');
 
-                // Se nenhum evento selecionado, não retorna nenhum lance
+                // Nenhum evento selecionado → nenhum lance
                 if (!$eventId) {
-                    return $query->whereRaw('1 = 0'); // força query vazia
+                    return $query->whereRaw('1 = 0');
                 }
 
                 // Aplica filtros
@@ -53,7 +53,7 @@ class ApprovedActiveBidResource extends Resource
                 return $query;
             })
             ->header(function () {
-                return view('filament.tables.headers.bid-filters', [
+                return view('components.filament-tables.bid-filters-final', [
                     'eventsQuery' => \App\Models\Event::query()->where('published', true),
                     'lotsQuery' => \App\Models\AnimalEvent::query(),
                     'usersQuery' => \App\Models\User::query(),

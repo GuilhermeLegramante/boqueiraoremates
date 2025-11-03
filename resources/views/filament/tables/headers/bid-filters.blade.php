@@ -3,7 +3,7 @@
     'lotsQuery' => null, // Query builder para lotes (AnimalEvent::query())
     'usersQuery' => null, // Query builder para clientes (User::query())
     'showPublished' => true, // Filtrar apenas eventos publicados
-    'statusOptions' => [0, 1, 2], // Status que aparecem no select
+    'statusOptions' => [0, 1, 2], // Status exibidos
 ])
 
 @php
@@ -23,11 +23,11 @@
     $selectedClient = session('selected_client_id');
     $selectedStatus = session('selected_status_id');
 
-    // Lotes dinâmicos
+    // Lotes dependentes do evento selecionado
     $lotsQuery = $lotsQuery ?? AnimalEvent::query();
     $lots = $selectedEvent ? $lotsQuery->where('event_id', $selectedEvent)->pluck('lot_number', 'id') : collect();
 
-    // Clientes dinâmicos
+    // Clientes dependentes do evento selecionado
     $usersQuery = $usersQuery ?? User::query();
     $clients = $usersQuery
         ->whereHas('bids', function ($q) use ($selectedEvent) {
@@ -47,26 +47,17 @@
         <select name="event_id"
             class="filament-forms-select w-full sm:w-64 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             x-data x-init="new TomSelect($el, { searchField: ['text'], placeholder: 'Selecione um evento...' })" onchange="this.form.submit()">
-
-            {{-- Nenhum evento selecionado por padrão --}}
             <option value="">Selecione um evento...</option>
-
-            {{-- Lista de eventos --}}
             @foreach ($events as $id => $name)
                 <option value="{{ $id }}" @selected($selectedEvent !== null && $selectedEvent == $id)>{{ $name }}</option>
             @endforeach
         </select>
 
-
         {{-- Status --}}
         <select name="status_id"
             class="filament-forms-select w-full sm:w-48 rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
             x-data x-init="new TomSelect($el, { placeholder: 'Todos os status' })" onchange="this.form.submit()">
-
-            {{-- Todos --}}
             <option value="" @selected(is_null($selectedStatus))>Todos os status</option>
-
-            {{-- Status --}}
             @foreach ($statusOptions as $status)
                 @php
                     $text = match ($status) {
@@ -78,7 +69,6 @@
                 <option value="{{ $status }}" @selected($selectedStatus !== null && $selectedStatus == $status)>{{ $text }}</option>
             @endforeach
         </select>
-
 
         {{-- Lote --}}
         <select name="lot_id"
