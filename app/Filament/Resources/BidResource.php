@@ -17,6 +17,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,39 +58,39 @@ class BidResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            /**
-             * 🔹 Header com o filtro customizado
-             */
-            ->header(function () {
-                return view('filament.tables.headers.bid-filters', [
-                    'resource' => class_basename(static::class), // ex: "BidResource" ou "ApprovedActiveBidResource"
-                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
-                    'lotsQuery'   => \App\Models\AnimalEvent::query(),
-                    'usersQuery'  => \App\Models\User::query(),
-                    'statusOptions' => [0, 1, 2],
-                ]);
-            })
-
-            /**
-             * 🔹 Filtro aplicado automaticamente com base nas sessões
-             */
-            ->modifyQueryUsing(function (Builder $query) {
-                $resource = static::class;
-
-                $eventId  = session("{$resource}.selected_event_id");
-                $lotId    = session("{$resource}.selected_lot_id");
-                $clientId = session("{$resource}.selected_client_id");
-                $statusId = session("{$resource}.selected_status_id");
-
-                if (!$eventId) {
-                    return $query->whereRaw('1=0');
+            ->headerActions([
+                Action::make('filtros')
+                    ->label('Filtrar')
+                    ->icon('heroicon-o-funnel')
+                    ->form([
+                        SelectFilter::make('event_id')
+                            ->label('Evento')
+                            ->options(fn() => \App\Models\Event::where('published', true)->pluck('name', 'id')->toArray())
+                            ->searchable(),
+                        SelectFilter::make('animal_event_id')
+                            ->label('Lote')
+                            ->options(fn(callable $get) => $get('event_id')
+                                ? \App\Models\AnimalEvent::where('event_id', $get('event_id'))->pluck('name', 'id')->toArray()
+                                : [])
+                            ->searchable(),
+                        SelectFilter::make('user_id')
+                            ->label('Cliente')
+                            ->options(fn() => \App\Models\User::pluck('name', 'id')->toArray())
+                            ->searchable(),
+                        SelectFilter::make('status')
+                            ->label('Status')
+                            ->options([
+                                0 => 'Pendente',
+                                1 => 'Aprovado',
+                                2 => 'Reprovado',
+                            ]),
+                    ])
+                    ->submitActionLabel('Aplicar'),
+            ])
+            ->modifyQueryUsing(function (Builder $query, array $data) {
+                if (empty($data['event_id'])) {
+                    return $query->whereRaw('1=0'); // não mostra nada até escolher evento
                 }
-
-                $query->where('event_id', $eventId)
-                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
-                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
-                    ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
-
                 return $query;
             })
 
