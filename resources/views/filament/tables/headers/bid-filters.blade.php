@@ -23,29 +23,37 @@
     </div>
 
     {{-- Lote --}}
-    <select name="selected_lot_id" onchange="this.form.submit()">
-        <option value="">Todos os lotes</option>
-        @foreach ($lots as $lot)
-            @if (!$selectedEventId || $lot->event_id == $selectedEventId)
-                <option value="{{ $lot->id }}" @selected($selectedLotId == $lot->id)>
-                    {{ $lot->lot_number ?? ($lot->name ?? 'Lote ' . $lot->id) }}
-                </option>
-            @endif
-        @endforeach
-    </select>
+    <div class="flex flex-col w-full sm:w-48">
+        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Lote</label>
+        <select name="selected_lot_id" onchange="this.form.submit()">
+            <option value="">Todos os lotes</option>
+            @foreach ($lots as $lot)
+                @if (!$selectedEventId || $lot->event_id == $selectedEventId)
+                    <option value="{{ $lot->id }}" @selected($selectedLotId == $lot->id)>
+                        {{ $lot->lot_number ?? ($lot->name ?? 'Lote ' . $lot->id) }}
+                    </option>
+                @endif
+            @endforeach
+        </select>
+    </div>
+
 
     {{-- Cliente --}}
-    <select name="selected_client_id" onchange="this.form.submit()">
-        <option value="">Todos os clientes</option>
-        @foreach ($users as $user)
-            @php
-                $hasBidInEvent = !$selectedEventId || $user->bids->where('event_id', $selectedEventId)->count() > 0;
-            @endphp
-            @if ($hasBidInEvent)
-                <option value="{{ $user->id }}" @selected($selectedClientId == $user->id)>{{ $user->name }}</option>
-            @endif
-        @endforeach
-    </select>
+    <div class="flex flex-col w-full sm:w-48">
+        <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cliente</label>
+        <select name="selected_client_id" onchange="this.form.submit()">
+            <option value="">Todos os clientes</option>
+            @foreach ($users as $user)
+                @php
+                    $hasBidInEvent = !$selectedEventId || $user->bids->where('event_id', $selectedEventId)->count() > 0;
+                @endphp
+                @if ($hasBidInEvent)
+                    <option value="{{ $user->id }}" @selected($selectedClientId == $user->id)>{{ $user->name }}</option>
+                @endif
+            @endforeach
+        </select>
+    </div>
+
 
 
     {{-- Status --}}
