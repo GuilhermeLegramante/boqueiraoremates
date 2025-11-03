@@ -60,6 +60,11 @@ class Bid extends Model
         );
     }
 
+    public function getLotNumberAttribute()
+    {
+        return \App\Models\AnimalEvent::find($this->animal_event_id)?->lot_number;
+    }
+
 
     public function getAnimalNameAttribute()
     {
