@@ -32,9 +32,32 @@ class ApprovedInactiveBidResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->modifyQueryUsing(fn(Builder $query) => $query
-                ->where('status', 1)
-                ->whereHas('event', fn($q) => $q->where('published', false)))
+            ->modifyQueryUsing(function (Builder $query) {
+                $eventId = session('selected_event_id');
+                $lotId = session('selected_lot_id');
+                $clientId = session('selected_client_id');
+                $statusId = session('selected_status_id');
+
+                // Se nenhum evento selecionado, não retorna nenhum lance
+                if (!$eventId) {
+                    return $query->whereRaw('1 = 0'); // força query vazia
+                }
+
+                $query->when($eventId, fn($q) => $q->where('event_id', $eventId))
+                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
+                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
+                    ->when($statusId !== null, fn($q) => $q->where('status', $statusId));
+
+                return $query;
+            })
+            ->header(function () {
+                return view('filament.tables.headers.bid-filters', [
+                    'eventsQuery' => \App\Models\Event::query()->where('status', 1)->where('published', false),
+                    'lotsQuery' => \App\Models\AnimalEvent::query(),
+                    'usersQuery' => \App\Models\User::query(),
+                    'statusOptions' => [0, 1, 2],
+                ]);
+            })
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -79,15 +102,15 @@ class ApprovedInactiveBidResource extends Resource
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
             ->filters([
-                Tables\Filters\SelectFilter::make('event_id')
-                    ->label('Evento')
-                    ->searchable()
-                    ->relationship('event', 'name'),
+                // Tables\Filters\SelectFilter::make('event_id')
+                //     ->label('Evento')
+                //     ->searchable()
+                //     ->relationship('event', 'name'),
 
-                Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->relationship('user', 'name'),
+                // Tables\Filters\SelectFilter::make('user_id')
+                //     ->label('Cliente')
+                //     ->searchable()
+                //     ->relationship('user', 'name'),
             ])
             ->deferFilters()
             ->filtersApplyAction(
@@ -96,13 +119,13 @@ class ApprovedInactiveBidResource extends Resource
                     ->label('Aplicar Filtro(s)'),
             )
             ->groups([
-                Group::make('event.name')
-                    ->label('Evento')
-                    ->collapsible(),
+                // Group::make('event.name')
+                //     ->label('Evento')
+                //     ->collapsible(),
 
-                Group::make('user.name')
-                    ->label('Cliente')
-                    ->collapsible(),
+                // Group::make('user.name')
+                //     ->label('Cliente')
+                //     ->collapsible(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
