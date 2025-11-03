@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Hash;
 
 class Client extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'name',
