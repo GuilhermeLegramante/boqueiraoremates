@@ -17,4 +17,20 @@ class ListBids extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
+
+    /**
+     * Executa ao carregar a página
+     */
+    public function mount(): void
+    {
+        parent::mount();
+
+        // Limpa os filtros da sessão
+        session()->forget([
+            'selected_event_id',
+            'selected_lot_id',
+            'selected_client_id',
+            'selected_status_id',
+        ]);
+    }
 }
