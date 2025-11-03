@@ -137,6 +137,7 @@ class Animal extends Model
         // Busca o maior lance para esse animal_event
         $bid = Bid::where('animal_event_id', $animalEventId)
             ->orderByDesc('amount')
+            ->where('status', 1) // Pega só lance aprovado
             ->first();
 
         $currentBid = $bid ? $bid->amount : 0;
@@ -157,7 +158,17 @@ class Animal extends Model
         $increment = $this->pivot->increment_value ?? 0;
 
         if ($this->current_bid > 0) {
-            return $this->current_bid + $increment;
+            $animalEventId = $this->pivot->id;
+
+            // Busca o maior lance para esse animal_event
+            $bid = Bid::where('animal_event_id', $animalEventId)
+                ->orderByDesc('amount')
+                ->where('status', 1) // Pega só lance aprovado
+                ->first();
+
+            $currentBid = $bid ? $bid->amount : 0;
+
+            return $currentBid + $increment;
         } else {
             return $this->pivot->min_value + $increment;
         }
