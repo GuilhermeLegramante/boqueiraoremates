@@ -58,7 +58,8 @@ class PendingBidResource extends Resource
                 // }
 
                 // Aplica os filtros
-                $query->where('event_id', $eventId)
+                $query
+                    ->when($eventId, fn($q) => $q->where('event_id', $eventId))
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
                     ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
