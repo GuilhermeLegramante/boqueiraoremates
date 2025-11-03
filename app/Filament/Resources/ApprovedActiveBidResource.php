@@ -33,39 +33,26 @@ class ApprovedActiveBidResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
-            ->header(function () {
-                return view('filament.tables.headers.select-event', [
-                    'events' => Event::where('published', true)->pluck('name', 'id'),
-                    'selected' => session('selected_event_id'),
-                ]);
-            })
-
-            /**
-             * ✅ Filtra conforme evento selecionado
-             */
             ->modifyQueryUsing(function (Builder $query) {
                 $eventId = session('selected_event_id');
                 $lotId = session('selected_lot_id');
                 $clientId = session('selected_client_id');
+                $statusId = session('selected_status_id');
 
-                $query->where('status', 1)
-                    ->whereHas('event', fn($q) => $q->where('published', true));
-
-                if ($eventId) {
-                    $query->where('event_id', $eventId);
-                } else {
-                    $query->whereRaw('1 = 0'); // não mostra nada sem evento
-                }
-
-                if ($lotId) {
-                    $query->where('animal_event_id', $lotId);
-                }
-
-                if ($clientId) {
-                    $query->where('user_id', $clientId);
-                }
+                $query->when($eventId, fn($q) => $q->where('event_id', $eventId))
+                    ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
+                    ->when($clientId, fn($q) => $q->where('user_id', $clientId))
+                    ->when($statusId !== null, fn($q) => $q->where('status', $statusId));
 
                 return $query;
+            })
+            ->header(function () {
+                return view('components.filament-tables.bid-filters-pro', [
+                    'eventsQuery' => \App\Models\Event::query()->where('published', true),
+                    'lotsQuery' => \App\Models\AnimalEvent::query(),
+                    'usersQuery' => \App\Models\User::query(),
+                    'statusOptions' => [0, 1, 2],
+                ]);
             })
 
             ->emptyStateHeading('Selecione um evento para visualizar os lances.')
