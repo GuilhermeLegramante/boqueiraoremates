@@ -37,12 +37,16 @@ class ApprovedActiveBidResource extends Resource
     {
         return $table
             ->header(fn() => view('filament.tables.headers.bid-filters', [
-                'resource' => static::class,
                 'events' => \App\Models\Event::where('published', true)->pluck('name', 'id'),
                 'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
-                'users' => \App\Models\User::pluck('name', 'id'),
+                'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
                 'statusOptions' => [0, 1, 2],
+                'selectedEventId' => session('selected_event_id'),
+                'selectedLotId' => session('selected_lot_id'),
+                'selectedClientId' => session('selected_client_id'),
+                'selectedStatusId' => session('selected_status_id'),
             ]))
+
             ->modifyQueryUsing(function (Builder $query) {
                 $eventId  = session("selected_event_id");
                 $lotId    = session("selected_lot_id");
