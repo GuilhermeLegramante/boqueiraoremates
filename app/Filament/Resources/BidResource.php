@@ -78,13 +78,14 @@ class BidResource extends Resource
              */
             ->modifyQueryUsing(function (Builder $query) {
                 $resource = static::class;
+
                 $eventId  = session("{$resource}.selected_event_id");
                 $lotId    = session("{$resource}.selected_lot_id");
                 $clientId = session("{$resource}.selected_client_id");
                 $statusId = session("{$resource}.selected_status_id");
 
                 if (!$eventId) {
-                    return $query->whereRaw('1=0'); // tabela vazia
+                    return $query->whereRaw('1=0');
                 }
 
                 $query->where('event_id', $eventId)
@@ -92,9 +93,9 @@ class BidResource extends Resource
                     ->when($clientId, fn($q) => $q->where('user_id', $clientId))
                     ->when($statusId !== null && $statusId !== '', fn($q) => $q->where('status', $statusId));
 
-
                 return $query;
             })
+
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
