@@ -25,7 +25,9 @@
     {{-- Lote --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Lote</label>
-        <select name="selected_lot_id" onchange="this.form.submit()">
+        <select name="selected_lot_id"
+            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            onchange="this.form.submit()">
             <option value="">Todos os lotes</option>
             @foreach ($lots as $lot)
                 @if (!$selectedEventId || $lot->event_id == $selectedEventId)
@@ -37,11 +39,12 @@
         </select>
     </div>
 
-
     {{-- Cliente --}}
     <div class="flex flex-col w-full sm:w-48">
         <label class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Cliente</label>
-        <select name="selected_client_id" onchange="this.form.submit()">
+        <select name="selected_client_id"
+            class="filament-forms-select w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+            onchange="this.form.submit()">
             <option value="">Todos os clientes</option>
             @foreach ($users as $user)
                 @php
