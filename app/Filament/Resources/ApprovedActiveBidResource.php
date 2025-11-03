@@ -47,7 +47,7 @@ class ApprovedActiveBidResource extends Resource
                 return $query;
             })
             ->header(function () {
-                return view('components.filament-tables.bid-filters-pro', [
+                return view('components.filament-tables.bid-filters', [
                     'eventsQuery' => \App\Models\Event::query()->where('published', true),
                     'lotsQuery' => \App\Models\AnimalEvent::query(),
                     'usersQuery' => \App\Models\User::query(),
