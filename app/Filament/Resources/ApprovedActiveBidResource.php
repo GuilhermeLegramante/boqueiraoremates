@@ -120,10 +120,10 @@ class ApprovedActiveBidResource extends Resource
                 //     ->searchable()
                 //     ->relationship('event', 'name'),
 
-                Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Cliente')
-                    ->searchable()
-                    ->relationship('user', 'name'),
+                // Tables\Filters\SelectFilter::make('user_id')
+                //     ->label('Cliente')
+                //     ->searchable()
+                //     ->relationship('user', 'name'),
             ])
             ->deferFilters()
             ->filtersApplyAction(
@@ -132,13 +132,13 @@ class ApprovedActiveBidResource extends Resource
                     ->label('Aplicar Filtro(s)'),
             )
             ->groups([
-                Group::make('event.name')
-                    ->label('Evento')
-                    ->collapsible(),
+                // Group::make('event.name')
+                //     ->label('Evento')
+                //     ->collapsible(),
 
-                Group::make('user.name')
-                    ->label('Cliente')
-                    ->collapsible(),
+                // Group::make('user.name')
+                //     ->label('Cliente')
+                //     ->collapsible(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
