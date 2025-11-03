@@ -52,10 +52,8 @@ class PendingBidResource extends Resource
                 $clientId = session(self::$sessionPrefix . "selected_client_id");
                 $statusId = session(self::$sessionPrefix . "selected_status_id");
 
-                // Se nenhum evento selecionado → retorna query vazia
-                // if (!$eventId) {
-                //     return $query->whereRaw('1=0');
-                // }
+                // Sempre traz apenas status = 0 por padrão
+                $query->where('status', 0);
 
                 // Aplica os filtros
                 $query
