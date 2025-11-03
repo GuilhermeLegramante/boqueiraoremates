@@ -64,5 +64,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Client::class, 'registered_user_id');
     }
-    
+
+    public function bids()
+    {
+        return $this->hasMany(\App\Models\Bid::class, 'user_id');
+    }
 }
