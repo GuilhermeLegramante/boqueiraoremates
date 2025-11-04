@@ -53,7 +53,7 @@ class ClientForm
                                 ->required()
                                 ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
                                 ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
-                                
+
                             Radio::make('gender')
                                 ->label(__('fields.gender'))
                                 ->options([
@@ -243,6 +243,19 @@ class ClientForm
                             // Textarea::make('note') ANOTAÇÕES AGORA SÃO NO RELATION MANAGER
                             //     ->label(__('fields.note'))
                             //     ->columnSpanFull(),
+                            TextInput::make('instagram')
+                                ->label('Instagram')
+                                ->placeholder('Ex: @usuario')
+                                ->columnSpanFull()
+                                ->prefixIcon('heroicon-o-at-symbol')
+                                ->maxLength(100),
+
+                            TextInput::make('facebook')
+                                ->label('Facebook')
+                                ->columnSpanFull()
+                                ->placeholder('Ex: facebook.com/usuario')
+                                ->prefixIcon('heroicon-o-globe-alt')
+                                ->maxLength(100),
                         ])
                         ->columns(3),
                 ])
