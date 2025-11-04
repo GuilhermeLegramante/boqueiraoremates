@@ -71,6 +71,7 @@ class BidController extends Controller
             ->where('animal_event_id', $request->animal_event_id)
             ->where('event_id', $request->event_id)
             ->where('amount', $request->amount)
+            ->where('status', '!=', 2) // Ignora lances rejeitados
             ->first();
 
         if ($existingBid) {
