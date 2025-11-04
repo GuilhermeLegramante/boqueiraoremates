@@ -169,7 +169,7 @@ class Client extends Model
                 // Cria novo usuário
                 $user = User::create([
                     'name'     => $client->name,
-                    'username' => $cpfCnpj, // sempre salvo sem máscara
+                    'username' => $client->cpf_cnpj, 
                     'email'    => $email,
                     'password' => Hash::make($password),
                 ]);
