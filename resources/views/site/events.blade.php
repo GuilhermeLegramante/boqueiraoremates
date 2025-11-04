@@ -5,25 +5,25 @@
     @foreach ($events as $event)
         <div class="max-w-6xl mx-auto my-6 bg-gray-800 rounded-lg overflow-hidden shadow-lg">
             <div
-                class="relative rounded-2xl overflow-hidden bg-[url('{{ asset('img/wood_texture.png') }}')] bg-cover bg-center p-1 md:p-2 flex flex-col md:flex-row justify-between items-center text-white max-h-20">
+                class="relative rounded-2xl overflow-hidden bg-[url('{{ asset('img/wood_texture.png') }}')] bg-cover bg-center p-2 md:p-3 flex flex-col md:flex-row justify-between items-center text-white">
 
-                <!-- Sobreposição para aumentar contraste -->
-                <div class="absolute inset-0 bg-black/30"></div>
+                <!-- Sobreposição para contraste -->
+                <div class="absolute inset-0 bg-black/40"></div>
 
-                <!-- Conteúdo da div -->
-                <div class="relative flex flex-col md:flex-row justify-between items-center w-full">
-                    <h1 class="text-lg md:text-xl font-bold drop-shadow-lg truncate">
+                <!-- Conteúdo -->
+                <div
+                    class="relative flex flex-col md:flex-row justify-between items-center w-full text-center md:text-left gap-1 md:gap-3">
+                    <h1 class="text-lg sm:text-xl md:text-2xl font-bold drop-shadow-lg leading-tight">
                         {{ $event->name }}
                     </h1>
-                    <span class="text-sm md:text-lg font-bold mt-1 md:mt-0 drop-shadow-lg truncate">
+                    <span class="text-sm sm:text-base md:text-lg font-semibold drop-shadow-lg whitespace-nowrap">
                         @if ($event->is_permanent)
                             VENDA PERMANENTE
                         @else
-                            Data / Horário: {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y - H:i') }}hs
+                            {{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y - H:i') }}hs
                         @endif
                     </span>
                 </div>
-
             </div>
 
             <!-- Conteúdo principal -->
@@ -31,7 +31,7 @@
                 <!-- Imagem do evento -->
                 <div class="flex justify-center md:justify-start">
                     <div
-                        class="w-44 sm:w-52 md:w-60 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
+                        class="w-48 sm:w-56 md:w-64 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
                         <a href="{{ route('events.show', $event) }}">
                             <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
                                 class="object-contain w-full h-full object-center">
@@ -50,11 +50,10 @@
                 <div class="flex justify-center md:justify-end">
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
-                            class="w-36 h-36 object-cover rounded">
+                            class="w-32 h-32 md:w-36 md:h-36 object-cover rounded">
                     </a>
                 </div>
             </div>
-
         </div>
     @endforeach
 
