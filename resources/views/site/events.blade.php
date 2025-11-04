@@ -27,30 +27,34 @@
             </div>
 
             <!-- Conteúdo principal -->
-            <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
+            <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 items-center text-white">
                 <!-- Imagem do evento -->
-                <div
-                    class="w-44 sm:w-52 md:w-60 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
-                    <a href="{{ route('events.show', $event) }}">
-                        <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
-                            class="object-contain w-full h-full object-center">
-                    </a>
+                <div class="flex justify-center md:justify-start">
+                    <div
+                        class="w-44 sm:w-52 md:w-60 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
+                        <a href="{{ route('events.show', $event) }}">
+                            <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
+                                class="object-contain w-full h-full object-center">
+                        </a>
+                    </div>
                 </div>
 
-
-
                 <!-- Descrição -->
-                <div class="md:col-span-3 text-justify">
+                <div class="text-justify">
                     <p class="text-sm md:text-base leading-relaxed">
                         {{ $event->note }}
                     </p>
                 </div>
 
                 <!-- Pré-lance -->
-                <a href="{{ route('events.show', $event) }}">
-                    <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance" class="w-36 h-36 object-cover rounded">
-                </a>
+                <div class="flex justify-center md:justify-end">
+                    <a href="{{ route('events.show', $event) }}">
+                        <img src="{{ asset('img/prelance.png') }}" alt="Pré-lance"
+                            class="w-36 h-36 object-cover rounded">
+                    </a>
+                </div>
             </div>
+
         </div>
     @endforeach
 
