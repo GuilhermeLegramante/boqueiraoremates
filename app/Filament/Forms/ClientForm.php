@@ -96,6 +96,7 @@ class ClientForm
                     Fieldset::make('Documentos')
                         ->schema([
                             Document::make('cpf_cnpj')
+                                ->required()
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic(),
                             TextInput::make('inscricaoestadual')
