@@ -3,10 +3,11 @@
 
         <!-- Banner -->
         <div
-            class="w-72 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden mx-auto lg:mx-0">
+            class="w-96 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden mx-auto lg:mx-0">
             <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Banner do evento"
-                class="w-full h-full object-cover object-center">
+                class="w-full h-full object-contain object-center">
         </div>
+
 
         <!-- Informações principais + Badges -->
         <div class="space-y-3 text-center lg:text-left">

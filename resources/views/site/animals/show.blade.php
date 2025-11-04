@@ -266,7 +266,6 @@
         </div>
     </section>
 
-    <!-- 🟢 ADICIONE ESTE NOVO SCRIPT AQUI -->
     <script>
         // Fecha a modal de sucesso (Lance Recebido)
         const closeBtn = document.getElementById('closeSuccessBtn');
