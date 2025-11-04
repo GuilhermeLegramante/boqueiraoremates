@@ -110,7 +110,7 @@ class BidController extends Controller
                 'message' => $mensagem,
             ]);
 
-        return back()->with('success', 'Lance enviado com sucesso!');
+        return redirect()->back()->with('bid_success', true);
     }
 
 

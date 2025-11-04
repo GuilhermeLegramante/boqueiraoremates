@@ -131,7 +131,6 @@
                                 @php
                                     $client = Auth::user()->client;
                                     // dd($client);
-                                    
                                 @endphp
 
                                 @if ($client && $client->situation === 'able')
@@ -224,6 +223,34 @@
                 @endif
             </div>
         </div>
+
+        <!-- Modal de Confirmação de Lance Recebido -->
+        @if (session('bid_success'))
+            <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-2xl shadow-2xl border border-green-700 max-w-md w-full overflow-hidden">
+                    <div class="bg-green-800 text-white px-6 py-4">
+                        <h3 class="text-xl font-bold">✅ Lance Recebido</h3>
+                    </div>
+                    <div class="px-6 py-6 text-green-900 text-center leading-relaxed">
+                        <p class="text-lg font-semibold mb-4">Lance recebido no lote!</p>
+                        <p class="text-sm mb-4">
+                            Após a liberação por parte da mesa operadora, o lote se atualizará automaticamente no site.
+                        </p>
+                        <p class="text-sm mb-6">
+                            Se seu lance for coberto, nossa equipe lhe informará.
+                        </p>
+                        <p class="text-sm font-semibold text-green-700">Muito Obrigado!!</p>
+
+                        <button id="closeSuccessBtn"
+                            class="mt-6 px-6 py-2 bg-green-700 text-white rounded-lg hover:bg-green-600 transition">
+                            Fechar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+
     </section>
 
     @include('site.events.header')
@@ -238,5 +265,18 @@
             </nav>
         </div>
     </section>
+
+    <!-- 🟢 ADICIONE ESTE NOVO SCRIPT AQUI -->
+    <script>
+        // Fecha a modal de sucesso (Lance Recebido)
+        const closeBtn = document.getElementById('closeSuccessBtn');
+        const successModal = document.getElementById('successModal');
+
+        if (closeBtn && successModal) {
+            closeBtn.addEventListener('click', () => {
+                successModal.classList.add('hidden');
+            });
+        }
+    </script>
 
 @endsection
