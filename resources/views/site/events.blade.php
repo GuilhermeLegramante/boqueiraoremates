@@ -30,12 +30,13 @@
             <div class="bg-[#4D6766] p-4 grid grid-cols-1 md:grid-cols-5 gap-4 items-center text-white">
                 <!-- Imagem do evento -->
                 <div
-                    class="w-44 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
+                    class="w-56 aspect-[1000/720] rounded-2xl shadow-xl border-4 border-white/20 bg-black overflow-hidden">
                     <a href="{{ route('events.show', $event) }}">
                         <img src="{{ asset('storage/' . $event->banner_min) }}" alt="Logo do lote"
-                            class="object-cover w-full h-full object-center">
+                            class="object-contain w-full h-full object-center">
                     </a>
                 </div>
+
 
                 <!-- Descrição -->
                 <div class="md:col-span-3 text-justify">
