@@ -215,7 +215,7 @@ class Client extends Model
 
             // Excluir usuário vinculado
             if ($client->registeredUser) {
-                // $client->registeredUser->delete();
+                $client->registeredUser->delete();
             }
         });
     }
