@@ -7,8 +7,8 @@
     <div class="relative container mx-auto px-6 py-1 flex justify-between items-start">
         <!-- Logo esquerda -->
         <div class="flex-shrink-0 ml-4 -mt-2">
-            <a href="{{ route('home') }}" <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
-                class="h-16 md:h-20">
+            <a href="{{ route('home') }}">
+                <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo" class="h-16 md:h-20">
             </a>
         </div>
 
