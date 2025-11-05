@@ -1,4 +1,4 @@
-<section class="bg-[#003333] text-white py-12 px-6 mt-2">
+<section class="bg-[#003333] text-white py-12 px-6 mt-8">
     <div class="container mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10 items-start">
 
         <!-- Banner -->
