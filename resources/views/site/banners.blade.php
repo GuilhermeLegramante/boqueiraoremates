@@ -1,6 +1,6 @@
  <!-- Carrossel de Banners -->
- <br><br><br><br>
- <section class="relative h-[500px] bg-green-900 bg-repeat-x bg-top flex items-center justify-center"
+ {{-- <br><br><br><br> --}}
+ <section class="relative h-[500px] mt-10 bg-green-900 bg-repeat-x bg-top flex items-center justify-center"
      style="background-image: url('{{ asset('img/madeira.png') }}'); background-size: auto 100%;">
      <div class="absolute inset-0 bg-black/50"></div>
      <div class="relative z-10 max-w-[930px] w-full mx-auto px-4">
