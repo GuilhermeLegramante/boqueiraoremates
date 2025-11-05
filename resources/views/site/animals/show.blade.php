@@ -3,8 +3,9 @@
 @section('title', $animal->pivot->name . ' - Detalhes do Lote')
 
 @section('content')
-    @include('site.banners')
-
+    <div class="hidden md:block">
+        @include('site.banners')
+    </div>
     <!-- Breadcrumbs -->
     <section class="py-4 px-4 bg-[#003333] text-white">
         <div class="container mx-auto text-sm">

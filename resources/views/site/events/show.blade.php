@@ -3,8 +3,9 @@
 @section('title', $event->name . ' - Detalhes')
 
 @section('content')
-    @include('site.banners')
-
+    <div class="hidden md:block">
+        @include('site.banners')
+    </div>
     @include('site.events.header')
 
     <!-- Breadcrumbs para página do evento -->
