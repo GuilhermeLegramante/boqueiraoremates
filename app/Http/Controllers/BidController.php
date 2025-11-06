@@ -115,16 +115,16 @@ class BidController extends Controller
             ]);
 
         // 📧 Envia notificação por e-mail para administradores
-        Mail::send('emails.new-bid', [
-            'user' => $user,
-            'event' => $event,
-            'animal' => $animal,
-            'amount' => $request->amount,
-        ], function ($mail) use ($event) {
-            $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
-                ->subject('Novo Lance Recebido - ' . $event->name)
-                ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
-        });
+        // Mail::send('emails.new-bid', [
+        //     'user' => $user,
+        //     'event' => $event,
+        //     'animal' => $animal,
+        //     'amount' => $request->amount,
+        // ], function ($mail) use ($event) {
+        //     $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
+        //         ->subject('Novo Lance Recebido - ' . $event->name)
+        //         ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
+        // });
 
         return redirect()->back()->with('bid_success', true);
     }
