@@ -124,7 +124,6 @@ class BidController extends Controller
         return redirect()->back()->with('bid_success', true);
     }
 
-
     public function approve(Bid $bid)
     {
         $bid->update([
