@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class BidController extends Controller
 {
@@ -97,19 +98,28 @@ class BidController extends Controller
             ->select('animals.name')
             ->first();
 
-        // 💬 Monta a mensagem personalizada
-        $mensagem = "Usuário: {$user->name}\n\n"
-            . "Evento: {$event->name}\n\n"
-            . "Animal: {$animal->name}\n\n"
+        // 💬 Monta mensagem
+        $mensagem = "📣 Novo lance recebido!\n\n"
+            . "Usuário: {$user->name}\n"
+            . "E-mail: {$user->email}\n\n"
+            . "Evento: {$event->name}\n"
+            . "Animal: {$animal->name}\n"
             . "Valor do Lance: R$ " . number_format($request->amount, 2, ',', '.') . "\n\n"
-            . "Lance enviado com sucesso, aguarde validação pela mesa, conforme regulamento do evento.";
+            . "Verifique o painel administrativo para validar o lance.";
 
-        // 📱 Envia notificação
+        // 📱 Envia notificação via WhatsApp (avisaapi)
         Http::withToken('esFDkhJ0D2G0M07nG5K9qCSbQDNC2xUQ5x8IxqHdJYYKHWUi6CxfxbIMfgiq')
             ->post('https://www.avisaapi.com.br/api/actions/sendMessage', [
                 'number'  => '55999181805',
                 'message' => $mensagem,
             ]);
+
+        // 📧 Envia notificação por e-mail para administradores
+        Mail::raw($mensagem, function ($mail) use ($event) {
+            $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
+                ->subject('Novo Lance Recebido - ' . $event->name)
+                ->from('contato@boqueiraoremates.com', 'Sistema de Leilões');
+        });
 
         return redirect()->back()->with('bid_success', true);
     }
