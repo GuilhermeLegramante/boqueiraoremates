@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class BidController extends Controller
@@ -107,25 +108,34 @@ class BidController extends Controller
             . "Valor do Lance: R$ " . number_format($request->amount, 2, ',', '.') . "\n\n"
             . "Verifique o painel administrativo para validar o lance.";
 
-        // 📱 Envia notificação via WhatsApp (avisaapi)
-        Http::withToken('esFDkhJ0D2G0M07nG5K9qCSbQDNC2xUQ5x8IxqHdJYYKHWUi6CxfxbIMfgiq')
-            ->post('https://www.avisaapi.com.br/api/actions/sendMessage', [
-                'number'  => '55999181805',
-                'message' => $mensagem,
-            ]);
+        // 📱 Envia notificação via WhatsApp (tratamento de erro)
+        try {
+            Http::withToken('esFDkhJ0D2G0M07nG5K9qCSbQDNC2xUQ5x8IxqHdJYYKHWUi6CxfxbIMfgiq')
+                ->post('https://www.avisaapi.com.br/api/actions/sendMessage', [
+                    'number'  => '55999181805',
+                    'message' => $mensagem,
+                ]);
+        } catch (\Throwable $e) {
+            Log::error('❌ Falha ao enviar mensagem WhatsApp: ' . $e->getMessage());
+        }
 
-        // 📧 Envia notificação por e-mail para administradores
-        // Mail::send('emails.new-bid', [
-        //     'user' => $user,
-        //     'event' => $event,
-        //     'animal' => $animal,
-        //     'amount' => $request->amount,
-        // ], function ($mail) use ($event) {
-        //     $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
-        //         ->subject('Novo Lance Recebido - ' . $event->name)
-        //         ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
-        // });
+        // 📧 Envia notificação por e-mail (tratamento de erro)
+        try {
+            Mail::send('emails.new-bid', [
+                'user' => $user,
+                'event' => $event,
+                'animal' => $animal,
+                'amount' => $request->amount,
+            ], function ($mail) use ($event) {
+                $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
+                    ->subject('Novo Lance Recebido - ' . $event->name)
+                    ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
+            });
+        } catch (\Throwable $e) {
+            Log::error('❌ Falha ao enviar e-mail de notificação: ' . $e->getMessage());
+        }
 
+        // ✅ Continua normalmente mesmo se notificações falharem
         return redirect()->back()->with('bid_success', true);
     }
 
