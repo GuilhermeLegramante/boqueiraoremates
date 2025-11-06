@@ -96,10 +96,32 @@ Route::get('/filament/filters/lots/{eventId}', [FilamentFilterController::class,
 
 Route::get('/teste-email', function () {
     try {
-        Mail::raw('Este é um teste de envio de e-mail pelo Laravel usando SMTP da Hostinger.', function ($message) {
-            $message->to('guilhermelegramante@gmail.com') // 👉 altere para o e-mail onde quer receber o teste
-                    ->subject('Teste de Envio - Hostinger SMTP')
-                    ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
+        // 🔹 Dados fictícios para teste
+        $user = (object)[
+            'name' => 'João da Silva',
+            'email' => 'joao.silva@example.com',
+        ];
+
+        $event = (object)[
+            'name' => 'Leilão de Primavera 2025',
+        ];
+
+        $animal = (object)[
+            'name' => 'Touro Brangus Campeão',
+        ];
+
+        $amount = 15750.00;
+
+        // 📧 Envio do e-mail
+        Mail::send('emails.new-bid', [
+            'user' => $user,
+            'event' => $event,
+            'animal' => $animal,
+            'amount' => $amount,
+        ], function ($mail) use ($event) {
+            $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
+                ->subject('Novo Lance Recebido - ' . $event->name)
+                ->from('contato@boqueiraoremates.com', 'Sistema de Leilões');
         });
 
         return '✅ E-mail de teste enviado com sucesso!';

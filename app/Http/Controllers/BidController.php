@@ -115,7 +115,12 @@ class BidController extends Controller
             ]);
 
         // 📧 Envia notificação por e-mail para administradores
-        // Mail::raw($mensagem, function ($mail) use ($event) {
+        // Mail::send('emails.new-bid', [
+        //     'user' => $user,
+        //     'event' => $event,
+        //     'animal' => $animal,
+        //     'amount' => $request->amount,
+        // ], function ($mail) use ($event) {
         //     $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
         //         ->subject('Novo Lance Recebido - ' . $event->name)
         //         ->from('contato@boqueiraoremates.com', 'Sistema de Leilões');
