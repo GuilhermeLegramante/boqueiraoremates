@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
@@ -92,3 +93,17 @@ Route::post('/forgot-password-validate', [LoginController::class, 'validateFirst
 Route::match(['get', 'post'], 'filament/filters/update', [FilamentFilterController::class, 'update'])
     ->name('filament.filters.update');
 Route::get('/filament/filters/lots/{eventId}', [FilamentFilterController::class, 'lots']);
+
+Route::get('/teste-email', function () {
+    try {
+        Mail::raw('Este é um teste de envio de e-mail pelo Laravel usando SMTP da Hostinger.', function ($message) {
+            $message->to('guilhermelegramante@gmail.com') // 👉 altere para o e-mail onde quer receber o teste
+                    ->subject('Teste de Envio - Hostinger SMTP')
+                    ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
+        });
+
+        return '✅ E-mail de teste enviado com sucesso!';
+    } catch (\Exception $e) {
+        return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
+    }
+});
