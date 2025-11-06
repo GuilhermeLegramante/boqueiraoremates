@@ -121,7 +121,7 @@ Route::get('/teste-email', function () {
         ], function ($mail) use ($event) {
             $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
                 ->subject('Novo Lance Recebido - ' . $event->name)
-                ->from('contato@boqueiraoremates.com', 'Sistema de Leilões');
+                ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
         });
 
         return '✅ E-mail de teste enviado com sucesso!';
