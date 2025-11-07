@@ -346,45 +346,73 @@ class ClientForm
                 ->dehydrateStateUsing(fn($state) => Hash::make($state))
                 ->same('passwordConfirmation')
                 ->validationAttribute('senha'),
+
             TextInput::make('passwordConfirmation')
                 ->label(__('filament-panels::pages/auth/register.form.password_confirmation.label'))
                 ->password()
                 ->revealable(filament()->arePasswordsRevealable())
                 ->required()
                 ->dehydrated(false),
+
             TextInput::make('inscricaoestadual')
                 ->label('Inscrição Estadual')
                 ->maxLength(10),
+
             TextInput::make('rg')
                 ->label(__('fields.rg'))
                 ->numeric(),
+                
             DatePicker::make('birth_date')
                 ->label('Data de Nascimento')
                 ->required()
                 ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
                 ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
+
             Radio::make('gender')
                 ->label(__('fields.gender'))
                 ->required()
                 ->options(['male' => 'Masculino', 'female' => 'Feminino']),
+
             TextInput::make('establishment')
                 ->label(__('fields.establishment')),
+
             TextInput::make('occupation')
                 ->required()
                 ->label(__('fields.occupation')),
+
             TextInput::make('note_occupation')
                 ->label(__('fields.note_occupation')),
+
             // TextInput::make('income')->numeric()->label(__('fields.income')),
-            // Money::make('income')
-            //     ->label(__('fields.income'))
-            //     ->live(condition: false),
-            TextInput::make('income')
-                ->prefix('R$')
-                ->numeric()
-                ->live()
-                ->debounce(1000)
-                // ->columnSpan(2)
-                ->label(__('fields.income')),
+            Money::make('income')
+                ->label('Renda')
+                ->prefix('R$ ')
+                ->live(false)
+                ->dehydrateStateUsing(
+                    fn($state) => $state !== null
+                        ? (float) str_replace(['.', ','], ['', '.'], $state)
+                        : null
+                ),
+
+
+            // TextInput::make('income')
+            //     ->label('Renda')
+            //     ->prefix('R$')
+            //     ->numeric()
+            //     ->rule('decimal:0,2')
+            //     ->formatStateUsing(
+            //         fn($state) => $state !== null
+            //             ? number_format($state, 2, ',', '.')
+            //             : null
+            //     )
+            //     ->dehydrateStateUsing(
+            //         fn($state) => $state !== null
+            //             ? (float) str_replace(['.', ','], ['', '.'], $state)
+            //             : null
+            //     )
+            //     ->live(onBlur: true)
+            //     ->suffixIcon('heroicon-o-currency-dollar'),
+
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
                 ->required()
