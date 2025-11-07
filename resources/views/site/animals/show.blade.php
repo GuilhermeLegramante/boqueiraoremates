@@ -60,17 +60,21 @@
                                 @php
                                     $status = $animal->pivot->status ?? null;
                                     $statusColors = [
-                                        'disponivel' => 'bg-green-600',
-                                        'reservado' => 'bg-yellow-500',
-                                        'vendido' => 'bg-red-600',
+                                        'disponivel' => 'bg-green-700',
+                                        'reservado' => 'bg-yellow-600',
+                                        'vendido' => 'bg-red-700',
                                     ];
                                 @endphp
 
+                                <!-- CARIMBO -->
                                 <span
-                                    class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow {{ $statusColors[$status] ?? 'bg-gray-600' }}">
+                                    class="absolute left-3 bottom-3 px-5 py-2 text-sm font-extrabold uppercase rounded-md shadow-lg ring-2 ring-white/80 text-white
+               transform -rotate-6 origin-left select-none
+               {{ $statusColors[$status] ?? 'bg-gray-700' }}">
                                     {{ $status }}
                                 </span>
                             </a>
+
 
                             <!-- Plaquinha pendurada -->
                             <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank"
