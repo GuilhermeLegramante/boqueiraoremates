@@ -60,17 +60,17 @@
                                 @php
                                     $status = $animal->pivot->status ?? null;
                                     $statusColors = [
-                                        'disponivel' => 'bg-green-700',
-                                        'reservado' => 'bg-yellow-600',
-                                        'vendido' => 'bg-red-700',
+                                        'disponivel' => 'bg-green-700/90',
+                                        'reservado' => 'bg-yellow-600/90',
+                                        'vendido' => 'bg-red-700/90',
                                     ];
                                 @endphp
 
-                                <!-- CARIMBO -->
+                                <!-- CARIMBO MAIOR -->
                                 <span
-                                    class="absolute left-3 bottom-3 px-5 py-2 text-sm font-extrabold uppercase rounded-md shadow-lg ring-2 ring-white/80 text-white
+                                    class="absolute left-4 bottom-4 px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl ring-4 ring-white/70 text-white
                transform -rotate-6 origin-left select-none
-               {{ $statusColors[$status] ?? 'bg-gray-700' }}">
+               {{ $statusColors[$status] ?? 'bg-gray-700/90' }}">
                                     {{ $status }}
                                 </span>
                             </a>
