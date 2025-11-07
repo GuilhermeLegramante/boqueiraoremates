@@ -52,12 +52,25 @@
                                 }
                             @endphp
 
-                            <a href="{{ $videoUrl }}" target="_blank" class="w-full">
+                            <a href="{{ $videoUrl }}" target="_blank" class="block relative w-full">
                                 <img src="{{ asset('storage/' . $animal->pivot->photo_full) }}"
                                     alt="{{ $animal->pivot->name }}"
                                     class="w-full rounded-lg shadow-lg object-cover hover:opacity-90 transition">
-                            </a>
 
+                                @php
+                                    $status = $animal->pivot->status ?? null;
+                                    $statusColors = [
+                                        'disponivel' => 'bg-green-600',
+                                        'reservado' => 'bg-yellow-500',
+                                        'vendido' => 'bg-red-600',
+                                    ];
+                                @endphp
+
+                                <span
+                                    class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow {{ $statusColors[$status] ?? 'bg-gray-600' }}">
+                                    {{ $status }}
+                                </span>
+                            </a>
 
                             <!-- Plaquinha pendurada -->
                             <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank"
