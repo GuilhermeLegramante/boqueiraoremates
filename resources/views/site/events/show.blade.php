@@ -110,7 +110,7 @@
                                         <span>Lote:</span>
                                         <span
                                             class="inline-block bg-red-600 text-white px-3 py-1 rounded-lg shadow text-center min-w-[110px]">
-                                            LOTE VENDIDO
+                                            VENDIDO
                                         </span>
 
                                         {{-- Mantém o espaço do "Lance Alvo" para alinhamento --}}
