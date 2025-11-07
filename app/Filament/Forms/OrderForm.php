@@ -106,12 +106,12 @@ class OrderForm
                     ->afterStateUpdated(function (Get $get, Set $set) {
                         $userId = Auth::id();
 
-                        if (!in_array($userId, [1, 2, 7])) { // Meu Id, do Zé e do Rafael
+                        // if (!in_array($userId, [1, 2, 7])) { // Meu Id, do Zé e do Rafael
                             $event = \App\Models\Event::find($get('event_id'));
                             if (isset($event->multiplier)) {
                                 $set('multiplier', $event->multiplier);
                             }
-                        }
+                        // }
                     })
                     ->columnSpanFull(),
                 Select::make('seller_id')
