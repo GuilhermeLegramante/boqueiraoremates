@@ -66,16 +66,17 @@
                                     ];
                                 @endphp
 
-                                <!-- CARIMBO MAIOR COM "LOTE" -->
+                                <!-- CARIMBO MAIOR CENTRALIZADO -->
                                 <span
-                                    class="absolute left-4 bottom-4 px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl ring-4 ring-white/70 text-white
+                                    class="absolute left-4 bottom-4 flex flex-col items-center justify-center text-center
+               px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl ring-4 ring-white/70 text-white
                transform -rotate-6 origin-left select-none
                {{ $statusColors[$status] ?? 'bg-gray-700/90' }}">
-                                    <span class="text-sm font-semibold opacity-80">Lote</span>
-                                    <br>
-                                    {{ $status }}
+                                    <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
+                                    <span class="leading-tight">{{ $status }}</span>
                                 </span>
                             </a>
+
 
                             <!-- Plaquinha pendurada -->
                             <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank"
