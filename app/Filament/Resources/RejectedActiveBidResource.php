@@ -52,6 +52,11 @@ class RejectedActiveBidResource extends Resource
                     return $query->whereRaw('1=0');
                 }
 
+                // Se não houver status selecionado, define o padrão como 2
+                if ($statusId === null || $statusId === '') {
+                    $statusId = 2;
+                }
+
                 // Aplica os filtros
                 $query->where('event_id', $eventId)
                     ->when($lotId, fn($q) => $q->where('animal_event_id', $lotId))
