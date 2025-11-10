@@ -91,7 +91,7 @@
 
                                 <span
                                     class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow {{ $statusColors[$status] ?? 'bg-gray-600' }}">
-                                    {{ $status }}
+                                    {{ $status == 'disponivel' ? 'DISPONÍVEL' : $status }}
                                 </span>
                             </a>
 
@@ -113,7 +113,7 @@
                                             VENDIDO
                                         </span>
 
-                                        {{-- Mantém o espaço do "Lance Alvo" para alinhamento --}}
+                                        {{-- Mantém o espaço do "Lance-alvo" para alinhamento --}}
                                         <span>&nbsp;</span>
                                         <span
                                             class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
@@ -135,7 +135,7 @@
                                         @endif
 
                                         @if (floatval($animal->pivot->target_value) > 0)
-                                            <span>Lance Alvo:</span>
+                                            <span>Lance-alvo:</span>
                                             <span
                                                 class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                 R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}

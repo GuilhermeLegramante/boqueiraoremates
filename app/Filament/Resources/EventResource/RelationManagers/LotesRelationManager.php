@@ -68,7 +68,7 @@ class LotesRelationManager extends RelationManager
                     ->nullable(),
 
                 TextInput::make('target_value')
-                    ->label('Lance Alvo')
+                    ->label('Lance-alvo')
                     ->prefix('R$')
                     ->numeric()
                     ->live()

@@ -615,7 +615,7 @@
                                                                         class="style1">Venda permanente de PÔNEIS - À
                                                                         venda: Reprodutores, Machos domados, fêmeas
                                                                         domadas, machos amanunciados e fêmeas domadas.
-                                                                        Todos Lotes com lance alvo. Preços e condições
+                                                                        Todos Lotes com lance-alvo. Preços e condições
                                                                         de pagamento nos comentários de cada lote ou
                                                                         direto com nossa Equipe Comercial - Consultas e
                                                                         propostas pelo fone 55.9 9733.1395</span></font>

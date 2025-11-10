@@ -141,7 +141,7 @@
                                 </p>
                             </div>
                             <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                <p class="text-green-300">Lance alvo</p>
+                                <p class="text-green-300">Lance-alvo</p>
                                 @if ($animal->pivot->target_value && $animal->pivot->target_value != '0.00')
                                     <p class="text-xl font-bold text-green-300">
                                         R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
