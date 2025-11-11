@@ -152,8 +152,8 @@
                             </div>
                         </div>
 
-                        @if ($animal->pivot->status === 'disponivel')
-                            @auth
+                        @auth
+                            @if ($animal->pivot->status === 'disponivel' || $event->closed)
                                 @php
                                     $client = Auth::user()->client;
                                     // dd($client);
