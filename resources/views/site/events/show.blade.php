@@ -105,8 +105,8 @@
                                 </h3>
 
                                 @if ($event->closed)
-                                    <p class="text-center text-gray-300 text-lg mt-10">
-                                        Os lotes deste evento ainda não estão disponíveis para exibição.
+                                    <p class="text-center text-gray-300">
+                                        EVENTO ENCERRADO
                                     </p>
                                 @else
                                     <div
