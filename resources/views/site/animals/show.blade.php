@@ -159,7 +159,7 @@
                                     // dd($client);
                                 @endphp
 
-                                @if ($client && $client->situation === 'able')
+                                @if ($client && $client->situation === 'able' && !$event->closed)
                                     {{-- ✅ FORMULÁRIO DE LANCE --}}
                                     <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
                                         @csrf
