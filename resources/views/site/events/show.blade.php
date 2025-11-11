@@ -105,9 +105,10 @@
                                 </h3>
 
                                 @if ($event->closed)
-                                    <p class="text-center text-gray-300">
+                                    <div
+                                        class="text-center text-gray-300 font-bold text-md mb-4 min-h-[60px] flex items-center justify-center">
                                         EVENTO ENCERRADO
-                                    </p>
+                                    </div>
                                 @else
                                     <div
                                         class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
