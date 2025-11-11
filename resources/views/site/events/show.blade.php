@@ -172,6 +172,7 @@
                     Este evento ainda não possui lotes cadastrados.
                 </p>
             @endif
+            
         @else
             <p class="text-center text-gray-300 text-lg mt-10">
                 Os lotes deste evento ainda não estão disponíveis para exibição.
