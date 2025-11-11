@@ -107,7 +107,7 @@
                                 @if ($event->closed)
                                     <div
                                         class="text-center text-gray-300 font-bold text-md mb-4 min-h-[60px] flex items-center justify-center">
-                                        EVENTO ENCERRADO
+                                        PRÉ-LANCE ENCERRADO
                                     </div>
                                 @else
                                     <div
@@ -172,7 +172,7 @@
                     Este evento ainda não possui lotes cadastrados.
                 </p>
             @endif
-            
+
         @else
             <p class="text-center text-gray-300 text-lg mt-10">
                 Os lotes deste evento ainda não estão disponíveis para exibição.
