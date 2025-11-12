@@ -17,6 +17,7 @@ class DocumentForm
                 ->createOptionForm(DocumentTypeForm::form())
                 ->required(),
             FileUpload::make('path')
+                ->required()
                 ->label(__('fields.file')),
         ];
     }

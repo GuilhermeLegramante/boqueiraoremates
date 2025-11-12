@@ -58,8 +58,14 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/bids/{bid}/approve', [BidController::class, 'approve'])->name('bids.approve'); // Aprovar manualmente
 });
 
-Route::get('/teste/{id}', function (string $id) {
-    return 'User ' . $id;
+Route::get('/teste', function () {
+    $now = \Carbon\Carbon::now();
+
+    $count = \App\Models\Event::where('published', true)
+        ->where('finish_date', '<', $now->subHours(5))
+        ->get();
+
+    dd($count);
 });
 
 Route::get('/', function () {
