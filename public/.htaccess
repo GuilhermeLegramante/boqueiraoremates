@@ -18,14 +18,4 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
-
-    # Permitir todos os métodos usados pelo Laravel
-    <Limit GET POST PUT PATCH DELETE OPTIONS>
-        Require all granted
-    </Limit>
-
-    # Evitar cache indevido do LiteSpeed (causa 405 aleatórios)
-    Header always unset "X-LiteSpeed-Cache"
-    Header always unset "Cache-Control"
-    Header always unset "ETag"
 </IfModule>
