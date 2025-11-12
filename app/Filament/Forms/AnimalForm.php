@@ -16,22 +16,6 @@ class AnimalForm
     public static function form(): array
     {
         return [
-            // FileUpload::make('photo')
-            //     ->label('Foto (Miniatura)')
-            //     ->image()
-            //     ->openable()
-            //     ->downloadable()
-            //     ->directory('animals/photos') // pasta onde será armazenada
-            //     ->visibility('public')
-            //     ->maxSize(2048),
-            // FileUpload::make('photo_full')
-            //     ->label('Foto (Grande)')
-            //     ->image()
-            //     ->openable()
-            //     ->downloadable()
-            //     ->directory('animals/photos') // pasta onde será armazenada
-            //     ->visibility('public')
-            //     ->maxSize(2048),
             TextInput::make('name')
                 ->label(__('fields.name'))
                 ->required()
@@ -39,15 +23,15 @@ class AnimalForm
             Select::make('breed_id')
                 ->label(__('fields.breed'))
                 ->live()
-                ->relationship('breed', 'name')
+                ->options(\App\Models\Breed::pluck('name', 'id'))
                 ->createOptionForm(BreedForm::form()),
             Select::make('coat_id')
                 ->label(__('fields.coat'))
-                ->relationship('coat', 'name')
+                ->options(\App\Models\Coat::pluck('name', 'id'))
                 ->createOptionForm(CoatForm::form()),
             Select::make('animal_type_id')
                 ->label(__('fields.animal_type'))
-                ->relationship('animalType', 'name')
+                ->options(\App\Models\AnimalType::pluck('name', 'id'))
                 ->createOptionForm(AnimalTypeForm::form()),
             TextInput::make('mother')
                 ->label(__('fields.mother')),
@@ -65,7 +49,6 @@ class AnimalForm
                 ->maxLength(7)
                 ->live()
                 ->nullable()
-                // ->unique(ignoreRecord: true)
                 ->visible(fn(Get $get): bool => self::isCrioulo($get('breed_id'))),
             TextInput::make('rb')
                 ->live()
@@ -104,16 +87,6 @@ class AnimalForm
             DatePicker::make('birth_date')
                 ->maxDate(now())
                 ->label('Data de Nascimento'),
-            // Textarea::make('note')
-            //     ->label('Comentário')
-            //     ->columnSpanFull()
-            //     ->rows(4)
-            //     ->maxLength(65535),
-            // TextInput::make('video_link')
-            //     ->label('Link do Vídeo')
-            //     ->url() // valida como URL
-            //     ->placeholder('https://youtube.com/...') // opcional
-            //     ->columnSpan('full'), // ocupa toda a largura do form
             TextInput::make('generation_link')
                 ->label('Link da Quinta Geração')
                 ->url() // valida como URL

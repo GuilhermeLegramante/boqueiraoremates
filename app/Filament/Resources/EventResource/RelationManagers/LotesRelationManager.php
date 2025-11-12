@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EventResource\RelationManagers;
 
+use App\Filament\Forms\AnimalForm;
 use App\Models\Animal;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
@@ -109,10 +110,33 @@ class LotesRelationManager extends RelationManager
                     ->label('Foto')
                     ->square(),
 
+                // Tables\Columns\TextColumn::make('name')
+                //     ->label('Animal')
+                //     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
+                //     ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%")),
+
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Animal')
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
-                    ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%")),
+                    ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%"))
+                    ->action(
+                        Tables\Actions\Action::make('editAnimal')
+                            ->label('Editar Animal')
+                            ->icon('heroicon-o-pencil-square')
+                            ->mountUsing(fn($form, $record) => $form->fill(
+                                \App\Models\Animal::find($record->animal_id)->toArray()
+                            ))
+                            ->form(AnimalForm::form())
+                            ->action(function (array $data, $record): void {
+                                $animal = \App\Models\Animal::find($record->animal_id);
+                                $animal->update($data);
+                            })
+                            ->modalHeading('Editar Animal')
+                            ->modalWidth('xl')
+                    )
+                    ->color('primary')
+                    ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('lot_number')
                     ->label('Lote')
