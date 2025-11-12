@@ -13,6 +13,7 @@ use App\Http\Controllers\SalesMapController;
 use App\Http\Controllers\SellerStatementController;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -134,4 +135,14 @@ Route::get('/teste-email', function () {
     } catch (\Exception $e) {
         return '❌ Erro ao enviar e-mail: ' . $e->getMessage();
     }
+});
+
+
+Route::get('/despublicar-eventos', function () {
+    Artisan::call('events:unpublish-old');
+
+    return response()->json([
+        'status' => 'ok',
+        'message' => 'Comando events:unpublish-old executado com sucesso!',
+    ]);
 });
