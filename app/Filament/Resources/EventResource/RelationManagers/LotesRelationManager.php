@@ -53,7 +53,7 @@ class LotesRelationManager extends RelationManager
                     ->required(),
 
                 TextInput::make('min_value')
-                    ->label('Lance Mínimo')
+                    ->label('Lance Inicial')
                     ->prefix('R$')
                     ->numeric()
                     ->live()
