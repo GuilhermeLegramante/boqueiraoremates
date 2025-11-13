@@ -102,7 +102,11 @@
                     <p><b>Gênero:</b>
                         {{ $animal->gender === 'male' ? 'MACHO' : ($animal->gender === 'female' ? 'FÊMEA' : '-') }}</p>
                     <p><b>Situação:</b> {{ $animal->pivot->situation ?? '-' }}</p>
-                    <p><b>RP:</b> {{ $animal->rb ?? '-' }}</p>
+                    @if ($animal->rb)
+                        <p><b>RP:</b> {{ $animal->rb }}</p>
+                    @elseif ($animal->register)
+                        <p><b>Registro:</b> {{ $animal->register }}</p>
+                    @endif
                     <p><b>Nascimento:</b> {{ \Carbon\Carbon::parse($animal->birth_date)->format('d/m/Y') }}</p>
                     <p><b>Pelagem:</b> {{ $animal->coat->name ?? '-' }}</p>
                     <p><b>Pai:</b> {{ $animal->father ?? '-' }}</p>
