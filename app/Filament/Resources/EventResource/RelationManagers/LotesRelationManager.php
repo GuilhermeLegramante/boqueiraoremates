@@ -4,6 +4,8 @@ namespace App\Filament\Resources\EventResource\RelationManagers;
 
 use App\Filament\Forms\AnimalForm;
 use App\Models\Animal;
+use App\Models\AnimalEvent;
+use App\Models\Bid;
 use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
@@ -39,22 +41,61 @@ class LotesRelationManager extends RelationManager
                     ->label('Animal')
                     ->options(Animal::all()->pluck('name', 'id'))
                     ->searchable()
-                    ->reactive() // 🔹 Torna o campo reativo
+                    ->reactive()
                     ->afterStateUpdated(function ($state, callable $set) {
-                        $animal = \App\Models\Animal::find($state);
+                        // $this refere-se ao RelationManager; event id do ownerRecord
+                        $eventId = $this->ownerRecord->id ?? null;
 
-                        if ($animal && isset($animal->current_bid)) {
-                            $set('current_bid_display', 'R$ ' . number_format($animal->current_bid, 2, ',', '.'));
-                        } else {
+                        if (! $state || ! $eventId) {
                             $set('current_bid_display', 'R$ 0,00');
+                            return;
                         }
+
+                        // tenta achar o registro pivot (animal_event) para este animal+evento
+                        $animalEvent = AnimalEvent::where('animal_id', $state)
+                            ->where('event_id', $eventId)
+                            ->first();
+
+                        if ($animalEvent) {
+                            // busca maior lance aprovado (status = 1)
+                            $bid = Bid::where('animal_event_id', $animalEvent->id)
+                                ->where('status', 1)
+                                ->orderByDesc('amount')
+                                ->first();
+
+                            $current = $bid ? $bid->amount : ($animalEvent->min_value ?? 0);
+                        } else {
+                            // ainda não existe pivot: mostrar 0 (ou outra lógica se preferir)
+                            $current = 0;
+                        }
+
+                        $set('current_bid_display', 'R$ ' . number_format($current, 2, ',', '.'));
                     })
                     ->afterStateHydrated(function ($state, callable $set) {
-                        $animal = \App\Models\Animal::find($state);
+                        // mesma lógica ao hidratar (edição)
+                        $eventId = $this->ownerRecord->id ?? null;
 
-                        if ($animal) {
-                            $set('current_bid_display', 'R$ ' . number_format($animal->current_bid, 2, ',', '.'));
+                        if (! $state || ! $eventId) {
+                            $set('current_bid_display', 'R$ 0,00');
+                            return;
                         }
+
+                        $animalEvent = AnimalEvent::where('animal_id', $state)
+                            ->where('event_id', $eventId)
+                            ->first();
+
+                        if ($animalEvent) {
+                            $bid = Bid::where('animal_event_id', $animalEvent->id)
+                                ->where('status', 1)
+                                ->orderByDesc('amount')
+                                ->first();
+
+                            $current = $bid ? $bid->amount : ($animalEvent->min_value ?? 0);
+                        } else {
+                            $current = 0;
+                        }
+
+                        $set('current_bid_display', 'R$ ' . number_format($current, 2, ',', '.'));
                     })
                     ->columnSpanFull()
                     ->required(),
