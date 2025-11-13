@@ -199,6 +199,7 @@ class LotesRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('current_bid_display')
                     ->label('Lance atual')
+                    ->sortable(false)
                     ->getStateUsing(function ($record) {
                         // tenta pegar o ID do pivot (animal_event)
                         $animalEventId = $record->id ?? $record->pivot?->id;
