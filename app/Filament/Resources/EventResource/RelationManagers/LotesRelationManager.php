@@ -105,13 +105,13 @@ class LotesRelationManager extends RelationManager
                     ->debounce(1000)
                     ->nullable(),
 
-                TextInput::make('final_value')
-                    ->label('Valor Final')
-                    ->prefix('R$')
-                    ->numeric()
-                    ->live()
-                    ->debounce(1000)
-                    ->nullable(),
+                // TextInput::make('final_value')
+                //     ->label('Valor Final')
+                //     ->prefix('R$')
+                //     ->numeric()
+                //     ->live()
+                //     ->debounce(1000)
+                //     ->nullable(),
 
                 Select::make('status')
                     ->label('Status')
