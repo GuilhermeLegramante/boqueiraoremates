@@ -194,7 +194,8 @@ class LotesRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('min_value')
                     ->label('Lance Inicial')
-                    ->money('BRL'),
+                    ->money('BRL')
+                    ->alignRight(),
 
                 Tables\Columns\TextColumn::make('current_bid_display')
                     ->label('Lance atual')
