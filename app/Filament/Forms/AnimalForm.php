@@ -20,23 +20,29 @@ class AnimalForm
                 ->label(__('fields.name'))
                 ->required()
                 ->maxLength(255),
+
             Select::make('breed_id')
                 ->label(__('fields.breed'))
                 ->live()
                 ->options(\App\Models\Breed::pluck('name', 'id'))
                 ->createOptionForm(BreedForm::form()),
+
             Select::make('coat_id')
                 ->label(__('fields.coat'))
                 ->options(\App\Models\Coat::pluck('name', 'id'))
                 ->createOptionForm(CoatForm::form()),
+
             Select::make('animal_type_id')
                 ->label(__('fields.animal_type'))
                 ->options(\App\Models\AnimalType::pluck('name', 'id'))
                 ->createOptionForm(AnimalTypeForm::form()),
+
             TextInput::make('mother')
                 ->label(__('fields.mother')),
+
             TextInput::make('father')
                 ->label(__('fields.father')),
+
             Radio::make('gender')
                 ->label(__('fields.gender'))
                 ->live()
@@ -44,21 +50,24 @@ class AnimalForm
                     'male' => 'MACHO',
                     'female' => 'FÊMEA',
                 ]),
+
             TextInput::make('sbb')
                 ->label(__('fields.sbb'))
                 ->maxLength(7)
                 ->live()
                 ->nullable()
                 ->visible(fn(Get $get): bool => self::isCrioulo($get('breed_id'))),
+
             TextInput::make('rb')
                 ->live()
                 ->label(__('fields.rb'))
                 ->visible(fn(Get $get): bool => self::isCrioulo($get('breed_id'))),
+
             TextInput::make('register')
                 ->label(__('fields.register'))
-                ->numeric()
                 ->live()
                 ->visible(fn(Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
+
             Radio::make('blood_level')
                 ->label(__('fields.blood_level'))
                 ->live()
@@ -67,11 +76,13 @@ class AnimalForm
                     'mixed' => 'Mestiço',
                 ])
                 ->visible(fn(Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
+
             TextInput::make('blodd_percentual')
                 ->label(__('fields.blodd_percentual'))
                 ->live()
                 ->numeric()
                 ->visible(fn(Get $get): bool => $get('blood_level') == 'mixed'),
+
             Radio::make('breeding')
                 ->label(__('fields.breeding'))
                 ->live()
@@ -81,12 +92,15 @@ class AnimalForm
                     'castrated' => 'Castrado'
                 ])
                 ->visible(fn(Get $get): bool => $get('gender') == 'male'),
+
             TextInput::make('quantity')
                 ->label(__('fields.quantity'))
                 ->numeric(),
+
             DatePicker::make('birth_date')
                 ->maxDate(now())
                 ->label('Data de Nascimento'),
+
             TextInput::make('generation_link')
                 ->label('Link da Quinta Geração')
                 ->url() // valida como URL
