@@ -31,12 +31,6 @@ class LotesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                // Select::make('animal_id')
-                //     ->label('Animal')
-                //     ->options(Animal::all()->pluck('name', 'id'))
-                //     ->searchable()
-                //     ->columnSpanFull()
-                //     ->required(),
                 Select::make('animal_id')
                     ->label('Animal')
                     ->options(Animal::all()->pluck('name', 'id'))
@@ -146,14 +140,6 @@ class LotesRelationManager extends RelationManager
                     ->debounce(1000)
                     ->nullable(),
 
-                // TextInput::make('final_value')
-                //     ->label('Valor Final')
-                //     ->prefix('R$')
-                //     ->numeric()
-                //     ->live()
-                //     ->debounce(1000)
-                //     ->nullable(),
-
                 Select::make('status')
                     ->label('Status')
                     ->options([
@@ -179,12 +165,6 @@ class LotesRelationManager extends RelationManager
                 Tables\Columns\ImageColumn::make('photo')
                     ->label('Foto')
                     ->square(),
-
-                // Tables\Columns\TextColumn::make('name')
-                //     ->label('Animal')
-                //     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
-                //     ->searchable(query: fn($query, $search) => $query->where('animal_event.name', 'like', "%{$search}%")),
-
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Animal')
@@ -213,7 +193,7 @@ class LotesRelationManager extends RelationManager
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.lot_number', $direction)),
 
                 Tables\Columns\TextColumn::make('min_value')
-                    ->label('Lance Mínimo')
+                    ->label('Lance Inicial')
                     ->money('BRL'),
 
                 Tables\Columns\TextColumn::make('status')
