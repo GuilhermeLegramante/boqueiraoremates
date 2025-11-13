@@ -29,10 +29,33 @@ class LotesRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                // Select::make('animal_id')
+                //     ->label('Animal')
+                //     ->options(Animal::all()->pluck('name', 'id'))
+                //     ->searchable()
+                //     ->columnSpanFull()
+                //     ->required(),
                 Select::make('animal_id')
                     ->label('Animal')
                     ->options(Animal::all()->pluck('name', 'id'))
                     ->searchable()
+                    ->reactive() // 🔹 Torna o campo reativo
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $animal = \App\Models\Animal::find($state);
+
+                        if ($animal && isset($animal->current_bid)) {
+                            $set('current_bid_display', 'R$ ' . number_format($animal->current_bid, 2, ',', '.'));
+                        } else {
+                            $set('current_bid_display', 'R$ 0,00');
+                        }
+                    })
+                    ->afterStateHydrated(function ($state, callable $set) {
+                        $animal = \App\Models\Animal::find($state);
+
+                        if ($animal) {
+                            $set('current_bid_display', 'R$ ' . number_format($animal->current_bid, 2, ',', '.'));
+                        }
+                    })
                     ->columnSpanFull()
                     ->required(),
 
@@ -59,6 +82,12 @@ class LotesRelationManager extends RelationManager
                     ->live()
                     ->debounce(1000)
                     ->required(),
+
+                TextInput::make('current_bid_display')
+                    ->label('Lance atual')
+                    ->disabled()
+                    ->dehydrated(false) // 🔹 não salva no banco
+                    ->columnSpanFull(),
 
                 TextInput::make('increment_value')
                     ->label('Valor do Incremento')
