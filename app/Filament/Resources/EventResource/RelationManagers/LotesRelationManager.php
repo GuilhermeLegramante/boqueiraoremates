@@ -196,6 +196,26 @@ class LotesRelationManager extends RelationManager
                     ->label('Lance Inicial')
                     ->money('BRL'),
 
+                Tables\Columns\TextColumn::make('current_bid')
+                    ->label('Lance atual')
+                    ->formatStateUsing(function ($record) {
+                        // $record aqui é o registro do pivot (AnimalEvent)
+                        $animalEventId = $record->id;
+
+                        // busca o maior lance aprovado (status = 1)
+                        $bid = Bid::where('animal_event_id', $animalEventId)
+                            ->where('status', 1)
+                            ->orderByDesc('amount')
+                            ->first();
+
+                        $currentBid = $bid ? $bid->amount : ($record->min_value ?? 0);
+
+                        return 'R$ ' . number_format($currentBid, 2, ',', '.');
+                    })
+                    ->sortable(false)
+                    ->searchable(false)
+                    ->alignRight(),
+
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
