@@ -139,12 +139,14 @@
                                         R$ {{ number_format($animal->current_bid ?? 0, 2, ',', '.') }}
                                     </p>
                                 </div>
+
                                 <div class="bg-[#003333] shadow-lg rounded-lg p-4">
                                     <p class="text-green-300">Próximo lance mínimo</p>
                                     <p class="text-xl font-bold text-white">
                                         R$ {{ number_format($animal->next_bid ?? 0, 2, ',', '.') }}
                                     </p>
                                 </div>
+
                                 <div class="bg-[#003333] shadow-lg rounded-lg p-4">
                                     <p class="text-green-300">Lance-alvo</p>
                                     @if ($animal->pivot->target_value && $animal->pivot->target_value != '0.00')
@@ -157,18 +159,21 @@
                                 </div>
                             </div>
 
+                            {{-- Usuário logado --}}
                             @auth
-                                @if ($animal->pivot->status === 'disponivel' || $event->closed)
-                                    @php
-                                        $client = Auth::user()->client;
-                                        // dd($client);
-                                    @endphp
+                                @php
+                                    $client = Auth::user()->client;
+                                @endphp
 
-                                    @if ($client && $client->situation === 'able' && !$event->closed)
-                                        {{-- ✅ FORMULÁRIO DE LANCE --}}
+                                {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
+                                @if ($animal->pivot->status === 'disponivel' && !$event->closed)
+                                    {{-- Cliente está apto --}}
+                                    @if ($client && $client->situation === 'able')
+                                        {{-- FORMULÁRIO DE LANCE --}}
                                         <form action="{{ route('bids.store') }}" method="POST" class="space-y-4"
                                             id="bidForm">
                                             @csrf
+
                                             <input type="hidden" name="event_id" value="{{ $event->id }}">
                                             <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
 
@@ -181,8 +186,9 @@
                                             </div>
 
                                             <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
-                                                O valor do lance não pode ser menor que o lance mínimo (R$
-                                                {{ number_format($animal->next_bid, 2, ',', '.') }}).
+                                                O valor do lance não pode ser menor que o lance mínimo
+                                                (R$ {{ number_format($animal->next_bid, 2, ',', '.') }})
+                                                .
                                             </p>
 
                                             <button type="submit"
@@ -193,11 +199,7 @@
 
                                         @include('site.animals.bid-modal')
                                     @else
-                                        {{-- ⚠️ CLIENTE NÃO HABILITADO --}}
-                                        {{-- <div
-                                        class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-                                        <p class="font-semibold">⚠️ Sua conta precisa estar habilitada para dar lances.</p>
-                                    </div> --}}
+                                        {{-- Cliente não apto --}}
                                         <div
                                             class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
                                             <p class="font-semibold">⚠️ Para dar lance, você precisa estar logado.</p>
@@ -207,26 +209,29 @@
                                                     Criar cadastro </a> </p>
                                         </div>
                                     @endif
-                                @endauth
-
-                                @guest
-                                    {{-- ⚠️ NÃO LOGADO --}}
+                                @else
+                                    {{-- Animal não disponível para lance --}}
                                     <div
                                         class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-                                        <p class="font-semibold">⚠️ Você deve estar logado para dar lances.</p>
-                                        <a href="{{ route('login') }}"
-                                            class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
-                                            Clique aqui para logar
-                                        </a>
+                                        <p class="font-semibold">⚠️ Este lote não está disponível para lance.</p>
                                     </div>
-                                @endguest
-                            @else
-                                {{-- ⚠️ LOTE INDISPONÍVEL --}}
-                                <div class="bg-gray-700 text-gray-300 p-4 rounded-lg text-center">
-                                    <p class="font-semibold text-lg">⚠️ Este lote não está disponível para lances.</p>
+                                @endif
+                            @endauth
+
+                            {{-- Visitante --}}
+                            @guest
+                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+                                    <p class="font-semibold">⚠️ Você deve estar logado para dar lances.</p>
+                                    <a href="{{ route('login') }}"
+                                        class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
+                                        Clique aqui para logar
+                                    </a>
                                 </div>
-                            @endif
+                            @endguest
+
+                        </div>
                     @endif
+
 
                 </div>
 
