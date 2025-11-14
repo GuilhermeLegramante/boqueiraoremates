@@ -20,7 +20,9 @@ class UnpublishOldEvents extends Command
             ->where('finish_date', '<', $now->subHours(5))
             ->update(['published' => false]);
 
-        Log::info("Comando events:unpublish-old executado. {$count} evento(s) despublicado(s).");
+        if ($count > 0) {
+            Log::info("Comando events:unpublish-old executado. {$count} evento(s) despublicado(s).");
+        }
 
         $this->info("{$count} evento(s) despublicado(s).");
     }
