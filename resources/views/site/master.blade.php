@@ -18,9 +18,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-v2QYF7y5rWq3JyZrR3fY+tRj+y0TmX1UyE1y7ZpXsK2eHqKZ7bZ5jXkOqjP3kTmFQHxgKXk1v1kMGG0zW0X/A=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
+
+        {{-- CDN sem integrity pra não dar erro devido à instabilidade da Cloudflare --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        crossorigin="anonymous">
 
     @stack('styles') {{-- para estilos extras em páginas específicas --}}
 </head>
