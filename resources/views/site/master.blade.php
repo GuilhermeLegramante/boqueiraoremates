@@ -23,7 +23,8 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
 
     {{-- CDN sem integrity pra não dar erro devido à instabilidade da Cloudflare --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/fontawesome/all.min.css') }}">
+
 
 
     @stack('styles') {{-- para estilos extras em páginas específicas --}}
