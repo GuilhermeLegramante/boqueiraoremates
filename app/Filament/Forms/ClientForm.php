@@ -111,7 +111,9 @@ class ClientForm
                     Fieldset::make('Filiação')
                         ->schema([
                             TextInput::make('mother')
+                                ->required()
                                 ->label(__('fields.mother')),
+
                             TextInput::make('father')
                                 ->label(__('fields.father')),
                         ])
@@ -361,7 +363,7 @@ class ClientForm
             TextInput::make('rg')
                 ->label(__('fields.rg'))
                 ->numeric(),
-                
+
             DatePicker::make('birth_date')
                 ->label('Data de Nascimento')
                 ->required()
@@ -394,40 +396,28 @@ class ClientForm
                         : null
                 ),
 
-
-            // TextInput::make('income')
-            //     ->label('Renda')
-            //     ->prefix('R$')
-            //     ->numeric()
-            //     ->rule('decimal:0,2')
-            //     ->formatStateUsing(
-            //         fn($state) => $state !== null
-            //             ? number_format($state, 2, ',', '.')
-            //             : null
-            //     )
-            //     ->dehydrateStateUsing(
-            //         fn($state) => $state !== null
-            //             ? (float) str_replace(['.', ','], ['', '.'], $state)
-            //             : null
-            //     )
-            //     ->live(onBlur: true)
-            //     ->suffixIcon('heroicon-o-currency-dollar'),
-
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
                 ->required()
                 ->format('(99) 99999-9999'),
+
             PhoneNumber::make('cel_phone')
                 ->label(__('fields.cel_phone'))
                 ->required()
                 ->format('(99) 99999-9999'),
+
             PhoneNumber::make('business_phone')
                 ->label(__('fields.business_phone'))
                 ->format('(99) 99999-9999'),
+
             PhoneNumber::make('home_phone')
                 ->label(__('fields.home_phone'))
                 ->format('(99) 99999-9999'),
-            TextInput::make('mother')->label(__('fields.mother')),
+
+            TextInput::make('mother')
+                ->label(__('fields.mother'))
+                ->required(),
+
             TextInput::make('father')->label(__('fields.father')),
             // Novos campos de redes sociais
 
@@ -482,16 +472,23 @@ class ClientForm
                 ->label(__('fields.bank'))
                 ->options(Bank::pluck('name', 'id')->toArray())
                 ->preload(),
+
             TextInput::make('bank_agency')->label(__('fields.bank_agency')),
+
             TextInput::make('current_account')->label(__('fields.current_account')),
+
             Toggle::make('has_register_in_another_auctioneer')->label(__('fields.has_register_in_another_auctioneer')),
+
             TextInput::make('auctioneer')->label(__('fields.auctioneer')),
+
             FileUpload::make('cnh_rg')
                 ->label('Cópia da CNH ou RG')
                 ->directory('documents'),
+
             FileUpload::make('document_income')
                 ->label('Comprovante de Renda')
                 ->directory('documents'),
+
             FileUpload::make('document_residence')
                 ->label('Comprovante de Residência')
                 ->directory('documents'),
