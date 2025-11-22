@@ -41,7 +41,13 @@
             <tr style="font-size: 11px;">
                 <td class="collumn-left"><strong>Estabelecimento:</strong> {{ $client->establishment }}</td>
                 <td class="collumn-right">
-                    <strong>Renda:</strong> {{ 'R$ ' . number_format($client->income, 2, ',', '.') }}
+                    <strong>Renda:</strong>
+
+                    @if (empty($client->income_range))
+                        {{ 'R$ ' . number_format($client->income, 2, ',', '.') }}
+                    @else
+                        {{ config('income.ranges')[$client->income_range] ?? '' }}
+                    @endif
                 </td>
             </tr>
             <tr class="bg-light" style="font-size: 11px;">

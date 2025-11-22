@@ -78,7 +78,14 @@ class ClientForm
                                 ->live()
                                 ->debounce(1000)
                                 ->columnSpan(2)
-                                ->label(__('fields.income')),
+                                ->label(__('fields.income'))
+                                ->hidden(fn(callable $get) => filled($get('income_range'))),
+
+                            Select::make('income_range')
+                                ->label('Faixa de Renda (IBGE)')
+                                ->options(config('income.ranges'))
+                                ->native(false)
+                                ->required(),
 
                             TextInput::make('instagram')
                                 ->label('Instagram')
@@ -139,26 +146,7 @@ class ClientForm
                         ->schema([
                             Cep::make('postal_code')
                                 ->label(__('fields.cep')),
-                            // ->live(onBlur: true)
-                            // ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                            //     // Força os campos preenchidos via ViaCEP a ficarem em MAIÚSCULAS
-                            //     $set('street', strtoupper((string) $get('street')));
-                            //     $set('district', strtoupper((string) $get('district')));
-                            //     $set('city', strtoupper((string) $get('city')));
-                            //     $set('state', strtoupper((string) $get('state')));
-                            // })
-                            // ->viaCep(
-                            //     mode: 'suffix',
-                            //     errorMessage: 'CEP inválido.',
-                            //     setFields: [
-                            //         'street' => 'logradouro',
-                            //         'number' => 'numero',
-                            //         'complement' => 'complemento',
-                            //         'district' => 'bairro',
-                            //         'city' => 'localidade',
-                            //         'state' => 'uf',
-                            //     ]
-                            // ),
+
                             TextInput::make('street')
                                 ->label(__('fields.street'))
                                 ->columnSpan(1)
@@ -190,13 +178,50 @@ class ClientForm
                                 ->afterStateUpdated(fn($state, callable $set) => $set('city', strtoupper($state)))
                                 ->extraAttributes(['style' => 'text-transform: uppercase;']),
 
-                            TextInput::make('state')
+                            // TextInput::make('state')
+                            //     ->label(__('fields.state'))
+                            //     ->required()
+                            //     ->maxLength(2)
+                            //     ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
+                            //     ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
+                            //     ->helperText('Informe apenas duas letras do estado'),
+                            Select::make('state')
                                 ->label(__('fields.state'))
                                 ->required()
-                                ->maxLength(2)
-                                ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
-                                ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
-                                ->helperText('Informe apenas duas letras do estado'),
+                                ->options([
+                                    'RS' => 'RS - Rio Grande do Sul',
+                                    'SC' => 'SC - Santa Catarina',
+                                    'PR' => 'PR - Paraná',
+
+                                    // demais estados em ordem alfabética
+                                    'AC' => 'AC - Acre',
+                                    'AL' => 'AL - Alagoas',
+                                    'AM' => 'AM - Amazonas',
+                                    'AP' => 'AP - Amapá',
+                                    'BA' => 'BA - Bahia',
+                                    'CE' => 'CE - Ceará',
+                                    'DF' => 'DF - Distrito Federal',
+                                    'ES' => 'ES - Espírito Santo',
+                                    'GO' => 'GO - Goiás',
+                                    'MA' => 'MA - Maranhão',
+                                    'MG' => 'MG - Minas Gerais',
+                                    'MS' => 'MS - Mato Grosso do Sul',
+                                    'MT' => 'MT - Mato Grosso',
+                                    'PA' => 'PA - Pará',
+                                    'PB' => 'PB - Paraíba',
+                                    'PE' => 'PE - Pernambuco',
+                                    'PI' => 'PI - Piauí',
+                                    'RJ' => 'RJ - Rio de Janeiro',
+                                    'RN' => 'RN - Rio Grande do Norte',
+                                    'RO' => 'RO - Rondônia',
+                                    'RR' => 'RR - Roraima',
+                                    'SE' => 'SE - Sergipe',
+                                    'SP' => 'SP - São Paulo',
+                                    'TO' => 'TO - Tocantins',
+                                ])
+                                ->native(false)
+                                ->searchable() // deixa melhor para o usuário
+                                ->helperText('Selecione o estado brasileiro'),
 
                         ])
                         ->columns(4),
@@ -386,15 +411,20 @@ class ClientForm
                 ->label(__('fields.note_occupation')),
 
             // TextInput::make('income')->numeric()->label(__('fields.income')),
-            Money::make('income')
-                ->label('Renda')
-                ->prefix('R$ ')
-                ->live(false)
-                ->dehydrateStateUsing(
-                    fn($state) => $state !== null
-                        ? (float) str_replace(['.', ','], ['', '.'], $state)
-                        : null
-                ),
+            // Money::make('income')
+            //     ->label('Renda')
+            //     ->prefix('R$ ')
+            //     ->live(false)
+            //     ->dehydrateStateUsing(
+            //         fn($state) => $state !== null
+            //             ? (float) str_replace(['.', ','], ['', '.'], $state)
+            //             : null
+            //     ),
+            Select::make('income_range')
+                ->label('Faixa de Renda (IBGE)')
+                ->options(config('income.ranges'))
+                ->native(false)
+                ->required(),
 
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
@@ -455,13 +485,51 @@ class ClientForm
             TextInput::make('district')->required()->label(__('fields.district'))->afterStateUpdated(fn($state, $set) => $set('district', strtoupper($state))),
             TextInput::make('city')->required()->label(__('fields.city'))->afterStateUpdated(fn($state, $set) => $set('city', strtoupper($state))),
 
-            TextInput::make('state')
+            // TextInput::make('state')
+            //     ->label(__('fields.state'))
+            //     ->required()
+            //     ->maxLength(2)
+            //     ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
+            //     ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
+            //     ->helperText('Informe apenas duas letras do estado'),
+            Select::make('state')
                 ->label(__('fields.state'))
                 ->required()
-                ->maxLength(2)
-                ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
-                ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
-                ->helperText('Informe apenas duas letras do estado'),
+                ->options([
+                    'RS' => 'RS - Rio Grande do Sul',
+                    'SC' => 'SC - Santa Catarina',
+                    'PR' => 'PR - Paraná',
+
+                    // demais estados em ordem alfabética
+                    'AC' => 'AC - Acre',
+                    'AL' => 'AL - Alagoas',
+                    'AM' => 'AM - Amazonas',
+                    'AP' => 'AP - Amapá',
+                    'BA' => 'BA - Bahia',
+                    'CE' => 'CE - Ceará',
+                    'DF' => 'DF - Distrito Federal',
+                    'ES' => 'ES - Espírito Santo',
+                    'GO' => 'GO - Goiás',
+                    'MA' => 'MA - Maranhão',
+                    'MG' => 'MG - Minas Gerais',
+                    'MS' => 'MS - Mato Grosso do Sul',
+                    'MT' => 'MT - Mato Grosso',
+                    'PA' => 'PA - Pará',
+                    'PB' => 'PB - Paraíba',
+                    'PE' => 'PE - Pernambuco',
+                    'PI' => 'PI - Piauí',
+                    'RJ' => 'RJ - Rio de Janeiro',
+                    'RN' => 'RN - Rio Grande do Norte',
+                    'RO' => 'RO - Rondônia',
+                    'RR' => 'RR - Roraima',
+                    'SE' => 'SE - Sergipe',
+                    'SP' => 'SP - São Paulo',
+                    'TO' => 'TO - Tocantins',
+                ])
+                ->native(false)
+                ->searchable() // deixa melhor para o usuário
+                ->helperText('Selecione o estado brasileiro'),
+
         ];
     }
 

@@ -50,6 +50,7 @@ class Client extends Model
         'inscricaoestadual',
         'instagram',
         'facebook',
+        'income_range',
     ];
 
     protected $casts = [
