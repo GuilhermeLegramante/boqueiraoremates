@@ -55,7 +55,7 @@ class ImportAnimals extends Page
                         'xl' => 2,
                         '2xl' => 2,
                     ])
-                    ->description('Envie um arquivo .csv com os dados nessa ordem: Nome do Animal, Raça, Pelagem, Tipo do Animal, Mãe, Pai, Sexo, SBB, RP, Data de Nascimento')
+                    ->description('Envie um arquivo .csv com os dados nessa ordem: Nome do Animal, Raça, Pelagem, Tipo do Animal, Mãe, Pai, Sexo, SBB, RP, Data de Nascimento e Link da Quinta Geração')
                     ->schema([
                         FileUpload::make('file')
                             ->label('Arquivo')
@@ -93,6 +93,7 @@ class ImportAnimals extends Page
                     $gender = trim($data[6]);
                     $sbb = trim($data[7]);
                     $rb = trim($data[8]);
+                    $generationLink = trim($data[10]);
 
                     $exploitBirthDate = explode('/', trim($data[9]));
                     $day = $exploitBirthDate[0];
@@ -130,6 +131,7 @@ class ImportAnimals extends Page
                             'mother' => $mother,
                             'father' => $father,
                             'birth_date' => $birthDate,
+                            'generation_link' => $generationLink,
                         ]
                     );
                 }
