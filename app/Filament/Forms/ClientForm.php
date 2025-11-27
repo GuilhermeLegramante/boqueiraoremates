@@ -69,23 +69,25 @@ class ClientForm
 
                             TextInput::make('note_occupation')
                                 ->label(__('fields.note_occupation')),
-                            // TextInput::make('income')->numeric()->label(__('fields.income')),
+
+                            TextInput::make('income')->numeric()->label(__('fields.income')),
+
                             // Money::make('income')->label(__('fields.income')),
 
-                            TextInput::make('income')
-                                ->prefix('R$')
-                                ->numeric()
-                                ->live()
-                                ->debounce(1000)
-                                ->columnSpan(2)
-                                ->label(__('fields.income'))
-                                ->hidden(fn(callable $get) => filled($get('income_range'))),
+                            // TextInput::make('income')
+                            //     ->prefix('R$')
+                            //     ->numeric()
+                            //     ->live()
+                            //     ->debounce(1000)
+                            //     ->columnSpan(2)
+                            //     ->label(__('fields.income'))
+                            //     ->hidden(fn(callable $get) => filled($get('income_range'))),
 
-                            Select::make('income_range')
-                                ->label('Faixa de Renda (IBGE)')
-                                ->options(config('income.ranges'))
-                                ->native(false)
-                                ->required(),
+                            // Select::make('income_range')
+                            //     ->label('Faixa de Renda (IBGE)')
+                            //     ->options(config('income.ranges'))
+                            //     ->native(false)
+                            //     ->required(),
 
                             TextInput::make('instagram')
                                 ->label('Instagram')
@@ -391,7 +393,8 @@ class ClientForm
 
             DatePicker::make('birth_date')
                 ->label('Data de Nascimento')
-                ->required()
+                // ->required()
+                ->native(false)
                 ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
                 ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
 
@@ -410,7 +413,8 @@ class ClientForm
             TextInput::make('note_occupation')
                 ->label(__('fields.note_occupation')),
 
-            // TextInput::make('income')->numeric()->label(__('fields.income')),
+            TextInput::make('income')->numeric()->label(__('fields.income')),
+
             // Money::make('income')
             //     ->label('Renda')
             //     ->prefix('R$ ')
@@ -420,11 +424,11 @@ class ClientForm
             //             ? (float) str_replace(['.', ','], ['', '.'], $state)
             //             : null
             //     ),
-            Select::make('income_range')
-                ->label('Faixa de Renda (IBGE)')
-                ->options(config('income.ranges'))
-                ->native(false)
-                ->required(),
+            // Select::make('income_range')
+            //     ->label('Faixa de Renda (IBGE)')
+            //     ->options(config('income.ranges'))
+            //     ->native(false)
+            //     ->required(),
 
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
