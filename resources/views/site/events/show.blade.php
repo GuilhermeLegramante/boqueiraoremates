@@ -110,11 +110,14 @@
                                         PRÉ-LANCE ENCERRADO
                                     </div>
                                     @if (floatval($animal->current_bid) > 0)
-                                        <span>Lance Atual:</span>
-                                        <span
-                                            class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                            R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                        </span>
+                                        <div
+                                            class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
+                                            <span>Lance Atual:</span>
+                                            <span
+                                                class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                            </span>
+                                        </div>
                                     @endif
                                 @else
                                     <div
