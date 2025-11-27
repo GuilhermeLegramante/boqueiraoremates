@@ -48,11 +48,43 @@ class ClientForm
                                 ->label(__('fields.email'))
                                 ->required()
                                 ->email(),
-                            DatePicker::make('birth_date')
+
+                            // DatePicker::make('birth_date')
+                            //     ->label('Data de Nascimento')
+                            //     ->required()
+                            //     ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
+                            //     ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
+                            TextInput::make('birth_date')
                                 ->label('Data de Nascimento')
+                                ->mask('99/99/9999')
+                                ->placeholder('dd/mm/aaaa')
                                 ->required()
-                                ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
-                                ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
+                                ->rule('date_format:d/m/Y')
+                                ->rule(function () {
+                                    return function (string $attribute, $value, $fail) {
+                                        try {
+                                            $data = \Carbon\Carbon::createFromFormat('d/m/Y', $value);
+                                        } catch (\Exception $e) {
+                                            return $fail('Data inválida.');
+                                        }
+
+                                        if ($data->greaterThan(now()->subYears(18))) {
+                                            $fail('É necessário ter pelo menos 18 anos.');
+                                        }
+                                    };
+                                })
+                                ->formatStateUsing(
+                                    fn($state) =>
+                                    $state
+                                        ? \Carbon\Carbon::parse($state)->format('d/m/Y')
+                                        : null
+                                )
+                                ->dehydrateStateUsing(
+                                    fn($state) =>
+                                    $state
+                                        ? \Carbon\Carbon::createFromFormat('d/m/Y', $state)->format('Y-m-d')
+                                        : null
+                                ),
 
                             Radio::make('gender')
                                 ->label(__('fields.gender'))
