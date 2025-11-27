@@ -398,7 +398,7 @@ class ClientForm
             //     ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
             //     ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
 
-            TextInput::make('data_nascimento')
+            TextInput::make('birth_date')
                 ->label('Data de Nascimento')
                 ->mask('99/99/9999')
                 ->placeholder('dd/mm/aaaa')
