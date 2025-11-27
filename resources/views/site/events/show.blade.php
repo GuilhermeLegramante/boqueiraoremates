@@ -109,6 +109,13 @@
                                         class="text-center text-gray-300 font-bold text-md mb-4 min-h-[60px] flex items-center justify-center">
                                         PRÉ-LANCE ENCERRADO
                                     </div>
+                                    @if (floatval($animal->current_bid) > 0)
+                                        <span>Lance Atual:</span>
+                                        <span
+                                            class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                            R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                        </span>
+                                    @endif
                                 @else
                                     <div
                                         class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
@@ -172,7 +179,6 @@
                     Este evento ainda não possui lotes cadastrados.
                 </p>
             @endif
-
         @else
             <p class="text-center text-gray-300 text-lg mt-10">
                 Os lotes deste evento ainda não estão disponíveis para exibição.
