@@ -57,6 +57,7 @@ class ClientResource extends Resource
                 TextColumn::make('id')
                     ->label(__('fields.code'))
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('name')
                     ->label('Nome')
                     ->getStateUsing(function ($record) {
@@ -64,24 +65,31 @@ class ClientResource extends Resource
                     })
                     ->searchable()
                     ->sortable()
-                    ->url(function ($record) {
-                        return route('client-details-pdf', $record->id);
-                    })
-                    ->openUrlInNewTab()
-                    ->color('info')
-                    ->icon('heroicon-o-document-text')
+                    ->copyable()
+                    // ->url(function ($record) {
+                    //     return route('client-details-pdf', $record->id);
+                    // })
+                    // ->openUrlInNewTab()
+                    // ->color('info')
+                    // ->icon('heroicon-o-document-text')
                     ->sortable(),
+
                 TextColumn::make('cpf_cnpj')
                     ->label(__('fields.cpf_cnpj'))
+                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+
                 // TextColumn::make('name')
                 //     ->label(__('fields.name'))
                 //     ->searchable(),
+
                 TextColumn::make('email')
                     ->label(__('fields.email'))
+                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->icon('heroicon-m-envelope'),
+
                 TextColumn::make('situation')
                     ->label(__('fields.situation'))
                     ->toggleable(isToggledHiddenByDefault: true)
@@ -95,6 +103,7 @@ class ClientResource extends Resource
                         'disabled' => 'warning',
                         'inactive' => 'danger',
                     }),
+
                 TextColumn::make('register_origin')
                     ->label(__('fields.register_origin'))
                     ->alignment(Alignment::Center)
@@ -108,6 +117,7 @@ class ClientResource extends Resource
                         'local' => 'gray',
                         'site' => 'primary',
                     }),
+
                 TextColumn::make('profile')
                     ->label(__('fields.profile'))
                     ->alignment(Alignment::Center)
@@ -121,27 +131,42 @@ class ClientResource extends Resource
                         'sale' => 'gray',
                         'both' => 'success',
                     }),
+
                 TextColumn::make('whatsapp')
                     ->label('Whatsapp')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('cel_phone')
                     ->label('Celular')
                     ->searchable()
+                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('business_phone')
                     ->label('Tel. Comercial')
                     ->searchable()
+                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('home_phone')
                     ->label('Tel. Res.')
                     ->searchable()
+                    ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                  TextColumn::make('address.city')
+                    ->label('Cidade')
+                    ->searchable()
+                    ->copyable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('created_at')
                     ->label(__('fields.created_at'))
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('updated_at')
                     ->label(__('fields.updated_at'))
                     ->dateTime()
@@ -156,6 +181,7 @@ class ClientResource extends Resource
                         'disabled' => 'Inabilitado',
                         'inactive' => 'Inativo'
                     ]),
+
                 SelectFilter::make('register_origin')
                     ->label(__('fields.register_origin'))
                     ->options([
@@ -163,6 +189,7 @@ class ClientResource extends Resource
                         'local' => 'Recinto',
                         'site' => 'Site'
                     ]),
+
                 SelectFilter::make('profile')
                     ->label(__('fields.profile'))
                     ->options([
