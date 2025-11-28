@@ -49,6 +49,15 @@ class BidResource extends Resource
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Action::make('report')
+                        ->label('Ficha')
+                        ->icon('heroicon-o-document-text')
+                        ->color('info')
+                        ->url(function ($record) {
+                            $client = $record->user?->client;
+                            return $client ? route('client-details-pdf', $client->id) : null;
+                        })->openUrlInNewTab(),
+
                     // Aprovar
                     Tables\Actions\Action::make('aprovar')
                         ->label('Aprovar')

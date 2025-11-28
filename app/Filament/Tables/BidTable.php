@@ -23,13 +23,13 @@ class BidTable
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->name ?? '—';
                 })
-                ->url(function ($record) {
-                    $client = $record->user?->client;
-                    return $client ? route('client-details-pdf', $client->id) : null;
-                })
-                ->openUrlInNewTab()
-                ->color('info')
-                ->icon('heroicon-o-document-text')
+                // ->url(function ($record) {
+                //     $client = $record->user?->client;
+                //     return $client ? route('client-details-pdf', $client->id) : null;
+                // })
+                // ->openUrlInNewTab()
+                // ->color('info')
+                // ->icon('heroicon-o-document-text')
                 ->sortable(),
 
             TextColumn::make('event.name')
