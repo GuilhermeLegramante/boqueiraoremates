@@ -20,6 +20,7 @@ class BidTable
 
             TextColumn::make('client_name')
                 ->label('Cliente')
+                ->copyable()
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->name ?? '—';
                 })
