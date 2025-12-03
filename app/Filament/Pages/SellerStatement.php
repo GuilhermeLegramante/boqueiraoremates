@@ -18,6 +18,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -221,6 +222,18 @@ class SellerStatement extends Page
                     ->visible(fn(callable $get) => !empty($get('seller_id')))
                     ->columns(3)
                     ->columnSpanFull(),
+
+                Section::make('Inoformações Adicionais')
+                    ->schema([
+                        Textarea::make('note')
+                            ->label('Observações')
+                            ->rows(5)
+                            ->reactive()
+                            ->columnSpanFull(),
+                    ])
+                    ->reactive()
+                    ->visible(fn(callable $get) => !empty($get('seller_id')))
+                    ->columnSpanFull(),
             ])
             ->statePath('data');
     }
@@ -274,12 +287,18 @@ class SellerStatement extends Page
                 'value' => $item->amount,
             ])->values()->toArray();
 
+            $note = DB::table('event_seller_notes')
+                ->where('event_id', $eventId)
+                ->where('seller_id', $sellerId)
+                ->first();
+
             $this->form->fill([
                 'event_id' => $eventId,
                 'seller_id' => $sellerId,
                 'additional_earnings' => $earnings,
                 'additional_discounts' => $discounts,
                 'total_earnings_01' => $receivedTotal,
+                'note' => optional($note)->note, // evita erro se null
             ]);
 
             if (empty($earnings) && empty($discounts)) {
@@ -298,6 +317,7 @@ class SellerStatement extends Page
 
         $eventId = $data['event_id'] ?? null;
         $sellerId = $data['seller_id'] ?? null;
+        $note = $data['note'] ?? null;
 
         if (!$eventId || !$sellerId) {
             Notification::make()
@@ -335,6 +355,19 @@ class SellerStatement extends Page
                     'type'        => 'discount',
                 ]);
             }
+
+            // Insere ou atualiza as observações
+            DB::table('event_seller_notes')->updateOrInsert(
+                [
+                    'event_id' => $eventId,
+                    'seller_id' => $sellerId,
+                ],
+                [
+                    'note' => $note,
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
 
             Notification::make()
                 ->title('Sucesso!')
