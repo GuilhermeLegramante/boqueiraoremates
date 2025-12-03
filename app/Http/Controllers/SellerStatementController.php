@@ -17,6 +17,11 @@ class SellerStatementController extends Controller
         $event = Event::find($request->query('eventId'));
         $seller = Client::find($request->query('sellerId'));
 
+        $note = DB::table('event_seller_notes')
+            ->where('event_id', $request->query('eventId'))
+            ->where('seller_id', $request->query('sellerId'))
+            ->first();
+
         $orders = Order::where('event_id', $event->id)
             ->with(['animal', 'seller', 'seller.address'])
             ->whereHas('seller', fn($query) => $query->where('id', $seller->id))
@@ -76,6 +81,7 @@ class SellerStatementController extends Controller
             'earnings' => $earnings,
             'discounts' => $discounts,
             'event' => $event,
+            'note' => optional($note)->note,
         ];
 
         return ReportFactory::getBasicPdf('landscape', 'reports.seller-statement', $args, $fileName);

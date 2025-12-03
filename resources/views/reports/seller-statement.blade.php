@@ -166,6 +166,10 @@
                     <td style="text-align: left;"><strong>Multiplicador:</strong></td>
                     <td>{{ $event->multiplier ?? '-' }}</td>
                 </tr>
+                <tr>
+                    <td style="width: 10%; text-align: left;"><strong>Observações:</strong></td>
+                    <td>{{ $note }}</td>
+                </tr>
                 {{-- <tr>
                     <td style="text-align: left;"><strong>Parcelas:</strong></td>
                     <td colspan="3">
