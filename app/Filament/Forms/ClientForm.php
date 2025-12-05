@@ -477,17 +477,12 @@ class ClientForm
             TextInput::make('note_occupation')
                 ->label(__('fields.note_occupation')),
 
-            TextInput::make('income')->numeric()->label(__('fields.income')),
+            // TextInput::make('income')->numeric()->label(__('fields.income')),
 
-            // Money::make('income')
-            //     ->label('Renda')
-            //     ->prefix('R$ ')
-            //     ->live(false)
-            //     ->dehydrateStateUsing(
-            //         fn($state) => $state !== null
-            //             ? (float) str_replace(['.', ','], ['', '.'], $state)
-            //             : null
-            //     ),
+            Money::make('income')
+                ->label('Renda')
+                ->prefix('R$ '),
+                
             // Select::make('income_range')
             //     ->label('Faixa de Renda (IBGE)')
             //     ->options(config('income.ranges'))
