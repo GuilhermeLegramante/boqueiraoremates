@@ -59,7 +59,8 @@ class Event extends Model
                 'note',
                 'video_link',
             ])
-            ->withTimestamps();
+            ->withTimestamps()
+            ->orderBy('animal_event.lot_number');
     }
 
     public function lotes()
