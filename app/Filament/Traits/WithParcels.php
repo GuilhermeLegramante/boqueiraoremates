@@ -37,7 +37,7 @@ trait WithParcels
     public $parcelsQuantity;
 
 
-    public function resolveParcels(): void
+    public function resolveParcels_OLD(): void
     {
         $data = $this->form->getState();
 
@@ -81,6 +81,7 @@ trait WithParcels
                     $parcelCounter++;
                     $parcel['ord'] = $parcelCounter . '-' . $parcels + $parcelCounter - 1 . '/' . $this->parcelsQuantity; // Ex: 1-2/50 , 1-3/50, etc.
                 }
+
 
                 $parcelValue = floatval($data['parcel_value']) * intval($parcelsParts[$i]);
                 $this->values[$i] = number_format($parcelValue, 2);
@@ -137,6 +138,7 @@ trait WithParcels
             array_push($this->parcels, $parcel);
         }
 
+
         /*
          Remover parcelas "do meio" em caso de parcelamento múltiplo ex. 2+2+8, 
          */
@@ -161,43 +163,142 @@ trait WithParcels
         $this->adjustMonths();
     }
 
+    public function resolveParcels(): void
+    {
+        $data = $this->form->getState();
+
+        // Data base
+        [$year, $month, $day] = array_map('intval', explode('-', $data['first_due_date']));
+
+        $paymentWay = PaymentWay::find($data['payment_way_id']);
+        $groups = array_map('intval', explode('+', $paymentWay->name));
+
+        $totalParcels = array_sum($groups);
+
+        // Inicializações
+        $this->parcels       = [];
+        $this->values        = [];
+        $this->parcelsDates  = [];
+        $this->sum           = 0;
+
+        $currentParcel = 1;
+
+        foreach ($groups as $groupSize) {
+
+            $shouldAggregate = $groupSize > 1 && $groupSize < 10;
+
+            // 🔹 AGRUPAMENTO VISUAL
+            if ($shouldAggregate) {
+
+                $start = $currentParcel;
+                $end   = $currentParcel + $groupSize - 1;
+
+                $ord = ($currentParcel === 1)
+                    ? "1/{$totalParcels} (Ent.)"
+                    : "{$start}-{$end}/{$totalParcels}";
+
+                $this->pushParcel(
+                    $ord,
+                    $year,
+                    $month,
+                    $day,
+                    $data['parcel_value'] * $groupSize
+                );
+
+                $currentParcel += $groupSize;
+            } else {
+
+                // 🔹 PARCELA A PARCELA
+                for ($i = 0; $i < $groupSize; $i++) {
+
+                    $ord = ($currentParcel === 1)
+                        ? "1/{$totalParcels} (Ent.)"
+                        : "{$currentParcel}/{$totalParcels}";
+
+                    $this->pushParcel(
+                        $ord,
+                        $year,
+                        $month,
+                        $day,
+                        $data['parcel_value']
+                    );
+
+                    $currentParcel++;
+                }
+            }
+        }
+
+        // Ajusta datas inválidas (fevereiro, etc.)
+        $this->adjustMonths();
+
+        $this->showParcels = true;
+    }
+
+    private function pushParcel(string $ord, int &$year, int &$month, int $day, float $value): void
+    {
+        $date = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
+
+        $this->parcels[] = [
+            'ord'  => $ord,
+            'date' => $date,
+        ];
+
+        $this->parcelsDates[] = $date;
+        $this->values[]       = number_format($value, 2);
+        $this->sum           += $value;
+
+        // Avança mês (1 vencimento = 1 mês)
+        if ($month < 12) {
+            $month++;
+        } else {
+            $month = 1;
+            $year++;
+        }
+    }
+
+
+
     /**
      * Para casos de parcelas agrupadas Ex. 2+2+46
      * Precisa corrigir os meses para que não "salte" nenhum
      */
-    private function adjustMonths()
+    private function adjustMonths(): void
     {
+        if (empty($this->parcelsDates)) {
+            return;
+        }
+
         $newParcelsDates = [];
 
-        $firstDate = explode('-', $this->parcelsDates[0]);
+        [$year, $month, $day] = explode('-', $this->parcelsDates[0]);
+        $day = str_pad($day, 2, '0', STR_PAD_LEFT);
 
-        $month = $firstDate[1];
-        $year = $firstDate[0];
+        foreach ($this->parcelsDates as $index => $parcelDate) {
 
-        foreach ($this->parcelsDates as $parcelDate) {
-            $date = explode('-', $parcelDate);
-
-            $day = str_pad($date[2], 2, '0', STR_PAD_LEFT);
-
-            if ((($day == '30') || ($day == '29') || ($day == '31')) && ($month == 2)) {
-                $day = '28';
+            // Ajusta fevereiro
+            if ($month == '02' && in_array($day, ['29', '30', '31'])) {
+                $finalDay = '28';
+            } else {
+                $finalDay = $day;
             }
 
-            $newDate = $year . '-' . $month . '-' . $day;
+            $newParcelsDates[] = $year . '-' . $month . '-' . $finalDay;
 
-            if (intval($month) <= 11) {
-                $month++;
-                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+            // Avança mês
+            if ((int)$month < 12) {
+                $month = str_pad((int)$month + 1, 2, '0', STR_PAD_LEFT);
             } else {
-                $month = 1;
-                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
+                $month = '01';
                 $year++;
             }
-
-            array_push($newParcelsDates, $newDate);
         }
 
         $this->parcelsDates = $newParcelsDates;
+
+        // Mantém as datas sincronizadas dentro de $this->parcels
+        foreach ($this->parcels as $i => $parcel) {
+            $this->parcels[$i]['date'] = $this->parcelsDates[$i];
+        }
     }
 
     private function resolveFirstPayment($firstPaymentParcelsQuantity, $firstParcelValue, $multiplier)
