@@ -183,9 +183,14 @@ trait WithParcels
 
         $currentParcel = 1;
 
-        foreach ($groups as $groupSize) {
+        $lastGroupIndex = count($groups) - 1;
 
-            $shouldAggregate = $groupSize > 1 && $groupSize < 10;
+        foreach ($groups as $groupIndex => $groupSize) {
+
+            // ✅ Só agrega se NÃO for o último grupo
+            $shouldAggregate =
+                $groupSize > 1 &&
+                $groupIndex < $lastGroupIndex;
 
             // 🔹 AGRUPAMENTO VISUAL
             if ($shouldAggregate) {
@@ -233,6 +238,7 @@ trait WithParcels
 
         $this->showParcels = true;
     }
+
 
     private function pushParcel(string $ord, int &$year, int &$month, int $day, float $value): void
     {
