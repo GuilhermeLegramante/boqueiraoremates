@@ -248,7 +248,7 @@ trait WithParcels
         $this->parcels[] = [
             'ord'   => $ord,
             'date'  => $date,
-            'value' => $formattedValue,
+            'value' => $value,
         ];
 
         $this->parcelsDates[] = $date;
