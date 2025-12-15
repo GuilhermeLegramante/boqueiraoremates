@@ -243,7 +243,7 @@ trait WithParcels
     {
         $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
 
-        $formattedValue = number_format($value, 2, ',', '.');
+        // $formattedValue = number_format($value, 2, ',', '.');
 
         $this->parcels[] = [
             'ord'   => $ord,
@@ -252,7 +252,7 @@ trait WithParcels
         ];
 
         $this->parcelsDates[] = $date;
-        $this->values[]       = $formattedValue;
+        $this->values[] = $value; // float puro
         $this->sum           += $value;
 
         // Avança mês
