@@ -239,21 +239,23 @@ trait WithParcels
         $this->showParcels = true;
     }
 
-
     private function pushParcel(string $ord, int &$year, int &$month, int $day, float $value): void
     {
-        $date = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
+        $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
+
+        $formattedValue = number_format($value, 2, ',', '.');
 
         $this->parcels[] = [
-            'ord'  => $ord,
-            'date' => $date,
+            'ord'   => $ord,
+            'date'  => $date,
+            'value' => $formattedValue,
         ];
 
         $this->parcelsDates[] = $date;
-        $this->values[]       = number_format($value, 2);
+        $this->values[]       = $formattedValue;
         $this->sum           += $value;
 
-        // Avança mês (1 vencimento = 1 mês)
+        // Avança mês
         if ($month < 12) {
             $month++;
         } else {
@@ -261,7 +263,6 @@ trait WithParcels
             $year++;
         }
     }
-
 
 
     /**
