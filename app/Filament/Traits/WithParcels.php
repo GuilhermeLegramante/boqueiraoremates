@@ -307,7 +307,7 @@ trait WithParcels
             $this->parcels[$i]['date'] = $this->parcelsDates[$i];
         }
 
-        dd($this->values);
+        // dd($this->values);
     }
 
     private function resolveFirstPayment($firstPaymentParcelsQuantity, $firstParcelValue, $multiplier)
