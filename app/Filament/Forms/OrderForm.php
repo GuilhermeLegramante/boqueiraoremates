@@ -282,7 +282,9 @@ class OrderForm
 
                 Textarea::make('business_note')
                     ->label('Observação')
+                    ->rows(8)
                     ->columnSpanFull(),
+                    
                 ParcelsDetails::make('parcels_details')
                     ->label('')
                     ->live()
