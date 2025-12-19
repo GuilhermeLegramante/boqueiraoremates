@@ -182,32 +182,15 @@ trait WithParcels
         $this->sum           = 0;
 
         $currentParcel = 1;
-
         $lastGroupIndex = count($groups) - 1;
 
         foreach ($groups as $groupIndex => $groupSize) {
 
-            // ✅ Só agrega se NÃO for o último grupo
-            $shouldAggregate =
-                $groupSize > 1 &&
-                $groupIndex < $lastGroupIndex;
+            // ====== TRATAMENTO ESPECIAL PARA A ENTRADA ======
+            if ($currentParcel === 1 && $groupSize > 1) {
 
-            // 🔹 AGRUPAMENTO VISUAL
-            if ($shouldAggregate) {
-
-                $start = $currentParcel;
-                $end   = $currentParcel + $groupSize - 1;
-
-                if ($currentParcel === 1) {
-                    // Entrada pode ser agrupada
-                    if ($groupSize > 1) {
-                        $ord = "1-{$groupSize}/{$totalParcels} (Ent.)";
-                    } else {
-                        $ord = "1/{$totalParcels} (Ent.)";
-                    }
-                } else {
-                    $ord = "{$start}-{$end}/{$totalParcels}";
-                }
+                // Ex.: 2 de entrada → 1-2/50 (Ent.)
+                $ord = "1-{$groupSize}/{$totalParcels} (Ent.)";
 
                 $this->pushParcel(
                     $ord,
@@ -218,9 +201,36 @@ trait WithParcels
                 );
 
                 $currentParcel += $groupSize;
-            } else {
+                continue;
+            }
 
-                // 🔹 PARCELA A PARCELA
+            // ====== AGRUPAMENTO VISUAL (EXCETO ÚLTIMO GRUPO) ======
+            $shouldAggregate =
+                $groupSize > 1 &&
+                $groupIndex < $lastGroupIndex;
+
+            if ($shouldAggregate) {
+
+                // Ex.: segundo grupo 2 → 3-4/50
+                $start = $currentParcel;
+                $end   = $currentParcel + $groupSize - 1;
+
+                $ord = "{$start}-{$end}/{$totalParcels}";
+
+                $this->pushParcel(
+                    $ord,
+                    $year,
+                    $month,
+                    $day,
+                    $data['parcel_value'] * $groupSize
+                );
+
+                $currentParcel += $groupSize;
+            }
+
+            // ====== ÚLTIMO GRUPO → PARCELA A PARCELA ======
+            else {
+
                 for ($i = 0; $i < $groupSize; $i++) {
 
                     $ord = ($currentParcel === 1)
