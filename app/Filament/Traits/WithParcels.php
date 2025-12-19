@@ -198,9 +198,16 @@ trait WithParcels
                 $start = $currentParcel;
                 $end   = $currentParcel + $groupSize - 1;
 
-                $ord = ($currentParcel === 1)
-                    ? "1/{$totalParcels} (Ent.)"
-                    : "{$start}-{$end}/{$totalParcels}";
+                if ($currentParcel === 1) {
+                    // Entrada pode ser agrupada
+                    if ($groupSize > 1) {
+                        $ord = "1-{$groupSize}/{$totalParcels} (Ent.)";
+                    } else {
+                        $ord = "1/{$totalParcels} (Ent.)";
+                    }
+                } else {
+                    $ord = "{$start}-{$end}/{$totalParcels}";
+                }
 
                 $this->pushParcel(
                     $ord,
