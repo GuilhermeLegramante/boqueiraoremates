@@ -130,11 +130,11 @@ class AdminPanelProvider extends PanelProvider
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 AuthenticateSession::class,
-                // ShareErrorsFromSession::class,
-                // VerifyCsrfToken::class,
-                // SubstituteBindings::class,
-                // DisableBladeIconComponents::class,
-                // DispatchServingFilamentEvent::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
                 SetTheme::class,
             ])
             ->authMiddleware([
@@ -142,15 +142,15 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
-    // public function boot(): void
-    // {
-    //     Filament::serving(function () {
-    //         $user = auth()->user();
+    public function boot(): void
+    {
+        Filament::serving(function () {
+            $user = auth()->user();
 
-    //         if ($user && $user->hasRole('client')) {
-    //             // Redireciona imediatamente para a rota 'home'
-    //             redirect()->route('home')->send();
-    //         }
-    //     });
-    // }
+            if ($user && $user->hasRole('client')) {
+                // Redireciona imediatamente para a rota 'home'
+                redirect()->route('home')->send();
+            }
+        });
+    }
 }
