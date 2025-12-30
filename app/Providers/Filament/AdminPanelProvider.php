@@ -125,7 +125,7 @@ class AdminPanelProvider extends PanelProvider
                     ->openUrlInNewTab(), // se quiser abrir em nova aba
             ])
             ->middleware([
-                // EncryptCookies::class,
+                EncryptCookies::class,
                 // AddQueuedCookiesToResponse::class,
                 // StartSession::class,
                 // AuthenticateSession::class,
