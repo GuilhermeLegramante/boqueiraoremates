@@ -69,4 +69,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Bid::class, 'user_id');
     }
+
+    public function canAccessPanel(User $user): bool
+    {
+        return ! $user->hasRole('client');
+    }
 }
