@@ -81,4 +81,5 @@
     ">
         {{ ucfirst($status) }}
     </span>
+    
 </div>
