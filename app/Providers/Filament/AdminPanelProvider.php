@@ -124,18 +124,18 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(1) // posição
                     ->openUrlInNewTab(), // se quiser abrir em nova aba
             ])
-            // ->middleware([
-            //     EncryptCookies::class,
-            //     AddQueuedCookiesToResponse::class,
-            //     StartSession::class,
-            //     AuthenticateSession::class,
-            //     ShareErrorsFromSession::class,
-            //     VerifyCsrfToken::class,
-            //     SubstituteBindings::class,
-            //     DisableBladeIconComponents::class,
-            //     DispatchServingFilamentEvent::class,
-            //     SetTheme::class,
-            // ])
+            ->middleware([
+                // EncryptCookies::class,
+                // AddQueuedCookiesToResponse::class,
+                // StartSession::class,
+                // AuthenticateSession::class,
+                // ShareErrorsFromSession::class,
+                // VerifyCsrfToken::class,
+                // SubstituteBindings::class,
+                // DisableBladeIconComponents::class,
+                // DispatchServingFilamentEvent::class,
+                SetTheme::class,
+            ])
             ->authMiddleware([
                 Authenticate::class,
             ]);
