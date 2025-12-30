@@ -17,13 +17,13 @@ echo "2) PHP em storage/ e public/ (NÃO deveria existir nada):"
 find storage public -type f -name "*.php"
 echo ""
 
-echo "3) Busca por funções suspeitas:"
-grep -R --line-number \
-  --exclude-dir=vendor \
-  --exclude-dir=storage/framework/views \
-  -E "eval\(|base64_decode|gzinflate|shell_exec|passthru|system\(" \
-  app bootstrap config database routes public
-echo ""
+# echo "3) Busca por funções suspeitas:"
+# grep -R --line-number \
+#   --exclude-dir=vendor \
+#   --exclude-dir=storage/framework/views \
+#   -E "eval\(|base64_decode|gzinflate|shell_exec|passthru|system\(" \
+#   app bootstrap config database routes public
+# echo ""
 
 echo "4) Arquivos sensíveis modificados nos últimos 30 dias:"
 find . -maxdepth 2 -type f \( -name ".env" -o -name "index.php" -o -name ".htaccess" \) -mtime -30
