@@ -141,15 +141,15 @@ class AdminPanelProvider extends PanelProvider
             ]);
     }
 
-    // public function boot(): void
-    // {
-    //     Filament::serving(function () {
-    //         $user = auth()->user();
+    public function boot(): void
+    {
+        Filament::serving(function () {
+            $user = auth()->user();
 
-    //         if ($user && $user->hasRole('client')) {
-    //             // Redireciona imediatamente para a rota 'home'
-    //             redirect()->route('home')->send();
-    //         }
-    //     });
-    // }
+            if ($user && $user->hasRole('client')) {
+                // Redireciona imediatamente para a rota 'home'
+                redirect()->route('home')->send();
+            }
+        });
+    }
 }
