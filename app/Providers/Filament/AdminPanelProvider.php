@@ -124,6 +124,7 @@ class AdminPanelProvider extends PanelProvider
                     ->sort(1) // posição
                     ->openUrlInNewTab(), // se quiser abrir em nova aba
             ])
+            ->authGuard('web')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

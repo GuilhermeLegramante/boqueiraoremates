@@ -14,6 +14,10 @@ return [
     |
     */
 
+    'auth' => [
+        'guard' => 'web',
+    ],
+
     'broadcasting' => [
 
         // 'echo' => [
