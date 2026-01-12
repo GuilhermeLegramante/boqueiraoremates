@@ -11,6 +11,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -154,6 +155,10 @@ class LotesRelationManager extends RelationManager
                 FileUpload::make('photo_full')->columnSpanFull()->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
                 RichEditor::make('note')->columnSpanFull()->label('Comentário')->nullable(),
                 TextInput::make('video_link')->columnSpanFull()->label('Link do Vídeo')->url()->nullable(),
+
+                Toggle::make('visible')
+                    ->label('Publicado')
+                    ->default(true),
             ]);
     }
 
