@@ -71,110 +71,113 @@
             @if ($event->animals->count() > 0)
                 <div x-ref="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     @foreach ($event->animals as $animal)
-                        <div data-animal data-name="{{ strtolower($animal->pivot->name) }}"
-                            class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
-                            <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}" class="block relative">
-                                <div class="w-full bg-[#4D6766] flex items-center justify-center">
-                                    <img src="{{ asset('storage/' . $animal->pivot->photo) }}"
-                                        alt="{{ $animal->pivot->name }}"
-                                        class="w-full h-auto object-contain transition duration-300 hover:scale-105 rounded-t-2xl shadow">
-                                </div>
-
-                                @php
-                                    $status = $animal->pivot->status ?? null;
-                                    $statusColors = [
-                                        'disponivel' => 'bg-green-600',
-                                        'reservado' => 'bg-yellow-500',
-                                        'vendido' => 'bg-red-600',
-                                    ];
-                                @endphp
-
-                                <span
-                                    class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow {{ $statusColors[$status] ?? 'bg-gray-600' }}">
-                                    {{ $status == 'disponivel' ? 'DISPONÍVEL' : $status }}
-                                </span>
-                            </a>
-
-                            <div class="p-5">
-                                <h3 class="font-bold text-xl text-white mb-2">
-                                    Lote: {{ $animal->pivot->lot_number }}
-                                </h3>
-
-                                <h3 class="font-bold text-xl text-white mb-2 min-h-[3rem]">
-                                    {{ $animal->pivot->name }}
-                                </h3>
-
-                                @if ($event->closed)
-                                    <div
-                                        class="text-center text-gray-300 font-bold text-md mb-4 min-h-[60px] flex items-center justify-center">
-                                        PRÉ-LANCE ENCERRADO
+                        @if ($animal->pivot->visible)
+                            <div data-animal data-name="{{ strtolower($animal->pivot->name) }}"
+                                class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
+                                <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
+                                    class="block relative">
+                                    <div class="w-full bg-[#4D6766] flex items-center justify-center">
+                                        <img src="{{ asset('storage/' . $animal->pivot->photo) }}"
+                                            alt="{{ $animal->pivot->name }}"
+                                            class="w-full h-auto object-contain transition duration-300 hover:scale-105 rounded-t-2xl shadow">
                                     </div>
-                                    @if (floatval($animal->current_bid) > 0)
-                                        <div
-                                            class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
-                                            <span>Lance Atual:</span>
-                                            <span
-                                                class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                            </span>
-                                        </div>
-                                    @endif
-                                @else
-                                    <div
-                                        class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
-                                        @if ($status == 'vendido')
-                                            <span>Lote:</span>
-                                            <span
-                                                class="inline-block bg-red-600 text-white px-3 py-1 rounded-lg shadow text-center min-w-[110px]">
-                                                VENDIDO
-                                            </span>
 
-                                            {{-- Mantém o espaço do "Lance-alvo" para alinhamento --}}
-                                            <span>&nbsp;</span>
-                                            <span
-                                                class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                &nbsp;
-                                            </span>
-                                        @else
-                                            @if (floatval($animal->current_bid) > 0)
+                                    @php
+                                        $status = $animal->pivot->status ?? null;
+                                        $statusColors = [
+                                            'disponivel' => 'bg-green-600',
+                                            'reservado' => 'bg-yellow-500',
+                                            'vendido' => 'bg-red-600',
+                                        ];
+                                    @endphp
+
+                                    <span
+                                        class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow {{ $statusColors[$status] ?? 'bg-gray-600' }}">
+                                        {{ $status == 'disponivel' ? 'DISPONÍVEL' : $status }}
+                                    </span>
+                                </a>
+
+                                <div class="p-5">
+                                    <h3 class="font-bold text-xl text-white mb-2">
+                                        Lote: {{ $animal->pivot->lot_number }}
+                                    </h3>
+
+                                    <h3 class="font-bold text-xl text-white mb-2 min-h-[3rem]">
+                                        {{ $animal->pivot->name }}
+                                    </h3>
+
+                                    @if ($event->closed)
+                                        <div
+                                            class="text-center text-gray-300 font-bold text-md mb-4 min-h-[60px] flex items-center justify-center">
+                                            PRÉ-LANCE ENCERRADO
+                                        </div>
+                                        @if (floatval($animal->current_bid) > 0)
+                                            <div
+                                                class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
                                                 <span>Lance Atual:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                     R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
                                                 </span>
-                                            @else
-                                                <span>&nbsp;</span>
-                                                <span
-                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                    R$ 0,00
-                                                </span>
-                                            @endif
-
-                                            @if (floatval($animal->pivot->target_value) > 0)
-                                                <span>Lance-alvo:</span>
-                                                <span
-                                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
-                                                </span>
-                                            @else
-                                                <span>&nbsp;</span>
-                                                <span
-                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                    R$ 0,00
-                                                </span>
-                                            @endif
+                                            </div>
                                         @endif
-                                    </div>
-                                @endif
+                                    @else
+                                        <div
+                                            class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
+                                            @if ($status == 'vendido')
+                                                <span>Lote:</span>
+                                                <span
+                                                    class="inline-block bg-red-600 text-white px-3 py-1 rounded-lg shadow text-center min-w-[110px]">
+                                                    VENDIDO
+                                                </span>
 
-                                @if (!$event->closed)
-                                    <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
-                                        class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
-                                        Ver Detalhes / Dar Lance
-                                    </a>
-                                @endif
+                                                {{-- Mantém o espaço do "Lance-alvo" para alinhamento --}}
+                                                <span>&nbsp;</span>
+                                                <span
+                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                                    &nbsp;
+                                                </span>
+                                            @else
+                                                @if (floatval($animal->current_bid) > 0)
+                                                    <span>Lance Atual:</span>
+                                                    <span
+                                                        class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                        R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                                    </span>
+                                                @else
+                                                    <span>&nbsp;</span>
+                                                    <span
+                                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                                        R$ 0,00
+                                                    </span>
+                                                @endif
+
+                                                @if (floatval($animal->pivot->target_value) > 0)
+                                                    <span>Lance-alvo:</span>
+                                                    <span
+                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                        R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
+                                                    </span>
+                                                @else
+                                                    <span>&nbsp;</span>
+                                                    <span
+                                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                                        R$ 0,00
+                                                    </span>
+                                                @endif
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    @if (!$event->closed)
+                                        <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
+                                            class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
+                                            Ver Detalhes / Dar Lance
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
-                        </div>
+                        @endif
                     @endforeach
                 </div>
             @else

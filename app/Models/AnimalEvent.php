@@ -23,6 +23,7 @@ class AnimalEvent extends Pivot
         'photo_full',
         'note',
         'video_link',
+        'visible',
     ];
 
     public $timestamps = true;

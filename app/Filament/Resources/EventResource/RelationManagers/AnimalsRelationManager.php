@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -213,7 +214,7 @@ class AnimalsRelationManager extends RelationManager
                 ->live()
                 ->debounce(1000)
                 ->nullable(),
-                
+
             TextInput::make('final_value')
                 ->label('Valor Final')
                 ->prefix('R$')
@@ -231,10 +232,29 @@ class AnimalsRelationManager extends RelationManager
                 ])
                 ->default('disponivel'),
 
-            FileUpload::make('photo')->label('Foto (Miniatura)')->image()->directory('animals/photos')->nullable(),
-            FileUpload::make('photo_full')->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
-            RichEditor::make('note')->label('Comentário')->nullable(),
-            TextInput::make('video_link')->label('Link do Vídeo')->url()->nullable(),
+            FileUpload::make('photo')->label('Foto (Miniatura)')
+                ->image()
+                ->directory('animals/photos')
+                ->nullable(),
+
+            FileUpload::make('photo_full')
+                ->label('Foto (Grande)')
+                ->image()
+                ->directory('animals/photos_full')
+                ->nullable(),
+
+            RichEditor::make('note')
+                ->label('Comentário')
+                ->nullable(),
+
+            TextInput::make('video_link')
+                ->label('Link do Vídeo')
+                ->url()
+                ->nullable(),
+
+            Toggle::make('visible')
+                ->label('Publicado')
+                ->default(true),
         ];
     }
 }
