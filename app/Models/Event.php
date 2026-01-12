@@ -58,6 +58,7 @@ class Event extends Model
                 'photo_full',
                 'note',
                 'video_link',
+                'visible',
             ])
             ->withTimestamps()
             ->orderBy('animal_event.lot_number');

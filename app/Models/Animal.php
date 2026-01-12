@@ -83,6 +83,7 @@ class Animal extends Model
                 'photo_full',
                 'note',
                 'video_link',
+                'visible',
             ])
             ->withTimestamps();
     }
