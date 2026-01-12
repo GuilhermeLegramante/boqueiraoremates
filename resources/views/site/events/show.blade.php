@@ -71,7 +71,7 @@
             @if ($event->animals->count() > 0)
                 <div x-ref="cards" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                     @foreach ($event->animals as $animal)
-                        @if ($animal->pivot->visible)
+                        {{-- @if ($animal->pivot->visible) --}}
                             <div data-animal data-name="{{ strtolower($animal->pivot->name) }}"
                                 class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                                 <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
@@ -177,7 +177,7 @@
                                     @endif
                                 </div>
                             </div>
-                        @endif
+                        {{-- @endif --}}
                     @endforeach
                 </div>
             @else
