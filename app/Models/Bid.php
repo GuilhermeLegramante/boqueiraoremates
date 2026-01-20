@@ -65,7 +65,6 @@ class Bid extends Model
         return \App\Models\AnimalEvent::find($this->animal_event_id)?->lot_number;
     }
 
-
     public function getAnimalNameAttribute()
     {
         $animalId = DB::table('animal_event')

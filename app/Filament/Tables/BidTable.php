@@ -18,20 +18,19 @@ class BidTable
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->sortable(),
 
-            TextColumn::make('client_name')
+            // TextColumn::make('client_name')
+            //     ->label('Cliente')
+            //     ->copyable()
+            //     ->getStateUsing(function ($record) {
+            //         return $record->user?->client?->name ?? '—';
+            //     })
+            //     ->sortable(),
+
+            TextColumn::make('user.client.name')
                 ->label('Cliente')
+                ->sortable()
                 ->copyable()
-                ->getStateUsing(function ($record) {
-                    return $record->user?->client?->name ?? '—';
-                })
-                // ->url(function ($record) {
-                //     $client = $record->user?->client;
-                //     return $client ? route('client-details-pdf', $client->id) : null;
-                // })
-                // ->openUrlInNewTab()
-                // ->color('info')
-                // ->icon('heroicon-o-document-text')
-                ->sortable(),
+                ->toggleable(),
 
             TextColumn::make('event.name')
                 ->searchable(['events.name'])
