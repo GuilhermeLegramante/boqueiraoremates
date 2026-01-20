@@ -26,11 +26,18 @@ class BidTable
             //     })
             //     ->sortable(),
 
-            TextColumn::make('user.client.name')
+            TextColumn::make('client_name')
                 ->label('Cliente')
-                ->sortable()
-                ->copyable()
-                ->toggleable(),
+                ->getStateUsing(fn($record) => $record->user?->client?->name ?? '—')
+                ->sortable(
+                    query: function ($query, string $direction) {
+                        $query
+                            ->leftJoin('users', 'users.id', '=', 'bids.user_id')
+                            ->leftJoin('clients', 'clients.id', '=', 'users.client_id')
+                            ->orderBy('clients.name', $direction)
+                            ->select('bids.*');
+                    }
+                ),
 
             TextColumn::make('event.name')
                 ->searchable(['events.name'])
