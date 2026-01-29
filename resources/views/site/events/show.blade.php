@@ -76,6 +76,7 @@
                                 class="bg-[#4D6766] rounded-2xl overflow-hidden shadow-lg transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl">
                                 <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                     class="block relative">
+
                                     <div class="w-full bg-[#4D6766] flex items-center justify-center">
                                         <img src="{{ asset('storage/' . $animal->pivot->photo) }}"
                                             alt="{{ $animal->pivot->name }}"
@@ -85,9 +86,9 @@
                                     @php
                                         $status = $animal->pivot->status ?? null;
                                         $statusColors = [
-                                            'disponivel' => 'bg-green-600',
-                                            'reservado' => 'bg-yellow-500',
-                                            'vendido' => 'bg-red-600',
+                                            'disponivel' => 'bg-green-700/90',
+                                            'reservado' => 'bg-yellow-600/90',
+                                            'vendido' => 'bg-red-700/90',
                                         ];
                                     @endphp
 
@@ -102,21 +103,22 @@
                                             <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
                                             <span class="leading-tight">{{ $status }}</span>
                                         </span>
-
-                                        {{-- Logo opcional --}}
-                                        <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
-                                            class="absolute bottom-3 right-3 h-10 md:h-12 opacity-70
-                                                hover:opacity-90 transition-opacity duration-300
-                                                select-none pointer-events-none">
                                     @else
                                         {{-- Badge pequeno para outros status --}}
                                         <span
                                             class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow
-                                             {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
-                                            {{ $status === 'disponivel' ? 'DISPONÍVEL' : $status }} 
+                                                {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
+                                            {{ $status === 'disponivel' ? 'DISPONÍVEL' : $status }}
                                         </span>
                                     @endif
+
+                                    {{-- 🟢 LOGO OPCIONAL (TODOS OS STATUS) --}}
+                                    <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
+                                        class="absolute bottom-3 right-3 h-10 md:h-12 opacity-70
+                                            hover:opacity-90 transition-opacity duration-300
+                                            select-none pointer-events-none">
                                 </a>
+
 
                                 <div class="p-5">
                                     <h3 class="font-bold text-xl text-white mb-2">
