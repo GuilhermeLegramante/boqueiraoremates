@@ -119,10 +119,10 @@
 
                                             {{-- Faixa atravessando --}}
                                             <span
-                                                class="absolute inset-x-[-20%] flex items-center justify-center
-                   py-2 text-xl font-black uppercase tracking-wider
-                   text-red-700 bg-white
-                   border-[5px] border-red-700 rounded-md">
+                                                class="absolute inset-x-[-25%] flex items-center justify-center
+                                                        py-3 text-2xl font-extrabold uppercase tracking-wider
+                                                        text-red-700 bg-white
+                                                        border-[5px] border-red-700 rounded-md leading-none">
                                                 VENDIDO
                                             </span>
                                         </div>
