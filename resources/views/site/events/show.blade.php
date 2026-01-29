@@ -94,7 +94,7 @@
 
                                     {{-- 🔴 CARIMBO GRANDE PARA VENDIDO --}}
                                     @if ($status === 'vendido')
-                                        {{-- <span
+                                        <span
                                             class="absolute left-4 bottom-4 flex flex-col items-center justify-center text-center
                                                 px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl
                                                 ring-4 ring-white/70 text-white
@@ -102,32 +102,7 @@
                                                 {{ $statusColors[$status] }}">
                                             <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
                                             <span class="leading-tight">{{ $status }}</span>
-                                        </span> --}}
-
-                                        <div
-                                            class="absolute left-4 bottom-4 w-24 h-24
-           rounded-full bg-white border-[5px] border-red-700
-           shadow-2xl transform -rotate-6 origin-left
-           flex flex-col items-center justify-center
-           px-2 select-none">
-
-                                            {{-- Texto LOTE (topo do círculo) --}}
-                                            <span
-                                                class="-mt-2 mb-2 text-[10px] font-black uppercase tracking-[0.25em]
-               text-red-700">
-                                                LOTE
-                                            </span>
-
-                                            {{-- Faixa atravessando --}}
-                                            <span
-                                                class="relative -mx-6 flex items-center justify-center
-               py-3 px-7
-               text-2xl font-black uppercase tracking-wider
-               text-red-700 bg-white
-               border-[5px] border-red-700 rounded-md leading-none">
-                                                VENDIDO
-                                            </span>
-                                        </div>
+                                        </span>
                                     @else
                                         {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
