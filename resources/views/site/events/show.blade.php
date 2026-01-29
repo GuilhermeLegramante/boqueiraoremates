@@ -91,10 +91,31 @@
                                         ];
                                     @endphp
 
-                                    <span
-                                        class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow {{ $statusColors[$status] ?? 'bg-gray-600' }}">
-                                        {{ $status == 'disponivel' ? 'DISPONÍVEL' : $status }}
-                                    </span>
+                                    {{-- 🔴 CARIMBO GRANDE PARA VENDIDO --}}
+                                    @if ($status === 'vendido')
+                                        <span
+                                            class="absolute left-4 bottom-4 flex flex-col items-center justify-center text-center
+                                                px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl
+                                                ring-4 ring-white/70 text-white
+                                                transform -rotate-6 origin-left select-none
+                                                {{ $statusColors[$status] }}">
+                                            <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
+                                            <span class="leading-tight">{{ $status }}</span>
+                                        </span>
+
+                                        {{-- Logo opcional --}}
+                                        <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
+                                            class="absolute bottom-3 right-3 h-10 md:h-12 opacity-70
+                                                hover:opacity-90 transition-opacity duration-300
+                                                select-none pointer-events-none">
+                                    @else
+                                        {{-- Badge pequeno para outros status --}}
+                                        <span
+                                            class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow
+                                             {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
+                                            {{ $status === 'disponivel' ? 'DISPONÍVEL' : $status }} 
+                                        </span>
+                                    @endif
                                 </a>
 
                                 <div class="p-5">
