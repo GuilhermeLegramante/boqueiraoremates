@@ -104,10 +104,11 @@
                                             <span class="leading-tight">{{ $status }}</span>
                                         </span>
                                     @else
-                                        {{-- Badge pequeno para outros status --}}
+                                        {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
-                                            class="absolute bottom-2 right-2 px-3 py-1 text-xs font-bold text-white uppercase rounded-lg shadow
-                                                {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
+                                            class="absolute left-3 bottom-3 px-3 py-1 text-xs font-bold text-white uppercase
+                                            rounded-lg shadow
+                                            {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
                                             {{ $status === 'disponivel' ? 'DISPONÍVEL' : $status }}
                                         </span>
                                     @endif
