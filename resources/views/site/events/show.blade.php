@@ -106,24 +106,21 @@
 
                                         <div
                                             class="absolute left-4 bottom-4 flex flex-col items-center justify-center
-                                                w-28 h-28 rounded-full bg-white border-[5px] border-red-700
-                                                shadow-2xl transform -rotate-6 origin-left select-none">
+               w-28 h-28 rounded-full bg-white border-4 border-red-700
+               shadow-2xl transform -rotate-6 origin-left select-none">
 
-                                            {{-- Texto LOTE (mais alto) --}}
+                                            {{-- Texto LOTE (acima do retângulo) --}}
                                             <span
-                                                class="-mt-3 mb-2 text-xs font-black uppercase tracking-[0.25em]
-                                                    text-red-700">
-                                                LOTE
+                                                class="mb-1 text-xs font-extrabold uppercase tracking-widest
+                   text-red-700">
+                                                Lote
                                             </span>
 
-                                            {{-- Retângulo centralizado --}}
+                                            {{-- Retângulo central maior --}}
                                             <span
-                                                class="flex items-center justify-center
-                                                    w-[90%] px-0 py-2
-                                                    text-xl font-black uppercase tracking-wider
-                                                    text-red-700 bg-white
-                                                    border-[5px] border-red-700 rounded-md">
-                                                VENDIDO
+                                                class="px-6 py-2 text-xl font-extrabold uppercase tracking-wider
+                   text-red-700 bg-white border-4 border-red-700 rounded-md">
+                                                Vendido
                                             </span>
                                         </div>
                                     @else
