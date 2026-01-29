@@ -96,7 +96,7 @@
                                         <img src="{{ asset('img/carimbo.png') }}" alt="Lote Vendido"
                                             class="absolute left-4 bottom-3
                w-32 md:w-36
-               transform -rotate-6
+               transform -rotate-6 translate-y-1
                drop-shadow-2xl
                select-none pointer-events-none">
                                     @else
@@ -109,7 +109,7 @@
                                         </span>
                                     @endif
 
-                                    {{-- 🟢 LOGO OPCIONAL (TODOS OS STATUS) --}}
+                                    {{-- 🟢 LOGO OPCIONAL --}}
                                     <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
                                         class="absolute right-3 bottom-3
            h-10 md:h-12
