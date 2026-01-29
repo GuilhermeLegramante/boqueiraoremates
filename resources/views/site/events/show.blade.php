@@ -105,10 +105,10 @@
                                         </span> --}}
                                         <img src="{{ asset('img/carimbo.png') }}" alt="Lote Vendido"
                                             class="absolute left-4 bottom-4
-               w-28 md:w-32
-               transform -rotate-6
-               drop-shadow-2xl
-               select-none pointer-events-none">
+                                            w-32 md:w-36
+                                            transform -rotate-6
+                                            drop-shadow-2xl
+                                            select-none pointer-events-none">
                                     @else
                                         {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
