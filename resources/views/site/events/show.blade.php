@@ -124,48 +124,48 @@
                                     @else
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
-                                            @if ($status == 'vendido')
+                                            {{-- @if ($status == 'vendido')
                                                 <span>Lote:</span>
                                                 <span
                                                     class="inline-block bg-red-600 text-white px-3 py-1 rounded-lg shadow text-center min-w-[110px]">
                                                     VENDIDO
-                                                </span>
+                                                </span> --}}
 
-                                                {{-- Mantém o espaço do "Lance-alvo" para alinhamento --}}
-                                                <span>&nbsp;</span>
-                                                <span
+                                            {{-- Mantém o espaço do "Lance-alvo" para alinhamento --}}
+                                            {{-- <span>&nbsp;</span> --}}
+                                            {{-- <span
                                                     class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
                                                     &nbsp;
                                                 </span>
+                                            @else --}}
+                                            @if (floatval($animal->current_bid) > 0)
+                                                <span>Lance Atual:</span>
+                                                <span
+                                                    class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                                </span>
                                             @else
-                                                @if (floatval($animal->current_bid) > 0)
-                                                    <span>Lance Atual:</span>
-                                                    <span
-                                                        class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                        R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                                    </span>
-                                                @else
-                                                    <span>&nbsp;</span>
-                                                    <span
-                                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                        R$ 0,00
-                                                    </span>
-                                                @endif
-
-                                                @if (floatval($animal->pivot->target_value) > 0)
-                                                    <span>Lance-alvo:</span>
-                                                    <span
-                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                        R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
-                                                    </span>
-                                                @else
-                                                    <span>&nbsp;</span>
-                                                    <span
-                                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                        R$ 0,00
-                                                    </span>
-                                                @endif
+                                                <span>&nbsp;</span>
+                                                <span
+                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                                    R$ 0,00
+                                                </span>
                                             @endif
+
+                                            @if (floatval($animal->pivot->target_value) > 0)
+                                                <span>Lance-alvo:</span>
+                                                <span
+                                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
+                                                </span>
+                                            @else
+                                                <span>&nbsp;</span>
+                                                <span
+                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                                    R$ 0,00
+                                                </span>
+                                            @endif
+                                            {{-- @endif --}}
                                         </div>
                                     @endif
 
