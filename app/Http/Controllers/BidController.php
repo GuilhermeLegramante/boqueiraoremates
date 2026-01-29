@@ -96,7 +96,7 @@ class BidController extends Controller
         $animal = DB::table('animal_event')
             ->join('animals', 'animals.id', '=', 'animal_event.animal_id')
             ->where('animal_event.id', $request->animal_event_id)
-            ->select('animals.name')
+            ->select('animals.name', 'animal_event.lot_number')
             ->first();
 
         // 💬 Monta mensagem
@@ -104,6 +104,7 @@ class BidController extends Controller
             . "Usuário: {$user->name}\n"
             . "E-mail: {$user->email}\n\n"
             . "Evento: {$event->name}\n"
+            . "Lote: {$animal->lot_number}\n"
             . "Animal: {$animal->name}\n"
             . "Valor do Lance: R$ " . number_format($request->amount, 2, ',', '.') . "\n\n"
             . "Verifique o painel administrativo para validar o lance.";

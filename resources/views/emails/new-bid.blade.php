@@ -110,6 +110,7 @@
             <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
 
             <p><span class="highlight">Evento:</span> {{ $event->name }}</p>
+            <p><span class="highlight">Lote:</span> {{ $animal->lot_number }}</p>
             <p><span class="highlight">Animal:</span> {{ $animal->name }}</p>
             <p><span class="highlight">Valor do Lance:</span>
                 <strong>R$ {{ number_format($amount, 2, ',', '.') }}</strong>
