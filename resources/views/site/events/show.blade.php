@@ -94,7 +94,7 @@
 
                                     {{-- 🔴 CARIMBO GRANDE PARA VENDIDO --}}
                                     @if ($status === 'vendido')
-                                        <span
+                                        {{-- <span
                                             class="absolute left-4 bottom-4 flex flex-col items-center justify-center text-center
                                                 px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl
                                                 ring-4 ring-white/70 text-white
@@ -102,7 +102,13 @@
                                                 {{ $statusColors[$status] }}">
                                             <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
                                             <span class="leading-tight">{{ $status }}</span>
-                                        </span>
+                                        </span> --}}
+                                        <img src="{{ asset('img/carimbo.png') }}" alt="Lote Vendido"
+                                            class="absolute left-4 bottom-4
+               w-28 md:w-32
+               transform -rotate-6
+               drop-shadow-2xl
+               select-none pointer-events-none">
                                     @else
                                         {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
