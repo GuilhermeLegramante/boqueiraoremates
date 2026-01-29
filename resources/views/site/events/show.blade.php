@@ -94,7 +94,7 @@
 
                                     {{-- 🔴 CARIMBO GRANDE PARA VENDIDO --}}
                                     @if ($status === 'vendido')
-                                        <span
+                                        {{-- <span
                                             class="absolute left-4 bottom-4 flex flex-col items-center justify-center text-center
                                                 px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl
                                                 ring-4 ring-white/70 text-white
@@ -102,7 +102,27 @@
                                                 {{ $statusColors[$status] }}">
                                             <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
                                             <span class="leading-tight">{{ $status }}</span>
-                                        </span>
+                                        </span> --}}
+
+                                        <div
+                                            class="absolute left-4 bottom-4 flex items-center justify-center
+                                                w-32 h-32 rounded-full bg-white border-4 border-red-700
+                                                shadow-2xl transform -rotate-6 origin-left select-none">
+
+                                            {{-- Texto LOTE --}}
+                                            <span
+                                                class="absolute top-6 text-sm font-extrabold uppercase tracking-widest
+                                                             text-red-700">
+                                                LOTE
+                                            </span>
+
+                                            {{-- Retângulo central --}}
+                                            <span
+                                                class="px-4 py-2 text-lg font-extrabold uppercase tracking-wider
+                                                                 text-red-700 bg-white border-4 border-red-700 rounded-md">
+                                                VENDIDO
+                                            </span>
+                                        </div>
                                     @else
                                         {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
