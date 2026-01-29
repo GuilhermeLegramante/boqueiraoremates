@@ -194,7 +194,10 @@
                                     @if (!$event->closed)
                                         <a href="{{ route('animals.show', [$event->id, $animal->pivot->id]) }}"
                                             class="mt-4 inline-block w-full text-center bg-[#003333] text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-[#005050] transition">
-                                            Ver Detalhes / Dar Lance
+                                            Ver Detalhes
+                                            @if ($status != 'vendido')
+                                                / Dar Lance
+                                            @endif
                                         </a>
                                     @endif
                                 </div>
