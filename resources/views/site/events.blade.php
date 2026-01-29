@@ -11,7 +11,7 @@
                 <div class="absolute inset-0 bg-black/40"></div>
 
                 <!-- Conteúdo -->
-                <div
+                <div @if ($event->is_permanent) id="vendas-permanentes" @endif
                     class="relative flex flex-col md:flex-row justify-between items-center w-full text-center md:text-left gap-1 md:gap-3">
                     <h1 class="text-lg sm:text-xl md:text-2xl font-bold drop-shadow-lg leading-tight">
                         {{ $event->name }}

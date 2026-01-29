@@ -30,6 +30,10 @@
                     class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
                     Equipe
                 </a>
+                <a href="{{ route('home') }}#vendas-permanentes"
+                    class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
+                    Vendas Diretas
+                </a>
                 <a href="{{ route('home') }}#contato"
                     class="px-3 py-1 text-sm font-medium text-white rounded-full hover:bg-yellow-600 hover:text-black transition">
                     Contato
@@ -111,6 +115,7 @@
         <a href="{{ route('home') }}" class="hover:text-yellow-400">Início</a>
         <a href="{{ route('home') }}#proximos-remates" class="hover:text-yellow-400">Próximos Eventos</a>
         <a href="{{ route('home') }}#equipe" class="hover:text-yellow-400">Equipe</a>
+        <a href="{{ route('home') }}#vendas-permanentes" class="hover:text-yellow-400">Vendas Diretas</a>
         <a href="{{ route('home') }}#contato" class="hover:text-yellow-400">Contato</a>
 
         <div class="mt-6 flex flex-col items-center space-y-3">
