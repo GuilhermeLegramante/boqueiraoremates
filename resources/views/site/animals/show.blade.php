@@ -67,7 +67,7 @@
                                 @endphp
 
                                 @if ($status == 'vendido')
-                                    <img src="{{ asset('img/carimbo.png') }}" alt="Lote Vendido"
+                                    <img src="{{ asset('img/carimbo_logo_10_anos.png') }}" alt="Lote Vendido"
                                         class="absolute left-4 bottom-3
                                             w-32 md:w-36
                                             transform -rotate-6 translate-y-1
