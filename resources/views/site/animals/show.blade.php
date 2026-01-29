@@ -67,15 +67,12 @@
                                 @endphp
 
                                 @if ($status == 'vendido')
-                                    <!-- CARIMBO MAIOR CENTRALIZADO -->
-                                    <span
-                                        class="absolute left-4 bottom-4 flex flex-col items-center justify-center text-center
-                                                px-8 py-4 text-2xl font-extrabold uppercase tracking-widest rounded-lg shadow-2xl ring-4 ring-white/70 text-white
-                                                transform -rotate-6 origin-left select-none
-                                                {{ $statusColors[$status] ?? 'bg-gray-700/90' }}">
-                                        <span class="text-sm font-semibold opacity-80 leading-none">Lote</span>
-                                        <span class="leading-tight">{{ $status }}</span>
-                                    </span>
+                                    <img src="{{ asset('img/carimbo.png') }}" alt="Lote Vendido"
+                                        class="absolute left-4 bottom-3
+                                            w-32 md:w-36
+                                            transform -rotate-6 translate-y-1
+                                            drop-shadow-2xl
+                                            select-none pointer-events-none">
 
                                     <!-- LOGO DISCRETA NO CANTO INFERIOR DIREITO -->
                                     <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"

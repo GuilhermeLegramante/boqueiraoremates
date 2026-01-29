@@ -95,16 +95,16 @@
                                     @if ($status === 'vendido')
                                         <img src="{{ asset('img/carimbo.png') }}" alt="Lote Vendido"
                                             class="absolute left-4 bottom-3
-               w-32 md:w-36
-               transform -rotate-6 translate-y-1
-               drop-shadow-2xl
-               select-none pointer-events-none">
+                                            w-32 md:w-36
+                                            transform -rotate-6 translate-y-1
+                                            drop-shadow-2xl
+                                            select-none pointer-events-none">
                                     @else
                                         {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
                                             class="absolute left-3 bottom-3 px-3 py-1 text-xs font-bold text-white uppercase
-               rounded-lg shadow
-               {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
+                                            rounded-lg shadow
+                                            {{ $statusColors[$status] ?? 'bg-gray-600/90' }}">
                                             {{ $status === 'disponivel' ? 'DISPONÍVEL' : $status }}
                                         </span>
                                     @endif
@@ -112,9 +112,9 @@
                                     {{-- 🟢 LOGO OPCIONAL --}}
                                     <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
                                         class="absolute right-3 bottom-3
-           h-10 md:h-12
-           opacity-70 hover:opacity-90 transition-opacity duration-300
-           select-none pointer-events-none">
+                                        h-10 md:h-12
+                                        opacity-70 hover:opacity-90 transition-opacity duration-300
+                                        select-none pointer-events-none">
 
                                 </a>
 
