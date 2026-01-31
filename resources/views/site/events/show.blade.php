@@ -99,6 +99,13 @@
                                             transform -rotate-6 translate-y-1
                                             drop-shadow-2xl
                                             select-none pointer-events-none">
+
+                                        {{-- 🟢 LOGO OPCIONAL --}}
+                                        <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
+                                            class="absolute right-3 bottom-3
+                                        h-10 md:h-12
+                                        opacity-70 hover:opacity-90 transition-opacity duration-300
+                                        select-none pointer-events-none">
                                     @else
                                         {{-- 🟢 Badge pequeno à esquerda --}}
                                         <span
@@ -109,12 +116,7 @@
                                         </span>
                                     @endif
 
-                                    {{-- 🟢 LOGO OPCIONAL --}}
-                                    <img src="{{ asset('img/logo_header_10_anos.png') }}" alt="Logo"
-                                        class="absolute right-3 bottom-3
-                                        h-10 md:h-12
-                                        opacity-70 hover:opacity-90 transition-opacity duration-300
-                                        select-none pointer-events-none">
+
 
                                 </a>
 
