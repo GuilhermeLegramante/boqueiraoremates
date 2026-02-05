@@ -148,21 +148,7 @@
                                     @else
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
-                                            {{-- @if ($status == 'vendido')
-                                                <span>Lote:</span>
-                                                <span
-                                                    class="inline-block bg-red-600 text-white px-3 py-1 rounded-lg shadow text-center min-w-[110px]">
-                                                    VENDIDO
-                                                </span> --}}
-
-                                            {{-- Mantém o espaço do "Lance-alvo" para alinhamento --}}
-                                            {{-- <span>&nbsp;</span> --}}
-                                            {{-- <span
-                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                    &nbsp;
-                                                </span>
-                                            @else --}}
-                                            @if (floatval($animal->current_bid) > 0)
+                                            @if (floatval($animal->current_bid) > 0 && floatval($animal->pivot->target_value) > 0)
                                                 <span>Lance Atual:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
