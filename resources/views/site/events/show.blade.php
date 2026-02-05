@@ -135,7 +135,7 @@
                                             class="text-center text-gray-300 font-bold text-md mb-4 min-h-[60px] flex items-center justify-center">
                                             PRÉ-LANCE ENCERRADO
                                         </div>
-                                        @if (floatval($animal->current_bid) > 0)
+                                        @if (floatval($animal->current_bid) > 0 && floatval($animal->pivot->target_value) > 0)
                                             <div
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
                                                 <span>Lance Atual:</span>
