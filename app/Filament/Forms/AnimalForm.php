@@ -3,6 +3,7 @@
 namespace App\Filament\Forms;
 
 use App\Models\Breed;
+use App\Models\Coat;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -30,6 +31,7 @@ class AnimalForm
             Select::make('coat_id')
                 ->label(__('fields.coat'))
                 ->options(\App\Models\Coat::pluck('name', 'id'))
+                ->createOptionUsing(fn(array $data) => Coat::create($data)->id)
                 ->createOptionForm(CoatForm::form()),
 
             Select::make('animal_type_id')
