@@ -278,7 +278,7 @@
 
             <tfoot>
                 <tr style="font-weight: bold; background-color: #f0f0f0;">
-                    <td colspan="6"></td>
+                    <td colspan="7"></td>
                     {{-- <td style="text-align: right;">
                         R$ {{ number_format($grossValueTotal, 2, ',', '.') }}
                     </td> --}}
