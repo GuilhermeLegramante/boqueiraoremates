@@ -2,6 +2,7 @@
 
 namespace App\Filament\Forms;
 
+use App\Models\AnimalType;
 use App\Models\Breed;
 use App\Models\Coat;
 use Filament\Forms\Components\DatePicker;
@@ -26,6 +27,7 @@ class AnimalForm
                 ->label(__('fields.breed'))
                 ->live()
                 ->options(\App\Models\Breed::pluck('name', 'id'))
+                ->createOptionUsing(fn(array $data) => Breed::create($data)->id)
                 ->createOptionForm(BreedForm::form()),
 
             Select::make('coat_id')
@@ -37,6 +39,7 @@ class AnimalForm
             Select::make('animal_type_id')
                 ->label(__('fields.animal_type'))
                 ->options(\App\Models\AnimalType::pluck('name', 'id'))
+                ->createOptionUsing(fn(array $data) => AnimalType::create($data)->id)
                 ->createOptionForm(AnimalTypeForm::form()),
 
             TextInput::make('mother')
