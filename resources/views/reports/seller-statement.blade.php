@@ -198,12 +198,12 @@
                     <th class="table-header text-white" style="width: 3%;">OS</th>
                     <th class="table-header text-white" style="width: 3%;">Lote</th>
                     <th class="table-header text-white" style="width: 18%;">Animal</th>
-                    <th class="table-header text-white" style="width: 18%;">Comprador</th>
+                    <th class="table-header text-white" style="width: 19%;">Comprador</th>
                     <th class="table-header text-white" style="width: 18%;">Cidade</th>
                     <th class="table-header text-white" style="width: 8%;">Parcela</th>
                     <th class="table-header text-white" style="width: 8%;">Faturamento</th>
                     <th class="table-header text-white" style="width: 8%;">Condição</th>
-                    <th class="table-header text-white" style="width: 7%;">Desconto</th>
+                    <th class="table-header text-white" style="width: 5%;">Dsc</th>
                     <th class="table-header text-white" style="width: 8%;">Recebido</th>
                     <th class="table-header text-white" style="width: 19%;">Informação</th>
                 </tr>
