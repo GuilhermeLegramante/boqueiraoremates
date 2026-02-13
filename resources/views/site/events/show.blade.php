@@ -149,7 +149,7 @@
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
 
-                                            @if (floatval($animal->current_bid) > 0 && floatval($animal->pivot->target_value) == 0 && $status !== 'vendido')
+                                            {{-- @if (floatval($animal->current_bid) > 0 && floatval($animal->pivot->target_value) == 0 && $status !== 'vendido')
                                                 <span>Lance Atual:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
@@ -161,7 +161,13 @@
                                                     class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
                                                     R$ 0,00
                                                 </span>
-                                            @endif
+                                            @endif --}}
+
+                                            <span>Lance Atual:</span>
+                                            <span
+                                                class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                            </span>
 
                                             @if (floatval($animal->pivot->target_value) > 0)
                                                 <span>Lance-alvo:</span>
