@@ -61,7 +61,10 @@ class Event extends Model
                 'visible',
             ])
             ->withTimestamps()
-            ->orderBy('animal_event.lot_number');
+            ->orderByRaw("
+            CAST(SUBSTRING_INDEX(animal_event.lot_number, '.', 1) AS UNSIGNED),
+            CAST(SUBSTRING_INDEX(animal_event.lot_number, '.', -1) AS UNSIGNED)
+        ");
     }
 
     public function lotes()
