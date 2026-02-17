@@ -19,7 +19,7 @@ class AllBidResource extends Resource
     protected static ?string $model = Bid::class;
 
     protected static ?string $navigationLabel = 'Lances por Cliente';
-    protected static ?string $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $recordTitleAttribute = 'user.name';
 
     protected static ?string $modelLabel = 'lance-por-cliente';
