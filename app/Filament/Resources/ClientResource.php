@@ -162,10 +162,9 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('created_at')
-                    ->label(__('fields.created_at'))
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->label('Dta Inclusão')
+                    ->date('d/m/Y')
+                    ->sortable(),
 
                 TextColumn::make('updated_at')
                     ->label(__('fields.updated_at'))
