@@ -44,8 +44,14 @@ class DocumentsRelationManager extends RelationManager
             ->columns([
                 TextColumn::make('documentType.name')
                     ->searchable()
-
                     ->label(__('fields.document_type')),
+
+                TextColumn::make('created_at')
+                    ->label('Dta Inclusão')
+                    ->date('d/m/Y')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 FileLink::make('path')
                     ->alignment(Alignment::Left)
                     ->label(__('fields.file')),
