@@ -125,20 +125,10 @@ class BidResource extends Resource
                 //     ->label('Cliente')
                 //     ->searchable()
                 //     ->relationship('user', 'name'),
-                Tables\Filters\SelectFilter::make('client_name')
-                    ->label('Cliente')
-                    ->options(function () {
-                        return \App\Models\Client::orderBy('name')
-                            ->pluck('name', 'id');
-                    })
-                    ->searchable()
-                    ->query(function ($query, $data) {
-                        if (!$data['value']) return;
-
-                        $query->whereHas('user.client', function ($q) use ($data) {
-                            $q->where('clients.id', $data['value']);
-                        });
-                    }),
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->label('Usuário')
+                    ->relationship('user', 'name')
+                    ->searchable(),
             ])
             ->deferFilters()
             ->filtersApplyAction(
