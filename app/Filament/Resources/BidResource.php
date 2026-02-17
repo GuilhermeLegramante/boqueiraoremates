@@ -99,17 +99,14 @@ class BidResource extends Resource
                     ->color('gray'),
             ], position: ActionsPosition::BeforeColumns)
             ->filters([
-                Tables\Filters\Filter::make('status')
-                    ->query(fn($query) => $query->where('status', 1))
-                    ->label('Aprovados'),
-
-                Tables\Filters\Filter::make('pendente')
-                    ->query(fn($query) => $query->where('status', 0))
-                    ->label('Pendentes'),
-
-                Tables\Filters\Filter::make('rejeitado')
-                    ->query(fn($query) => $query->where('status', 2))
-                    ->label('Rejeitados'),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        1 => 'Aprovados',
+                        0 => 'Pendentes',
+                        2 => 'Rejeitados',
+                    ])
+                    ->multiple(),
 
                 Tables\Filters\Filter::make('published_events')
                     ->label('Somente eventos publicados')
@@ -126,7 +123,7 @@ class BidResource extends Resource
                 //     ->searchable()
                 //     ->relationship('user', 'name'),
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label('Usuário')
+                    ->label('Cliente')
                     ->relationship('user', 'name')
                     ->searchable(),
             ])
