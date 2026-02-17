@@ -22,6 +22,7 @@ class BidTable
                 ->label('Cliente')
                 ->sortable(false)
                 ->copyable()
+                ->searchable()
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->name ?? '—';
                 }),
