@@ -49,8 +49,7 @@ class DocumentsRelationManager extends RelationManager
                 TextColumn::make('created_at')
                     ->label('Dta Inclusão')
                     ->date('d/m/Y')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->sortable(),
 
                 FileLink::make('path')
                     ->alignment(Alignment::Left)
