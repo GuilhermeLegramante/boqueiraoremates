@@ -18,13 +18,13 @@ class BidTable
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->sortable(),
 
-            TextColumn::make('client_name')
+            TextColumn::make('user.name')
                 ->label('Cliente')
                 ->sortable(false)
                 ->copyable()
-                ->searchable()
+                ->searchable(['users.name'])
                 ->getStateUsing(function ($record) {
-                    return $record->user?->client?->name ?? '—';
+                    return $record->user?->name ?? '—';
                 }),
 
             TextColumn::make('event.name')
