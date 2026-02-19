@@ -23,6 +23,10 @@ class ViewSalesMapAnimals extends BaseWidget
 
     public $record;
 
+    protected static ?string $navigationLabel = 'Faturas de Venda';
+    protected static ?string $modelLabel = 'Fatura de Venda / OS';
+    protected static ?string $pluralModelLabel = 'Faturas de Venda / OS';
+
     public function mount($record)
     {
         $this->record = $record;
