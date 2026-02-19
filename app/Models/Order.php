@@ -193,4 +193,9 @@ class Order extends Model
             }
         });
     }
+
+    public static function getModelLabel(): string
+    {
+        return 'OS';
+    }
 }
