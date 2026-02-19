@@ -21,8 +21,7 @@ class ViewSalesMapAnimals extends BaseWidget
 {
     protected int|string|array $columnSpan = 'full';
 
-    protected static ?string $modelLabel = 'Fatura de Venda / OS';
-    protected static ?string $pluralModelLabel = 'Faturas de Venda / OS';
+    
 
     public $record;
 
@@ -36,16 +35,10 @@ class ViewSalesMapAnimals extends BaseWidget
     {
         return $table
             ->heading($this->record->event->name)
-            // ->query(
-            //     fn() => Order::where('event_id', $this->record->event_id)
-            //         ->with(['animal', 'seller.address']) // Garantir que carregamos os relacionamentos necessários
-            // )
             ->query(function () {
                 $orders = Order::where('event_id', $this->record->event_id)
                     ->with(['animal', 'seller.address']) // Relacionamentos
                     ->get(); // Executa a query aqui
-
-                // dd($orders->first()); // Exibe o primeiro resultado para inspecionar
 
                 return Order::where('event_id', $this->record->event_id)
                     ->with(['animal', 'seller.address']);

@@ -16,6 +16,9 @@ class ViewSalesMap extends ViewRecord
 {
     protected static string $resource = SalesMapResource::class;
 
+    protected static ?string $modelLabel = 'Fatura de Venda / OS';
+    protected static ?string $pluralModelLabel = 'Faturas de Venda / OS';
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;
