@@ -23,10 +23,6 @@ class ViewSalesMapAnimals extends BaseWidget
 
     public $record;
 
-    protected static ?string $navigationLabel = 'Faturas de Venda';
-    protected static ?string $modelLabel = 'Fatura de Venda / OS';
-    protected static ?string $pluralModelLabel = 'Faturas de Venda / OS';
-
     public function mount($record)
     {
         $this->record = $record;
@@ -90,6 +86,7 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->label('Faturamento')
                     ->money('BRL')
                     ->alignEnd()
+                    ->summarizersLabel('Faturas de Venda / OS')
                     ->summarize([
                         Sum::make()->label('Faturamento Total')->money('BRL'),
                         Average::make()->label('Média Geral por Lote')->money('BRL'),
