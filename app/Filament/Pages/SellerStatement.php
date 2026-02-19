@@ -133,10 +133,12 @@ class SellerStatement extends Page
                             ->schema([
                                 Placeholder::make('total_earnings_01')
                                     ->label('Total de Proventos 01')
-                                    ->content(
-                                        fn(callable $get) =>
-                                        'R$ ' . number_format($get('total_earnings_01'), 2, ',', '.')
-                                    )
+                                    ->content(function (callable $get) {
+                                        // Obtém o valor e garante que seja tratado como número (0 se estiver vazio)
+                                        $value = (float) ($get('total_earnings_01') ?? 0);
+
+                                        return 'R$ ' . number_format($value, 2, ',', '.');
+                                    })
                                     ->reactive(),
                             ])
                             ->reactive()
@@ -184,33 +186,52 @@ class SellerStatement extends Page
                     ->schema([
                         Placeholder::make('total_earnings')
                             ->label('Total de Proventos (01 + 02)')
-                            ->content(
-                                fn(callable $get) =>
-                                'R$ ' . number_format(collect($get('additional_earnings'))->sum('value') + $get('total_earnings_01'), 2, ',', '.')
-                            )
+                            ->content(function (callable $get) {
+                                // 1. Calcula a soma da coleção (garante que seja numérico)
+                                $additional = (float) collect($get('additional_earnings'))->sum('value');
+
+                                // 2. Obtém o valor do outro campo e força para float (evita erro de string)
+                                $earnings01 = (float) ($get('total_earnings_01') ?? 0);
+
+                                // 3. Soma os dois floats e formata o resultado
+                                return 'R$ ' . number_format($additional + $earnings01, 2, ',', '.');
+                            })
                             ->reactive(),
 
                         Placeholder::make('total_discounts')
                             ->label('Total de Descontos')
-                            ->content(
-                                fn(callable $get) =>
-                                'R$ ' . number_format(collect($get('additional_discounts'))->sum('value'), 2, ',', '.')
-                            )
+                            ->content(function (callable $get) {
+                                // 1. Transforma em coleção e garante que não seja nulo
+                                $discounts = collect($get('additional_discounts') ?? []);
+
+                                // 2. Soma os valores garantindo que cada 'value' seja tratado como float
+                                $total = $discounts->sum(fn($item) => (float) ($item['value'] ?? 0));
+
+                                // 3. Retorna formatado
+                                return 'R$ ' . number_format($total, 2, ',', '.');
+                            })
                             ->reactive()
                             ->extraAttributes(['class' => 'text-red-600']),
 
                         Placeholder::make('final_balance')
                             ->label('Saldo Final')
                             ->content(function (callable $get) {
-                                $earnings = collect($get('additional_earnings'))->sum('value');
-                                $discounts = collect($get('additional_discounts'))->sum('value');
-                                $balance = $get('total_earnings_01') + $earnings - $discounts;
+                                // Garantimos que tudo seja float e tratamos nulos
+                                $earnings01 = (float) ($get('total_earnings_01') ?? 0);
+                                $extraEarnings = (float) collect($get('additional_earnings'))->sum('value');
+                                $discounts = (float) collect($get('additional_discounts'))->sum('value');
+
+                                $balance = $earnings01 + $extraEarnings - $discounts;
+
                                 return 'R$ ' . number_format($balance, 2, ',', '.');
                             })
                             ->extraAttributes(function (callable $get) {
-                                $earnings = collect($get('additional_earnings'))->sum('value');
-                                $discounts = collect($get('additional_discounts'))->sum('value');
-                                $balance = $get('total_earnings_01') + $earnings - $discounts;
+                                // Repetimos a lógica de segurança aqui para as classes CSS
+                                $earnings01 = (float) ($get('total_earnings_01') ?? 0);
+                                $extraEarnings = (float) collect($get('additional_earnings'))->sum('value');
+                                $discounts = (float) collect($get('additional_discounts'))->sum('value');
+
+                                $balance = $earnings01 + $extraEarnings - $discounts;
 
                                 return [
                                     'class' => 'font-bold ' . ($balance >= 0 ? 'text-green-600' : 'text-red-600'),
