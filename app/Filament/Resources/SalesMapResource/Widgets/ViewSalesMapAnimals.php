@@ -21,12 +21,16 @@ class ViewSalesMapAnimals extends BaseWidget
 {
     protected int|string|array $columnSpan = 'full';
 
+    protected static ?string $modelLabel = 'Fatura de Venda / OS';
+    protected static ?string $pluralModelLabel = 'Faturas de Venda / OS';
+
     public $record;
 
     public function mount($record)
     {
         $this->record = $record;
     }
+
 
     public function table(Table $table): Table
     {
