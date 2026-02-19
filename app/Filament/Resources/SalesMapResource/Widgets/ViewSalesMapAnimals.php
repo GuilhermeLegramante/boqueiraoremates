@@ -86,7 +86,6 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->label('Faturamento')
                     ->money('BRL')
                     ->alignEnd()
-                    ->summarizersLabel('Faturas de Venda / OS')
                     ->summarize([
                         Sum::make()->label('Faturamento Total')->money('BRL'),
                         Average::make()->label('Média Geral por Lote')->money('BRL'),
