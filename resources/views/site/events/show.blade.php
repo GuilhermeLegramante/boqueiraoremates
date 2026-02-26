@@ -136,7 +136,7 @@
                                             PRÉ-LANCE ENCERRADO
                                         </div>
                                         {{-- @if (floatval($animal->current_bid) > 0 && floatval($animal->pivot->target_value) == 0) --}}
-                                        @if (floatval($animal->pivot->target_value) == 0)
+                                        {{-- @if (floatval($animal->pivot->target_value) == 0) --}}
                                             <div
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
                                                 <span>Lance Atual:</span>
@@ -145,7 +145,7 @@
                                                     R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
                                                 </span>
                                             </div>
-                                        @endif
+                                        {{-- @endif --}}
                                     @else
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
