@@ -124,7 +124,7 @@
                         </div>
                     </div>
 
-                    @if (!$event->closed)
+                    @if (!$event->closed && !$event->is_permanent)
                         <!-- Card de lance -->
                         @if ($animal->pivot->status === 'disponivel' && !$event->closed)
                             <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
@@ -162,10 +162,12 @@
                         @auth
                             @php
                                 $client = Auth::user()->client;
+
+                                $plantao = \App\Models\PlantaoConfig::where('ativo', true)->get()->first();
                             @endphp
 
                             {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
-                            @if ($animal->pivot->status === 'disponivel' && !$event->closed)
+                            @if ($animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent)
                                 {{-- Cliente está apto --}}
                                 @if ($client && $client->situation === 'able')
                                     {{-- FORMULÁRIO DE LANCE --}}
@@ -208,6 +210,49 @@
                                     </div>
                                 @endif
                             @else
+                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+
+                                    @if ($plantao)
+                                        @php
+                                            $mensagem = urlencode(
+                                                "Olá, tenho interesse no lote {$animal->pivot->name} do evento {$event->name}. Poderia me passar mais informações?",
+                                            );
+
+                                            $numeroLimpo = preg_replace('/\D/', '', $plantao->phone);
+                                            $whatsLink = "https://wa.me/55{$numeroLimpo}?text={$mensagem}";
+                                        @endphp
+
+                                        <div class="flex flex-col gap-3">
+
+                                            {{-- Botão WhatsApp --}}
+                                            <a href="{{ $whatsLink }}" target="_blank"
+                                                class="w-full text-center bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
+                                                💬 Falar no WhatsApp
+                                            </a>
+
+                                            {{-- Botão Ligar --}}
+                                            <a href="tel:{{ $numeroLimpo }}"
+                                                class="w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
+                                                📞 Ligar para o Plantão de Vendas
+                                            </a>
+                                        </div>
+                                    @else
+                                        @if ($event->is_permanent)
+                                            <p class="text-sm mt-2">
+                                                No momento não há plantão de venda disponível. Tente novamente mais tarde.
+                                            </p>
+                                        @else
+                                            <p class="font-semibold">⚠️ Este lote não está disponível para lance.</p>
+                                        @endif
+                                    @endif
+                                </div>
+
+
+                                {{-- Aqui quero um botão para chamar o whatsap de algum plantão ativo $plantoes->first()->is_active aí tem que direcionar
+                                    para o whatsapp com uma mensagem pré-definida tipo "Olá, tenho interesse no lote {{ $animal->pivot->name }} do evento {{ $event->name }}. Poderia me passar mais informações?"
+                                    Também quero um botão que ligue direto para o plantão, usando o número de telefone cadastrado no banco de dados, algo como "tel:{{ $plantoes->first()->phone }}"
+                                --}}
+
                                 {{-- Animal não disponível para lance --}}
                                 <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
                                     <p class="font-semibold">⚠️ Este lote não está disponível para lance.</p>
