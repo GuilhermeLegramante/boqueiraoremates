@@ -4,7 +4,7 @@
            hover:from-yellow-500 hover:to-yellow-700
            text-[#003333] font-semibold px-4 py-3 rounded-full 
            shadow-2xl flex items-center gap-2 z-50 
-           transition-all duration-300 transform hover:scale-105"
+           transition-all duration-300 transform hover:scale-105 animate-pulse"
     aria-label="Ir para Vendas Diretas">
 
     <!-- Ícone -->
