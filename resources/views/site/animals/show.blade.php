@@ -125,7 +125,7 @@
                     </div>
 
                     <!-- Card de lance -->
-                    @if ($animal->pivot->status === 'disponivel' && !$event->closed)
+                    @if ($animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent)
                         <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
                             <h3 class="text-xl font-bold mb-4">Dar lance</h3>
 
@@ -211,7 +211,6 @@
                             @endif
                         @else
                             <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-
                                 @if ($plantao)
                                     @php
                                         $mensagem = urlencode(
