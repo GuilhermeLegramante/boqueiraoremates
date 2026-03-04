@@ -227,13 +227,13 @@
                                             {{-- Botão WhatsApp --}}
                                             <a href="{{ $whatsLink }}" target="_blank"
                                                 class="w-full text-center bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
-                                                💬 Falar no WhatsApp
+                                                💬 Fazer oferta / consultar detalhes via WhatsApp
                                             </a>
 
                                             {{-- Botão Ligar --}}
                                             <a href="tel:{{ $numeroLimpo }}"
                                                 class="w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
-                                                📞 Ligar para o Plantão de Vendas
+                                                📞 Fazer oferta / consultar detalhes via Ligação Telefônica
                                             </a>
                                         </div>
                                     @else
