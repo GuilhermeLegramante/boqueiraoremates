@@ -94,14 +94,6 @@
                 <!-- Informações e lance (à direita) -->
                 <div class="space-y-4 md:order-2">
                     <!-- Dados técnicos -->
-                    <h1>
-                        @if($animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent)
-                        V
-                        @else
-                        F
-                        @endif
-                    </h1>
-
                     <h1 class="text-3xl font-bold">{{ $animal->pivot->name }}</h1>
                     <p><b>N° Lote:</b> {{ $animal->pivot->lot_number ?? '-' }}</p>
                     <p><b>Gênero:</b>
@@ -175,7 +167,9 @@
                             @endphp
 
                             {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
-                            @if ($animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent)
+                            @if (strtolower($animal->pivot->status) === 'disponivel' &&
+                                    (bool) $event->closed === false &&
+                                    (bool) $event->is_permanent === false)
                                 {{-- Cliente está apto --}}
                                 @if ($client && $client->situation === 'able')
                                     {{-- FORMULÁRIO DE LANCE --}}
