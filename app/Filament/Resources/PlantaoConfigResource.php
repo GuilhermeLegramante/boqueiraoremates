@@ -39,7 +39,7 @@ class PlantaoConfigResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                PhoneNumber::make('whatsapp')
+                PhoneNumber::make('phone')
                     ->label(__('fields.whatsapp'))
                     ->format('(99) 99999-9999'),
 
