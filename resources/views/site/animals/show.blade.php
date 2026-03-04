@@ -124,145 +124,141 @@
                         </div>
                     </div>
 
-                    @if (!$event->closed && !$event->is_permanent)
-                        <!-- Card de lance -->
-                        @if ($animal->pivot->status === 'disponivel' && !$event->closed)
-                            <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
-                                <h3 class="text-xl font-bold mb-4">Dar lance</h3>
+                    <!-- Card de lance -->
+                    @if ($animal->pivot->status === 'disponivel' && !$event->closed)
+                        <div class="bg-[#002222] p-6 rounded-xl shadow-lg mt-6">
+                            <h3 class="text-xl font-bold mb-4">Dar lance</h3>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                                    <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                        <p class="text-green-300">Lance atual</p>
-                                        <p class="text-xl font-bold text-white">
-                                            R$ {{ number_format($animal->current_bid ?? 0, 2, ',', '.') }}
-                                        </p>
-                                    </div>
-
-                                    <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                        <p class="text-green-300">Próximo lance mínimo</p>
-                                        <p class="text-xl font-bold text-white">
-                                            R$ {{ number_format($animal->next_bid ?? 0, 2, ',', '.') }}
-                                        </p>
-                                    </div>
-
-                                    <div class="bg-[#003333] shadow-lg rounded-lg p-4">
-                                        <p class="text-green-300">Lance-alvo</p>
-                                        @if ($animal->pivot->target_value && $animal->pivot->target_value != '0.00')
-                                            <p class="text-xl font-bold text-green-300">
-                                                R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
-                                            </p>
-                                        @else
-                                            <p class="text-xl font-bold text-green-300">Consulte o regulamento</p>
-                                        @endif
-                                    </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                                <div class="bg-[#003333] shadow-lg rounded-lg p-4">
+                                    <p class="text-green-300">Lance atual</p>
+                                    <p class="text-xl font-bold text-white">
+                                        R$ {{ number_format($animal->current_bid ?? 0, 2, ',', '.') }}
+                                    </p>
                                 </div>
-                        @endif
 
-                        {{-- Usuário logado --}}
-                        @auth
-                            @php
-                                $client = Auth::user()->client;
+                                <div class="bg-[#003333] shadow-lg rounded-lg p-4">
+                                    <p class="text-green-300">Próximo lance mínimo</p>
+                                    <p class="text-xl font-bold text-white">
+                                        R$ {{ number_format($animal->next_bid ?? 0, 2, ',', '.') }}
+                                    </p>
+                                </div>
 
-                                $plantao = \App\Models\PlantaoConfig::where('ativo', true)->get()->first();
-                            @endphp
-
-                            {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
-                            @if (strtolower($animal->pivot->status) === 'disponivel' &&
-                                    (bool) $event->closed === false &&
-                                    (bool) $event->is_permanent === false)
-                                {{-- Cliente está apto --}}
-                                @if ($client && $client->situation === 'able')
-                                    {{-- FORMULÁRIO DE LANCE --}}
-                                    <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
-                                        @csrf
-
-                                        <input type="hidden" name="event_id" value="{{ $event->id }}">
-                                        <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
-
-                                        <div class="relative">
-                                            <span
-                                                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
-                                            <input type="text" name="amount" id="bidInput"
-                                                class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
-                                                required>
-                                        </div>
-
-                                        <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
-                                            O valor do lance não pode ser menor que o lance mínimo
-                                            (R$ {{ number_format($animal->next_bid, 2, ',', '.') }})
-                                            .
+                                <div class="bg-[#003333] shadow-lg rounded-lg p-4">
+                                    <p class="text-green-300">Lance-alvo</p>
+                                    @if ($animal->pivot->target_value && $animal->pivot->target_value != '0.00')
+                                        <p class="text-xl font-bold text-green-300">
+                                            R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                         </p>
-
-                                        <button type="submit"
-                                            class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow hover:bg-green-500 transition">
-                                            Confirmar Lance
-                                        </button>
-                                    </form>
-
-                                    @include('site.animals.bid-modal')
-                                @else
-                                    {{-- Cliente não apto --}}
-                                    <div
-                                        class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-                                        <p class="font-semibold">⚠️ Para dar lance, você precisa estar logado.</p>
-                                        <p class="text-sm mt-2"> Ainda não possui cadastro? <a
-                                                href="{{ route('filament.admin.auth.register') }}"
-                                                class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
-                                                Criar cadastro </a> </p>
-                                    </div>
-                                @endif
-                            @else
-                                TESTE
-                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-
-                                    @if ($plantao)
-                                        @php
-                                            $mensagem = urlencode(
-                                                "Olá, tenho interesse no lote {$animal->pivot->name} do evento {$event->name}. Poderia me passar mais informações?",
-                                            );
-
-                                            $numeroLimpo = preg_replace('/\D/', '', $plantao->phone);
-                                            $whatsLink = "https://wa.me/55{$numeroLimpo}?text={$mensagem}";
-                                        @endphp
-
-                                        <div class="flex flex-col gap-3">
-
-                                            {{-- Botão WhatsApp --}}
-                                            <a href="{{ $whatsLink }}" target="_blank"
-                                                class="w-full text-center bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
-                                                💬 Fazer oferta / consultar detalhes via WhatsApp
-                                            </a>
-
-                                            {{-- Botão Ligar --}}
-                                            <a href="tel:{{ $numeroLimpo }}"
-                                                class="w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
-                                                📞 Fazer oferta / consultar detalhes via Ligação Telefônica
-                                            </a>
-                                        </div>
                                     @else
-                                        @if ($event->is_permanent)
-                                            <p class="text-sm mt-2">
-                                                No momento não há plantão de venda disponível. Tente novamente mais tarde.
-                                            </p>
-                                        @else
-                                            <p class="font-semibold">⚠️ Este lote não está disponível para lance.</p>
-                                        @endif
+                                        <p class="text-xl font-bold text-green-300">Consulte o regulamento</p>
                                     @endif
                                 </div>
-                            @endif
-                        @endauth
-
-                        {{-- Visitante --}}
-                        @guest
-                            <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-                                <p class="font-semibold">⚠️ Você deve estar logado para dar lances.</p>
-                                <a href="{{ route('login') }}"
-                                    class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
-                                    Clique aqui para logar
-                                </a>
                             </div>
-                        @endguest
                     @endif
+
+                    {{-- Usuário logado --}}
+                    @auth
+                        @php
+                            $client = Auth::user()->client;
+
+                            $plantao = \App\Models\PlantaoConfig::where('ativo', true)->get()->first();
+                        @endphp
+
+                        {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
+                        @if (strtolower($animal->pivot->status) === 'disponivel' &&
+                                (bool) $event->closed === false &&
+                                (bool) $event->is_permanent === false)
+                            {{-- Cliente está apto --}}
+                            @if ($client && $client->situation === 'able')
+                                {{-- FORMULÁRIO DE LANCE --}}
+                                <form action="{{ route('bids.store') }}" method="POST" class="space-y-4" id="bidForm">
+                                    @csrf
+
+                                    <input type="hidden" name="event_id" value="{{ $event->id }}">
+                                    <input type="hidden" name="animal_event_id" value="{{ $animal->pivot->id }}">
+
+                                    <div class="relative">
+                                        <span
+                                            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-700 z-10">R$</span>
+                                        <input type="text" name="amount" id="bidInput"
+                                            class="w-full pl-10 px-4 py-2 rounded-lg text-black border" placeholder="0,00"
+                                            required>
+                                    </div>
+
+                                    <p id="bidError" class="text-red-600 text-sm mt-1 hidden">
+                                        O valor do lance não pode ser menor que o lance mínimo
+                                        (R$ {{ number_format($animal->next_bid, 2, ',', '.') }})
+                                        .
+                                    </p>
+
+                                    <button type="submit"
+                                        class="w-full bg-green-600 text-white font-bold px-6 py-3 rounded-lg shadow hover:bg-green-500 transition">
+                                        Confirmar Lance
+                                    </button>
+                                </form>
+
+                                @include('site.animals.bid-modal')
+                            @else
+                                {{-- Cliente não apto --}}
+                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+                                    <p class="font-semibold">⚠️ Para dar lance, você precisa estar logado.</p>
+                                    <p class="text-sm mt-2"> Ainda não possui cadastro? <a
+                                            href="{{ route('filament.admin.auth.register') }}"
+                                            class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
+                                            Criar cadastro </a> </p>
+                                </div>
+                            @endif
+                        @else
+                            <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+
+                                @if ($plantao)
+                                    @php
+                                        $mensagem = urlencode(
+                                            "Olá, tenho interesse no lote {$animal->pivot->name} do evento {$event->name}. Poderia me passar mais informações?",
+                                        );
+
+                                        $numeroLimpo = preg_replace('/\D/', '', $plantao->phone);
+                                        $whatsLink = "https://wa.me/55{$numeroLimpo}?text={$mensagem}";
+                                    @endphp
+
+                                    <div class="flex flex-col gap-3">
+
+                                        {{-- Botão WhatsApp --}}
+                                        <a href="{{ $whatsLink }}" target="_blank"
+                                            class="w-full text-center bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
+                                            💬 Fazer oferta / consultar detalhes via WhatsApp
+                                        </a>
+
+                                        {{-- Botão Ligar --}}
+                                        <a href="tel:{{ $numeroLimpo }}"
+                                            class="w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
+                                            📞 Fazer oferta / consultar detalhes via Ligação Telefônica
+                                        </a>
+                                    </div>
+                                @else
+                                    @if ($event->is_permanent)
+                                        <p class="text-sm mt-2">
+                                            No momento não há plantão de venda disponível. Tente novamente mais tarde.
+                                        </p>
+                                    @else
+                                        <p class="font-semibold">⚠️ Este lote não está disponível para lance.</p>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
+                    @endauth
+
+                    {{-- Visitante --}}
+                    @guest
+                        <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
+                            <p class="font-semibold">⚠️ Você deve estar logado para dar lances.</p>
+                            <a href="{{ route('login') }}"
+                                class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
+                                Clique aqui para logar
+                            </a>
+                        </div>
+                    @endguest
                 </div>
             </div>
         </div>
