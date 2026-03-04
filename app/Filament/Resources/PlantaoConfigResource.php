@@ -35,6 +35,7 @@ class PlantaoConfigResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')
+                    ->label(__('fields.name'))
                     ->required()
                     ->maxLength(255),
 
@@ -53,11 +54,15 @@ class PlantaoConfigResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('fields.name'))
                     ->searchable(),
 
-                TextColumn::make('phone'),
+                TextColumn::make('phone')
+                    ->label(__('fields.phone'))
+                    ->searchable(),
 
                 IconColumn::make('is_active')
+                    ->label('Ativo')
                     ->boolean(),
             ])
             ->filters([
