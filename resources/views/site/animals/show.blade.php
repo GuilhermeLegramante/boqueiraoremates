@@ -94,6 +94,14 @@
                 <!-- Informações e lance (à direita) -->
                 <div class="space-y-4 md:order-2">
                     <!-- Dados técnicos -->
+                    <h1>
+                        @if($animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent)
+                        V
+                        @else
+                        F
+                        @endif
+                    </h1>
+
                     <h1 class="text-3xl font-bold">{{ $animal->pivot->name }}</h1>
                     <p><b>N° Lote:</b> {{ $animal->pivot->lot_number ?? '-' }}</p>
                     <p><b>Gênero:</b>
@@ -122,7 +130,6 @@
                         <div>
                             {!! str_replace('<p>', '<p style="text-align: justify;">', $animal->pivot->note) !!}
                         </div>
-                        <p>{{ $animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent }}</p>
                     </div>
 
                     @if (!$event->closed && !$event->is_permanent)
