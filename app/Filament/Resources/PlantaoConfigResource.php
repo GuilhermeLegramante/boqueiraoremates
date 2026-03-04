@@ -28,6 +28,8 @@ class PlantaoConfigResource extends Resource
 
     protected static ?string $slug = 'plantoes';
 
+    protected static ?string $modelLabel = 'plantão';
+
     public static function form(Form $form): Form
     {
         return $form
