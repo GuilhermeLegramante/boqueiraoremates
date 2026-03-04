@@ -218,6 +218,7 @@
                                     </div>
                                 @endif
                             @else
+                                TESTE
                                 <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
 
                                     @if ($plantao)
