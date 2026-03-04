@@ -63,8 +63,7 @@ class PlantaoConfigResource extends Resource
                     ->searchable(),
 
                 ToggleColumn::make('is_active')
-                    ->label('Ativo')
-                    ->boolean(),
+                    ->label('Ativo'),
             ])
             ->filters([
                 //
