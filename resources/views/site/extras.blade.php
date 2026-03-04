@@ -1,3 +1,26 @@
+<!-- Botão Flutuante Vendas Diretas -->
+<a href="{{ route('home') }}#vendas-permanentes"
+    class="fixed bottom-20 right-4 bg-gradient-to-r from-yellow-400 to-yellow-600 
+           hover:from-yellow-500 hover:to-yellow-700
+           text-[#003333] font-semibold px-4 py-3 rounded-full 
+           shadow-2xl flex items-center gap-2 z-50 
+           transition-all duration-300 transform hover:scale-105"
+    aria-label="Ir para Vendas Diretas">
+
+    <!-- Ícone -->
+    <svg xmlns="http://www.w3.org/2000/svg" 
+         class="h-5 w-5" 
+         fill="none" 
+         viewBox="0 0 24 24" 
+         stroke="currentColor" 
+         stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 10h18M7 15h1m4 0h5M6 6h12a2 2 0 012 2v8a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2z" />
+    </svg>
+
+    Vendas Diretas
+</a>
+
 <!-- WhatsApp -->
 <a href="https://wa.me/5555997331395"
     target="_blank"
