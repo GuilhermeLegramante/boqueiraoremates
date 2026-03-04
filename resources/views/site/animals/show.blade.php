@@ -162,7 +162,7 @@
                         @php
                             $client = Auth::user()->client;
 
-                            $plantao = \App\Models\PlantaoConfig::where('ativo', true)->get()->first();
+                            $plantao = \App\Models\PlantaoConfig::where('is_active', true)->get()->first();
                         @endphp
 
                         {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
