@@ -43,6 +43,7 @@ class PlantaoConfigResource extends Resource
                     ->format('(99) 99999-9999'),
 
                 Toggle::make('is_active')
+                    ->label('Ativo')
                     ->default(true),
             ]);
     }
