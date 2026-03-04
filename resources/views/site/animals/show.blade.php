@@ -221,19 +221,51 @@
                                         $whatsLink = "https://wa.me/55{$numeroLimpo}?text={$mensagem}";
                                     @endphp
 
-                                    <div class="flex flex-col gap-3">
+                                    <div class="flex flex-col gap-4 mt-4">
 
-                                        {{-- Botão WhatsApp --}}
+                                        {{-- WhatsApp --}}
                                         <a href="{{ $whatsLink }}" target="_blank"
-                                            class="w-full text-center bg-green-600 hover:bg-green-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
-                                            💬 Fazer oferta / consultar detalhes via WhatsApp
+                                            class="group w-full flex items-center justify-center gap-3
+               bg-[#0f5132] hover:bg-[#146c43]
+               border border-green-700/40
+               text-white font-semibold tracking-wide
+               px-6 py-3 rounded-xl
+               shadow-md hover:shadow-lg
+               transition-all duration-300">
+
+                                            {{-- Ícone --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="w-5 h-5 opacity-90 group-hover:scale-110 transition" fill="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path
+                                                    d="M20.52 3.48A11.91 11.91 0 0012.05 0C5.5 0 .22 5.28.22 11.83c0 2.08.54 4.1 1.57 5.9L0 24l6.45-1.69a11.8 11.8 0 005.6 1.43h.01c6.55 0 11.83-5.28 11.83-11.83 0-3.16-1.23-6.13-3.47-8.43z" />
+                                            </svg>
+
+                                            Falar com a Mesa de Vendas via WhatsApp
                                         </a>
 
-                                        {{-- Botão Ligar --}}
+
+                                        {{-- Ligação --}}
                                         <a href="tel:{{ $numeroLimpo }}"
-                                            class="w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg shadow transition">
-                                            📞 Fazer oferta / consultar detalhes via Ligação Telefônica
+                                            class="group w-full flex items-center justify-center gap-3
+                                                    bg-[#1c1c1c] hover:bg-[#2b2b2b]
+                                                    border border-white/10
+                                                    text-white font-semibold tracking-wide
+                                                    px-6 py-3 rounded-xl
+                                                    shadow-md hover:shadow-lg
+                                                    transition-all duration-300">
+
+                                            {{-- Ícone --}}
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="w-5 h-5 opacity-90 group-hover:scale-110 transition" fill="none"
+                                                stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                    d="M3 5a2 2 0 012-2h2.28a2 2 0 011.94 1.51l.7 2.8a2 2 0 01-.45 1.87l-1.27 1.27a16 16 0 006.59 6.59l1.27-1.27a2 2 0 011.87-.45l2.8.7A2 2 0 0121 16.72V19a2 2 0 01-2 2h-1C9.16 21 3 14.84 3 7V5z" />
+                                            </svg>
+
+                                            Ligar para a Central de Atendimento
                                         </a>
+
                                     </div>
                                 @else
                                     @if ($event->is_permanent)
