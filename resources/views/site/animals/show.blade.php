@@ -122,6 +122,7 @@
                         <div>
                             {!! str_replace('<p>', '<p style="text-align: justify;">', $animal->pivot->note) !!}
                         </div>
+                        <p>{{ $animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent }}</p>
                     </div>
 
                     @if (!$event->closed && !$event->is_permanent)
@@ -246,17 +247,6 @@
                                         @endif
                                     @endif
                                 </div>
-
-
-                                {{-- Aqui quero um botão para chamar o whatsap de algum plantão ativo $plantoes->first()->is_active aí tem que direcionar
-                                    para o whatsapp com uma mensagem pré-definida tipo "Olá, tenho interesse no lote {{ $animal->pivot->name }} do evento {{ $event->name }}. Poderia me passar mais informações?"
-                                    Também quero um botão que ligue direto para o plantão, usando o número de telefone cadastrado no banco de dados, algo como "tel:{{ $plantoes->first()->phone }}"
-                                --}}
-
-                                {{-- Animal não disponível para lance --}}
-                                <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
-                                    <p class="font-semibold">⚠️ Este lote não está disponível para lance.</p>
-                                </div>
                             @endif
                         @endauth
 
@@ -272,10 +262,7 @@
                         @endguest
                     @endif
                 </div>
-
-
             </div>
-
         </div>
         </div>
 
