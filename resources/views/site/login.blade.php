@@ -43,7 +43,7 @@
 
                     {{-- Usuário / CPF --}}
                     <div>
-                        <label for="username" class="block font-semibold mb-1">Usuário ou CPF</label>
+                        <label for="username" class="block font-semibold mb-1">Usuário ou CPF/CNPJ</label>
                         <input type="text" name="username" id="username"
                             class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                             placeholder="Digite seu usuário ou CPF" required>
@@ -174,16 +174,26 @@
             const formError = document.getElementById('formError');
             const firstAccessNotice = document.getElementById('firstAccessNotice');
 
-            // Máscara CPF
+            // Máscara CPF ou CNPJ
             usernameInput.addEventListener('input', () => {
-                let value = usernameInput.value;
-                if (/^\d/.test(value)) {
-                    value = value.replace(/\D/g, '')
+                let value = usernameInput.value.replace(/\D/g, '');
+
+                if (value.length <= 11) {
+                    // CPF
+                    value = value
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d)/, '$1.$2')
                         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-                    usernameInput.value = value;
+                } else {
+                    // CNPJ
+                    value = value
+                        .replace(/^(\d{2})(\d)/, '$1.$2')
+                        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+                        .replace(/(\d{4})(\d)/, '$1-$2');
                 }
+
+                usernameInput.value = value;
             });
 
             // Checar primeiro acesso
