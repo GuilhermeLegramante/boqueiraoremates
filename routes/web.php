@@ -25,11 +25,11 @@ use Livewire\Livewire;
 use function PHPUnit\Framework\fileExists;
 
 Livewire::setScriptRoute(function ($handle) {
-    return Route::get('/boqueirao/boqueiraoremates/public/livewire/livewire.js', $handle);
+    return Route::get('/boqueiraoremates/public/livewire/livewire.js', $handle);
 });
 
 Livewire::setUpdateRoute(function ($handle) {
-    return Route::post('/boqueirao/boqueiraoremates/public/livewire/update', $handle);
+    return Route::post('/boqueiraoremates/public/livewire/update', $handle);
 });
 
 // Livewire::setScriptRoute(function ($handle) {
