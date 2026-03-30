@@ -170,7 +170,7 @@ class Client extends Model
                 // Cria novo usuário
                 $user = User::create([
                     'name'     => $client->name,
-                    'username' => $client->cpf_cnpj, 
+                    'username' => $client->cpf_cnpj,
                     'email'    => $email,
                     'password' => Hash::make($password),
                 ]);
@@ -184,6 +184,13 @@ class Client extends Model
         });
 
         static::updated(function ($client) {
+            // 🔹 Atualiza o nome do usuário vinculado
+            if ($client->registeredUser) {
+                $client->registeredUser->update([
+                    'name' => $client->name,
+                ]);
+            }
+            
             // Verifica quais atributos foram alterados
             $changes = $client->getDirty();
 
