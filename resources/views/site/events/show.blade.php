@@ -130,6 +130,27 @@
                                         {{ $animal->pivot->name }}
                                     </h3>
 
+                                    {{-- Mostra lance alvo se for venda de coberturas --}}
+                                    @if (str_contains(strtolower($event->name), 'cobertura'))
+                                        <div
+                                            class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
+
+                                            @if (floatval($animal->pivot->target_value) > 0)
+                                                <span>Lance-alvo:</span>
+                                                <span
+                                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
+                                                </span>
+                                            @else
+                                                <span>&nbsp;</span>
+                                                <span
+                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
+                                                    R$ 0,00
+                                                </span>
+                                            @endif
+                                        </div>
+                                    @endif
+
                                     {{-- Só mostra valores para eventos que não são VENDA DIRETA --}}
                                     @if (!$event->is_permanent)
                                         @if ($event->closed)
