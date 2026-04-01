@@ -18,6 +18,11 @@ class BidTable
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->sortable(),
 
+            TextColumn::make('created_at')
+                ->label('Data')
+                ->dateTime()
+                ->sortable(),
+
             TextColumn::make('user.name')
                 ->label('Cliente')
                 ->sortable(false)
@@ -26,6 +31,26 @@ class BidTable
                 ->getStateUsing(function ($record) {
                     return $record->user?->name ?? '—';
                 }),
+
+            IconColumn::make('status')
+                ->label('Status')
+                ->sortable()
+                ->icon(fn($state) => match ($state) {
+                    1 => 'heroicon-o-check-circle',   // aprovado
+                    2 => 'heroicon-o-x-circle',       // rejeitado
+                    default => 'heroicon-o-clock',    // pendente
+                })
+                ->color(fn($state) => match ($state) {
+                    1 => 'success',   // verde
+                    2 => 'danger',    // vermelho
+                    default => 'warning', // amarelo
+                }),
+
+            TextColumn::make('approvedBy.name')
+                ->label('Aprovado por')
+                ->sortable()
+                ->toggleable(isToggledHiddenByDefault: true),
+
 
             TextColumn::make('event.name')
                 ->searchable(['events.name'])
@@ -47,29 +72,8 @@ class BidTable
                 ->money('BRL')
                 ->sortable(),
 
-            IconColumn::make('status')
-                ->label('Status')
-                ->sortable()
-                ->icon(fn($state) => match ($state) {
-                    1 => 'heroicon-o-check-circle',   // aprovado
-                    2 => 'heroicon-o-x-circle',       // rejeitado
-                    default => 'heroicon-o-clock',    // pendente
-                })
-                ->color(fn($state) => match ($state) {
-                    1 => 'success',   // verde
-                    2 => 'danger',    // vermelho
-                    default => 'warning', // amarelo
-                }),
 
-            TextColumn::make('approvedBy.name')
-                ->label('Aprovado por')
-                ->sortable()
-                ->toggleable(isToggledHiddenByDefault: true),
 
-            TextColumn::make('created_at')
-                ->label('Data')
-                ->dateTime()
-                ->sortable(),
         ];
     }
 }
