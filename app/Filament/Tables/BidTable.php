@@ -32,6 +32,11 @@ class BidTable
                     return $record->user?->name ?? '—';
                 }),
 
+            TextColumn::make('amount')
+                ->label('Valor')
+                ->money('BRL')
+                ->sortable(),
+
             IconColumn::make('status')
                 ->label('Status')
                 ->sortable()
@@ -67,10 +72,7 @@ class BidTable
                 ->label('Animal')
                 ->sortable(['animals.name']),
 
-            TextColumn::make('amount')
-                ->label('Valor')
-                ->money('BRL')
-                ->sortable(),
+
 
 
 
