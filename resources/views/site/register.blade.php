@@ -150,57 +150,117 @@
     </section>
 
     <script>
-        // Máscaras e Eventos (mesma lógica anterior)
+        // --- FUNÇÕES DE MÁSCARA ---
         const cpfCnpjMask = (v) => {
             v = v.replace(/\D/g, '');
-            return v.length <= 11 ? v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "$1.$2.$3-$4") : v.replace(
-                /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "$1.$2.$3/$4-$5");
+            if (v.length <= 11) {
+                return v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "$1.$2.$3-$4");
+            } else {
+                return v.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "$1.$2.$3/$4-$5");
+            }
+        };
+
+        const dateMask = (v) => {
+            v = v.replace(/\D/g, '');
+            if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+            return v;
+        };
+
+        const phoneMask = (v) => {
+            v = v.replace(/\D/g, '');
+            return v.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+        };
+
+        const cepMask = (v) => {
+            v = v.replace(/\D/g, '');
+            return v.replace(/^(\d{5})(\d{3}).*/, '$1-$2');
         };
 
         document.addEventListener('DOMContentLoaded', () => {
             const cpfInput = document.getElementById('cpf_cnpj');
-            cpfInput.addEventListener('input', (e) => e.target.value = cpfCnpjMask(e.target.value));
+            const birthInput = document.getElementById('birth_date');
+            const whatsappInput = document.getElementById('whatsapp');
+            const cepInput = document.getElementById('postal_code');
 
+            // Aplicar Máscaras em tempo real
+            cpfInput.addEventListener('input', (e) => e.target.value = cpfCnpjMask(e.target.value));
+            birthInput.addEventListener('input', (e) => e.target.value = dateMask(e.target.value));
+            whatsappInput.addEventListener('input', (e) => e.target.value = phoneMask(e.target.value));
+            cepInput.addEventListener('input', (e) => e.target.value = cepMask(e.target.value));
+
+            // Autocompletar Endereço pelo CEP (ViaCEP)
+            cepInput.addEventListener('blur', async () => {
+                const cep = cepInput.value.replace(/\D/g, '');
+                if (cep.length !== 8) return;
+
+                try {
+                    const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await response.json();
+                    if (!data.erro) {
+                        document.getElementById('street').value = data.logradouro.toUpperCase();
+                        document.getElementById('district').value = data.bairro.toUpperCase();
+                        document.getElementById('city').value = data.localidade.toUpperCase();
+                        document.getElementById('state').value = data.uf.toUpperCase();
+                        document.getElementById('number').focus();
+                    }
+                } catch (e) {
+                    console.error("Erro ao buscar CEP");
+                }
+            });
+
+            // Lógica de Autocompletar Cadastro Existente (CPF)
             cpfInput.addEventListener('blur', async () => {
                 const val = cpfInput.value.replace(/\D/g, '');
                 if (val.length < 11) return;
+
                 document.getElementById('searchingMsg').classList.remove('hidden');
                 try {
                     const res = await fetch(`/api/check-client?cpf_cnpj=${val}`);
                     const json = await res.json();
                     if (json.exists) {
                         const d = json.data;
-                        Swal.fire('Cadastro Localizado', 'Dados carregados.', 'info');
+                        Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
+                            'info');
                         document.getElementById('name').value = d.name || '';
                         document.getElementById('email').value = d.email || '';
+
+                        if (d.birth_date && d.birth_date.includes('-')) {
+                            const [y, m, d_part] = d.birth_date.split('-');
+                            document.getElementById('birth_date').value = `${d_part}/${m}/${y}`;
+                        }
+
                         if (d.address) {
-                            document.getElementById('postal_code').value = d.address.postal_code || '';
+                            document.getElementById('postal_code').value = cepMask(d.address
+                                .postal_code || '');
                             document.getElementById('street').value = d.address.street || '';
+                            document.getElementById('number').value = d.address.number || '';
+                            document.getElementById('district').value = d.address.district || '';
                             document.getElementById('city').value = d.address.city || '';
-                            document.getElementById('state').value = d.address.state ||
-                            ''; // PREENCHE ESTADO
+                            document.getElementById('state').value = d.address.state || '';
                         }
                     }
                 } catch (e) {
-                    console.error(e);
+                    console.log("Erro na busca.");
                 } finally {
                     document.getElementById('searchingMsg').classList.add('hidden');
                 }
             });
         });
 
+        // Navegação entre passos
         function goToStep(s) {
-            // Validação simples de senha no Step 1
             if (s === 2) {
                 const p1 = document.getElementsByName('password')[0].value;
                 const p2 = document.getElementsByName('passwordConfirmation')[0].value;
-                if (p1 && p1 !== p2) {
-                    Swal.fire('Erro', 'As senhas não coincidem!', 'error');
+                if (p1 !== p2) {
+                    Swal.fire('Erro', 'As senhas não conferem!', 'error');
                     return;
                 }
             }
             document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
             document.getElementById('step-' + s).classList.remove('hidden');
+
             const l1 = document.getElementById('progress_line');
             const l2 = document.getElementById('progress_line_2');
             if (l1) l1.style.width = s >= 2 ? '100%' : '0%';
@@ -208,6 +268,7 @@
             window.scrollTo(0, 0);
         }
 
+        // Submissão Final
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
@@ -225,13 +286,14 @@
                 });
                 const data = await res.json();
                 if (res.ok && data.success) {
-                    Swal.fire('Sucesso!', 'Cadastro realizado!', 'success').then(() => window.location.href =
-                        data.redirect);
+                    Swal.fire('Sucesso!', 'Cadastro realizado!', 'success').then(() => {
+                        window.location.href = data.redirect;
+                    });
                 } else {
-                    Swal.fire('Erro', data.message || 'Verifique os dados.', 'error');
+                    Swal.fire('Atenção', data.message || 'Verifique os campos.', 'warning');
                 }
             } catch (err) {
-                Swal.fire('Erro', 'Falha no servidor.', 'error');
+                Swal.fire('Erro', 'Falha na comunicação.', 'error');
             } finally {
                 document.getElementById('btnText').classList.remove('hidden');
                 document.getElementById('btnSpinner').classList.add('hidden');
