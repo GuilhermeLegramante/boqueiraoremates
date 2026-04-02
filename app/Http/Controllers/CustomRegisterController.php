@@ -22,11 +22,13 @@ class CustomRegisterController extends Controller
             $cpfEnviado = $request->cpf_cnpj;
 
             if (empty($cpfEnviado)) {
-                return response()->json(['exists' => false]);
+                return response()->json([
+                    'exists' => false,
+                    'message' => 'CPF/CNPJ é obrigatório.'
+                ]);
             }
 
             // Busca o cliente. 
-            // Usamos o nome exato da função que você me mandou: registeredUser
             $client = \App\Models\Client::with(['address', 'registeredUser'])
                 ->where('cpf_cnpj', $cpfEnviado)
                 ->orWhere('cpf_cnpj', preg_replace('/\D/', '', $cpfEnviado))
@@ -46,7 +48,10 @@ class CustomRegisterController extends Controller
                 ]);
             }
 
-            return response()->json(['exists' => false]);
+            return response()->json([
+                'exists' => false,
+                'message' => 'CPF/CNPJ não encontrado.'
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
