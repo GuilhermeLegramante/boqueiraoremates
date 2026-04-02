@@ -19,17 +19,18 @@ class CustomRegisterController extends Controller
     public function checkClient(Request $request)
     {
         try {
-            // 1. Limpa o CPF para buscar apenas números no banco
-            $cpf = preg_replace('/\D/', '', $request->cpf_cnpj);
+            $cpfEnviado = $request->cpf_cnpj;
 
-            if (empty($cpf)) {
+            if (empty($cpfEnviado)) {
                 return response()->json(['exists' => false]);
             }
 
-            // 2. Busca o cliente com os relacionamentos
-            // Certifique-se que os nomes 'address' e 'registeredUser' são os nomes das funções no seu Model Client
+            // Tenta buscar o cliente de duas formas: exatamente como veio ou apenas números
+            $cpfApenasNumeros = preg_replace('/\D/', '', $cpfEnviado);
+
             $client = \App\Models\Client::with(['address', 'registeredUser'])
-                ->where('cpf_cnpj', $cpf)
+                ->where('cpf_cnpj', $cpfEnviado) // Busca com máscara (123.456.789-01)
+                ->orWhere('cpf_cnpj', $cpfApenasNumeros) // Busca sem máscara (12345678901)
                 ->first();
 
             if ($client) {
@@ -38,25 +39,16 @@ class CustomRegisterController extends Controller
                     'data' => [
                         'name' => $client->name,
                         'email' => $client->registeredUser->email ?? '',
-                        'address' => $client->address ? [
-                            'street' => $client->address->street,
-                            'city' => $client->address->city,
-                            'district' => $client->address->district,
-                            'state' => $client->address->state,
-                            'postal_code' => $client->address->postal_code,
-                            'number' => $client->address->number,
-                        ] : null
+                        'address' => $client->address
                     ]
                 ]);
             }
 
             return response()->json(['exists' => false]);
         } catch (\Exception $e) {
-            // Se der erro, ele retorna o erro real em JSON para você ver no console
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
-                'line' => $e->getLine()
+                'error' => $e->getMessage()
             ], 500);
         }
     }

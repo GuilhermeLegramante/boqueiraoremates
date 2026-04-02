@@ -182,21 +182,34 @@
             // 2. Lógica reativa do CPF (Igual ao Filament afterStateUpdated)
             const cpfInput = document.getElementById('cpf_cnpj');
             cpfInput.addEventListener('blur', async () => {
-                if (!cpfInput.value) return;
+                // Pegamos o valor direto do input (com máscara)
+                const valorComMascara = cpfInput.value;
 
-                const response = await fetch(
-                    `/api/check-client?cpf_cnpj=${cpfInput.value.replace(/\D/g, '')}`);
-                const result = await response.json();
+                if (valorComMascara.length < 14) return; // Mínimo para CPF formatado
 
-                if (result.exists) {
-                    // Preenchimento automático (simplificado)
-                    document.getElementById('name').value = result.data.name;
-                    document.getElementById('email').value = result.data.email;
-                    if (result.data.address) {
-                        document.getElementById('street').value = result.data.address.street;
-                        document.getElementById('city').value = result.data.address.city;
+                try {
+                    const response = await fetch(
+                        `/api/check-client?cpf_cnpj=${encodeURIComponent(valorComMascara)}`);
+                    const result = await response.json();
+
+                    if (result.exists) {
+                        // Preenchimento dos campos...
+                        document.getElementById('name').value = result.data.name;
+                        document.getElementById('email').value = result.data.email;
+
+                        if (result.data.address) {
+                            document.getElementById('street').value = result.data.address.street || '';
+                            document.getElementById('city').value = result.data.address.city || '';
+                            document.getElementById('district').value = result.data.address.district ||
+                                '';
+                            document.getElementById('state').value = result.data.address.state || '';
+                            document.getElementById('postal_code').value = result.data.address
+                                .postal_code || '';
+                            document.getElementById('number').value = result.data.address.number || '';
+                        }
                     }
-                    alert('Cliente já cadastrado. Os dados serão atualizados.');
+                } catch (err) {
+                    console.error('Erro ao consultar CPF:', err);
                 }
             });
 
