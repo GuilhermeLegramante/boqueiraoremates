@@ -79,7 +79,7 @@
                             class="px-3 py-1 text-xs font-semibold bg-yellow-500 text-black rounded-md hover:bg-yellow-600 transition">
                             Login
                         </a>
-                        <a href="{{ route('filament.admin.auth.register') }}"
+                        <a href="{{ route('register.custom') }}"
                             class="px-3 py-1 text-xs font-semibold bg-yellow-500 text-black rounded-md hover:bg-yellow-600 transition">
                             Cadastro
                         </a>
@@ -150,7 +150,7 @@
                     class="px-4 py-2 bg-yellow-500 rounded-md text-black hover:bg-yellow-600 transition">
                     Login
                 </a>
-                <a href="{{ route('filament.admin.auth.register') }}"
+                <a href="{{ route('register.custom') }}"
                     class="px-4 py-2 bg-yellow-500 rounded-md text-black hover:bg-yellow-600 transition">
                     Cadastro
                 </a>

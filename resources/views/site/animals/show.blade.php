@@ -204,7 +204,7 @@
                                 <div class="bg-yellow-200 text-yellow-900 p-4 rounded-lg border border-yellow-300 shadow-sm">
                                     <p class="font-semibold">⚠️ Para dar lance, você precisa estar logado.</p>
                                     <p class="text-sm mt-2"> Ainda não possui cadastro? <a
-                                            href="{{ route('filament.admin.auth.register') }}"
+                                            href="{{ route('register.custom') }}"
                                             class="inline-block mt-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg shadow transition">
                                             Criar cadastro </a> </p>
                                 </div>

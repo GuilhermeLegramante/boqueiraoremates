@@ -10,7 +10,7 @@
 
                 <p class="text-center text-gray-600 mb-6">
                     Ainda não tem uma conta?
-                    <a href="{{ route('filament.admin.auth.register') }}"
+                    <a href="{{ route('register.custom') }}"
                         class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">
                         Cadastre-se aqui
                     </a>
