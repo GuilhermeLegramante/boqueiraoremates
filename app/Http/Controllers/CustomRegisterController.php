@@ -75,37 +75,41 @@ class CustomRegisterController extends Controller
 
         return DB::transaction(function () use ($request, $birthDateDb) {
             $data = $request->all();
-            $cpfLimpo = $data['cpf_cnpj'];
+            $cpfComMascara = $data['cpf_cnpj']; // Mantendo a máscara conforme solicitado
 
-            // 1. Usuário
+            // 1. Usuário (Update ou Create pelo Username/CPF)
             $user = User::updateOrCreate(
-                ['username' => $cpfLimpo],
+                ['username' => $cpfComMascara],
                 [
                     'name' => strtoupper($data['name']),
                     'email' => strtolower($data['email']),
                     'password' => Hash::make($data['password']),
                 ]
             );
-            $user->assignRole('client'); // Garante a role
+            $user->assignRole('client');
 
             // 2. Endereço
             $address = Address::create([
                 'postal_code' => preg_replace('/\D/', '', $data['postal_code'] ?? ''),
                 'street'      => strtoupper($data['street'] ?? ''),
+                'number'      => strtoupper($data['number'] ?? 'S/N'),
+                'complement'  => strtoupper($data['complement'] ?? ''),
+                'district'    => strtoupper($data['district'] ?? ''),
                 'city'        => strtoupper($data['city'] ?? ''),
                 'state'       => strtoupper($data['state'] ?? 'RS'),
-                'district'    => strtoupper($data['district'] ?? ''),
-                'number'      => $data['number'] ?? 'S/N',
             ]);
 
-            // 3. Cliente (CORRIGIDO WHATSAPP E EMAIL)
+            // 3. Cliente (Campos novos adicionados)
             $client = Client::updateOrCreate(
-                ['cpf_cnpj' => $cpfLimpo],
+                ['cpf_cnpj' => $cpfComMascara],
                 [
                     'name'               => strtoupper($data['name']),
-                    'email'              => strtolower($data['email']), // SALVANDO EMAIL
+                    'mother'             => strtoupper($data['mother'] ?? ''),
+                    'occupation'         => strtoupper($data['occupation'] ?? ''),
+                    'income'             => $data['income'] ?? null,
+                    'email'              => strtolower($data['email']),
                     'birth_date'         => $birthDateDb,
-                    'whatsapp'           => $data['whatsapp'], // SALVANDO WHATSAPP
+                    'whatsapp'           => $data['whatsapp'], // Com máscara
                     'address_id'         => $address->id,
                     'registered_user_id' => $user->id,
                     'situation'          => 'disabled',
@@ -113,21 +117,32 @@ class CustomRegisterController extends Controller
                 ]
             );
 
-            // 4. Documento (CORRIGIDO PATH)
-            if ($request->hasFile('cnh_rg')) {
-                $file = $request->file('cnh_rg');
-                $path = $file->store('documents', 'public');
+            // 4. Mapeamento e Upload de Documentos
+            $documentsMap = [
+                'cnh_rg'             => 'DOCUMENTO PESSOAL',
+                'document_income'    => 'COMPROVANTE DE RENDA',
+                'document_residence' => 'COMPROVANTE DE RESIDÊNCIA',
+            ];
 
-                $docType = DocumentType::where('name', 'LIKE', '%DOCUMENTO PESSOAL%')->first();
+            foreach ($documentsMap as $inputName => $docTypeName) {
+                if ($request->hasFile($inputName)) {
+                    $file = $request->file($inputName);
+                    $path = $file->store('documents', 'public');
+                    $docType = DocumentType::where('name', $docTypeName)->first();
 
-                if ($docType) {
-                    // Criamos o documento passando explicitamente o user_id que acabamos de criar
-                    Document::create([
-                        'client_id'        => $client->id,
-                        'document_type_id' => $docType->id,
-                        'path'             => $path,
-                        'user_id'          => $user->id // <--- IMPORTANTE: Passe o ID do usuário criado acima
-                    ]);
+                    if ($docType) {
+                        // UpdateOrCreate para evitar duplicidade do mesmo tipo para o mesmo cliente
+                        Document::updateOrCreate(
+                            [
+                                'client_id'        => $client->id,
+                                'document_type_id' => $docType->id,
+                            ],
+                            [
+                                'user_id' => $user->id,
+                                'path'    => $path,
+                            ]
+                        );
+                    }
                 }
             }
 

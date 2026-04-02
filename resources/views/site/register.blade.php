@@ -78,6 +78,21 @@
                             <input type="password" name="passwordConfirmation"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Nome da Mãe *</label>
+                            <input type="text" name="mother" id="mother"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Profissão *</label>
+                            <input type="text" name="occupation" id="occupation"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Renda Mensal *</label>
+                            <input type="text" name="income" id="income" placeholder="R$ 0,00"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
+                        </div>
                         <button type="button" onclick="goToStep(2)"
                             class="md:col-span-2 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition-all uppercase">Próximo
                             Passo</button>
@@ -98,6 +113,11 @@
                         <div>
                             <label class="block font-semibold text-gray-700">Número</label>
                             <input type="text" name="number" id="number"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Complemento</label>
+                            <input type="text" name="complement" id="complement"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
                         <div>
@@ -133,6 +153,15 @@
                             <label class="block font-semibold text-gray-700">Documento Pessoal (CNH ou RG) *</label>
                             <input type="file" name="cnh_rg" class="w-full border p-2 rounded-lg bg-gray-50">
                         </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Comprovante de Renda *</label>
+                            <input type="file" name="document_income" class="w-full border p-2 rounded-lg bg-gray-50">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Comprovante de Residência *</label>
+                            <input type="file" name="document_residence"
+                                class="w-full border p-2 rounded-lg bg-gray-50">
+                        </div>
                         <div class="flex gap-3 mt-6">
                             <button type="button" onclick="goToStep(2)"
                                 class="w-1/3 bg-gray-200 text-gray-700 py-3 rounded-lg font-bold">VOLTAR</button>
@@ -151,6 +180,13 @@
 
     <script>
         // --- FUNÇÕES DE MÁSCARA ---
+        const moneyMask = (v) => {
+            v = v.replace(/\D/g, "");
+            v = v.replace(/(\d)(\d{2})$/, "$1,$2");
+            v = v.replace(/(?=(\d{3})+(\D))\B/g, ".");
+            return "R$ " + v;
+        };
+
         const cpfCnpjMask = (v) => {
             v = v.replace(/\D/g, '');
             if (v.length <= 11) {
@@ -186,12 +222,15 @@
             const birthInput = document.getElementById('birth_date');
             const whatsappInput = document.getElementById('whatsapp');
             const cepInput = document.getElementById('postal_code');
+            const incomeInput = document.getElementById('income');
 
             // Aplicar Máscaras em tempo real
             cpfInput.addEventListener('input', (e) => e.target.value = cpfCnpjMask(e.target.value));
             birthInput.addEventListener('input', (e) => e.target.value = dateMask(e.target.value));
             whatsappInput.addEventListener('input', (e) => e.target.value = phoneMask(e.target.value));
             cepInput.addEventListener('input', (e) => e.target.value = cepMask(e.target.value));
+            incomeInput.addEventListener('input', (e) => e.target.value = moneyMask(e.target.value));
+
 
             // Autocompletar Endereço pelo CEP (ViaCEP)
             cepInput.addEventListener('blur', async () => {
@@ -239,6 +278,10 @@
                             document.getElementById('birth_date').value = `${d_part}/${m}/${y}`;
                         }
 
+                        document.getElementById('mother').value = d.mother || '';
+                        document.getElementById('occupation').value = d.occupation || '';
+                        document.getElementById('income').value = d.income || '';
+
                         if (d.address) {
                             document.getElementById('postal_code').value = cepMask(d.address
                                 .postal_code || '');
@@ -247,6 +290,7 @@
                             document.getElementById('district').value = d.address.district || '';
                             document.getElementById('city').value = d.address.city || '';
                             document.getElementById('state').value = d.address.state || '';
+                            document.getElementById('complement').value = d.address.complement || '';
                         }
                     }
                 } catch (e) {
