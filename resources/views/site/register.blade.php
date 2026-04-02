@@ -1,7 +1,7 @@
 @extends('site.master')
 
 @section('content')
-    <section class="flex justify-center bg-gray-100 pt-32 pb-16 min-h-screen">
+    <section class="flex justify-center bg-gray-100 pt-32 pb-16 min-h-screen mt-4">
         <div class="w-full max-w-4xl">
             <div class="bg-white p-8 rounded-xl shadow-lg">
                 <h2 class="text-3xl font-bold text-center mb-6">Cadastro de Cliente</h2>
