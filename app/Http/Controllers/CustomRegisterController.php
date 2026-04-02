@@ -99,7 +99,7 @@ class CustomRegisterController extends Controller
                 [
                     'name' => $data['name'],
                     'birth_date' => $birthDateDb,
-                    'whatsapp' => preg_replace('/\D/', '', $data['whatsapp'] ?? ''),
+                    'whatsapp' => $data['whatsapp'],
                     'address_id' => $address->id,
                     'registered_user_id' => $user->id,
                     'situation' => 'disabled',
