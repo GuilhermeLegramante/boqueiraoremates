@@ -169,7 +169,11 @@
 
         const phoneMask = (v) => {
             v = v.replace(/\D/g, '');
-            return v.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            if (v.length > 10) {
+                return v.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+            } else {
+                return v.replace(/^(\d{2})(\d{4})(\d{4}).*/, '($1) $2-$3');
+            }
         };
 
         const cepMask = (v) => {
@@ -224,7 +228,9 @@
                             'info');
                         document.getElementById('name').value = d.name || '';
                         document.getElementById('email').value = d.email || '';
-                        document.getElementById('whatsapp').value = d.whatsapp || '';
+                        if (d.whatsapp) {
+                            document.getElementById('whatsapp').value = phoneMask(d.whatsapp);
+                        }
                         document.getElementById('birth_date').value = d.birth_date || '';
 
 
