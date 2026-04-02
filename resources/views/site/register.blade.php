@@ -304,7 +304,7 @@
         function goToStep(s) {
             // Se o usuário está tentando ir para o passo 2, validamos o passo 1
             if (s === 2) {
-                const nomeMae = document.getElementById('mother_name').value.trim();
+                const nomeMae = document.getElementById('mother').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const p1 = document.getElementsByName('password')[0].value;
                 const p2 = document.getElementsByName('passwordConfirmation')[0].value;
