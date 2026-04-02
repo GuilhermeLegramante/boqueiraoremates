@@ -310,6 +310,7 @@
                 const email = document.getElementById('email').value.trim();
                 const p1 = document.getElementsByName('password')[0].value;
                 const p2 = document.getElementsByName('passwordConfirmation')[0].value;
+                const income = document.getElementById('income').value.trim();
 
                 if (!nome) {
                     Swal.fire('Atenção', 'O nome é obrigatório.', 'warning');
@@ -334,7 +335,10 @@
                     return;
                 }
 
-
+                if (!income) {
+                    Swal.fire('Atenção', 'A renda mensal é obrigatória.', 'warning');
+                    return;
+                }
 
                 // Validação de Senha
                 if (p1.length < 6) {
