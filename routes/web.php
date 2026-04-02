@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
+use App\Http\Controllers\Auth\CustomRegisterController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EventController;
@@ -144,4 +145,22 @@ Route::get('/despublicar-eventos', function () {
         'status' => 'ok',
         'message' => 'Comando events:unpublish-old executado com sucesso!',
     ]);
+});
+
+// Rotas de Cadastro Personalizado
+Route::middleware('guest')->group(function () {
+    
+    // 1. Rota para exibir a página (a view Blade que criamos)
+    Route::get('/cadastro', function () {
+        return view('site.register'); 
+    })->name('register.custom');
+
+    // 2. Rota para a lógica de salvar os dados (POST)
+    Route::post('/cadastro/store', [CustomRegisterController::class, 'store'])
+        ->name('register.custom.store');
+
+    // 3. Rota API interna para busca de CPF/CNPJ (Reatividade)
+    // Usamos GET aqui pois é apenas uma consulta de dados
+    Route::get('/api/check-client', [CustomRegisterController::class, 'checkClient'])
+        ->name('api.check.client');
 });
