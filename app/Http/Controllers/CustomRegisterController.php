@@ -39,6 +39,8 @@ class CustomRegisterController extends Controller
                         'name' => $client->name,
                         // Se o cliente existe mas não tem usuário vinculado, evitamos erro:
                         'email' => $client->registeredUser->email ?? '',
+                        'whatsapp' => $client->whatsapp,
+                        'birth_date' => $client->birth_date ? Carbon::parse($client->birth_date)->format('d/m/Y') : '',
                         'address' => $client->address
                     ]
                 ]);
@@ -98,6 +100,7 @@ class CustomRegisterController extends Controller
                 ['cpf_cnpj' => $cpf],
                 [
                     'name' => $data['name'],
+                    'email' => $data['email'],
                     'birth_date' => $birthDateDb,
                     'whatsapp' => $data['whatsapp'],
                     'address_id' => $address->id,
