@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Client;
@@ -11,7 +12,7 @@ use App\Models\DocumentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
+
 
 class CustomRegisterController extends Controller
 {
@@ -36,13 +37,23 @@ class CustomRegisterController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validação básica de idade (Regra de negócio)
-        $birthDate = Carbon::createFromFormat('d/m/Y', $request->birth_date);
-        if ($birthDate->greaterThan(now()->subYears(18))) {
-            return response()->json(['success' => false, 'message' => 'Necessário ser maior de 18 anos.'], 422);
+        // 1. Tratamento da Data e Validação de Idade
+        try {
+            // Criamos o objeto Carbon primeiro
+            $dateObj = Carbon::createFromFormat('d/m/Y', $request->birth_date);
+
+            // Verificação de maioridade (18 anos)
+            if ($dateObj->greaterThan(now()->subYears(18))) {
+                return response()->json(['success' => false, 'message' => 'Necessário ser maior de 18 anos.'], 422);
+            }
+
+            // Formatamos para o banco de dados (string Y-m-d)
+            $birthDateDb = $dateObj->format('Y-m-d');
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => 'Data de nascimento inválida.'], 422);
         }
 
-        return DB::transaction(function () use ($request, $birthDate) {
+        return DB::transaction(function () use ($request, $birthDateDb) {
             $data = $request->all();
             $cpf = preg_replace('/\D/', '', $data['cpf_cnpj']);
 
@@ -56,11 +67,11 @@ class CustomRegisterController extends Controller
                 ]
             );
 
-            // 3. Endereço (Regra de Uppercase do seu form)
+            // 3. Endereço
             $address = Address::updateOrCreate(
                 ['id' => $data['address_id'] ?? null],
                 [
-                    'postal_code' => $data['postal_code'],
+                    'postal_code' => preg_replace('/\D/', '', $data['postal_code']),
                     'street' => strtoupper($data['street']),
                     'city' => strtoupper($data['city']),
                     'state' => strtoupper($data['state']),
@@ -74,13 +85,14 @@ class CustomRegisterController extends Controller
                 ['cpf_cnpj' => $cpf],
                 [
                     'name' => $data['name'],
-                    'birth_date' => $birthDate->format('Y-m-d'),
-                    'whatsapp' => $data['whatsapp'],
+                    'birth_date' => $birthDateDb, // Usando a string formatada Y-m-d
+                    'whatsapp' => preg_replace('/\D/', '', $data['whatsapp']),
                     'address_id' => $address->id,
-                    'situation' => 'disabled', // Conforme seu código original
+                    'situation' => 'disabled',
                     'register_origin' => 'site'
                 ]
             );
+
             $client->registeredUser()->associate($user);
             $client->save();
 
@@ -88,15 +100,22 @@ class CustomRegisterController extends Controller
             if ($request->hasFile('cnh_rg')) {
                 $path = $request->file('cnh_rg')->store('documents', 'public');
                 $docType = DocumentType::where('name', 'DOCUMENTO PESSOAL')->first();
-                
-                Document::updateOrCreate(
-                    ['client_id' => $client->id, 'document_type_id' => $docType->id],
-                    ['user_id' => $user->id, 'path' => $path]
-                );
+
+                if ($docType) {
+                    Document::updateOrCreate(
+                        ['client_id' => $client->id, 'document_type_id' => $docType->id],
+                        ['user_id' => $user->id, 'path' => $path]
+                    );
+                }
             }
 
             auth()->login($user);
-            return response()->json(['success' => true, 'redirect' => '/home']);
+
+            // Altere para a URL correta do seu sistema se necessário
+            return response()->json([
+                'success' => true,
+                'redirect' => 'https://sistema.boqueiraoremates.com/'
+            ]);
         });
     }
 }
