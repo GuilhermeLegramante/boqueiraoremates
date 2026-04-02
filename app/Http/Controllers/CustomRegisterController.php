@@ -70,7 +70,7 @@ class CustomRegisterController extends Controller
 
         return DB::transaction(function () use ($request, $birthDateDb) {
             $data = $request->all();
-            $cpfLimpo = preg_replace('/\D/', '', $data['cpf_cnpj']);
+            $cpfLimpo = $data['cpf_cnpj'];
 
             // 1. Usuário
             $user = User::updateOrCreate(
