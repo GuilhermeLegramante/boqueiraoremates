@@ -108,6 +108,12 @@
                             <input type="text" name="city" id="city"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Estado (UF)</label>
+                            <input type="text" name="state" id="state" maxlength="2"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase"
+                                placeholder="EX: RS">
+                        </div>
                         <div class="flex gap-3 md:col-span-3 mt-4">
                             <button type="button" onclick="goToStep(1)"
                                 class="w-1/3 bg-gray-200 text-gray-700 py-3 rounded-lg font-bold">VOLTAR</button>
@@ -233,6 +239,7 @@
                             document.getElementById('number').value = d.address.number || '';
                             document.getElementById('district').value = d.address.district || '';
                             document.getElementById('city').value = d.address.city || '';
+                            document.getElementById('state').value = d.address.state || ''; 
                         }
                     }
                 } catch (e) {

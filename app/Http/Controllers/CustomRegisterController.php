@@ -89,12 +89,12 @@ class CustomRegisterController extends Controller
             $address = Address::updateOrCreate(
                 ['id' => $data['address_id'] ?? null],
                 [
-                    'postal_code' => preg_replace('/\D/', '', $data['postal_code']),
-                    'street' => strtoupper($data['street']),
-                    'city' => strtoupper($data['city']),
-                    'state' => strtoupper($data['state']),
-                    'district' => strtoupper($data['district']),
-                    'number' => $data['number'],
+                    'postal_code' => preg_replace('/\D/', '', $data['postal_code'] ?? ''),
+                    'street'      => strtoupper($data['street'] ?? ''),
+                    'city'        => strtoupper($data['city'] ?? ''),
+                    'state'       => strtoupper($data['state'] ?? 'RS'), // Default para RS se vazio
+                    'district'    => strtoupper($data['district'] ?? ''),
+                    'number'      => $data['number'] ?? 'S/N',
                 ]
             );
 
