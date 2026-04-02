@@ -154,10 +154,20 @@
 
     <script>
         // --- FUNÇÕES AUXILIARES DE MÁSCARA ---
+        const cpfCnpjMask = (value) => {
+            value = value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                // CPF: 000.000.000-00
+                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "\$1.\$2.\$3-\$4");
+            } else {
+                // CNPJ: 00.000.000/0000-00
+                return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "\$1.\$2.\$3/\$4-\$5");
+            }
+        }
+
         const phoneMask = (value) => {
             if (!value) return "";
             value = value.replace(/\D/g, '');
-            // Formata como (99) 99999-9999
             value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
             value = value.replace(/(\d{5})(\d)/, "$1-$2");
             return value;
@@ -175,17 +185,22 @@
             const birthInput = document.getElementById('birth_date');
             const whatsappInput = document.getElementById('whatsapp');
 
-            // Aplica máscara de WhatsApp enquanto digita
+            // Máscara CPF/CNPJ
+            cpfInput.addEventListener('input', (e) => {
+                e.target.value = cpfCnpjMask(e.target.value);
+            });
+
+            // Máscara WhatsApp
             whatsappInput.addEventListener('input', (e) => {
                 e.target.value = phoneMask(e.target.value);
             });
 
-            // Máscara Nascimento enquanto digita
+            // Máscara Nascimento
             birthInput.addEventListener('input', (e) => {
                 e.target.value = dateMask(e.target.value);
             });
 
-            // Lógica de Autocompletar
+            // Lógica de Autocompletar ao sair do campo CPF
             cpfInput.addEventListener('blur', async () => {
                 const val = cpfInput.value.replace(/\D/g, '');
                 if (val.length < 11) return;
@@ -198,28 +213,20 @@
 
                     if (json.exists) {
                         const d = json.data;
-
                         Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
                             'info');
 
-                        // Preenchimento de campos básicos
                         document.getElementById('name').value = d.name || '';
                         document.getElementById('email').value = d.email || '';
 
-                        // CORREÇÃO DATA: Se vier YYYY-MM-DD converte para DD/MM/YYYY
                         if (d.birth_date && d.birth_date.includes('-')) {
                             const [year, month, day] = d.birth_date.split('-');
                             document.getElementById('birth_date').value = `${day}/${month}/${year}`;
-                        } else {
-                            document.getElementById('birth_date').value = d.birth_date_formatted || d
-                                .birth_date || '';
                         }
 
-                        // CORREÇÃO WHATSAPP: Aplica a máscara ao valor que vem do banco
                         document.getElementById('whatsapp').value = d.whatsapp ? phoneMask(d.whatsapp) :
                             '';
 
-                        // Endereço
                         if (d.address) {
                             document.getElementById('postal_code').value = d.address.postal_code || '';
                             document.getElementById('street').value = d.address.street || '';
@@ -229,30 +236,22 @@
                         }
                     }
                 } catch (e) {
-                    console.log("Novo cliente ou erro na busca.");
+                    console.log("Erro na busca.");
                 } finally {
                     document.getElementById('searchingMsg').classList.add('hidden');
                 }
             });
         });
 
-        function goToStep(s) {
-            document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById('step-' + s).classList.remove('hidden');
-
-            const l1 = document.getElementById('progress_line');
-            const l2 = document.getElementById('progress_line_2');
-
-            if (l1) l1.style.width = s >= 2 ? '100%' : '0%';
-            if (l2) l2.style.width = s === 3 ? '100%' : '0%';
-            window.scrollTo(0, 0);
-        }
-
-        // Submissão do Formulário
+        // Submissão do Formulário com tratamento de erros por campo
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const formData = new FormData(e.target);
 
+            // Limpa mensagens de erro anteriores
+            document.querySelectorAll('.error-msg').forEach(el => el.remove());
+            document.querySelectorAll('input').forEach(el => el.classList.remove('border-red-500'));
+
+            const formData = new FormData(e.target);
             document.getElementById('btnText').classList.add('hidden');
             document.getElementById('btnSpinner').classList.remove('hidden');
 
@@ -261,24 +260,59 @@
                     method: 'POST',
                     body: formData,
                     headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
                     }
                 });
+
                 const data = await res.json();
 
-                if (data.success) {
-                    Swal.fire('Sucesso!', 'Cadastro realizado. Bem-vindo!', 'success').then(() => {
+                if (res.ok && data.success) {
+                    Swal.fire('Sucesso!', 'Cadastro realizado com sucesso.', 'success').then(() => {
                         window.location.href = data.redirect;
                     });
                 } else {
-                    Swal.fire('Erro', data.message || 'Verifique os campos.', 'error');
+                    // Se houver erros de validação (Laravel 422)
+                    if (data.errors) {
+                        Object.keys(data.errors).forEach(key => {
+                            const input = document.getElementsByName(key)[0];
+                            if (input) {
+                                input.classList.add('border-red-500');
+                                const errorPara = document.createElement('p');
+                                errorPara.className = 'text-red-500 text-xs mt-1 error-msg';
+                                errorPara.innerText = data.errors[key][0];
+                                input.parentNode.appendChild(errorPara);
+                            }
+                        });
+
+                        // Volta para o primeiro passo se houver erro lá
+                        const firstErrorKey = Object.keys(data.errors)[0];
+                        if (['name', 'email', 'cpf_cnpj', 'birth_date', 'whatsapp', 'password'].includes(
+                                firstErrorKey)) {
+                            goToStep(1);
+                        }
+
+                        Swal.fire('Atenção', 'Por favor, corrija os erros no formulário.', 'warning');
+                    } else {
+                        Swal.fire('Erro', data.message || 'Erro ao processar.', 'error');
+                    }
                 }
             } catch (err) {
-                Swal.fire('Erro', 'Falha ao processar cadastro.', 'error');
+                Swal.fire('Erro', 'Falha na comunicação com o servidor.', 'error');
             } finally {
                 document.getElementById('btnText').classList.remove('hidden');
                 document.getElementById('btnSpinner').classList.add('hidden');
             }
         });
+
+        function goToStep(s) {
+            document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById('step-' + s).classList.remove('hidden');
+            const l1 = document.getElementById('progress_line');
+            const l2 = document.getElementById('progress_line_2');
+            if (l1) l1.style.width = s >= 2 ? '100%' : '0%';
+            if (l2) l2.style.width = s === 3 ? '100%' : '0%';
+            window.scrollTo(0, 0);
+        }
     </script>
 @endsection
