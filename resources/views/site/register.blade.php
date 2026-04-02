@@ -224,6 +224,9 @@
                             'info');
                         document.getElementById('name').value = d.name || '';
                         document.getElementById('email').value = d.email || '';
+                        document.getElementById('whatsapp').value = d.whatsapp || '';
+                        document.getElementById('birth_date').value = d.birth_date || '';
+
 
                         if (d.birth_date && d.birth_date.includes('-')) {
                             const [y, m, d_part] = d.birth_date.split('-');
