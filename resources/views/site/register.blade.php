@@ -153,12 +153,39 @@
     </section>
 
     <script>
-        // --- MÁSCARAS E BUSCAS ---
+        // --- FUNÇÕES AUXILIARES DE MÁSCARA ---
+        const phoneMask = (value) => {
+            if (!value) return "";
+            value = value.replace(/\D/g, '');
+            // Formata como (99) 99999-9999
+            value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
+            value = value.replace(/(\d{5})(\d)/, "$1-$2");
+            return value;
+        }
+
+        const dateMask = (value) => {
+            let v = value.replace(/\D/g, '');
+            if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
+            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+            return v;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const cpfInput = document.getElementById('cpf_cnpj');
             const birthInput = document.getElementById('birth_date');
+            const whatsappInput = document.getElementById('whatsapp');
 
-            // Lógica de Autocompletar (Business Rules do ClientForm)
+            // Aplica máscara de WhatsApp enquanto digita
+            whatsappInput.addEventListener('input', (e) => {
+                e.target.value = phoneMask(e.target.value);
+            });
+
+            // Máscara Nascimento enquanto digita
+            birthInput.addEventListener('input', (e) => {
+                e.target.value = dateMask(e.target.value);
+            });
+
+            // Lógica de Autocompletar
             cpfInput.addEventListener('blur', async () => {
                 const val = cpfInput.value.replace(/\D/g, '');
                 if (val.length < 11) return;
@@ -166,39 +193,46 @@
                 document.getElementById('searchingMsg').classList.remove('hidden');
 
                 try {
-                    // Endpoint que você deve criar para retornar o JSON do cliente
                     const res = await fetch(`/api/check-client?cpf_cnpj=${val}`);
                     const json = await res.json();
 
                     if (json.exists) {
+                        const d = json.data;
+
                         Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
                             'info');
-                        // Preenchimento conforme lógica do seu afterStateUpdated
-                        document.getElementById('name').value = json.data.name;
-                        document.getElementById('email').value = json.data.email;
-                        document.getElementById('birth_date').value = json.data.birth_date_formatted;
-                        document.getElementById('whatsapp').value = json.data.whatsapp;
+
+                        // Preenchimento de campos básicos
+                        document.getElementById('name').value = d.name || '';
+                        document.getElementById('email').value = d.email || '';
+
+                        // CORREÇÃO DATA: Se vier YYYY-MM-DD converte para DD/MM/YYYY
+                        if (d.birth_date && d.birth_date.includes('-')) {
+                            const [year, month, day] = d.birth_date.split('-');
+                            document.getElementById('birth_date').value = `${day}/${month}/${year}`;
+                        } else {
+                            document.getElementById('birth_date').value = d.birth_date_formatted || d
+                                .birth_date || '';
+                        }
+
+                        // CORREÇÃO WHATSAPP: Aplica a máscara ao valor que vem do banco
+                        document.getElementById('whatsapp').value = d.whatsapp ? phoneMask(d.whatsapp) :
+                            '';
+
                         // Endereço
-                        if (json.data.address) {
-                            document.getElementById('postal_code').value = json.data.address
-                            .postal_code;
-                            document.getElementById('street').value = json.data.address.street;
-                            document.getElementById('city').value = json.data.address.city;
+                        if (d.address) {
+                            document.getElementById('postal_code').value = d.address.postal_code || '';
+                            document.getElementById('street').value = d.address.street || '';
+                            document.getElementById('number').value = d.address.number || '';
+                            document.getElementById('district').value = d.address.district || '';
+                            document.getElementById('city').value = d.address.city || '';
                         }
                     }
                 } catch (e) {
-                    console.log("Novo cliente.");
+                    console.log("Novo cliente ou erro na busca.");
                 } finally {
                     document.getElementById('searchingMsg').classList.add('hidden');
                 }
-            });
-
-            // Máscara Nascimento
-            birthInput.addEventListener('input', e => {
-                let v = e.target.value.replace(/\D/g, '');
-                if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
-                else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
-                e.target.value = v;
             });
         });
 
@@ -209,12 +243,12 @@
             const l1 = document.getElementById('progress_line');
             const l2 = document.getElementById('progress_line_2');
 
-            l1.style.width = s >= 2 ? '100%' : '0%';
-            l2.style.width = s === 3 ? '100%' : '0%';
+            if (l1) l1.style.width = s >= 2 ? '100%' : '0%';
+            if (l2) l2.style.width = s === 3 ? '100%' : '0%';
             window.scrollTo(0, 0);
         }
 
-        // Submissão (handleRegistration)
+        // Submissão do Formulário
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
