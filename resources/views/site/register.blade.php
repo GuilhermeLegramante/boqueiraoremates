@@ -304,10 +304,22 @@
         function goToStep(s) {
             // Se o usuário está tentando ir para o passo 2, validamos o passo 1
             if (s === 2) {
+                const nome = document.getElementById('name').value.trim();
+                const whatsapp = document.getElementById('whatsapp').value.trim();
                 const nomeMae = document.getElementById('mother').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const p1 = document.getElementsByName('password')[0].value;
                 const p2 = document.getElementsByName('passwordConfirmation')[0].value;
+
+                if (!nome) {
+                    Swal.fire('Atenção', 'O nome é obrigatório.', 'warning');
+                    return;
+                }
+
+                if (!whatsapp) {
+                    Swal.fire('Atenção', 'O WhatsApp é obrigatório.', 'warning');
+                    return;
+                }
 
                 // Validação Nome da Mãe
                 if (!nomeMae) {
