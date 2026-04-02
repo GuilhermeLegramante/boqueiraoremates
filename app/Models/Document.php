@@ -42,7 +42,7 @@ class Document extends Model
                 if ($userId) {
                     \App\Models\ClientNote::create([
                         'client_id' => $document->client_id,
-                        'user_id'   => $userId,
+                        'user_id'   => User::first()->id, 
                         'content'   => "Documento {$document->documentType->name} foi adicionado ao cliente.",
                     ]);
                 }
