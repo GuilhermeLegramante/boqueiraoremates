@@ -164,3 +164,27 @@ Route::post('/cadastro/store', [CustomRegisterController::class, 'store'])
 Route::get('/api/check-client', [CustomRegisterController::class, 'checkClient'])
     ->name('api.check.client');
 // });
+
+Route::get('/teste-cpf', function () {
+    $cpf = '017.859.290-03';
+
+    // Busca o cliente
+    $client = \App\Models\Client::where('cpf_cnpj', $cpf)->first();
+
+    if (!$client) {
+        return "Cliente com CPF {$cpf} NÃO encontrado no banco.";
+    }
+
+    // Tenta carregar as relações
+    $client->load(['address', 'registeredUser']);
+
+    return response()->json([
+        'cliente_encontrado' => $client->name,
+        'cpf_no_banco' => $client->cpf_cnpj,
+        'possui_endereco' => !is_null($client->address),
+        'dados_endereco' => $client->address,
+        'possui_usuario_vinculado' => !is_null($client->registeredUser),
+        'email_do_usuario' => $client->registeredUser->email ?? 'Sem e-mail (registered_user_id está nulo?)',
+        'id_do_usuario_no_cliente' => $client->registered_user_id
+    ]);
+});
