@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnimalController;
-use App\Http\Controllers\Auth\CustomRegisterController;
+use App\Http\Controllers\CustomRegisterController;
 use App\Http\Controllers\BidController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\EventController;
