@@ -316,6 +316,13 @@
                     return;
                 }
 
+                // Validação de E-mail (Regex Simples)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email || !emailRegex.test(email)) {
+                    Swal.fire('E-mail Inválido', 'Por favor, insira um e-mail válido.', 'warning');
+                    return;
+                }
+
                 if (!whatsapp) {
                     Swal.fire('Atenção', 'O WhatsApp é obrigatório.', 'warning');
                     return;
@@ -327,12 +334,7 @@
                     return;
                 }
 
-                // Validação de E-mail (Regex Simples)
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!email || !emailRegex.test(email)) {
-                    Swal.fire('E-mail Inválido', 'Por favor, insira um e-mail válido.', 'warning');
-                    return;
-                }
+
 
                 // Validação de Senha
                 if (p1.length < 6) {
