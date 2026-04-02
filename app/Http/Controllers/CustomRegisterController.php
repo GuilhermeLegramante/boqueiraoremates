@@ -100,7 +100,7 @@ class CustomRegisterController extends Controller
                     'name'               => strtoupper($data['name']),
                     'email'              => strtolower($data['email']), // SALVANDO EMAIL
                     'birth_date'         => $birthDateDb,
-                    'whatsapp'           => preg_replace('/\D/', '', $data['whatsapp']), // SALVANDO WHATSAPP
+                    'whatsapp'           => $data['whatsapp'], // SALVANDO WHATSAPP
                     'address_id'         => $address->id,
                     'registered_user_id' => $user->id,
                     'situation'          => 'disabled',
