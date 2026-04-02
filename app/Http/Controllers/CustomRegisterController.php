@@ -109,6 +109,15 @@ class CustomRegisterController extends Controller
                 'state'       => strtoupper($data['state'] ?? 'RS'),
             ]);
 
+            // Limpeza do campo Income (Renda)
+            $income = $data['income'] ?? null;
+            if ($income) {
+                // Remove "R$", pontos de milhar e troca a vírgula por ponto
+                $income = str_replace(['R$', '.', ' '], '', $income);
+                $income = str_replace(',', '.', $income);
+                $income = (float) $income;
+            }
+
             // 3. Cliente (Campos novos adicionados)
             $client = Client::updateOrCreate(
                 ['cpf_cnpj' => $cpfComMascara],
@@ -116,7 +125,7 @@ class CustomRegisterController extends Controller
                     'name'               => strtoupper($data['name']),
                     'mother'             => strtoupper($data['mother'] ?? ''),
                     'occupation'         => strtoupper($data['occupation'] ?? ''),
-                    'income'             => $data['income'] ?? null,
+                    'income'             => $income ?? null,
                     'email'              => strtolower($data['email']),
                     'birth_date'         => $birthDateDb,
                     'whatsapp'           => $data['whatsapp'], // Com máscara
