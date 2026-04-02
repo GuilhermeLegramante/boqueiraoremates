@@ -6,111 +6,141 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <section class="flex justify-center bg-gray-100 pt-48 pb-16 min-h-screen">
-        <div class="w-full max-w-2xl"> {{-- Um pouco mais largo que o login para caber os grids --}}
+        <div class="w-full max-w-2xl px-4">
             <div class="bg-white p-8 rounded-xl shadow-lg flex flex-col space-y-6">
                 <h2 class="text-3xl font-bold text-center mb-2">Crie sua conta</h2>
 
                 <p class="text-center text-gray-600 mb-6">
                     Já possui uma conta?
-                    <a href="{{ route('login') }}" class="text-blue-600 font-semibold hover:text-blue-800 transition-colors">
+                    <a href="{{ route('login') }}"
+                        class="text-green-700 font-semibold hover:text-green-800 transition-colors">
                         Acesse aqui
                     </a>
                 </p>
 
-                {{-- Barra de Progresso Estilo Boqueirão --}}
-                <div class="flex items-center justify-between px-4 mb-4">
-                    <div id="step1_indicator" class="flex items-center text-green-700 font-bold">
+                {{-- Barra de Progresso --}}
+                <div class="flex items-center justify-between mb-8">
+                    <div id="step1_dot" class="flex flex-col items-center">
                         <span
-                            class="w-8 h-8 flex items-center justify-center rounded-full bg-green-700 text-white mr-2">1</span>
-                        Identificação
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-green-700 text-white font-bold transition-all">1</span>
+                        <span class="text-xs mt-1 font-bold text-green-700 uppercase">Dados</span>
                     </div>
-                    <div class="flex-1 h-1 bg-gray-200 mx-4 rounded">
-                        <div id="progress_bar" class="h-full bg-green-600 w-1/3 transition-all duration-300"></div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-2 -mt-4">
+                        <div id="progress_line" class="h-full bg-green-700 w-0 transition-all duration-500"></div>
                     </div>
-                    <div id="step2_indicator" class="flex items-center text-gray-400 font-bold">
+                    <div id="step2_dot" class="flex flex-col items-center">
                         <span
-                            class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 mr-2">2</span>
-                        Finalizar
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 font-bold transition-all">2</span>
+                        <span class="text-xs mt-1 font-bold text-gray-400 uppercase">Endereço</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-2 -mt-4">
+                        <div id="progress_line_2" class="h-full bg-green-700 w-0 transition-all duration-500"></div>
+                    </div>
+                    <div id="step3_dot" class="flex flex-col items-center">
+                        <span
+                            class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 font-bold transition-all">3</span>
+                        <span class="text-xs mt-1 font-bold text-gray-400 uppercase">Senha</span>
                     </div>
                 </div>
 
                 <form id="registerForm" class="space-y-5">
                     @csrf
+                    <p id="formError" class="text-red-500 text-sm hidden text-center font-bold"></p>
 
-                    {{-- Erro geral --}}
-                    <p id="formError" class="text-red-500 text-sm mt-1 hidden text-center"></p>
-
-                    {{-- PASSO 1: DADOS INICIAIS --}}
-                    <div id="step-1" class="space-y-5">
+                    <div id="step-1" class="space-y-4">
                         <div>
-                            <label for="cpf_cnpj" class="block font-semibold mb-1">CPF ou CNPJ</label>
+                            <label class="block font-semibold mb-1">CPF ou CNPJ</label>
                             <input type="text" name="cpf_cnpj" id="cpf_cnpj"
                                 class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                                placeholder="000.000.000-00" required>
+                                placeholder="000.000.000-00">
                             <p id="cpf_cnpjError" class="text-red-500 text-sm mt-1 hidden"></p>
+                            <p id="searchingMsg" class="text-blue-600 text-xs mt-1 hidden italic">Buscando dados...</p>
                         </div>
-
                         <div>
-                            <label for="name" class="block font-semibold mb-1">Nome Completo</label>
+                            <label class="block font-semibold mb-1">Nome Completo</label>
                             <input type="text" name="name" id="name"
-                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                                placeholder="Digite seu nome completo">
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
                             <p id="nameError" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
-
                         <div>
-                            <label for="email" class="block font-semibold mb-1">E-mail</label>
+                            <label class="block font-semibold mb-1">E-mail</label>
                             <input type="email" name="email" id="email"
-                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                                placeholder="exemplo@email.com">
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
                             <p id="emailError" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
-
-                        <button type="button" onclick="nextStep()"
-                            class="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition-all">
-                            Próximo Passo
-                        </button>
+                        <button type="button" onclick="goToStep(2)"
+                            class="w-full bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition-all">PRÓXIMO
+                            PASSO</button>
                     </div>
 
-                    {{-- PASSO 2: SEGURANÇA E FINALIZAÇÃO --}}
-                    <div id="step-2" class="hidden space-y-5">
+                    <div id="step-2" class="hidden space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="col-span-1">
+                                <label class="block font-semibold mb-1">CEP</label>
+                                <input type="text" name="postal_code" id="postal_code"
+                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block font-semibold mb-1">Rua</label>
+                                <input type="text" name="street" id="street"
+                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                            </div>
+                        </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="birth_date" class="block font-semibold mb-1">Data de Nascimento</label>
-                                <input type="text" name="birth_date" id="birth_date" placeholder="dd/mm/aaaa"
+                                <label class="block font-semibold mb-1">Bairro</label>
+                                <input type="text" name="district" id="district"
                                     class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
-                                <p id="birth_dateError" class="text-red-500 text-sm mt-1 hidden"></p>
                             </div>
                             <div>
-                                <label for="whatsapp" class="block font-semibold mb-1">WhatsApp</label>
+                                <label class="block font-semibold mb-1">Número</label>
+                                <input type="text" name="number" id="number"
+                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Cidade</label>
+                            <input type="text" name="city" id="city"
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                        </div>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" onclick="goToStep(1)"
+                                class="w-1/3 bg-gray-100 text-gray-600 py-3 rounded-lg font-semibold">VOLTAR</button>
+                            <button type="button" onclick="goToStep(3)"
+                                class="w-2/3 bg-green-700 text-white py-3 rounded-lg font-semibold">PRÓXIMO</button>
+                        </div>
+                    </div>
+
+                    <div id="step-3" class="hidden space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block font-semibold mb-1">Nascimento</label>
+                                <input type="text" name="birth_date" id="birth_date" placeholder="dd/mm/aaaa"
+                                    class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block font-semibold mb-1">WhatsApp</label>
                                 <input type="text" name="whatsapp" id="whatsapp" placeholder="(00) 00000-0000"
                                     class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
                             </div>
                         </div>
-
                         <div>
-                            <label for="password" class="block font-semibold mb-1">Crie uma Senha</label>
-                            <input type="password" name="password" id="password"
-                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                                placeholder="Mínimo 6 caracteres">
+                            <label class="block font-semibold mb-1">Crie sua Senha</label>
+                            <input type="password" name="password"
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
                             <p id="passwordError" class="text-red-500 text-sm mt-1 hidden"></p>
                         </div>
-
                         <div>
-                            <label for="password_confirmation" class="block font-semibold mb-1">Confirme a Senha</label>
-                            <input type="password" name="password_confirmation" id="password_confirmation"
-                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
-                                placeholder="Repita a senha">
+                            <label class="block font-semibold mb-1">Confirmar Senha</label>
+                            <input type="password" name="password_confirmation"
+                                class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none">
                         </div>
-
-                        <div class="flex gap-3">
-                            <button type="button" onclick="prevStep()"
-                                class="w-1/3 bg-gray-200 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-all">
-                                Voltar
-                            </button>
+                        <div class="flex gap-3 mt-6">
+                            <button type="button" onclick="goToStep(2)"
+                                class="w-1/3 bg-gray-100 text-gray-600 py-3 rounded-lg font-semibold">VOLTAR</button>
                             <button id="registerBtn" type="submit"
                                 class="w-2/3 bg-green-700 text-white py-3 rounded-lg font-semibold hover:bg-green-800 transition-all flex justify-center items-center">
-                                <span id="btnText">Finalizar Cadastro</span>
+                                <span id="btnText">FINALIZAR CADASTRO</span>
                                 <svg id="btnSpinner" class="animate-spin h-5 w-5 text-white ml-2 hidden"
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10"
@@ -122,136 +152,159 @@
                         </div>
                     </div>
                 </form>
-
-                {{-- Suporte via WhatsApp (Mantido o padrão do login) --}}
-                <div class="mt-4 text-center">
-                    <a href="https://wa.me/5555997331395" target="_blank"
-                        class="inline-flex items-center justify-center gap-2 text-green-700 font-semibold hover:underline text-sm">
-                        Precisa de ajuda? Fale conosco no WhatsApp
-                    </a>
-                </div>
             </div>
         </div>
     </section>
 
     <script>
-        let currentStep = 1;
+        // Função Navegação
+        function goToStep(s) {
+            document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById('step-' + s).classList.remove('hidden');
 
-        function updateUI() {
-            document.getElementById('step-1').classList.toggle('hidden', currentStep !== 1);
-            document.getElementById('step-2').classList.toggle('hidden', currentStep !== 2);
+            const l1 = document.getElementById('progress_line');
+            const l2 = document.getElementById('progress_line_2');
+            const d2 = document.getElementById('step2_dot');
+            const d3 = document.getElementById('step3_dot');
 
-            const progress = document.getElementById('progress_bar');
-            const step2Ind = document.getElementById('step2_indicator');
+            l1.style.width = s >= 2 ? '100%' : '0%';
+            l2.style.width = s === 3 ? '100%' : '0%';
 
-            if (currentStep === 2) {
-                progress.style.width = '100%';
-                step2Ind.classList.replace('text-gray-400', 'text-green-700');
-                step2Ind.querySelector('span').classList.replace('bg-gray-200', 'bg-green-700');
-                step2Ind.querySelector('span').classList.replace('text-gray-500', 'text-white');
-            } else {
-                progress.style.width = '33%';
-                step2Ind.classList.replace('text-green-700', 'text-gray-400');
-                step2Ind.querySelector('span').classList.replace('bg-green-700', 'bg-gray-200');
-                step2Ind.querySelector('span').classList.replace('text-white', 'text-gray-500');
+            // Update Dots (Cores do Boqueirão)
+            if (s >= 2) {
+                d2.querySelector('span').classList.replace('bg-gray-200', 'bg-green-700');
+                d2.querySelector('span').classList.replace('text-gray-500', 'text-white');
             }
-        }
-
-        function nextStep() {
-            currentStep = 2;
-            updateUI();
-        }
-
-        function prevStep() {
-            currentStep = 1;
-            updateUI();
+            if (s === 3) {
+                d3.querySelector('span').classList.replace('bg-gray-200', 'bg-green-700');
+                d3.querySelector('span').classList.replace('text-gray-500', 'text-white');
+            }
+            window.scrollTo(0, 0);
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            const registerForm = document.getElementById('registerForm');
             const cpfInput = document.getElementById('cpf_cnpj');
+            const postalInput = document.getElementById('postal_code');
             const birthInput = document.getElementById('birth_date');
             const whatsappInput = document.getElementById('whatsapp');
 
-            // Máscara CPF/CNPJ (Igual ao login)
-            cpfInput.addEventListener('input', () => {
-                let value = cpfInput.value.replace(/\D/g, '');
-                if (value.length <= 11) {
-                    value = value.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(
-                        /(\d{3})(\d{1,2})$/, '$1-$2');
-                } else {
-                    value = value.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,
-                        '$1.$2.$3').replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+            // --- REGRAS DE NEGÓCIO: BUSCA DE CLIENTE (CPF/CNPJ) ---
+            cpfInput.addEventListener('blur', async () => {
+                const val = cpfInput.value.replace(/\D/g, '');
+                if (val.length < 11) return;
+
+                document.getElementById('searchingMsg').classList.remove('hidden');
+
+                try {
+                    const res = await fetch(`/api/check-client?cpf_cnpj=${val}`);
+                    const json = await res.json();
+
+                    if (json.exists) {
+                        Swal.fire({
+                            title: 'Dados Localizados!',
+                            text: 'Já encontramos seu cadastro. Preenchemos os dados para você.',
+                            icon: 'info',
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+                        document.getElementById('name').value = json.data.name || '';
+                        document.getElementById('email').value = json.data.email || '';
+                        if (json.data.address) {
+                            document.getElementById('postal_code').value = json.data.address
+                                .postal_code || '';
+                            document.getElementById('street').value = json.data.address.street || '';
+                            document.getElementById('district').value = json.data.address.district ||
+                            '';
+                            document.getElementById('city').value = json.data.address.city || '';
+                            document.getElementById('number').value = json.data.address.number || '';
+                        }
+                    }
+                } catch (e) {
+                    console.error("Erro busca cliente");
+                } finally {
+                    document.getElementById('searchingMsg').classList.add('hidden');
                 }
-                cpfInput.value = value;
             });
 
-            // Máscara Data (Igual ao login)
-            birthInput.addEventListener('input', (e) => {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 8) value = value.slice(0, 8);
-                if (value.length > 4) value = value.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
-                else if (value.length > 2) value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
-                e.target.value = value;
+            // --- REGRAS DE NEGÓCIO: BUSCA CEP ---
+            postalInput.addEventListener('blur', async () => {
+                const cep = postalInput.value.replace(/\D/g, '');
+                if (cep.length !== 8) return;
+
+                try {
+                    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                    const data = await res.json();
+                    if (!data.erro) {
+                        document.getElementById('street').value = data.logradouro;
+                        document.getElementById('district').value = data.bairro;
+                        document.getElementById('city').value = data.localidade;
+                    }
+                } catch (e) {}
             });
 
-            // Submit
-            registerForm.addEventListener('submit', async e => {
+            // --- MÁSCARAS (IGUAL AO LOGIN) ---
+            cpfInput.addEventListener('input', e => {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v.length <= 11) v = v.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2')
+                    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                else v = v.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+                    .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d)/, '$1-$2');
+                e.target.value = v;
+            });
+
+            birthInput.addEventListener('input', e => {
+                let v = e.target.value.replace(/\D/g, '');
+                if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
+                else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+                e.target.value = v;
+            });
+
+            // --- ENVIO DO FORMULÁRIO COM MODAL MODERNA ---
+            document.getElementById('registerForm').addEventListener('submit', async e => {
                 e.preventDefault();
-
-                // Limpa erros
-                document.querySelectorAll('#registerForm p.text-red-500').forEach(p => p.classList.add(
-                    'hidden'));
-
                 const btnText = document.getElementById('btnText');
                 const btnSpinner = document.getElementById('btnSpinner');
+
                 btnText.classList.add('hidden');
                 btnSpinner.classList.remove('hidden');
-
-                const formData = new FormData(registerForm);
+                document.querySelectorAll('.text-red-500').forEach(p => p.classList.add('hidden'));
 
                 try {
                     const res = await fetch('{{ route('register.custom.store') }}', {
                         method: 'POST',
-                        body: formData,
+                        body: new FormData(e.target),
                         headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json'
                         }
                     });
-
                     const data = await res.json();
 
                     if (data.success) {
                         Swal.fire({
-                            title: 'Sucesso!',
-                            text: 'Seu cadastro foi realizado. Redirecionando para o site...',
+                            title: '<span style="color:#15803d">Cadastro Concluído!</span>',
+                            html: 'Seja bem-vindo à Boqueirão Remates.<br>Redirecionando para o sistema...',
                             icon: 'success',
                             showConfirmButton: false,
-                            timer: 3000,
+                            timer: 3500,
+                            allowOutsideClick: false,
                             willClose: () => {
                                 window.location.href = data.redirect;
                             }
                         });
-                        return;
-                    }
-
-                    if (data.errors) {
-                        for (const [key, messages] of Object.entries(data.errors)) {
-                            const errorElem = document.getElementById(key + 'Error');
-                            if (errorElem) {
-                                errorElem.textContent = messages[0];
-                                errorElem.classList.remove('hidden');
+                    } else if (data.errors) {
+                        for (const [key, msg] of Object.entries(data.errors)) {
+                            const errEl = document.getElementById(key + 'Error');
+                            if (errEl) {
+                                errEl.textContent = msg[0];
+                                errEl.classList.remove('hidden');
                             }
                         }
-                        // Se houver erro no passo 1, volta para lá
-                        if (data.errors.cpf_cnpj || data.errors.name || data.errors.email) {
-                            prevStep();
-                        }
+                        if (data.errors.cpf_cnpj || data.errors.name) goToStep(1);
+                        else if (data.errors.postal_code) goToStep(2);
                     }
                 } catch (err) {
-                    console.error(err);
-                    document.getElementById('formError').textContent = 'Erro de comunicação.';
-                    document.getElementById('formError').classList.remove('hidden');
+                    Swal.fire('Erro', 'Falha na conexão.', 'error');
                 } finally {
                     btnText.classList.remove('hidden');
                     btnSpinner.classList.add('hidden');
