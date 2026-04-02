@@ -72,6 +72,29 @@ class CustomRegisterController extends Controller
 
     public function store(Request $request)
     {
+        // 1. Validação de Campos Obrigatórios e Formato de E-mail
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'name'        => 'required|string|max:255',
+            'mother'      => 'required|string|max:255', // Nome da mãe obrigatório
+            'email'       => 'required|email:rfc,dns',  // E-mail obrigatório e formato válido
+            'birth_date'  => 'required',
+            'whatsapp'    => 'required',
+            'password'    => 'required|min:6',
+            'income'      => 'required', // Renda obrigatória
+            'occupation'  => 'required', // Profissão obrigatória
+        ], [
+            'mother.required' => 'O nome da mãe é obrigatório.',
+            'email.required'  => 'O e-mail é obrigatório.',
+            'email.email'     => 'Por favor, insira um endereço de e-mail válido.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first()
+            ], 422);
+        }
+        
         // 1. Tratamento da Data e Validação de Idade
         try {
             $dateObj = Carbon::createFromFormat('d/m/Y', $request->birth_date);

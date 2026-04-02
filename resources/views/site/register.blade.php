@@ -59,7 +59,7 @@
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Data de Nascimento *</label>
+                            <label class="block font-semibold text-gray-700">Data de Nascimento </label>
                             <input type="text" name="birth_date" id="birth_date" placeholder="dd/mm/aaaa"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
@@ -84,12 +84,12 @@
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Profissão *</label>
+                            <label class="block font-semibold text-gray-700">Profissão </label>
                             <input type="text" name="occupation" id="occupation"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Renda Mensal *</label>
+                            <label class="block font-semibold text-gray-700">Renda Mensal </label>
                             <input type="text" name="income" id="income" placeholder="R$ 0,00"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
@@ -150,15 +150,15 @@
                             Anexe fotos nítidas dos seus documentos para agilizar sua aprovação.
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Documento Pessoal (CNH ou RG) *</label>
+                            <label class="block font-semibold text-gray-700">Documento Pessoal (CNH ou RG) </label>
                             <input type="file" name="cnh_rg" class="w-full border p-2 rounded-lg bg-gray-50">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Comprovante de Renda *</label>
+                            <label class="block font-semibold text-gray-700">Comprovante de Renda </label>
                             <input type="file" name="document_income" class="w-full border p-2 rounded-lg bg-gray-50">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Comprovante de Residência *</label>
+                            <label class="block font-semibold text-gray-700">Comprovante de Residência </label>
                             <input type="file" name="document_residence"
                                 class="w-full border p-2 rounded-lg bg-gray-50">
                         </div>
@@ -301,16 +301,39 @@
             });
         });
 
-        // Navegação entre passos
         function goToStep(s) {
+            // Se o usuário está tentando ir para o passo 2, validamos o passo 1
             if (s === 2) {
+                const nomeMae = document.getElementById('mother_name').value.trim();
+                const email = document.getElementById('email').value.trim();
                 const p1 = document.getElementsByName('password')[0].value;
                 const p2 = document.getElementsByName('passwordConfirmation')[0].value;
+
+                // Validação Nome da Mãe
+                if (!nomeMae) {
+                    Swal.fire('Atenção', 'O nome da mãe é obrigatório.', 'warning');
+                    return;
+                }
+
+                // Validação de E-mail (Regex Simples)
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!email || !emailRegex.test(email)) {
+                    Swal.fire('E-mail Inválido', 'Por favor, insira um e-mail válido.', 'warning');
+                    return;
+                }
+
+                // Validação de Senha
+                if (p1.length < 6) {
+                    Swal.fire('Senha Curta', 'A senha deve ter pelo menos 6 caracteres.', 'warning');
+                    return;
+                }
                 if (p1 !== p2) {
                     Swal.fire('Erro', 'As senhas não conferem!', 'error');
                     return;
                 }
             }
+
+            // Lógica de navegação visual (mantida)
             document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
             document.getElementById('step-' + s).classList.remove('hidden');
 
