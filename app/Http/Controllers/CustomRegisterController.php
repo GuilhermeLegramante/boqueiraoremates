@@ -18,21 +18,47 @@ class CustomRegisterController extends Controller
 {
     public function checkClient(Request $request)
     {
-        $client = Client::with('address', 'registeredUser')
-            ->where('cpf_cnpj', $request->cpf_cnpj)
-            ->first();
+        try {
+            // 1. Limpa o CPF para buscar apenas números no banco
+            $cpf = preg_replace('/\D/', '', $request->cpf_cnpj);
 
-        if ($client) {
+            if (empty($cpf)) {
+                return response()->json(['exists' => false]);
+            }
+
+            // 2. Busca o cliente com os relacionamentos
+            // Certifique-se que os nomes 'address' e 'registeredUser' são os nomes das funções no seu Model Client
+            $client = \App\Models\Client::with(['address', 'registeredUser'])
+                ->where('cpf_cnpj', $cpf)
+                ->first();
+
+            if ($client) {
+                return response()->json([
+                    'exists' => true,
+                    'data' => [
+                        'name' => $client->name,
+                        'email' => $client->registeredUser->email ?? '',
+                        'address' => $client->address ? [
+                            'street' => $client->address->street,
+                            'city' => $client->address->city,
+                            'district' => $client->address->district,
+                            'state' => $client->address->state,
+                            'postal_code' => $client->address->postal_code,
+                            'number' => $client->address->number,
+                        ] : null
+                    ]
+                ]);
+            }
+
+            return response()->json(['exists' => false]);
+        } catch (\Exception $e) {
+            // Se der erro, ele retorna o erro real em JSON para você ver no console
             return response()->json([
-                'exists' => true,
-                'data' => [
-                    'name' => $client->registeredUser->name ?? $client->name,
-                    'email' => $client->registeredUser->email ?? '',
-                    'address' => $client->address
-                ]
-            ]);
+                'success' => false,
+                'error' => $e->getMessage(),
+                'line' => $e->getLine()
+            ], 500);
         }
-        return response()->json(['exists' => false]);
     }
 
     public function store(Request $request)
