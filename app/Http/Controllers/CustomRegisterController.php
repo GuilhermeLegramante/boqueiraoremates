@@ -111,17 +111,18 @@ class CustomRegisterController extends Controller
             // 4. Documento (CORRIGIDO PATH)
             if ($request->hasFile('cnh_rg')) {
                 $file = $request->file('cnh_rg');
-                // Salva com nome único para evitar conflitos
-                $fileName = time() . '_' . $client->id . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('documents', $fileName, 'public');
+                $path = $file->store('documents', 'public');
 
                 $docType = DocumentType::where('name', 'LIKE', '%DOCUMENTO PESSOAL%')->first();
 
                 if ($docType) {
-                    Document::updateOrCreate(
-                        ['client_id' => $client->id, 'document_type_id' => $docType->id],
-                        ['path' => $path] // O Model Document já tem o boot para criar a Note
-                    );
+                    // Criamos o documento passando explicitamente o user_id que acabamos de criar
+                    Document::create([
+                        'client_id'        => $client->id,
+                        'document_type_id' => $docType->id,
+                        'path'             => $path,
+                        'user_id'          => $user->id // <--- IMPORTANTE: Passe o ID do usuário criado acima
+                    ]);
                 }
             }
 

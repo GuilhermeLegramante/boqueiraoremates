@@ -30,15 +30,22 @@ class Document extends Model
     protected static function booted()
     {
         static::created(function ($document) {
-            // Garante que o tipo de documento está carregado
             $document->loadMissing('documentType');
 
             if ($document->client_id && $document->documentType) {
-                ClientNote::create([
-                    'client_id' => $document->client_id,
-                    'user_id' =>  auth()->id() ?? 1,
-                    'content' => "Documento {$document->documentType->name} foi adicionado ao cliente.",
-                ]);
+                // CORREÇÃO: Verifica se existe um usuário logado ou usa o dono do documento
+                // Se for um cadastro novo, auth()->id() pode falhar.
+                $userId = auth()->id() ?: $document->user_id;
+
+                // Se ainda assim não tiver user_id (caso de cadastro novo), 
+                // precisamos garantir um ID válido ou pular a nota automática
+                if ($userId) {
+                    \App\Models\ClientNote::create([
+                        'client_id' => $document->client_id,
+                        'user_id'   => $userId,
+                        'content'   => "Documento {$document->documentType->name} foi adicionado ao cliente.",
+                    ]);
+                }
             }
         });
     }
