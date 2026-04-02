@@ -38,10 +38,11 @@
                 <form id="registerForm" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
+                    {{-- STEP 1: DADOS PESSOAIS --}}
                     <div id="step-1" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
                             <label class="block font-semibold text-gray-700">CPF ou CNPJ *</label>
-                            <input type="text" name="cpf_cnpj" id="cpf_cnpj" required
+                            <input type="text" name="cpf_cnpj" id="cpf_cnpj"
                                 class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                                 placeholder="000.000.000-00">
                             <p id="searchingMsg" class="text-green-600 text-xs mt-1 hidden italic">Verificando cadastro
@@ -49,12 +50,12 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-gray-700">Nome Completo *</label>
-                            <input type="text" name="name" id="name" required
+                            <input type="text" name="name" id="name"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
                             <label class="block font-semibold text-gray-700">E-mail *</label>
-                            <input type="email" name="email" id="email" required
+                            <input type="email" name="email" id="email"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
@@ -69,12 +70,12 @@
                         </div>
                         <div>
                             <label class="block font-semibold text-gray-700">Senha *</label>
-                            <input type="password" name="password" required
+                            <input type="password" name="password"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
                             <label class="block font-semibold text-gray-700">Confirmar Senha *</label>
-                            <input type="password" name="passwordConfirmation" required
+                            <input type="password" name="passwordConfirmation"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <button type="button" onclick="goToStep(2)"
@@ -82,6 +83,7 @@
                             Passo</button>
                     </div>
 
+                    {{-- STEP 2: ENDEREÇO --}}
                     <div id="step-2" class="hidden grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                             <label class="block font-semibold text-gray-700">CEP</label>
@@ -112,7 +114,7 @@
                             <label class="block font-semibold text-gray-700">Estado (UF)</label>
                             <input type="text" name="state" id="state" maxlength="2"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase"
-                                placeholder="EX: RS">
+                                placeholder="RS">
                         </div>
                         <div class="flex gap-3 md:col-span-3 mt-4">
                             <button type="button" onclick="goToStep(1)"
@@ -122,26 +124,15 @@
                         </div>
                     </div>
 
+                    {{-- STEP 3: DOCUMENTOS --}}
                     <div id="step-3" class="hidden space-y-4">
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4">
-                            <p class="text-sm text-blue-800 italic">Anexe fotos nítidas dos seus documentos para agilizar
-                                sua aprovação.</p>
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-4 text-sm text-blue-800 italic">
+                            Anexe fotos nítidas dos seus documentos para agilizar sua aprovação.
                         </div>
-
                         <div>
                             <label class="block font-semibold text-gray-700">Documento Pessoal (CNH ou RG) *</label>
                             <input type="file" name="cnh_rg" class="w-full border p-2 rounded-lg bg-gray-50">
                         </div>
-                        <div>
-                            <label class="block font-semibold text-gray-700">Comprovante de Residência</label>
-                            <input type="file" name="document_residence"
-                                class="w-full border p-2 rounded-lg bg-gray-50">
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-gray-700">Comprovante de Renda</label>
-                            <input type="file" name="document_income" class="w-full border p-2 rounded-lg bg-gray-50">
-                        </div>
-
                         <div class="flex gap-3 mt-6">
                             <button type="button" onclick="goToStep(2)"
                                 class="w-1/3 bg-gray-200 text-gray-700 py-3 rounded-lg font-bold">VOLTAR</button>
@@ -159,105 +150,66 @@
     </section>
 
     <script>
-        // --- FUNÇÕES AUXILIARES DE MÁSCARA ---
-        const cpfCnpjMask = (value) => {
-            value = value.replace(/\D/g, '');
-            if (value.length <= 11) {
-                // CPF: 000.000.000-00
-                return value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "\$1.\$2.\$3-\$4");
-            } else {
-                // CNPJ: 00.000.000/0000-00
-                return value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "\$1.\$2.\$3/\$4-\$5");
-            }
-        }
-
-        const phoneMask = (value) => {
-            if (!value) return "";
-            value = value.replace(/\D/g, '');
-            value = value.replace(/^(\d{2})(\d)/g, "($1) $2");
-            value = value.replace(/(\d{5})(\d)/, "$1-$2");
-            return value;
-        }
-
-        const dateMask = (value) => {
-            let v = value.replace(/\D/g, '');
-            if (v.length > 4) v = v.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
-            else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
-            return v;
-        }
+        // Máscaras e Eventos (mesma lógica anterior)
+        const cpfCnpjMask = (v) => {
+            v = v.replace(/\D/g, '');
+            return v.length <= 11 ? v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/g, "$1.$2.$3-$4") : v.replace(
+                /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/g, "$1.$2.$3/$4-$5");
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             const cpfInput = document.getElementById('cpf_cnpj');
-            const birthInput = document.getElementById('birth_date');
-            const whatsappInput = document.getElementById('whatsapp');
+            cpfInput.addEventListener('input', (e) => e.target.value = cpfCnpjMask(e.target.value));
 
-            // Máscara CPF/CNPJ
-            cpfInput.addEventListener('input', (e) => {
-                e.target.value = cpfCnpjMask(e.target.value);
-            });
-
-            // Máscara WhatsApp
-            whatsappInput.addEventListener('input', (e) => {
-                e.target.value = phoneMask(e.target.value);
-            });
-
-            // Máscara Nascimento
-            birthInput.addEventListener('input', (e) => {
-                e.target.value = dateMask(e.target.value);
-            });
-
-            // Lógica de Autocompletar ao sair do campo CPF
             cpfInput.addEventListener('blur', async () => {
                 const val = cpfInput.value.replace(/\D/g, '');
                 if (val.length < 11) return;
-
                 document.getElementById('searchingMsg').classList.remove('hidden');
-
                 try {
                     const res = await fetch(`/api/check-client?cpf_cnpj=${val}`);
                     const json = await res.json();
-
                     if (json.exists) {
                         const d = json.data;
-                        Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
-                            'info');
-
+                        Swal.fire('Cadastro Localizado', 'Dados carregados.', 'info');
                         document.getElementById('name').value = d.name || '';
                         document.getElementById('email').value = d.email || '';
-
-                        if (d.birth_date && d.birth_date.includes('-')) {
-                            const [year, month, day] = d.birth_date.split('-');
-                            document.getElementById('birth_date').value = `${day}/${month}/${year}`;
-                        }
-
-                        document.getElementById('whatsapp').value = d.whatsapp ? phoneMask(d.whatsapp) :
-                            '';
-
                         if (d.address) {
                             document.getElementById('postal_code').value = d.address.postal_code || '';
                             document.getElementById('street').value = d.address.street || '';
-                            document.getElementById('number').value = d.address.number || '';
-                            document.getElementById('district').value = d.address.district || '';
                             document.getElementById('city').value = d.address.city || '';
-                            document.getElementById('state').value = d.address.state || ''; 
+                            document.getElementById('state').value = d.address.state ||
+                            ''; // PREENCHE ESTADO
                         }
                     }
                 } catch (e) {
-                    console.log("Erro na busca.");
+                    console.error(e);
                 } finally {
                     document.getElementById('searchingMsg').classList.add('hidden');
                 }
             });
         });
 
-        // Submissão do Formulário com tratamento de erros por campo
+        function goToStep(s) {
+            // Validação simples de senha no Step 1
+            if (s === 2) {
+                const p1 = document.getElementsByName('password')[0].value;
+                const p2 = document.getElementsByName('passwordConfirmation')[0].value;
+                if (p1 && p1 !== p2) {
+                    Swal.fire('Erro', 'As senhas não coincidem!', 'error');
+                    return;
+                }
+            }
+            document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+            document.getElementById('step-' + s).classList.remove('hidden');
+            const l1 = document.getElementById('progress_line');
+            const l2 = document.getElementById('progress_line_2');
+            if (l1) l1.style.width = s >= 2 ? '100%' : '0%';
+            if (l2) l2.style.width = s === 3 ? '100%' : '0%';
+            window.scrollTo(0, 0);
+        }
+
         document.getElementById('registerForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Limpa mensagens de erro anteriores
-            document.querySelectorAll('.error-msg').forEach(el => el.remove());
-            document.querySelectorAll('input').forEach(el => el.classList.remove('border-red-500'));
-
             const formData = new FormData(e.target);
             document.getElementById('btnText').classList.add('hidden');
             document.getElementById('btnSpinner').classList.remove('hidden');
@@ -271,55 +223,19 @@
                         'Accept': 'application/json'
                     }
                 });
-
                 const data = await res.json();
-
                 if (res.ok && data.success) {
-                    Swal.fire('Sucesso!', 'Cadastro realizado com sucesso.', 'success').then(() => {
-                        window.location.href = data.redirect;
-                    });
+                    Swal.fire('Sucesso!', 'Cadastro realizado!', 'success').then(() => window.location.href =
+                        data.redirect);
                 } else {
-                    // Se houver erros de validação (Laravel 422)
-                    if (data.errors) {
-                        Object.keys(data.errors).forEach(key => {
-                            const input = document.getElementsByName(key)[0];
-                            if (input) {
-                                input.classList.add('border-red-500');
-                                const errorPara = document.createElement('p');
-                                errorPara.className = 'text-red-500 text-xs mt-1 error-msg';
-                                errorPara.innerText = data.errors[key][0];
-                                input.parentNode.appendChild(errorPara);
-                            }
-                        });
-
-                        // Volta para o primeiro passo se houver erro lá
-                        const firstErrorKey = Object.keys(data.errors)[0];
-                        if (['name', 'email', 'cpf_cnpj', 'birth_date', 'whatsapp', 'password'].includes(
-                                firstErrorKey)) {
-                            goToStep(1);
-                        }
-
-                        Swal.fire('Atenção', 'Por favor, corrija os erros no formulário.', 'warning');
-                    } else {
-                        Swal.fire('Erro', data.message || 'Erro ao processar.', 'error');
-                    }
+                    Swal.fire('Erro', data.message || 'Verifique os dados.', 'error');
                 }
             } catch (err) {
-                Swal.fire('Erro', 'Falha na comunicação com o servidor.', 'error');
+                Swal.fire('Erro', 'Falha no servidor.', 'error');
             } finally {
                 document.getElementById('btnText').classList.remove('hidden');
                 document.getElementById('btnSpinner').classList.add('hidden');
             }
         });
-
-        function goToStep(s) {
-            document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById('step-' + s).classList.remove('hidden');
-            const l1 = document.getElementById('progress_line');
-            const l2 = document.getElementById('progress_line_2');
-            if (l1) l1.style.width = s >= 2 ? '100%' : '0%';
-            if (l2) l2.style.width = s === 3 ? '100%' : '0%';
-            window.scrollTo(0, 0);
-        }
     </script>
 @endsection

@@ -57,15 +57,10 @@ class CustomRegisterController extends Controller
     {
         // 1. Tratamento da Data e Validação de Idade
         try {
-            // Criamos o objeto Carbon primeiro
             $dateObj = Carbon::createFromFormat('d/m/Y', $request->birth_date);
-
-            // Verificação de maioridade (18 anos)
             if ($dateObj->greaterThan(now()->subYears(18))) {
                 return response()->json(['success' => false, 'message' => 'Necessário ser maior de 18 anos.'], 422);
             }
-
-            // Formatamos para o banco de dados (string Y-m-d)
             $birthDateDb = $dateObj->format('Y-m-d');
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Data de nascimento inválida.'], 422);
@@ -85,34 +80,33 @@ class CustomRegisterController extends Controller
                 ]
             );
 
-            // 3. Endereço
+            // 3. Endereço (ADICIONADO TRATAMENTO PARA 'STATE')
             $address = Address::updateOrCreate(
                 ['id' => $data['address_id'] ?? null],
                 [
                     'postal_code' => preg_replace('/\D/', '', $data['postal_code'] ?? ''),
                     'street'      => strtoupper($data['street'] ?? ''),
                     'city'        => strtoupper($data['city'] ?? ''),
-                    'state'       => strtoupper($data['state'] ?? 'RS'), // Default para RS se vazio
+                    'state'       => strtoupper($data['state'] ?? 'RS'), // Default RS
                     'district'    => strtoupper($data['district'] ?? ''),
                     'number'      => $data['number'] ?? 'S/N',
                 ]
             );
 
-            // 4. Cliente (Criar ou Atualizar)
+            // 4. Cliente
             $client = Client::updateOrCreate(
                 ['cpf_cnpj' => $cpf],
                 [
                     'name' => $data['name'],
                     'birth_date' => $birthDateDb,
-                    'whatsapp' => preg_replace('/\D/', '', $data['whatsapp']),
+                    'whatsapp' => preg_replace('/\D/', '', $data['whatsapp'] ?? ''),
                     'address_id' => $address->id,
-                    'registered_user_id' => $user->id, // <--- IMPORTANTE: Vincula o ID do usuário aqui
+                    'registered_user_id' => $user->id,
                     'situation' => 'disabled',
                     'register_origin' => 'site'
                 ]
             );
 
-            // Se quiser garantir a associação pelo método do Eloquent também:
             $client->registeredUser()->associate($user);
             $client->save();
 
@@ -120,7 +114,6 @@ class CustomRegisterController extends Controller
             if ($request->hasFile('cnh_rg')) {
                 $path = $request->file('cnh_rg')->store('documents', 'public');
                 $docType = DocumentType::where('name', 'DOCUMENTO PESSOAL')->first();
-
                 if ($docType) {
                     Document::updateOrCreate(
                         ['client_id' => $client->id, 'document_type_id' => $docType->id],
@@ -131,7 +124,6 @@ class CustomRegisterController extends Controller
 
             auth()->login($user);
 
-            // Altere para a URL correta do seu sistema se necessário
             return response()->json([
                 'success' => true,
                 'redirect' => 'https://sistema.boqueiraoremates.com/'
