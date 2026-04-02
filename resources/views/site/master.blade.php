@@ -22,6 +22,8 @@
         integrity="sha512-v2QYF7y5rWq3JyZrR3fY+tRj+y0TmX1UyE1y7ZpXsK2eHqKZ7bZ5jXkOqjP3kTmFQHxgKXk1v1kMGG0zW0X/A=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+    <script src="https://unpkg.com/imask"></script>
+
     @stack('styles') {{-- para estilos extras em páginas específicas --}}
 </head>
 

@@ -123,6 +123,38 @@
             const steps = document.querySelectorAll('.form-step');
             const stepIndicators = document.querySelectorAll('.step-idx');
 
+            // Máscara de CPF ou CNPJ Dinâmica
+            const cpfCnpjElem = document.getElementById('cpf_cnpj');
+            const cpfCnpjMask = IMask(cpfCnpjElem, {
+                mask: [{
+                        mask: '000.000.000-00',
+                        type: 'CPF'
+                    },
+                    {
+                        mask: '00.000.000/0000-00',
+                        type: 'CNPJ'
+                    }
+                ]
+            });
+
+            // Máscara de Data de Nascimento
+            const birthDateElem = document.getElementById('birth_date');
+            IMask(birthDateElem, {
+                mask: '00/00/0000'
+            });
+
+            // Máscara de CEP
+            const cepElem = document.getElementById('postal_code');
+            IMask(cepElem, {
+                mask: '00000-000'
+            });
+
+            // Máscara de WhatsApp (Celular)
+            const whatsappElem = document.getElementById('whatsapp');
+            IMask(whatsappElem, {
+                mask: '(00) 00000-0000'
+            });
+
             // 1. Navegação Wizard
             const updateWizard = () => {
                 steps.forEach((s, i) => s.classList.toggle('hidden', i !== currentStep - 1));
