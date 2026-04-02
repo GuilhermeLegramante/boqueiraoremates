@@ -70,57 +70,57 @@ class CustomRegisterController extends Controller
 
         return DB::transaction(function () use ($request, $birthDateDb) {
             $data = $request->all();
-            $cpf = $data['cpf_cnpj'];
+            $cpfLimpo = preg_replace('/\D/', '', $data['cpf_cnpj']);
 
-            // 2. Localiza ou Cria Usuário
+            // 1. Usuário
             $user = User::updateOrCreate(
-                ['username' => $cpf],
+                ['username' => $cpfLimpo],
                 [
-                    'name' => $data['name'],
-                    'email' => $data['email'],
+                    'name' => strtoupper($data['name']),
+                    'email' => strtolower($data['email']),
                     'password' => Hash::make($data['password']),
                 ]
             );
+            $user->assignRole('client'); // Garante a role
 
-            // 3. Endereço (ADICIONADO TRATAMENTO PARA 'STATE')
-            $address = Address::updateOrCreate(
-                ['id' => $data['address_id'] ?? null],
-                [
-                    'postal_code' => preg_replace('/\D/', '', $data['postal_code'] ?? ''),
-                    'street'      => strtoupper($data['street'] ?? ''),
-                    'city'        => strtoupper($data['city'] ?? ''),
-                    'state'       => strtoupper($data['state'] ?? 'RS'), // Default RS
-                    'district'    => strtoupper($data['district'] ?? ''),
-                    'number'      => $data['number'] ?? 'S/N',
-                ]
-            );
+            // 2. Endereço
+            $address = Address::create([
+                'postal_code' => preg_replace('/\D/', '', $data['postal_code'] ?? ''),
+                'street'      => strtoupper($data['street'] ?? ''),
+                'city'        => strtoupper($data['city'] ?? ''),
+                'state'       => strtoupper($data['state'] ?? 'RS'),
+                'district'    => strtoupper($data['district'] ?? ''),
+                'number'      => $data['number'] ?? 'S/N',
+            ]);
 
-            // 4. Cliente
+            // 3. Cliente (CORRIGIDO WHATSAPP E EMAIL)
             $client = Client::updateOrCreate(
-                ['cpf_cnpj' => $cpf],
+                ['cpf_cnpj' => $cpfLimpo],
                 [
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'birth_date' => $birthDateDb,
-                    'whatsapp' => $data['whatsapp'],
-                    'address_id' => $address->id,
+                    'name'               => strtoupper($data['name']),
+                    'email'              => strtolower($data['email']), // SALVANDO EMAIL
+                    'birth_date'         => $birthDateDb,
+                    'whatsapp'           => preg_replace('/\D/', '', $data['whatsapp']), // SALVANDO WHATSAPP
+                    'address_id'         => $address->id,
                     'registered_user_id' => $user->id,
-                    'situation' => 'disabled',
-                    'register_origin' => 'site'
+                    'situation'          => 'disabled',
+                    'register_origin'    => 'site'
                 ]
             );
 
-            $client->registeredUser()->associate($user);
-            $client->save();
-
-            // 5. Upload de Documentos
+            // 4. Documento (CORRIGIDO PATH)
             if ($request->hasFile('cnh_rg')) {
-                $path = $request->file('cnh_rg')->store('documents', 'public');
-                $docType = DocumentType::where('name', 'DOCUMENTO PESSOAL')->first();
+                $file = $request->file('cnh_rg');
+                // Salva com nome único para evitar conflitos
+                $fileName = time() . '_' . $client->id . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('documents', $fileName, 'public');
+
+                $docType = DocumentType::where('name', 'LIKE', '%DOCUMENTO PESSOAL%')->first();
+
                 if ($docType) {
                     Document::updateOrCreate(
                         ['client_id' => $client->id, 'document_type_id' => $docType->id],
-                        ['user_id' => $user->id, 'path' => $path]
+                        ['path' => $path] // O Model Document já tem o boot para criar a Note
                     );
                 }
             }
