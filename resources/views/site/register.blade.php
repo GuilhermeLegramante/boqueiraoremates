@@ -216,7 +216,7 @@
 
                 document.getElementById('searchingMsg').classList.remove('hidden');
                 try {
-                    const res = await fetch(`/api/check-client?cpf_cnpj=${val}`);
+                    const res = await fetch(`/api/check-client?cpf_cnpj=${cpfInput.value}`);
                     const json = await res.json();
                     if (json.exists) {
                         const d = json.data;
