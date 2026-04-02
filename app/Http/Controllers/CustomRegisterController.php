@@ -28,7 +28,7 @@ class CustomRegisterController extends Controller
                 ]);
             }
 
-            // Busca o cliente. 
+            // Busca o cliente com os novos campos
             $client = \App\Models\Client::with(['address', 'registeredUser'])
                 ->where('cpf_cnpj', $cpfEnviado)
                 ->orWhere('cpf_cnpj', preg_replace('/\D/', '', $cpfEnviado))
@@ -38,12 +38,22 @@ class CustomRegisterController extends Controller
                 return response()->json([
                     'exists' => true,
                     'data' => [
-                        'name' => $client->name,
-                        // Se o cliente existe mas não tem usuário vinculado, evitamos erro:
-                        'email' => $client->registeredUser->email ?? '',
-                        'whatsapp' => $client->whatsapp,
-                        'birth_date' => $client->birth_date ? Carbon::parse($client->birth_date)->format('d/m/Y') : '',
-                        'address' => $client->address
+                        'name'          => $client->name,
+                        'mother'   => $client->mother, // NOVO
+                        'occupation'    => $client->occupation,  // NOVO
+                        'income'        => $client->income,      // NOVO
+                        'email'         => $client->registeredUser->email ?? $client->email ?? '',
+                        'whatsapp'      => $client->whatsapp,
+                        'birth_date'    => $client->birth_date ? \Carbon\Carbon::parse($client->birth_date)->format('d/m/Y') : '',
+                        'address'       => [
+                            'postal_code' => $client->address->postal_code ?? '',
+                            'street'      => $client->address->street ?? '',
+                            'number'      => $client->address->number ?? '',
+                            'complement'  => $client->address->complement ?? '', // NOVO
+                            'district'    => $client->address->district ?? '',
+                            'city'        => $client->address->city ?? '',
+                            'state'       => $client->address->state ?? '',
+                        ]
                     ]
                 ]);
             }
