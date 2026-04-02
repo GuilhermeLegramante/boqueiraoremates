@@ -148,19 +148,19 @@ Route::get('/despublicar-eventos', function () {
 });
 
 // Rotas de Cadastro Personalizado
-Route::middleware('guest')->group(function () {
-    
-    // 1. Rota para exibir a página (a view Blade que criamos)
-    Route::get('/cadastro', function () {
-        return view('site.register'); 
-    })->name('register.custom');
+// Route::middleware('guest')->group(function () {
 
-    // 2. Rota para a lógica de salvar os dados (POST)
-    Route::post('/cadastro/store', [CustomRegisterController::class, 'store'])
-        ->name('register.custom.store');
+// 1. Rota para exibir a página (a view Blade que criamos)
+Route::get('/cadastro', function () {
+    return view('site.register');
+})->name('register.custom');
 
-    // 3. Rota API interna para busca de CPF/CNPJ (Reatividade)
-    // Usamos GET aqui pois é apenas uma consulta de dados
-    Route::get('/api/check-client', [CustomRegisterController::class, 'checkClient'])
-        ->name('api.check.client');
-});
+// 2. Rota para a lógica de salvar os dados (POST)
+Route::post('/cadastro/store', [CustomRegisterController::class, 'store'])
+    ->name('register.custom.store');
+
+// 3. Rota API interna para busca de CPF/CNPJ (Reatividade)
+// Usamos GET aqui pois é apenas uma consulta de dados
+Route::get('/api/check-client', [CustomRegisterController::class, 'checkClient'])
+    ->name('api.check.client');
+// });
