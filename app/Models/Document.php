@@ -34,18 +34,14 @@ class Document extends Model
 
             if ($document->client_id && $document->documentType) {
                 // CORREÇÃO: Verifica se existe um usuário logado ou usa o dono do documento
-                // Se for um cadastro novo, auth()->id() pode falhar.
-                $userId = auth()->id() ?: $document->user_id;
 
                 // Se ainda assim não tiver user_id (caso de cadastro novo), 
                 // precisamos garantir um ID válido ou pular a nota automática
-                if ($userId) {
-                    \App\Models\ClientNote::create([
-                        'client_id' => $document->client_id,
-                        'user_id'   => User::first()->id, 
-                        'content'   => "Documento {$document->documentType->name} foi adicionado ao cliente.",
-                    ]);
-                }
+                \App\Models\ClientNote::create([
+                    'client_id' => $document->client_id,
+                    'user_id'   => User::first()->id,
+                    'content'   => "Documento {$document->documentType->name} foi adicionado ao cliente.",
+                ]);
             }
         });
     }
