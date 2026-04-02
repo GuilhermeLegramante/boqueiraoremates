@@ -25,12 +25,11 @@ class CustomRegisterController extends Controller
                 return response()->json(['exists' => false]);
             }
 
-            // Tenta buscar o cliente de duas formas: exatamente como veio ou apenas números
-            $cpfApenasNumeros = preg_replace('/\D/', '', $cpfEnviado);
-
+            // Busca o cliente. 
+            // Usamos o nome exato da função que você me mandou: registeredUser
             $client = \App\Models\Client::with(['address', 'registeredUser'])
-                ->where('cpf_cnpj', $cpfEnviado) // Busca com máscara (123.456.789-01)
-                ->orWhere('cpf_cnpj', $cpfApenasNumeros) // Busca sem máscara (12345678901)
+                ->where('cpf_cnpj', $cpfEnviado)
+                ->orWhere('cpf_cnpj', preg_replace('/\D/', '', $cpfEnviado))
                 ->first();
 
             if ($client) {
@@ -38,6 +37,7 @@ class CustomRegisterController extends Controller
                     'exists' => true,
                     'data' => [
                         'name' => $client->name,
+                        // Se o cliente existe mas não tem usuário vinculado, evitamos erro:
                         'email' => $client->registeredUser->email ?? '',
                         'address' => $client->address
                     ]
@@ -98,19 +98,21 @@ class CustomRegisterController extends Controller
                 ]
             );
 
-            // 4. Cliente
+            // 4. Cliente (Criar ou Atualizar)
             $client = Client::updateOrCreate(
                 ['cpf_cnpj' => $cpf],
                 [
                     'name' => $data['name'],
-                    'birth_date' => $birthDateDb, // Usando a string formatada Y-m-d
+                    'birth_date' => $birthDateDb,
                     'whatsapp' => preg_replace('/\D/', '', $data['whatsapp']),
                     'address_id' => $address->id,
+                    'registered_user_id' => $user->id, // <--- IMPORTANTE: Vincula o ID do usuário aqui
                     'situation' => 'disabled',
                     'register_origin' => 'site'
                 ]
             );
 
+            // Se quiser garantir a associação pelo método do Eloquent também:
             $client->registeredUser()->associate($user);
             $client->save();
 
