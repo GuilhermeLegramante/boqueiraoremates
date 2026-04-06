@@ -54,10 +54,12 @@ class ClientResource extends Resource
         return $table
             ->defaultSort('id', 'desc')
 
-            ->recordClasses(fn(Client $record) => match ($record->situation) {
-                'disabled', 'inactive' => 'bg-danger-500/10 dark:bg-danger-500/20 text-danger-600',
-                default => null,
-            })
+            ->recordClasses(
+                fn(Client $record) =>
+                $record->situation !== 'able'
+                    ? 'bg-danger-50 text-danger-600 dark:bg-danger-900/20'
+                    : null
+            )
             ->columns([
                 TextColumn::make('id')
                     ->label(__('fields.code'))
