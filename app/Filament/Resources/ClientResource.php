@@ -53,6 +53,11 @@ class ClientResource extends Resource
     {
         return $table
             ->defaultSort('id', 'desc')
+
+            ->recordClasses(fn(Client $record) => match ($record->situation) {
+                'disabled', 'inactive' => 'bg-danger-500/10 dark:bg-danger-500/20 text-danger-600',
+                default => null,
+            })
             ->columns([
                 TextColumn::make('id')
                     ->label(__('fields.code'))
@@ -64,14 +69,7 @@ class ClientResource extends Resource
                         return $record->name ?? '—';
                     })
                     ->searchable()
-                    ->sortable()
                     ->copyable()
-                    // ->url(function ($record) {
-                    //     return route('client-details-pdf', $record->id);
-                    // })
-                    // ->openUrlInNewTab()
-                    // ->color('info')
-                    // ->icon('heroicon-o-document-text')
                     ->sortable(),
 
                 TextColumn::make('cpf_cnpj')
@@ -79,10 +77,6 @@ class ClientResource extends Resource
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
-
-                // TextColumn::make('name')
-                //     ->label(__('fields.name'))
-                //     ->searchable(),
 
                 TextColumn::make('email')
                     ->label(__('fields.email'))
@@ -155,7 +149,7 @@ class ClientResource extends Resource
                     ->copyable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                  TextColumn::make('address.city')
+                TextColumn::make('address.city')
                     ->label('Cidade')
                     ->searchable()
                     ->copyable()
