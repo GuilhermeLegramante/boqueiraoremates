@@ -67,6 +67,7 @@ class ClientResource extends Resource
 
                 TextColumn::make('name')
                     ->label('Nome')
+                    ->color(fn ($record) => $record->situation !== 'able' ? 'danger' : null)
                     ->getStateUsing(function ($record) {
                         return $record->name ?? '—';
                     })
