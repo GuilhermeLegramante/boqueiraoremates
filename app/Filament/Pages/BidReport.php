@@ -95,8 +95,8 @@ class BidReport extends Page implements HasForms
             ->with(['user', 'event'])
             ->whereHas('user', function ($query) {
                 $query->whereNotIn('name', [
-                    '%LUIS EMERSON HOISLER DA ROSA%',
-                    '%LEANDRO CESAR DORNELES DE OLIVEIRA%'
+                    'LUIS EMERSON HOISLER DA ROSA',
+                    'LEANDRO CESAR DORNELES DE OLIVEIRA'
                 ]);
             })
             ->get();
