@@ -91,12 +91,12 @@ class BidReport extends Page implements HasForms
         }
 
         return Bid::where('event_id', $eventId)
-            ->where('status', 1) // Certifica-te que 'approved' é o status correto no teu banco
-            ->with(['user', 'event'])
+            ->where('status', 1)
+            ->with(['user', 'approvedBy'])
             ->whereHas('user', function ($query) {
                 $query->whereNotIn('name', [
-                    'LUIS EMERSON HOISLER DA ROSA',
-                    'LEANDRO CESAR DORNELES DE OLIVEIRA'
+                    '%LUIS EMERSON HOISLER DA ROSA%',
+                    '%LEANDRO CESAR DORNELES DE OLIVEIRA%'
                 ]);
             })
             ->get();
