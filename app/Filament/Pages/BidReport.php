@@ -53,7 +53,7 @@ class BidReport extends Page implements HasForms
         }
 
         return Bid::where('event_id', $eventId)
-            ->where('status', 'approved') // Certifica-te que 'approved' é o status correto no teu banco
+            ->where('status', 1) // Certifica-te que 'approved' é o status correto no teu banco
             ->with(['user', 'event'])
             ->get();
     }
