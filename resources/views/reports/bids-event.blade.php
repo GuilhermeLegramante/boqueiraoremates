@@ -143,7 +143,7 @@
                 @php $totalGeral = 0; @endphp
                 @foreach ($bids as $bid)
                     <tr>
-                        <td class="text-center">#{{ str_pad($bid->id, 5, '0', STR_PAD_LEFT) }}</td>
+                        <td class="text-center">{{ str_pad($bid->id, 5, '0', STR_PAD_LEFT) }}</td>
                         <td class="text-center">{{ $bid->created_at->format('d/m/Y H:i') }}</td>
                         <td class="upper">{{ $bid->user->name }}</td>
                         <td class="text-center">{{ $bid->lot_number }}</td>
