@@ -17,6 +17,12 @@ class BidReportController extends Controller
         $bids = Bid::where('event_id', $eventId)
             ->where('status', 1)
             ->with(['user', 'approvedBy'])
+            ->whereHas('user', function ($query) {
+                $query->whereNotIn('name', [
+                    'LUIS EMERSON HOISLER DA ROSA',
+                    'LEANDRO CESAR DORNELES DE OLIVEIRA'
+                ]);
+            })
             ->get();
 
         $fileName = 'RELATORIO_LANCES_' . str_replace(' ', '_', $event->name);
