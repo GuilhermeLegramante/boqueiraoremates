@@ -38,7 +38,7 @@ class BidReport extends Page implements HasForms
         return [
             Action::make('sortear')
                 ->label('Sortear Ganhador')
-                ->color('warning')
+                ->color('success')
                 ->icon('heroicon-m-gift')
                 ->requiresConfirmation()
                 ->modalHeading('Sortear entre os lances aprovados')
