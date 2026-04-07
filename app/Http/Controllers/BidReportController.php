@@ -11,11 +11,11 @@ class BidReportController extends Controller
     public function generateEventBidsPdf($eventId)
     {
         set_time_limit(0);
-        
+
         $event = Event::findOrFail($eventId);
 
         $bids = Bid::where('event_id', $eventId)
-            ->where('status', 'approved')
+            ->where('status', 1)
             ->with(['user', 'approvedBy'])
             ->get();
 
