@@ -16,6 +16,8 @@ class BidReport extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    public ?\App\Models\Bid $winner = null; // Armazena o lance sorteado
+
     protected static ?string $navigationIcon = 'heroicon-o-document-chart-bar';
     protected static string $view = 'filament.pages.bid-report';
     protected static ?string $title = 'Relatório de Lances Aprovados';
@@ -55,6 +57,8 @@ class BidReport extends Page implements HasForms
 
                     // Pega um lance aleatório
                     $sorteado = $bids->random();
+
+                    $this->winner = $bids->random(); // Define o vencedor aqui
 
                     // Dispara um alerta de sucesso com o nome do ganhador
                     Notification::make()

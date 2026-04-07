@@ -6,6 +6,29 @@
     <hr class="my-6 border-gray-200">
 
     @if ($this->data['event_id'] ?? false)
+
+        @if ($this->winner)
+            <div
+                class="mb-6 p-6 bg-gradient-to-r from-yellow-100 to-yellow-200 border-2 border-yellow-400 rounded-2xl shadow-sm animate-bounce-short">
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-yellow-400 rounded-full">
+                        <x-heroicon-m-trophy class="w-8 h-8 text-white" />
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-yellow-800 uppercase tracking-wider">Ganhador do Sorteio</p>
+                        <h3 class="text-2xl font-black text-gray-900 uppercase">
+                            {{ $this->winner->user->name }}
+                        </h3>
+                        <p class="text-sm text-yellow-900">
+                            Lote: <strong>{{ $this->winner->lot_number }}</strong> |
+                            Lance: <strong>R$ {{ number_format($this->winner->amount, 2, ',', '.') }}</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        @endif
+
+
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-bold">Lances Aprovados: {{ $this->bids->count() }}</h2>
 
