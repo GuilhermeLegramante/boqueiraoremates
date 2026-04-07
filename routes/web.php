@@ -57,6 +57,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/bids', [BidController::class, 'store'])->name('bids.store'); // Recebe lance do site
     Route::post('/bids/{bid}/approve', [BidController::class, 'approve'])->name('bids.approve'); // Aprovar manualmente
+
+    Route::get('/report/bids-pdf/{eventId}', [App\Http\Controllers\BidReportController::class, 'generateEventBidsPdf'])
+        ->name('report.bids.pdf');
 });
 
 Route::get('/teste', function () {
