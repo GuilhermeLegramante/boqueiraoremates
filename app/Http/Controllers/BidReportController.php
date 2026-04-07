@@ -19,8 +19,8 @@ class BidReportController extends Controller
             ->with(['user', 'approvedBy'])
             ->whereHas('user', function ($query) {
                 $query->whereNotIn('name', [
-                    '%LUIS EMERSON HOISLER DA ROSA%',
-                    '%LEANDRO CESAR DORNELES DE OLIVEIRA%'
+                    'LUIS EMERSON HOISLER DA ROSA',
+                    'LEANDRO CESAR DORNELES DE OLIVEIRA'
                 ]);
             })
             ->get();
