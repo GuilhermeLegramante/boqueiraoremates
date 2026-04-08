@@ -28,7 +28,6 @@
             </div>
         @endif
 
-
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-bold">Lances Aprovados: {{ $this->bids->count() }}</h2>
 
@@ -59,24 +58,56 @@
                 <tbody class="divide-y divide-gray-200">
                     @forelse($this->bids as $bid)
                         <tr
-                            class="hover:bg-gray-50 transition {{ $this->winner && $this->winner->id === $bid->id ? 'bg-yellow-50' : '' }}">
-                            <td class="px-4 py-2">
+                            class="hover:bg-gray-50 transition {{ $this->winner && $this->winner->id === $bid->id ? 'bg-yellow-50 border-l-4 border-yellow-400' : '' }}">
+                            <td class="px-4 py-2 text-center">
                                 <input type="checkbox" wire:model.live="selectedBids" value="{{ $bid->id }}"
                                     class="w-4 h-4 text-warning-600 border-gray-300 rounded focus:ring-warning-500">
                             </td>
 
+                            <td class="px-4 py-2 text-sm text-gray-600 font-mono">
+                                #{{ str_pad($bid->id, 5, '0', STR_PAD_LEFT) }}
+                            </td>
+
                             <td class="px-4 py-2 text-sm text-gray-600">
-                                {{ str_pad($bid->id, 5, '0', STR_PAD_LEFT) }}
+                                {{ $bid->created_at->format('d/m/Y H:i') }}
+                            </td>
+
+                            <td class="px-4 py-2 text-sm font-medium text-gray-900 uppercase">
+                                {{ $bid->user->name }}
+                            </td>
+
+                            <td class="px-4 py-2 text-sm text-gray-600">
+                                {{ $bid->lot_number }}
+                            </td>
+
+                            <td class="px-4 py-2 text-sm font-bold text-gray-900 text-right">
+                                R$ {{ number_format($bid->amount, 2, ',', '.') }}
                             </td>
                         </tr>
                     @empty
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-gray-500 italic">
+                                Nenhum lance encontrado para os critérios selecionados.
+                            </td>
+                        </tr>
                     @endforelse
                 </tbody>
+                @if ($this->bids->count() > 0)
+                    <tfoot class="bg-gray-50 font-bold">
+                        <tr>
+                            <td colspan="5" class="px-4 py-2 text-right text-gray-700 uppercase">Total Acumulado:
+                            </td>
+                            <td class="px-4 py-2 text-right text-green-600">
+                                R$ {{ number_format($this->bids->sum('amount'), 2, ',', '.') }}
+                            </td>
+                        </tr>
+                    </tfoot>
+                @endif
             </table>
         </div>
 
         <div class="mt-2 text-xs text-gray-500 italic">
-            * {{ count($this->selectedBids) }} clientes participando do sorteio no momento.
+            * {{ count($this->selectedBids) }} lances marcados para participar do sorteio e aparecer no PDF.
         </div>
     @endif
 </x-filament-panels::page>
