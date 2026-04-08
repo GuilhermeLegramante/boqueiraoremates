@@ -24,6 +24,8 @@ class BidReport extends Page implements HasForms
 
     protected static ?string $navigationGroup = 'Relatórios';
 
+    public array $selectedBids = []; // Armazena os IDs dos lances selecionados para o sorteio
+
     // Propriedade para armazenar o ID do evento selecionado
     public ?array $data = [];
 
@@ -33,39 +35,41 @@ class BidReport extends Page implements HasForms
         $this->form->fill();
     }
 
+    // Adicione este método para resetar a seleção ao mudar o evento
+    public function updatedDataEventId()
+    {
+        $this->winner = null;
+        $this->selectedBids = $this->getBidsProperty()->pluck('id')->toArray();
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             Action::make('sortear')
-                ->label('Sortear Ganhador')
-                ->color('success')
+                ->label('Sortear entre selecionados')
+                ->color('warning')
                 ->icon('heroicon-m-gift')
                 ->requiresConfirmation()
-                ->modalHeading('Sortear entre os lances aprovados')
-                ->modalDescription('O sistema escolherá aleatoriamente um dos clientes da lista abaixo.')
-                ->modalSubmitActionLabel('Realizar Sorteio')
                 ->action(function () {
-                    $bids = $this->getBidsProperty();
+                    // Filtra os lances originais apenas pelos IDs marcados nos checkboxes
+                    $pool = $this->getBidsProperty()->whereIn('id', $this->selectedBids);
 
-                    if ($bids->isEmpty()) {
+                    if ($pool->isEmpty()) {
                         Notification::make()
-                            ->title('Nenhum lance encontrado')
+                            ->title('Nenhum lance selecionado')
+                            ->body('Marca pelo menos um cliente na tabela para realizar o sorteio.')
                             ->danger()
                             ->send();
                         return;
                     }
 
-                    // Pega um lance aleatório
-                    $sorteado = $bids->random();
+                    $this->winner = $pool->random();
 
-                    $this->winner = $bids->random(); // Define o vencedor aqui
-
-                    // Dispara um alerta de sucesso com o nome do ganhador
                     Notification::make()
-                        ->title('🎉 Temos um vencedor!')
-                        ->body("O cliente sorteado foi: **{$sorteado->user->name}**\n\nLote: {$sorteado->lot_number}")
+                        ->title('🎉 Sorteio Realizado!')
+                        ->body("Ganhador: **{$this->winner->user->name}**")
                         ->success()
-                        ->persistent() // O alerta não some sozinho
+                        ->persistent()
                         ->send();
                 }),
         ];

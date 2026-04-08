@@ -33,8 +33,11 @@
             <h2 class="text-lg font-bold">Lances Aprovados: {{ $this->bids->count() }}</h2>
 
             <x-filament::button tag="a"
-                href="{{ route('report.bids.pdf', ['eventId' => $this->data['event_id']]) }}" target="_blank"
-                icon="heroicon-m-printer" color="success">
+                href="{{ route('report.bids.pdf', [
+                    'eventId' => $this->data['event_id'],
+                    'selectedBids' => $this->selectedBids,
+                ]) }}"
+                target="_blank" icon="heroicon-m-printer" color="success">
                 Gerar Relatório PDF
             </x-filament::button>
         </div>
@@ -43,6 +46,9 @@
             <table class="w-full text-left divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-4 py-2 w-10">
+                            <x-heroicon-m-check-circle class="w-5 h-5 text-gray-400" />
+                        </th>
                         <th class="px-4 py-2 font-bold text-sm text-gray-700">Código</th>
                         <th class="px-4 py-2 font-bold text-sm text-gray-700">Data/Hora</th>
                         <th class="px-4 py-2 font-bold text-sm text-gray-700">Cliente</th>
@@ -52,42 +58,25 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($this->bids as $bid)
-                        <tr class="hover:bg-gray-50 transition">
+                        <tr
+                            class="hover:bg-gray-50 transition {{ $this->winner && $this->winner->id === $bid->id ? 'bg-yellow-50' : '' }}">
+                            <td class="px-4 py-2">
+                                <input type="checkbox" wire:model.live="selectedBids" value="{{ $bid->id }}"
+                                    class="w-4 h-4 text-warning-600 border-gray-300 rounded focus:ring-warning-500">
+                            </td>
+
                             <td class="px-4 py-2 text-sm text-gray-600">
                                 {{ str_pad($bid->id, 5, '0', STR_PAD_LEFT) }}
                             </td>
-                            <td class="px-4 py-2 text-sm text-gray-600">
-                                {{ $bid->created_at->format('d/m/Y H:i') }}
-                            </td>
-                            <td class="px-4 py-2 text-sm font-medium text-gray-900 uppercase">
-                                {{ $bid->user->name }}
-                            </td>
-                            <td class="px-4 py-2 text-sm text-gray-600">
-                                {{ $bid->lot_number }}
-                            </td>
-                            <td class="px-4 py-2 text-sm font-bold text-gray-900 text-right">
-                                R$ {{ number_format($bid->amount, 2, ',', '.') }}
-                            </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                                Nenhum lance aprovado encontrado para este evento.
-                            </td>
-                        </tr>
                     @endforelse
                 </tbody>
-                @if ($this->bids->count() > 0)
-                    <tfoot class="bg-gray-50 font-bold">
-                        <tr>
-                            <td colspan="4" class="px-4 py-2 text-right text-gray-700">TOTAL:</td>
-                            <td class="px-4 py-2 text-right text-green-600">
-                                R$ {{ number_format($this->bids->sum('amount'), 2, ',', '.') }}
-                            </td>
-                        </tr>
-                    </tfoot>
-                @endif
             </table>
+        </div>
+
+        <div class="mt-2 text-xs text-gray-500 italic">
+            * {{ count($this->selectedBids) }} clientes participando do sorteio no momento.
         </div>
     @endif
 </x-filament-panels::page>
