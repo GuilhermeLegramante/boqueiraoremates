@@ -205,21 +205,12 @@ class ClientResource extends Resource
                         'both' => 'Ambos'
                     ]),
 
-                Filter::make('upcoming_birthdays')
-                    ->label('Próximos aniversários (7 dias)')
+                Filter::make('birthday_today')
+                    ->label('Aniversariantes de hoje')
                     ->query(function (Builder $query): Builder {
-
-                        return $query->whereRaw("
-                                                (
-                                                    STR_TO_DATE(CONCAT(YEAR(CURDATE()), '-', DATE_FORMAT(birth_date, '%m-%d')), '%Y-%m-%d')
-                                                ) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-
-                                                OR
-
-                                                (
-                                                    STR_TO_DATE(CONCAT(YEAR(CURDATE()) + 1, '-', DATE_FORMAT(birth_date, '%m-%d')), '%Y-%m-%d')
-                                                ) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
-                                            ");
+                        return $query
+                            ->whereMonth('birth_date', now()->month)
+                            ->whereDay('birth_date', now()->day);
                     })
             ], layout: FiltersLayout::Dropdown)
             ->actions([
