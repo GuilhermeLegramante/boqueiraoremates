@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
 
 class ClientResource extends Resource
 {
@@ -202,6 +204,26 @@ class ClientResource extends Resource
                         'sale' => 'Venda',
                         'both' => 'Ambos'
                     ]),
+
+                Filter::make('birth_date')
+                    ->label('Data de Nascimento')
+                    ->form([
+                        DatePicker::make('from')
+                            ->label('De'),
+                        DatePicker::make('until')
+                            ->label('Até'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('birth_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['until'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('birth_date', '<=', $date),
+                            );
+                    })
             ], layout: FiltersLayout::Dropdown)
             ->actions([
                 ActionGroup::make([
