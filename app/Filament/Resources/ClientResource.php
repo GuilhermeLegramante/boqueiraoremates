@@ -167,6 +167,20 @@ class ClientResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
+                TextColumn::make('next_birthday')
+                    ->label('Aniversário em')
+                    ->badge()
+                    ->formatStateUsing(function ($state) {
+                        if ($state === 0) return 'HOJE 🎉';
+                        if ($state === 1) return 'AMANHÃ 🎂';
+                        return "EM {$state} DIAS";
+                    })
+                    ->color(fn($state) => match (true) {
+                        $state === 0 => 'success',
+                        $state <= 3 => 'warning',
+                        default => 'gray',
+                    }),
+
                 TextColumn::make('created_at')
                     ->label('Dta Inclusão')
                     ->date('d/m/Y')
