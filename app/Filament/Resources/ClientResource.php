@@ -209,9 +209,9 @@ class ClientResource extends Resource
                     ->label('Data de Nascimento')
                     ->form([
                         DatePicker::make('from')
-                            ->label('De'),
+                            ->label('De (Dt. Nasc.'),
                         DatePicker::make('until')
-                            ->label('Até'),
+                            ->label('Até (Dt. Nasc.)'),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
