@@ -209,7 +209,7 @@ class ClientResource extends Resource
                     ->label('Data de Nascimento')
                     ->form([
                         DatePicker::make('from')
-                            ->label('De (Dt. Nasc.'),
+                            ->label('De (Dt. Nasc.)'),
                         DatePicker::make('until')
                             ->label('Até (Dt. Nasc.)'),
                     ])
