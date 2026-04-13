@@ -161,7 +161,7 @@ class ClientResource extends Resource
 
                 TextColumn::make('birth_date')
                     ->label('Data de Nascimento')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
