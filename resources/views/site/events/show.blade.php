@@ -2,6 +2,10 @@
 
 @section('title', $event->name . ' - Detalhes')
 
+@section('og_title', $event->name)
+@section('og_description', Str::limit($event->note, 150))
+@section('og_image', asset('storage/' . $event->banner_min))
+
 @section('content')
     <div class="hidden md:block">
         @include('site.banners')

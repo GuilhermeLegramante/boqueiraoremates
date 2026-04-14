@@ -4,6 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{-- Open Graph padrão --}}
+    <meta property="og:title" content="@yield('og_title', 'Boqueirão Remates')" />
+    <meta property="og:description" content="@yield('og_description', 'Confira nossos eventos e remates')" />
+    <meta property="og:image" content="@yield('og_image', asset('img/logo.png'))" />
+    <meta property="og:url" content="{{ url()->current() }}" />
+    <meta property="og:type" content="website" />
+
+
     <title>@yield('title', 'Boqueirão Remates')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="shortcut icon" href="{{ asset('img/logo.png') }}" type="image/icon">
