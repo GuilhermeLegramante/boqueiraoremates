@@ -18,7 +18,10 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Get;
+use Illuminate\Support\HtmlString;
 class BidResource extends Resource
 {
     protected static ?string $model = Bid::class;
@@ -39,8 +42,101 @@ class BidResource extends Resource
 
     public static function form(Form $form): Form
     {
-        // Não precisa de formulário, pois os lances vêm do site
-        return $form;
+        return $form
+            ->schema([
+                Forms\Components\Section::make('Detalhes do Lance')
+                    ->schema([
+                        // Seleção do Evento
+                        Forms\Components\Select::make('event_id')
+                            ->label('Evento')
+                            ->relationship('event', 'name')
+                            ->live()
+                            ->afterStateUpdated(fn($set) => $set('animal_event_id', null))
+                            ->required(),
+
+                        // Seleção do Animal/Lote
+                        Forms\Components\Select::make('animal_event_id')
+                            ->label('Animal / Lote')
+                            ->options(function (Get $get) {
+                                $eventId = $get('event_id');
+                                if (!$eventId) return collect();
+
+                                return \App\Models\AnimalEvent::where('event_id', $eventId)
+                                    ->with('animal')
+                                    ->get()
+                                    ->sortBy(fn($item) => (float) $item->lot_number)
+                                    ->mapWithKeys(fn($item) => [
+                                        $item->id => "Lote {$item->lot_number} - " . ($item->animal?->name ?? 'S/N')
+                                    ]);
+                            })
+                            ->live() // Essencial para atualizar os placeholders abaixo
+                            ->required()
+                            ->searchable(),
+
+                        // --- SEÇÃO DE INFORMAÇÕES DE VALORES ---
+                        Grid::make(3) // Divide em 3 colunas para mostrar os valores lado a lado
+                            ->schema([
+                                Placeholder::make('valor_minimo')
+                                    ->label('Lance Mínimo Inicial')
+                                    ->content(function (Get $get) {
+                                        $pivotId = $get('animal_event_id');
+                                        if (!$pivotId) return '---';
+
+                                        $ae = \App\Models\AnimalEvent::find($pivotId);
+                                        return $ae ? 'R$ ' . number_format($ae->min_value, 2, ',', '.') : '---';
+                                    }),
+
+                                Placeholder::make('lance_atual')
+                                    ->label('Lance Atual (Aprovado)')
+                                    ->content(function (Get $get) {
+                                        $pivotId = $get('animal_event_id');
+                                        if (!$pivotId) return '---';
+
+                                        $maxBid = \App\Models\Bid::where('animal_event_id', $pivotId)
+                                            ->where('status', 1) // Apenas aprovados
+                                            ->max('amount');
+
+                                        return $maxBid ? 'R$ ' . number_format($maxBid, 2, ',', '.') : 'Nenhum lance';
+                                    }),
+
+                                Placeholder::make('proximo_lance')
+                                    ->label('Sugestão Próximo Lance')
+                                    ->extraAttributes(['class' => 'text-success-600 font-bold'])
+                                    ->content(function (Get $get) {
+                                        $pivotId = $get('animal_event_id');
+                                        if (!$pivotId) return '---';
+
+                                        $ae = \App\Models\AnimalEvent::find($pivotId);
+                                        if (!$ae) return '---';
+
+                                        $maxBid = \App\Models\Bid::where('animal_event_id', $pivotId)
+                                            ->where('status', '<>', 2) // Não rejeitados
+                                            ->max('amount');
+
+                                        $base = $maxBid ?: $ae->min_value;
+                                        $sugestao = $base + ($ae->increment_value ?? 0);
+
+                                        return new HtmlString('<span style="color: green; font-weight: bold;">R$ ' . number_format($sugestao, 2, ',', '.') . '</span>');
+                                    }),
+                            ])
+                            ->visible(fn(Get $get) => filled($get('animal_event_id'))), // Só mostra se houver animal selecionado
+
+                        // Campo de preenchimento do valor
+                        Forms\Components\TextInput::make('amount')
+                            ->label('Seu Lance')
+                            ->numeric()
+                            ->prefix('R$')
+                            ->required()
+                            ->helperText('O valor deve ser igual ou superior à sugestão do próximo lance.')
+                            ->columnSpanFull(),
+
+                        Forms\Components\Select::make('user_id')
+                            ->label('Cliente')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->required(),
+                    ])->columns(2)
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -164,7 +260,7 @@ class BidResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false;
+        return true; // Permitir criação de lances manualmente
     }
 
     public static function getNavigationBadge(): ?string
