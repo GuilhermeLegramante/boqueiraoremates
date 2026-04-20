@@ -242,7 +242,7 @@ trait WithParcels
                         $year,
                         $month,
                         $day,
-                        $data['parcel_value']
+                        (float) ($data['parcel_value'] ?? 0) // Garante que nunca seja null
                     );
 
                     $currentParcel++;
@@ -256,11 +256,9 @@ trait WithParcels
         $this->showParcels = true;
     }
 
-    private function pushParcel(string $ord, int &$year, int &$month, int $day, float $value): void
+    private function pushParcel(string $ord, int &$year, int &$month, int $day, ?float $value): void
     {
         $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
-
-        // $formattedValue = number_format($value, 2, ',', '.');
 
         $this->parcels[] = [
             'ord'   => $ord,
