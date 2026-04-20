@@ -123,7 +123,7 @@ class BidResource extends Resource
 
                         // Campo de preenchimento do valor
                         Forms\Components\TextInput::make('amount')
-                            ->label('Seu Lance')
+                            ->label('Valor do Lance')
                             ->numeric()
                             ->prefix('R$')
                             ->required()
