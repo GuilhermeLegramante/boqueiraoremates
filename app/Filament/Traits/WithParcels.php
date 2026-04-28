@@ -167,15 +167,19 @@ trait WithParcels
     {
         $data = $this->form->getState();
 
-        // Data base
+        // Data base inicial
         [$year, $month, $day] = array_map('intval', explode('-', $data['first_due_date']));
 
         $paymentWay = PaymentWay::find($data['payment_way_id']);
-        $groups = array_map('intval', explode('+', $paymentWay->name));
+        // Filtramos o array para remover zeros (como o '0' em '0+20') para evitar loops vazios ou erros de cálculo
+        $groups = array_filter(array_map('intval', explode('+', $paymentWay->name)), fn($value) => $value > 0);
+
+        // Reindexar o array após o filtro
+        $groups = array_values($groups);
 
         $totalParcels = array_sum($groups);
 
-        // Inicializações
+        // Inicializações de estado
         $this->parcels       = [];
         $this->values        = [];
         $this->parcelsDates  = [];
@@ -186,73 +190,66 @@ trait WithParcels
 
         foreach ($groups as $groupIndex => $groupSize) {
 
-            // ====== TRATAMENTO ESPECIAL PARA A ENTRADA ======
-            if ($currentParcel === 1 && $groupSize > 1) {
+            // Se chegamos aqui, o groupSize é pelo menos 1 devido ao array_filter
 
-                // Ex.: 2 de entrada → 1-2/50 (Ent.)
-                $ord = "1-{$groupSize}/{$totalParcels} (Ent.)";
+            // ====== ÚLTIMO GRUPO OU GRUPO UNITÁRIO ======
+            // Se for o último grupo (ex: o '20' no '0+20') ou se for apenas uma parcela, expandimos.
+            $isLastGroup = ($groupIndex === $lastGroupIndex);
 
-                $this->pushParcel(
-                    $ord,
-                    $year,
-                    $month,
-                    $day,
-                    $data['parcel_value'] * $groupSize
-                );
-
-                $currentParcel += $groupSize;
-                continue;
-            }
-
-            // ====== AGRUPAMENTO VISUAL (EXCETO ÚLTIMO GRUPO) ======
-            $shouldAggregate =
-                $groupSize > 1 &&
-                $groupIndex < $lastGroupIndex;
-
-            if ($shouldAggregate) {
-
-                // Ex.: segundo grupo 2 → 3-4/50
-                $start = $currentParcel;
-                $end   = $currentParcel + $groupSize - 1;
-
-                $ord = "{$start}-{$end}/{$totalParcels}";
-
-                $this->pushParcel(
-                    $ord,
-                    $year,
-                    $month,
-                    $day,
-                    $data['parcel_value'] * $groupSize
-                );
-
-                $currentParcel += $groupSize;
-            }
-
-            // ====== ÚLTIMO GRUPO → PARCELA A PARCELA ======
-            else {
-
+            if ($isLastGroup) {
                 for ($i = 0; $i < $groupSize; $i++) {
+                    $ord = "{$currentParcel}/{$totalParcels}";
 
-                    $ord = ($currentParcel === 1)
-                        ? "1/{$totalParcels} (Ent.)"
-                        : "{$currentParcel}/{$totalParcels}";
+                    // Adiciona o sufixo (Ent.) apenas se for a primeiríssima parcela do total
+                    if ($currentParcel === 1) {
+                        $ord .= " (Ent.)";
+                    }
 
                     $this->pushParcel(
                         $ord,
                         $year,
                         $month,
                         $day,
-                        (float) ($data['parcel_value'] ?? 0) // Garante que nunca seja null
+                        (float) ($data['parcel_value'] ?? 0)
                     );
+                    $currentParcel++;
+                }
+            }
+            // ====== GRUPOS INTERMÉDIOS/ENTRADA AGRUPADA ======
+            else {
+                // Se não for o último e for maior que 1, agrupamos visualmente (ex: 2+48)
+                if ($groupSize > 1) {
+                    $start = $currentParcel;
+                    $end   = $currentParcel + $groupSize - 1;
+                    $ord = "{$start}-{$end}/{$totalParcels}";
+                    if ($start === 1) $ord .= " (Ent.)";
 
+                    $this->pushParcel(
+                        $ord,
+                        $year,
+                        $month,
+                        $day,
+                        floatval($data['parcel_value']) * $groupSize
+                    );
+                    $currentParcel += $groupSize;
+                } else {
+                    // Caso seja um grupo de apenas 1 parcela (ex: 1+1+40)
+                    $ord = "{$currentParcel}/{$totalParcels}";
+                    if ($currentParcel === 1) $ord .= " (Ent.)";
+
+                    $this->pushParcel(
+                        $ord,
+                        $year,
+                        $month,
+                        $day,
+                        (float) ($data['parcel_value'] ?? 0)
+                    );
                     $currentParcel++;
                 }
             }
         }
 
-        // Ajusta datas inválidas (fevereiro, etc.)
         $this->adjustMonths();
-
         $this->showParcels = true;
     }
 
