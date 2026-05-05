@@ -297,10 +297,19 @@
 
         <!-- Navegação entre lotes -->
         @php
-            $currentAnimalIndex = $event->animals->search(fn($a) => $a->id === $animal->id);
-            $previousAnimal = $event->animals->get($currentAnimalIndex - 1);
-            $nextAnimal = $event->animals->get($currentAnimalIndex + 1);
+            $animalsOrdered = $event->animals
+                ->sortBy(function ($a) {
+                    $parts = explode('.', $a->pivot->lot_number);
+                    return [(int) $parts[0], (int) ($parts[1] ?? 0)];
+                })
+                ->values();
+
+            $currentAnimalIndex = $animalsOrdered->search(fn($a) => $a->id === $animal->id);
+
+            $previousAnimal = $animalsOrdered->get($currentAnimalIndex - 1);
+            $nextAnimal = $animalsOrdered->get($currentAnimalIndex + 1);
         @endphp
+        
         <div class="mt-10 flex justify-between max-w-md mx-auto text-sm">
             @if ($previousAnimal)
                 <a href="{{ route('animals.show', [$event->id, $previousAnimal->pivot->id]) }}"
