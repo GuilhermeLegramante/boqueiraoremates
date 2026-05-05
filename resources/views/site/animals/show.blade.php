@@ -304,12 +304,13 @@
                 })
                 ->values();
 
-            $currentAnimalIndex = $animalsOrdered->search(fn($a) => $a->id === $animal->id);
+            $currentAnimalIndex = $animalsOrdered->search(fn($a) => $a->pivot->id === $animal->pivot->id);
 
             $previousAnimal = $animalsOrdered->get($currentAnimalIndex - 1);
             $nextAnimal = $animalsOrdered->get($currentAnimalIndex + 1);
+
         @endphp
-        
+
         <div class="mt-10 flex justify-between max-w-md mx-auto text-sm">
             @if ($previousAnimal)
                 <a href="{{ route('animals.show', [$event->id, $previousAnimal->pivot->id]) }}"
