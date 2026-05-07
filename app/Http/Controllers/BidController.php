@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Bid;
 use App\Models\Event;
+use App\Services\NotificationService;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,49 +15,12 @@ use Illuminate\Support\Facades\Mail;
 
 class BidController extends Controller
 {
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'animal_event_id' => 'required|exists:animal_event,id',
-    //         'event_id' => 'required|exists:events,id',
-    //         'amount' => 'required|numeric|min:0.01',
-    //     ]);
+    protected $notificationService;
 
-    //     Bid::create([
-    //         'animal_event_id' => $request->animal_event_id,
-    //         'event_id' => $request->event_id,
-    //         'user_id' => Auth::id(),
-    //         'amount' => $request->amount,
-    //         'status' => false,
-    //     ]);
-
-    //     // Busca os dados relacionados
-    //     $user   = Auth::user();
-    //     $event  = Event::find($request->event_id);
-
-    //     // Busca o nome do animal a partir da pivot
-    //     $animal = DB::table('animal_event')
-    //         ->join('animals', 'animals.id', '=', 'animal_event.animal_id')
-    //         ->where('animal_event.id', $request->animal_event_id)
-    //         ->select('animals.name')
-    //         ->first();
-
-    //     // Monta a mensagem personalizada
-    //     $mensagem = "Usuário: {$user->name}\n\n"
-    //         . "Evento: {$event->name}\n\n"
-    //         . "Animal: {$animal->name}\n\n"
-    //         . "Valor do Lance: R$ " . number_format($request->amount, 2, ',', '.') . "\n\n"
-    //         . "Lance enviado com sucesso, aguarde validação pela mesa, conforme regulamento do evento.";
-
-
-    //     Http::withToken('esFDkhJ0D2G0M07nG5K9qCSbQDNC2xUQ5x8IxqHdJYYKHWUi6CxfxbIMfgiq')
-    //         ->post('https://www.avisaapi.com.br/api/actions/sendMessage', [
-    //             'number'  => '55999181805',
-    //             'message' => $mensagem,
-    //         ]);
-
-    //     return back()->with('success', 'Lance enviado com sucesso!');
-    // }
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
 
     public function store(Request $request)
     {
@@ -88,52 +52,17 @@ class BidController extends Controller
             'status' => false,
         ]);
 
-        // 🔍 Busca os dados relacionados
-        $user   = Auth::user();
-        $event  = Event::find($request->event_id);
-
+        // Busca dados para notificação
+        $user = Auth::user();
+        $event = Event::find($request->event_id);
         $animal = DB::table('animal_event')
             ->join('animals', 'animals.id', '=', 'animal_event.animal_id')
             ->where('animal_event.id', $request->animal_event_id)
             ->select('animals.name', 'animal_event.lot_number')
             ->first();
 
-        // 💬 Monta mensagem
-        $mensagem = "📣 Novo lance recebido!\n\n"
-            . "Usuário: {$user->name}\n"
-            . "E-mail: {$user->email}\n\n"
-            . "Evento: {$event->name}\n"
-            . "Lote: {$animal->lot_number}\n"
-            . "Animal: {$animal->name}\n"
-            . "Valor do Lance: R$ " . number_format($request->amount, 2, ',', '.') . "\n\n"
-            . "Verifique o painel administrativo para validar o lance.";
-
-        // 📱 Envia notificação via WhatsApp (tratamento de erro)
-        try {
-            Http::withToken('esFDkhJ0D2G0M07nG5K9qCSbQDNC2xUQ5x8IxqHdJYYKHWUi6CxfxbIMfgiq')
-                ->post('https://www.avisaapi.com.br/api/actions/sendMessage', [
-                    'number'  => '55999181805',
-                    'message' => $mensagem,
-                ]);
-        } catch (\Throwable $e) {
-            Log::error('❌ Falha ao enviar mensagem WhatsApp: ' . $e->getMessage());
-        }
-
-        // 📧 Envia notificação por e-mail (tratamento de erro)
-        try {
-            Mail::send('emails.new-bid', [
-                'user' => $user,
-                'event' => $event,
-                'animal' => $animal,
-                'amount' => $request->amount,
-            ], function ($mail) use ($event) {
-                $mail->to(['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'])
-                    ->subject('Novo Lance Recebido - ' . $event->name)
-                    ->from('contato@boqueiraoremates.com', 'Boqueirão Remates');
-            });
-        } catch (\Throwable $e) {
-            Log::error('❌ Falha ao enviar e-mail de notificação: ' . $e->getMessage());
-        }
+        // 3. Chama o serviço de notificação
+        $this->notificationService->sendNewBidNotifications($user, $event, $animal, $request->amount);
 
         // ✅ Continua normalmente mesmo se notificações falharem
         return redirect()->back()->with('bid_success', true);
