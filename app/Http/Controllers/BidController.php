@@ -68,16 +68,15 @@ class BidController extends Controller
 
         $userId = Auth::id();
 
-        // 🔒 Verifica se já existe lance com o mesmo valor do mesmo usuário para o mesmo animal/evento
-        $existingBid = Bid::where('user_id', $userId)
-            ->where('animal_event_id', $request->animal_event_id)
+        // 🔒 Verifica se já existe lance com o mesmo valor para o mesmo animal/evento
+        $existingBid = Bid::where('animal_event_id', $request->animal_event_id)
             ->where('event_id', $request->event_id)
             ->where('amount', $request->amount)
             ->where('status', '!=', 2) // Ignora lances rejeitados
             ->first();
 
         if ($existingBid) {
-            return back()->with('error', 'Você já enviou um lance com este mesmo valor para este animal.');
+            return back()->with('error', 'Já existe um lance com este mesmo valor para este lote.');
         }
 
         // ✅ Cria o novo lance
