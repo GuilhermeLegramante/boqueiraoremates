@@ -15,7 +15,8 @@ class NotificationService
     public function sendNewBidNotifications($user, $event, $animal, $amount)
     {
         // $this->sendWhatsApp($user, $event, $animal, $amount);
-        $this->recipients = ['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'];
+        // $this->recipients = ['lances@boqueiraoremates.com', 'guilhermelegramante@gmail.com'];
+        $this->recipients = ['lances@boqueiraoremates.com'];
 
         $this->sendEmail($user, $event, $animal, $amount);
     }
@@ -45,7 +46,7 @@ class NotificationService
     private function sendEmail($user, $event, $animal, $amount)
     {
         $recipients = $this->recipients;
-        
+
         try {
             Mail::send('emails.new-bid', [
                 'user' => $user,
