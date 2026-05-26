@@ -68,6 +68,13 @@ class ClientResource extends Resource
                     })
                     ->searchable()
                     ->copyable()
+                    ->tooltip(function ($record) {
+                        $lastNote = $record->notes()
+                            ->latest()
+                            ->first();
+
+                        return $lastNote?->content ?? 'Sem observações';
+                    })
                     ->sortable(),
 
                 TextColumn::make('cpf_cnpj')
