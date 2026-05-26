@@ -158,6 +158,21 @@ class Client extends Model
             // Email fallback
             $email = $client->email ?? "{$cpfCnpj}@example.com";
 
+            // Procura cliente existente ignorando máscara
+            $existingClient = Client::where('cpf_cnpj', $cpfCnpj)
+                ->orWhere('cpf_cnpj', $client->cpf_cnpj)
+                ->first();
+
+            // Se já existir, atualiza e cancela criação
+            if ($existingClient) {
+                $existingClient->update([
+                    'name' => $client->name,
+                    'email' => $client->email,
+                ]);
+
+                return false; // cancelar criação do novo registro
+            }
+
             // Busca usuário existente com mesmo username (com ou sem máscara)
             $existingUser = User::where('username', $cpfCnpj)
                 ->orWhere('username', $client->cpf_cnpj)
@@ -190,7 +205,7 @@ class Client extends Model
                     'name' => $client->name,
                 ]);
             }
-            
+
             // Verifica quais atributos foram alterados
             $changes = $client->getDirty();
 
