@@ -189,7 +189,9 @@
                                                 <span>Lance Atual:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    @if (floatval($animal->pivot->target_value) == 0 && $status === 'vendido')
+                                                    {{-- @if (floatval($animal->pivot->target_value) == 0 && $status === 'vendido') --}}
+                                                    {{-- Kauê pediu para deixar zerado quando for vendido --}}
+                                                    @if ($status === 'vendido')
                                                         R$ 0,00
                                                     @else
                                                         R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
