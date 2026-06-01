@@ -119,7 +119,7 @@
 
                     <div class="mt-3 text-white">
                         <h3 class="text-lg font-semibold">Comentários</h3>
-                        <div>
+                        <div class="comentarios-conteudo">
                             {!! str_replace('<p>', '<p style="text-align: justify;">', $animal->pivot->note) !!}
                         </div>
                     </div>
@@ -360,6 +360,14 @@
     </section>
 
     @include('site.events.header')
+
+    <style>
+        /* Se o editor salvar o path em uma tag de legenda comum (como <figcaption> ou .image-path) */
+        .comentarios-conteudo figcaption,
+        .comentarios-conteudo .image-path {
+            display: none !important;
+        }
+    </style>
 
     <!-- Breadcrumbs para página do evento -->
     <section class="py-4 px-4 bg-[#003333] text-white">
