@@ -127,25 +127,25 @@
             <td class="table-0pky" colspan="5">
                 {{ $order->business_note }}
 
-                @if ($order->tipo_de_venda)
+                @if ($order->sale_type)
                     <br>
                     <strong>Tipo de Venda:</strong>
 
-                    @switch($order->tipo_de_venda)
+                    @switch($order->sale_type)
                         @case('animal_inteiro')
                             Animal Inteiro
                         @break
 
                         @case('cota')
-                            Cota ({{ $order->percentage }}%)
+                            Cota ({{ $order->sale_type_percentage }}%)
                         @break
 
                         @case('direito_de_uso')
-                            Direito de Uso ({{ $order->percentage }}%)
+                            Direito de Uso ({{ $order->sale_type_percentage }}%)
                         @break
 
                         @case('cobertura')
-                            Cobertura ({{ $order->quantity }} unidades)
+                            Cobertura ({{ $order->sale_type_quantity }} unidades)
                         @break
                     @endswitch
                 @endif
