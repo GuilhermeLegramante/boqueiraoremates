@@ -83,7 +83,7 @@
                 {{ 'R$ ' . number_format($order->gross_value / $order->multiplier, 2, ',', '.') }}
             </td> --}}
             @include('reports.partials.td-money', [
-                'money_value' => $order->gross_value / $order->multiplier,
+                'money_value' => $order->multiplier > 0 ? $order->gross_value / $order->multiplier : 0,
             ])
 
             <td class="table-fymr">Multiplicador</td>
