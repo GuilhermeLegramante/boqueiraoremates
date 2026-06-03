@@ -81,6 +81,20 @@ class OrderResource extends Resource
                     ->label('Animal')
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
+
+                TextColumn::make('sale_type')
+                    ->label('Tipo de Venda')
+                    ->formatStateUsing(function ($state, $record) {
+                        return match ($state) {
+                            'animal_inteiro' => 'Animal Inteiro',
+                            'cota' => 'Cota (' . $record->sale_type_percentage . '%)',
+                            'direito_de_uso' => 'Direito de Uso (' . $record->sale_type_percentage . '%)',
+                            'cobertura' => 'Cobertura (' . $record->sale_type_quantity . ')',
+                            default => $state,
+                        };
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 TextColumn::make('multiplier')
                     ->label('Multiplicador')
                     ->toggleable(isToggledHiddenByDefault: false),
@@ -153,18 +167,6 @@ class OrderResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge(),
 
-                TextColumn::make('sale_type')
-                    ->label('Tipo de Venda')
-                    ->formatStateUsing(function ($state, $record) {
-                        return match ($state) {
-                            'animal_inteiro' => 'Animal Inteiro',
-                            'cota' => 'Cota (' . $record->sale_type_percentage . '%)',
-                            'direito_de_uso' => 'Direito de Uso (' . $record->sale_type_percentage . '%)',
-                            'cobertura' => 'Cobertura (' . $record->sale_type_quantity . ')',
-                            default => $state,
-                        };
-                    })
-                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('created_at')
                     ->label('Emitida em')
