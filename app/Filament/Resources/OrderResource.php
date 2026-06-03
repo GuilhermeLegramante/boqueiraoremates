@@ -101,7 +101,7 @@ class OrderResource extends Resource
                         ->label('Total Valor Líquido')
                         ->money('BRL')
                         ->using(
-                            fn (DatabaseBuilder $query): float =>
+                            fn(DatabaseBuilder $query): float =>
                             $query
                                 ->sum(
                                     DB::raw('(gross_value * discount_percentage) / 100')
@@ -115,7 +115,7 @@ class OrderResource extends Resource
                         ->label('Total Comissão Comprador')
                         ->money('BRL')
                         ->using(
-                            fn (DatabaseBuilder $query): float =>
+                            fn(DatabaseBuilder $query): float =>
                             $query
                                 ->sum(
                                     DB::raw('(gross_value * buyer_commission) / 100')
@@ -129,7 +129,7 @@ class OrderResource extends Resource
                         ->label('Total Comissão Vendedor')
                         ->money('BRL')
                         ->using(
-                            fn (DatabaseBuilder $query): float =>
+                            fn(DatabaseBuilder $query): float =>
                             $query
                                 ->sum(
                                     DB::raw('(gross_value * seller_commission) / 100')
@@ -152,6 +152,20 @@ class OrderResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->alignment(Alignment::Center)
                     ->badge(),
+
+                TextColumn::make('sale_type')
+                    ->label('Tipo de Venda')
+                    ->formatStateUsing(function ($state, $record) {
+                        return match ($state) {
+                            'animal_inteiro' => 'Animal Inteiro',
+                            'cota' => 'Cota (' . $record->sale_type_percentage . '%)',
+                            'direito_de_uso' => 'Direito de Uso (' . $record->sale_type_percentage . '%)',
+                            'cobertura' => 'Cobertura (' . $record->sale_type_quantity . ')',
+                            default => $state,
+                        };
+                    })
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 TextColumn::make('created_at')
                     ->label('Emitida em')
                     ->dateTime()
@@ -203,17 +217,17 @@ class OrderResource extends Resource
                         return $query
                             ->when(
                                 $data['created_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('base_date', '>=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('base_date', '>=', $date),
                             )
                             ->when(
                                 $data['created_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('base_date', '<=', $date),
+                                fn(Builder $query, $date): Builder => $query->whereDate('base_date', '<=', $date),
                             );
                     })
             ])
             ->deferFilters()
             ->filtersApplyAction(
-                fn (Action $action) => $action
+                fn(Action $action) => $action
                     ->link()
                     ->label('Aplicar Filtro(s)'),
             )
@@ -234,7 +248,7 @@ class OrderResource extends Resource
                         ->label('Gerar PDF')
                         ->icon('heroicon-o-document-text')
                         ->color('info')
-                        ->url(fn (Order $record): string => route('order-pdf', $record->id))
+                        ->url(fn(Order $record): string => route('order-pdf', $record->id))
                         ->openUrlInNewTab(),
                     Tables\Actions\DeleteAction::make(),
                 ]),
@@ -245,7 +259,6 @@ class OrderResource extends Resource
                     ExportBulkAction::make()->label('Download'),
                 ]),
             ]);
-        
     }
 
     public static function getRelations(): array
