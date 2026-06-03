@@ -52,7 +52,11 @@ class EditOrder extends EditRecord
 
         $data['discount_percentage'] = number_format((float) $data['discount_percentage'], 2, '.', '');
 
-        $data['original_parcel'] = floatval($data['gross_value']) / floatval($data['multiplier']);
+        $multiplier = floatval($data['multiplier'] ?? 0);
+
+        $data['original_parcel'] = $multiplier > 0
+            ? floatval($data['gross_value']) / $multiplier
+            : 0;
 
         return $data;
     }
