@@ -168,8 +168,8 @@
                         {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
                         @if (strtolower($animal->pivot->status) === 'disponivel' &&
                                 (bool) $event->closed === false &&
-                                (bool) $event->is_permanent === false && 
-                                ($animal->pivot->target_value != null && $animal->pivot->target_value != '0.00'))
+                                ((bool) $event->is_permanent === false ||
+                                    ((float) $animal->pivot->target_value > 0)))
                             {{-- Cliente está apto --}}
                             @if ($client && $client->situation === 'able')
                                 {{-- FORMULÁRIO DE LANCE --}}
