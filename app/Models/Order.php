@@ -71,6 +71,9 @@ class Order extends Model
         'able_to_exam_date',
         'able_to_loading',
         'able_to_loading_date',
+        'sale_type',
+        'sale_type_percentage',
+        'sale_type_quantity',
     ];
 
     protected $casts = [

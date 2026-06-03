@@ -126,6 +126,29 @@
             <td class="table-fymr">Obs</td>
             <td class="table-0pky" colspan="5">
                 {{ $order->business_note }}
+
+                @if ($order->tipo_de_venda)
+                    <br>
+                    <strong>Tipo de Venda:</strong>
+
+                    @switch($order->tipo_de_venda)
+                        @case('animal_inteiro')
+                            Animal Inteiro
+                        @break
+
+                        @case('cota')
+                            Cota ({{ $order->percentage }}%)
+                        @break
+
+                        @case('direito_de_uso')
+                            Direito de Uso ({{ $order->percentage }}%)
+                        @break
+
+                        @case('cobertura')
+                            Cobertura ({{ $order->quantity }} unidades)
+                        @break
+                    @endswitch
+                @endif
             </td>
         </tr>
         <tr>

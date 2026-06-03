@@ -107,10 +107,10 @@ class OrderForm
                         $userId = Auth::id();
 
                         // if (!in_array($userId, [1, 2, 7])) { // Meu Id, do Zé e do Rafael
-                            $event = \App\Models\Event::find($get('event_id'));
-                            if (isset($event->multiplier)) {
-                                $set('multiplier', $event->multiplier);
-                            }
+                        $event = \App\Models\Event::find($get('event_id'));
+                        if (isset($event->multiplier)) {
+                            $set('multiplier', $event->multiplier);
+                        }
                         // }
                     })
                     ->columnSpanFull(),
@@ -280,11 +280,50 @@ class OrderForm
                         }
                     }),
 
+                // Tipo de Venda
+                // - ANIMAL INTEIRO
+                // - COTA ( quando selecionar cota dar a opção de digitar a porcentagem )
+                // - DIREITO DE USO ( quando selecionar Direito de Uso dar a opção de digitar a porcentagem )
+                // - COBERTURA ( quando selecionar Cobertura dar a opção de digitar a quantidade)
+                Select::make('sale_type')
+                    ->label('Tipo de Venda')
+                    ->options([
+                        'animal_inteiro' => 'Animal Inteiro',
+                        'cota' => 'Cota',
+                        'direito_de_uso' => 'Direito de Uso',
+                        'cobertura' => 'Cobertura',
+                    ])
+                    ->live()
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        if ($get('sale_type') === 'cota' || $get('sale_type') === 'direito_de_uso') {
+                            $set('sale_type_percentage', null);
+                        } else {
+                            $set('sale_type_quantity', null);
+                        }
+                    })
+                    ->columnSpan(2),
+                    
+                TextInput::make('sale_type_percentage')
+                    ->label('Porcentagem')
+                    ->live()
+                    ->debounce(600)
+                    ->suffix('%')
+                    ->numeric()
+                    ->visible(fn(Get $get): bool => in_array($get('sale_type'), ['cota', 'direito_de_uso'])),
+
+                TextInput::make('sale_type_quantity')
+                    ->label('Quantidade')
+                    ->live()
+                    ->debounce(600)
+                    ->numeric()
+                    ->visible(fn(Get $get): bool => $get('sale_type') === 'cobertura'),
+
+
                 Textarea::make('business_note')
                     ->label('Observação')
                     ->rows(8)
                     ->columnSpanFull(),
-                    
+
                 ParcelsDetails::make('parcels_details')
                     ->label('')
                     ->live()
