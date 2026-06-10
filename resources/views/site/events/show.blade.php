@@ -130,21 +130,31 @@
                                         {{ $animal->pivot->name }}
                                     </h3>
 
-                                    {{-- 🔹 Bloco do Lote Vinculado com Miniatura --}}
-                                    @if ($animal->pivot->linked_animal_event_id && $animal->pivot->linkedLot)
+                                    {{-- 🔹 Bloco de Venda Conjunta / Múltipla-escolha Inteligente (Ida e Volta) --}}
+                                    @php
+                                        // Define quem é o lote parceiro, seja por vínculo direto ou inverso
+                                        $linkedLot = null;
+
+                                        if ($animal->pivot->linked_animal_event_id && $animal->pivot->linkedLot) {
+                                            $linkedLot = $animal->pivot->linkedLot;
+                                        } elseif ($animal->pivot->parentLot) {
+                                            $linkedLot = $animal->pivot->parentLot;
+                                        }
+                                    @endphp
+
+                                    @if ($linkedLot)
                                         <div
-                                            class="mt-4 mb-4 p-3 bg-white/10 rounded-lg border border-white/20 text-sm text-gray-200">
-                                            <span class="font-semibold text-amber-400 block mb-2">🔄 Venda Conjunta /
+                                            class="mt-2 mb-4 p-3 bg-white/10 rounded-lg border border-white/20 text-sm text-gray-200">
+                                            <span class="font-semibold text-amber-400 block mb-2">🔄
                                                 Múltipla-escolha:</span>
 
                                             <div class="flex items-center gap-3">
-                                                {{-- Verifica se o lote vinculado possui foto cadastrada --}}
-                                                @if ($animal->pivot->linkedLot->photo)
-                                                    <img src="{{ Storage::url($animal->pivot->linkedLot->photo) }}"
-                                                        alt="{{ $animal->pivot->linkedLot->name }}"
+                                                {{-- Foto do lote parceiro --}}
+                                                @if ($linkedLot->photo)
+                                                    <img src="{{ Storage::url($linkedLot->photo) }}"
+                                                        alt="{{ $linkedLot->name }}"
                                                         class="w-12 h-12 object-cover rounded-md border border-white/10 bg-gray-800" />
                                                 @else
-                                                    {{-- Placeholder caso não tenha foto --}}
                                                     <div
                                                         class="w-12 h-12 flex items-center justify-center rounded-md border border-dashed border-white/20 bg-gray-800 text-gray-400 text-xs">
                                                         Sem foto
@@ -153,10 +163,10 @@
 
                                                 <div>
                                                     <p class="font-bold text-white text-base">
-                                                        Lote {{ $animal->pivot->linkedLot->lot_number }}
+                                                        Lote {{ $linkedLot->lot_number }}
                                                     </p>
                                                     <p class="text-gray-300">
-                                                        {{ $animal->pivot->linkedLot->name }}
+                                                        {{ $linkedLot->name }}
                                                     </p>
                                                 </div>
                                             </div>

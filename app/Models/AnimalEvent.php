@@ -46,4 +46,10 @@ class AnimalEvent extends Pivot
     {
         return $this->belongsTo(AnimalEvent::class, 'linked_animal_event_id');
     }
+
+    // Relacionamento com o lote que foi vinculado a este (Pai / Inverso)
+    public function parentLot()
+    {
+        return $this->hasOne(AnimalEvent::class, 'linked_animal_event_id', 'id');
+    }
 }
