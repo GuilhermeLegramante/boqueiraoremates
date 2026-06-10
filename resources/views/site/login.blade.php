@@ -57,7 +57,7 @@
 
                     {{-- Usuário / CPF --}}
                     <div>
-                        <label for="username" class="block font-semibold mb-1">Usuário ou CPF/CNPJ</label>
+                        <label for="username" id="usernameLabel" class="block font-semibold mb-1">Usuário ou CPF/CNPJ</label>
                         <input type="text" name="username" id="username"
                             class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                             placeholder="Digite seu usuário ou CPF" required>
