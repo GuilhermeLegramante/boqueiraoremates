@@ -93,28 +93,34 @@ class Bid extends Model
 
     protected static function replicateBidToLinkedLot($bid)
     {
-        // 1. Busca o lote (AnimalEvent) que recebeu o lance original
+        // 1. Busca o lote atual que recebeu o lance
         $currentLot = AnimalEvent::find($bid->animal_event_id);
+        if (!$currentLot) return;
 
-        if (!$currentLot || !$currentLot->linked_animal_event_id) {
-            return;
-        }
+        // 2. Descobre o ID do lote parceiro de forma inteligente:
+        // Se houver vínculo direto, pega o 'linked_animal_event_id'
+        // Senão, procura se algum lote aponta para o lote atual (vínculo inverso)
+        $targetLotId = $currentLot->linked_animal_event_id
+            ?? AnimalEvent::where('linked_animal_event_id', $currentLot->id)->value('id');
 
-        // 2. Trava de segurança para não duplicar e evitar loop infinito
-        $alreadyReplicated = static::where('animal_event_id', $currentLot->linked_animal_event_id)
+        // Se não houver nenhum parceiro em nenhum dos sentidos, interrompe
+        if (!$targetLotId) return;
+
+        // 3. Trava de segurança contra loop infinito
+        $alreadyReplicated = static::where('animal_event_id', $targetLotId)
             ->where('amount', $bid->amount)
             ->where('user_id', $bid->user_id)
-            ->where('event_id', $bid->event_id) // 🔹 Adicionado para consistência
+            ->where('event_id', $bid->event_id)
             ->exists();
 
         if (!$alreadyReplicated) {
-            // 3. Cria o lance espelhado no lote vinculado idêntico ao original
+            // 4. Cria o lance espelho no lote parceiro
             static::create([
-                'animal_event_id' => $currentLot->linked_animal_event_id,
-                'event_id'        => $bid->event_id,  // 🔹 Preenche o id do evento vindo da request/admin
+                'animal_event_id' => $targetLotId,
+                'event_id'        => $bid->event_id,
                 'user_id'         => $bid->user_id,
                 'amount'          => $bid->amount,
-                'status'          => $bid->status,    // 🔹 Copia fielmente o status (false do site ou true do Admin)
+                'status'          => $bid->status, // Mantém o status original (site = false, admin = true)
             ]);
         }
     }
@@ -122,14 +128,16 @@ class Bid extends Model
     protected static function syncStatusToLinkedLot($bid)
     {
         $currentLot = AnimalEvent::find($bid->animal_event_id);
+        if (!$currentLot) return;
 
-        if (!$currentLot || !$currentLot->linked_animal_event_id) {
-            return;
-        }
+        // Descobre o ID do lote parceiro no mesmo esquema bidirecional
+        $targetLotId = $currentLot->linked_animal_event_id
+            ?? AnimalEvent::where('linked_animal_event_id', $currentLot->id)->value('id');
 
-        // Se o Admin aprovar ou rejeitar o lance pai no Filament,
-        // o lance do lote vinculado segue o mesmo destino
-        static::where('animal_event_id', $currentLot->linked_animal_event_id)
+        if (!$targetLotId) return;
+
+        // Atualiza o status do lance correspondente no lote parceiro
+        static::where('animal_event_id', $targetLotId)
             ->where('amount', $bid->amount)
             ->where('user_id', $bid->user_id)
             ->where('event_id', $bid->event_id)
