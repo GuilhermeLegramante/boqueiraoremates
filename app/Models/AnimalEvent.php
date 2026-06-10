@@ -10,7 +10,7 @@ class AnimalEvent extends Pivot
 
     protected $fillable = [
         'animal_id',
-        'event_id', // se tiver um relacionamento com outro evento
+        'event_id',
         'name',
         'situation',
         'lot_number',
@@ -24,6 +24,7 @@ class AnimalEvent extends Pivot
         'note',
         'video_link',
         'visible',
+        'linked_animal_event_id', // 🔹 Adicionado aqui múltipla escolha
     ];
 
     public $timestamps = true;
@@ -38,5 +39,11 @@ class AnimalEvent extends Pivot
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    // Relacionamento com o lote vinculado (Múltipla escolha)
+    public function linkedLot()
+    {
+        return $this->belongsTo(AnimalEvent::class, 'linked_animal_event_id');
     }
 }

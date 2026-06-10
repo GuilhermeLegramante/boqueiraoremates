@@ -119,11 +119,7 @@
                                             {{ $status === 'disponivel' ? 'DISPONÍVEL' : $status }}
                                         </span>
                                     @endif
-
-
-
                                 </a>
-
 
                                 <div class="p-5">
                                     <h3 class="font-bold text-xl text-white mb-2">
@@ -133,6 +129,39 @@
                                     <h3 class="font-bold text-xl text-white mb-2 min-h-[3rem]">
                                         {{ $animal->pivot->name }}
                                     </h3>
+
+                                    {{-- 🔹 Bloco do Lote Vinculado com Miniatura --}}
+                                    @if ($animal->pivot->linked_animal_event_id && $animal->pivot->linkedLot)
+                                        <div
+                                            class="mt-4 mb-4 p-3 bg-white/10 rounded-lg border border-white/20 text-sm text-gray-200">
+                                            <span class="font-semibold text-amber-400 block mb-2">🔄 Venda Conjunta /
+                                                Múltipla-escolha:</span>
+
+                                            <div class="flex items-center gap-3">
+                                                {{-- Verifica se o lote vinculado possui foto cadastrada --}}
+                                                @if ($animal->pivot->linkedLot->photo)
+                                                    <img src="{{ Storage::url($animal->pivot->linkedLot->photo) }}"
+                                                        alt="{{ $animal->pivot->linkedLot->name }}"
+                                                        class="w-12 h-12 object-cover rounded-md border border-white/10 bg-gray-800" />
+                                                @else
+                                                    {{-- Placeholder caso não tenha foto --}}
+                                                    <div
+                                                        class="w-12 h-12 flex items-center justify-center rounded-md border border-dashed border-white/20 bg-gray-800 text-gray-400 text-xs">
+                                                        Sem foto
+                                                    </div>
+                                                @endif
+
+                                                <div>
+                                                    <p class="font-bold text-white text-base">
+                                                        Lote {{ $animal->pivot->linkedLot->lot_number }}
+                                                    </p>
+                                                    <p class="text-gray-300">
+                                                        {{ $animal->pivot->linkedLot->name }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
 
                                     {{-- Mostra lance alvo se for venda de coberturas --}}
                                     @if (str_contains(strtolower($event->name), 'cobertura'))

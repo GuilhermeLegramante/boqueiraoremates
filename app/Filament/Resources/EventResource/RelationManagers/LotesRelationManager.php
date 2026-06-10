@@ -141,6 +141,26 @@ class LotesRelationManager extends RelationManager
                     ->debounce(1000)
                     ->nullable(),
 
+                // 🔹 NOVO CAMPO: Lote Vinculado (Múltipla-escolha)
+                Select::make('linked_animal_event_id')
+                    ->label('Lote Vinculado (Múltipla-escolha)')
+                    ->placeholder('Selecione um lote caso este seja de múltipla-escolha')
+                    ->options(function ($record) {
+                        $eventId = $this->ownerRecord->id ?? null;
+                        if (!$eventId) return [];
+
+                        return AnimalEvent::where('event_id', $eventId)
+                            // Evita que o lote liste a si mesmo na edição
+                            ->when($record, fn($query) => $query->where('id', '!=', $record->id))
+                            ->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->id => "Lote {$item->lot_number} - {$item->name}"];
+                            });
+                    })
+                    ->searchable()
+                    ->columnSpanFull()
+                    ->nullable(),
+
                 Select::make('status')
                     ->label('Status')
                     ->options([
@@ -197,6 +217,8 @@ class LotesRelationManager extends RelationManager
                     ->label('Lote')
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.lot_number', $direction)),
 
+
+
                 Tables\Columns\TextColumn::make('min_value')
                     ->label('Lance Inicial')
                     ->money('BRL')
@@ -224,6 +246,13 @@ class LotesRelationManager extends RelationManager
                         return 'R$ ' . number_format($currentBid, 2, ',', '.');
                     })
                     ->alignRight(),
+
+                // 🔹 OPCONAL: Coluna na tabela para ver facilmente se há vínculo
+                Tables\Columns\TextColumn::make('linkedLot.name')
+                    ->label('Lote Vinculado')
+                    ->placeholder('Nenhum')
+                    ->description(fn($record) => $record->linkedLot ? "Lote: {$record->linkedLot->lot_number}" : null)
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
