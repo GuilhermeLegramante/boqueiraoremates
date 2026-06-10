@@ -450,18 +450,6 @@ class ClientResource extends Resource
                             ->whereDay('birth_date', now()->day);
                     }),
 
-                Filter::make('is_international')
-                    ->label('Apenas Internacionais')
-                    ->toggle()
-                    ->query(function (Builder $query, array $state): Builder {
-                        // O Filament passa o estado dentro de um array com o índice 'isActive' ou o nome do filtro
-                        // Usar o $state['value'] garante que só filtramos se o toggle estiver de fato ligado (true)
-                        return $query->when(
-                            $state['value'] ?? false,
-                            fn(Builder $query) => $query->where('is_international', true)
-                        );
-                    }),
-
             ], layout: FiltersLayout::Dropdown)
             ->actions([
                 ActionGroup::make([
