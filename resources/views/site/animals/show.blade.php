@@ -96,6 +96,30 @@
                     <!-- Dados técnicos -->
                     <h1 class="text-3xl font-bold">{{ $animal->pivot->name }}</h1>
                     <p><b>N° Lote:</b> {{ $animal->pivot->lot_number ?? '-' }}</p>
+                    {{-- 🔹 Início do Bloco de Múltipla-Escolha / Venda Conjunta --}}
+                    @php
+                        $linkedLot = null;
+                        if ($animal->pivot->linked_animal_event_id && $animal->pivot->linkedLot) {
+                            $linkedLot = $animal->pivot->linkedLot;
+                        } elseif ($animal->pivot->parentLot) {
+                            $linkedLot = $animal->pivot->parentLot;
+                        }
+                    @endphp
+
+                    @if ($linkedLot)
+                        <div
+                            class="my-3 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg text-sm text-gray-200 flex items-center justify-between">
+                            <div>
+                                <span class="font-bold text-amber-400 block mb-0.5">🔄
+                                    Múltipla-escolha</span>
+                                <span>Vinculado ao <strong>Lote {{ $linkedLot->lot_number }}</strong> -
+                                    {{ $linkedLot->name }}</span>
+                            </div>
+                            {{-- Se você tiver uma rota para ver o outro lote, pode colocar o link aqui --}}
+                            {{-- <a href="{{ route('lote.show', $linkedLot->id) }}" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-3 py-1.5 rounded text-xs transition">Ver Lote</a> --}}
+                        </div>
+                    @endif
+                    {{-- 🔹 Fim do Bloco --}}
                     <p><b>Gênero:</b>
                         {{ $animal->gender === 'male' ? 'MACHO' : ($animal->gender === 'female' ? 'FÊMEA' : '-') }}</p>
                     <p><b>Situação:</b> {{ $animal->pivot->situation ?? '-' }}</p>
