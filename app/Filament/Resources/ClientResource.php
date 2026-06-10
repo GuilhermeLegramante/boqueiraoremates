@@ -452,9 +452,16 @@ class ClientResource extends Resource
 
                 Filter::make('is_international')
                     ->label('Apenas Internacionais')
-                    ->toggle() // 👈 Isso transforma o filtro em um componente de Toggle visual
-                    ->query(fn(Builder $query): Builder => $query->where('is_international', true)),
-                    
+                    ->toggle()
+                    ->query(function (Builder $query, array $state): Builder {
+                        // O Filament passa o estado dentro de um array com o índice 'isActive' ou o nome do filtro
+                        // Usar o $state['value'] garante que só filtramos se o toggle estiver de fato ligado (true)
+                        return $query->when(
+                            $state['value'] ?? false,
+                            fn(Builder $query) => $query->where('is_international', true)
+                        );
+                    }),
+
             ], layout: FiltersLayout::Dropdown)
             ->actions([
                 ActionGroup::make([
