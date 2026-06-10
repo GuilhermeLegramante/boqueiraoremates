@@ -357,6 +357,7 @@ class ClientResource extends Resource
 
                 IconColumn::make('is_international')
                     ->label('Internacional')
+                    ->sortable()
                     ->boolean() // Identifica automaticamente true/false
                     ->trueIcon('heroicon-o-globe-alt')  // Ícone de globo para internacional
                     ->falseIcon('heroicon-o-home')       // Ícone de casa para nacional (opcional)
