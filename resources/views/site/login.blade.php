@@ -41,6 +41,20 @@
                     {{-- Erro geral --}}
                     <p id="formError" class="text-red-500 text-sm mt-1 hidden text-center"></p>
 
+                    {{-- 🌍 Seletor de Tipo de Cliente (Nacional vs Internacional) --}}
+                    <div class="flex items-center justify-center bg-gray-100 p-1 rounded-lg border">
+                        <button type="button" id="btnNacional"
+                            class="w-1/2 text-sm py-1.5 rounded-md font-medium transition-all bg-white text-green-700 shadow-sm border border-gray-200">
+                            🇧🇷 Nacional (CPF/CNPJ)
+                        </button>
+                        <button type="button" id="btnInternacional"
+                            class="w-1/2 text-sm py-1.5 rounded-md font-medium transition-all text-gray-500 hover:text-gray-700">
+                            🌍 Internacional
+                        </button>
+                        {{-- Campo oculto para enviar o estado do tipo de cliente ao Backend --}}
+                        <input type="hidden" name="is_international" id="is_international" value="0">
+                    </div>
+
                     {{-- Usuário / CPF --}}
                     <div>
                         <label for="username" class="block font-semibold mb-1">Usuário ou CPF/CNPJ</label>
@@ -124,46 +138,49 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
 
-            const input = document.getElementById('birth_date');
-            const error = document.getElementById('birth_dateError');
+            // Elementos de Data de Nascimento
+            const inputBirthDate = document.getElementById('birth_date');
+            const errorBirthDate = document.getElementById('birth_dateError');
 
-            // Aplica máscara
-            input.addEventListener('input', (e) => {
-                let value = e.target.value.replace(/\D/g, '');
-                if (value.length > 8) value = value.slice(0, 8);
+            // Aplica máscara na data de nascimento
+            if (inputBirthDate) {
+                inputBirthDate.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 8) value = value.slice(0, 8);
 
-                if (value.length > 4) {
-                    value = value.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
-                } else if (value.length > 2) {
-                    value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
-                }
+                    if (value.length > 4) {
+                        value = value.replace(/^(\d{2})(\d{2})(\d{0,4}).*/, '$1/$2/$3');
+                    } else if (value.length > 2) {
+                        value = value.replace(/^(\d{2})(\d{0,2})/, '$1/$2');
+                    }
 
-                e.target.value = value;
-            });
+                    e.target.value = value;
+                });
 
-            // Validação simples
-            input.addEventListener('blur', () => {
-                const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-                if (input.value && !regex.test(input.value)) {
-                    error.textContent = 'Data inválida. Use o formato dd/mm/aaaa.';
-                    error.classList.remove('hidden');
-                } else {
-                    error.classList.add('hidden');
-                }
-            });
-
-            // Converte para formato do banco (YYYY-MM-DD) antes de enviar o form
-            const form = input.closest('form');
-            if (form) {
-                form.addEventListener('submit', () => {
-                    const parts = input.value.split('/');
-                    if (parts.length === 3) {
-                        input.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                // Validação simples da data
+                inputBirthDate.addEventListener('blur', () => {
+                    const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+                    if (inputBirthDate.value && !regex.test(inputBirthDate.value)) {
+                        errorBirthDate.textContent = 'Data inválida. Use o formato dd/mm/aaaa.';
+                        errorBirthDate.classList.remove('hidden');
+                    } else {
+                        errorBirthDate.classList.add('hidden');
                     }
                 });
+
+                // Converte para formato do banco (YYYY-MM-DD) antes de enviar o form
+                const form = inputBirthDate.closest('form');
+                if (form) {
+                    form.addEventListener('submit', () => {
+                        const parts = inputBirthDate.value.split('/');
+                        if (parts.length === 3) {
+                            inputBirthDate.value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                        }
+                    });
+                }
             }
 
-
+            // Elementos do Formulário de Login Geral
             const usernameInput = document.getElementById('username');
             const passwordContainer = document.getElementById('passwordContainer');
             const firstAccessFields = document.getElementById('firstAccessFields');
@@ -174,8 +191,18 @@
             const formError = document.getElementById('formError');
             const firstAccessNotice = document.getElementById('firstAccessNotice');
 
-            // Máscara CPF ou CNPJ
+            // 🌍 Elementos Novos - Seletor Internacional
+            const btnNacional = document.getElementById('btnNacional');
+            const btnInternacional = document.getElementById('btnInternacional');
+            const inputInternational = document.getElementById('is_international');
+            const usernameLabel = document.getElementById('usernameLabel');
+
+            // Máscara dinâmica para CPF ou CNPJ (Só aplica se NÃO for internacional)
             usernameInput.addEventListener('input', () => {
+                if (inputInternational && inputInternational.value === "1") {
+                    return; // Se for internacional, aceita e-mail livremente sem máscara
+                }
+
                 let value = usernameInput.value.replace(/\D/g, '');
 
                 if (value.length <= 11) {
@@ -196,8 +223,13 @@
                 usernameInput.value = value;
             });
 
-            // Checar primeiro acesso
+            // Checar primeiro acesso (Apenas para clientes nacionais)
             usernameInput.addEventListener('blur', async () => {
+                // Se for internacional, não faz a verificação de primeiro acesso nacional
+                if (inputInternational && inputInternational.value === "1") {
+                    return;
+                }
+
                 const username = usernameInput.value.trim();
                 if (!username) return;
 
@@ -216,7 +248,7 @@
                     const data = await res.json();
 
                     if (data.first_login) {
-                        firstAccessNotice.classList.remove('hidden');
+                        if (firstAccessNotice) firstAccessNotice.classList.remove('hidden');
                         passwordContainer.classList.add('hidden');
                         firstAccessFields.classList.remove('hidden');
                         firstAccessFields.style.opacity = 1;
@@ -226,16 +258,16 @@
                                 'Não informado'
                             ])
                             .map(name => `
-                        <label class="flex items-center space-x-2 cursor-pointer">
-                            <input type="radio" name="mother" value="${name}" required>
-                            <span>${name}</span>
-                        </label>
-                    `).join('');
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="mother" value="${name}" required>
+                                <span>${name}</span>
+                            </label>
+                        `).join('');
                     } else {
                         passwordContainer.classList.remove('hidden');
                         firstAccessFields.classList.add('hidden');
                         firstAccessFields.style.opacity = 0;
-                        firstAccessNotice.classList.add('hidden');
+                        if (firstAccessNotice) firstAccessNotice.classList.add('hidden');
                     }
                 } catch (err) {
                     console.error(err);
@@ -244,60 +276,118 @@
                 }
             });
 
-            // Submit do formulário
-            // Submit do formulário
-            loginForm.addEventListener('submit', async e => {
-                e.preventDefault();
-                formError.classList.add('hidden');
-                document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
-                    'hidden'));
+            // 🌍 Lógica de clique no botão Internacional
+            if (btnInternacional) {
+                btnInternacional.addEventListener('click', () => {
+                    if (inputInternational) inputInternational.value = "1";
 
-                loginText.classList.add('hidden');
-                loginSpinner.classList.remove('hidden');
+                    // Alterna classes visuais dos botões
+                    btnInternacional.classList.add('bg-white', 'text-green-700', 'shadow-sm', 'border',
+                        'border-gray-200');
+                    btnInternacional.classList.remove('text-gray-500');
+                    btnNacional.classList.remove('bg-white', 'text-green-700', 'shadow-sm', 'border',
+                        'border-gray-200');
+                    btnNacional.classList.add('text-gray-500');
 
-                const formData = new FormData(loginForm);
-                const isFirstLogin = !firstAccessFields.classList.contains('hidden');
-                const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
-                    '{{ route('login.submit') }}';
+                    // Atualiza Labels, Mudar tipo para email e limpa o campo
+                    if (usernameLabel) usernameLabel.textContent = "E-mail cadastrado";
+                    usernameInput.placeholder = "Digite seu e-mail cadastrado";
+                    usernameInput.type = "email";
+                    usernameInput.value = "";
 
-                try {
-                    const res = await fetch(url, {
-                        method: 'POST',
-                        body: formData
-                    });
+                    // Exibe imediatamente o container de senha normal e oculta o primeiro acesso brasileiro
+                    passwordContainer.classList.remove('hidden');
+                    firstAccessFields.classList.add('hidden');
+                    firstAccessFields.style.opacity = 0;
+                    if (firstAccessNotice) firstAccessNotice.classList.add('hidden');
+                    formError.classList.add('hidden');
+                });
+            }
 
-                    const data = await res.json();
+            // 🇧🇷 Lógica de clique no botão Nacional
+            if (btnNacional) {
+                btnNacional.addEventListener('click', () => {
+                    if (inputInternational) inputInternational.value = "0";
 
-                    if (data.success) {
-                        // Redireciona para o site externo após login
-                        window.location.href = 'https://sistema.boqueiraoremates.com/';
-                        return;
-                    }
+                    // Alterna classes visuais dos botões
+                    btnNacional.classList.add('bg-white', 'text-green-700', 'shadow-sm', 'border',
+                        'border-gray-200');
+                    btnNacional.classList.remove('text-gray-500');
+                    btnInternacional.classList.remove('bg-white', 'text-green-700', 'shadow-sm', 'border',
+                        'border-gray-200');
+                    btnInternacional.classList.add('text-gray-500');
 
-                    if (data.error) {
-                        formError.textContent = data.error;
-                        formError.classList.remove('hidden');
-                    }
+                    // Retorna os padrões nacionais
+                    if (usernameLabel) usernameLabel.textContent = "Usuário ou CPF/CNPJ";
+                    usernameInput.placeholder = "Digite seu usuário ou CPF";
+                    usernameInput.type = "text";
+                    usernameInput.value = "";
 
-                    if (data.errors) {
-                        for (const [key, messages] of Object.entries(data.errors)) {
-                            const errorElem = document.getElementById(key + 'Error');
-                            if (errorElem) {
-                                errorElem.textContent = messages.join(', ');
-                                errorElem.classList.remove('hidden');
+                    // Reseta a exibição dos campos para esperar a digitação do CPF
+                    passwordContainer.classList.add('hidden');
+                    firstAccessFields.classList.add('hidden');
+                    firstAccessFields.style.opacity = 0;
+                    formError.classList.add('hidden');
+                });
+            }
+
+            // Submit do formulário via Ajax
+            if (loginForm) {
+                loginForm.addEventListener('submit', async e => {
+                    e.preventDefault();
+                    formError.classList.add('hidden');
+                    document.querySelectorAll('#loginForm p.text-red-500').forEach(p => p.classList.add(
+                        'hidden'));
+
+                    loginText.classList.add('hidden');
+                    loginSpinner.classList.remove('hidden');
+
+                    const formData = new FormData(loginForm);
+
+                    // Determina se é fluxo de primeiro acesso (Só faz sentido se for Nacional)
+                    const isFirstLogin = !firstAccessFields.classList.contains('hidden') && (
+                        inputInternational && inputInternational.value === "0");
+
+                    const url = isFirstLogin ? '{{ route('first_access.validate') }}' :
+                        '{{ route('login.submit') }}';
+
+                    try {
+                        const res = await fetch(url, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        const data = await res.json();
+
+                        if (data.success) {
+                            window.location.href = 'https://sistema.boqueiraoremates.com/';
+                            return;
+                        }
+
+                        if (data.error) {
+                            formError.textContent = data.error;
+                            formError.classList.remove('hidden');
+                        }
+
+                        if (data.errors) {
+                            for (const [key, messages] of Object.entries(data.errors)) {
+                                const errorElem = document.getElementById(key + 'Error');
+                                if (errorElem) {
+                                    errorElem.textContent = messages.join(', ');
+                                    errorElem.classList.remove('hidden');
+                                }
                             }
                         }
+                    } catch (err) {
+                        formError.textContent = 'Erro de comunicação com o servidor.';
+                        formError.classList.remove('hidden');
+                        console.error(err);
+                    } finally {
+                        loginText.classList.remove('hidden');
+                        loginSpinner.classList.add('hidden');
                     }
-                } catch (err) {
-                    formError.textContent = 'Erro de comunicação com o servidor.';
-                    formError.classList.remove('hidden');
-                    console.error(err);
-                } finally {
-                    loginText.classList.remove('hidden');
-                    loginSpinner.classList.add('hidden');
-                }
-            });
-
+                });
+            }
         });
     </script>
 @endsection
