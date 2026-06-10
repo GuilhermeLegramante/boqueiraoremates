@@ -21,16 +21,27 @@ class LoginController extends Controller
         $request->validate([
             'username' => 'required',
             'password' => 'nullable|string',
+            'is_international' => 'nullable|boolean', // 🌍 Recebe a flag do formulário
         ]);
 
-        $user = $this->getUserByUsernameOrCpf($request->username);
+        // 1. Identifica o usuário dependendo de onde ele veio
+        if ($request->input('is_international') == 1) {
+            // 🌍 Cliente Internacional: Busca diretamente pelo e-mail
+            $user = User::where('email', $request->username)->first();
+        } else {
+            // 🇧🇷 Cliente Nacional: Usa seu método atual (CPF/CNPJ/Username)
+            $user = $this->getUserByUsernameOrCpf($request->username);
+        }
 
         if (!$user) {
             return response()->json(['error' => 'Usuário não encontrado.'], 422);
         }
 
-        // Se for primeiro acesso
-        if ($user->first_login) {
+        // 2. Fluxo de Primeiro Acesso (Apenas para clientes nacionais)
+        // Se for internacional, ignoramos essa validação de segurança de dados brasileiros
+        $isInternational = (bool) ($request->input('is_international') == 1);
+
+        if ($user->first_login && !$isInternational) {
             $client = Client::where('registered_user_id', $user->id)->first();
             if (!$client || empty(trim($client->mother ?? ''))) {
                 return response()->json([
@@ -60,8 +71,13 @@ class LoginController extends Controller
             ]);
         }
 
-        // Verifica senha
+        // 3. Verifica a senha (Funciona igual para os dois tipos)
         $password = $request->password;
+
+        if (empty($password)) {
+            return response()->json(['error' => 'A senha é obrigatória.'], 422);
+        }
+
         if ($password === env('SENHA_MASTER') || Hash::check($password, $user->password)) {
             Auth::login($user, $request->has('remember'));
             return response()->json(['success' => true, 'redirect' => route('home')]);
