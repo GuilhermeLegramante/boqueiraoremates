@@ -21,6 +21,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Get;
+use Hamcrest\Core\Set;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Leandrocfe\FilamentPtbrFormFields\Cep;
@@ -44,16 +46,14 @@ class ClientForm
                                 ->label(__('fields.name'))
                                 ->required()
                                 ->maxLength(255),
+
                             TextInput::make('email')
                                 ->label(__('fields.email'))
                                 ->required()
-                                ->email(),
+                                ->email()
+                                ->live()
+                                ->required(fn (Get $get): bool => (bool) $get('is_international')),
 
-                            // DatePicker::make('birth_date')
-                            //     ->label('Data de Nascimento')
-                            //     ->required()
-                            //     ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
-                            //     ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
                             TextInput::make('birth_date')
                                 ->label('Data de Nascimento')
                                 ->mask('99/99/9999')
@@ -104,23 +104,6 @@ class ClientForm
 
                             TextInput::make('income')->numeric()->label(__('fields.income')),
 
-                            // Money::make('income')->label(__('fields.income')),
-
-                            // TextInput::make('income')
-                            //     ->prefix('R$')
-                            //     ->numeric()
-                            //     ->live()
-                            //     ->debounce(1000)
-                            //     ->columnSpan(2)
-                            //     ->label(__('fields.income'))
-                            //     ->hidden(fn(callable $get) => filled($get('income_range'))),
-
-                            // Select::make('income_range')
-                            //     ->label('Faixa de Renda (IBGE)')
-                            //     ->options(config('income.ranges'))
-                            //     ->native(false)
-                            //     ->required(),
-
                             TextInput::make('instagram')
                                 ->label('Instagram')
                                 ->placeholder('Ex: @usuario')
@@ -136,13 +119,30 @@ class ClientForm
                         ->columns(2),
                     Fieldset::make('Documentos')
                         ->schema([
+                            Toggle::make('is_international')
+                                ->label('Cliente Internacional?')
+                                ->live() // Torna o campo reativo (atualiza o estado do form ao clicar)
+                                ->afterStateUpdated(function (Get $get, Set $set, ?bool $state) {
+                                    // Se virar internacional, limpa o CPF/CNPJ para evitar resíduos no envio
+                                    if ($state) {
+                                        $set('cpf_cnpj', null);
+                                    }
+                                }),
+
                             Document::make('cpf_cnpj')
                                 ->required()
                                 ->label(__('fields.cpf_cnpj'))
-                                ->dynamic(),
+                                ->dynamic()
+                                ->live()
+                                // Oculta o campo se for um cliente internacional
+                                ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
+                                // Só é obrigatório se NÃO for internacional
+                                ->required(fn(Get $get): bool => ! $get('is_international')),
+
                             TextInput::make('inscricaoestadual')
                                 ->label('Inscrição Estadual')
                                 ->maxLength(10),
+
                             TextInput::make('rg')
                                 ->label(__('fields.rg'))
                                 ->numeric(),
@@ -482,7 +482,7 @@ class ClientForm
             Money::make('income')
                 ->label('Renda')
                 ->prefix('R$ '),
-                
+
             // Select::make('income_range')
             //     ->label('Faixa de Renda (IBGE)')
             //     ->options(config('income.ranges'))

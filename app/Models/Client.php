@@ -21,6 +21,7 @@ class Client extends Model
     protected $fillable = [
         'name',
         'email',
+        'is_international',
         'name',
         'email',
         'birth_date',
@@ -139,54 +140,13 @@ class Client extends Model
     protected static function booted()
     {
         static::creating(function ($client) {
-            // Remove máscara do CPF/CNPJ
-            $cpfCnpj = preg_replace('/\D/', '', $client->cpf_cnpj);
-
-            // Define senha com os 6 primeiros dígitos
-            $password = substr($cpfCnpj, 0, 6);
-
-            // Email fallback
-            $email = $client->email ?? "{$cpfCnpj}@example.com";
-
-            // Procura cliente existente ignorando máscara
-            $existingClient = Client::where('cpf_cnpj', $cpfCnpj)
-                ->orWhere('cpf_cnpj', $client->cpf_cnpj)
-                ->first();
-
-            // Se já existir, atualiza e cancela criação
-            if ($existingClient) {
-                $existingClient->update([
-                    'name' => $client->name,
-                    'email' => $client->email,
-                ]);
-
-                return false; // cancelar criação do novo registro
+            if ($client->is_international) {
+                return static::handleInternationalClient($client);
             }
 
-            // Busca usuário existente com mesmo username (com ou sem máscara)
-            $existingUser = User::where('username', $cpfCnpj)
-                ->orWhere('username', $client->cpf_cnpj)
-                ->first();
-
-            if ($existingUser) {
-                // Já existe, apenas vincula
-                $client->registeredUser()->associate($existingUser);
-            } else {
-                // Cria novo usuário
-                $user = User::create([
-                    'name'     => $client->name,
-                    'username' => $client->cpf_cnpj,
-                    'email'    => $email,
-                    'password' => Hash::make($password),
-                ]);
-
-                // Atribui o papel (role)
-                $user->assignRole('client');
-
-                // Vincula o usuário ao cliente
-                $client->registeredUser()->associate($user);
-            }
+            return static::handleNationalClient($client);
         });
+
 
         static::updated(function ($client) {
             // 🔹 Atualiza o nome do usuário vinculado
@@ -231,5 +191,83 @@ class Client extends Model
                 $client->registeredUser->delete();
             }
         });
+    }
+
+    /**
+     * Orquestra a criação de clientes internacionais e seus respectivos usuários.
+     */
+    private static function handleInternationalClient($client): void
+    {
+        $username = $client->email;
+
+        // Gera senha temporária baseada no Whatsapp ou fallback seguro
+        $rawWhatsapp = preg_replace('/\D/', '', $client->whatsapp ?? '');
+        $password = substr($rawWhatsapp, 0, 6);
+        if (empty($password)) {
+            $password = '123456';
+        }
+
+        // Busca usuário existente pelo e-mail
+        $existingUser = User::where('email', $client->email)->first();
+
+        if ($existingUser) {
+            $client->registeredUser()->associate($existingUser);
+        } else {
+            $user = User::create([
+                'name'     => $client->name,
+                'username' => $username,
+                'email'    => $client->email,
+                'password' => Hash::make($password),
+            ]);
+
+            $user->assignRole('client');
+            $client->registeredUser()->associate($user);
+        }
+    }
+
+    /**
+     * Orquestra a validação e criação de clientes nacionais (com CPF/CNPJ).
+     * Retorna 'false' se a criação do registro precisar ser abortada.
+     */
+    private static function handleNationalClient($client): bool
+    {
+        $cpfCnpj = preg_replace('/\D/', '', $client->cpf_cnpj);
+        $password = substr($cpfCnpj, 0, 6);
+        $email = $client->email ?? "{$cpfCnpj}@example.com";
+
+        // Evita duplicidade de cliente nacional
+        $existingClient = Client::where('cpf_cnpj', $cpfCnpj)
+            ->orWhere('cpf_cnpj', $client->cpf_cnpj)
+            ->first();
+
+        if ($existingClient) {
+            $existingClient->update([
+                'name' => $client->name,
+                'email' => $client->email,
+            ]);
+
+            return false; // Aborta a criação do novo registro no banco
+        }
+
+        // Busca ou vincula o usuário correspondente ao CPF/CNPJ
+        $existingUser = User::where('username', $cpfCnpj)
+            ->orWhere('username', $client->cpf_cnpj)
+            ->first();
+
+        if ($existingUser) {
+            $client->registeredUser()->associate($existingUser);
+        } else {
+            $user = User::create([
+                'name'     => $client->name,
+                'username' => $client->cpf_cnpj,
+                'email'    => $email,
+                'password' => Hash::make($password),
+            ]);
+
+            $user->assignRole('client');
+            $client->registeredUser()->associate($user);
+        }
+
+        return true;
     }
 }

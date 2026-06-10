@@ -27,6 +27,7 @@ use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Exports\ExcelExport;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Filters\Filter;
 
 class ClientResource extends Resource
@@ -354,6 +355,15 @@ class ClientResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
+                IconColumn::make('is_international')
+                    ->label('Internacional')
+                    ->boolean() // Identifica automaticamente true/false
+                    ->trueIcon('heroicon-o-globe-alt')  // Ícone de globo para internacional
+                    ->falseIcon('heroicon-o-home')       // Ícone de casa para nacional (opcional)
+                    ->trueColor('info')                  // Cor azul para internacional
+                    ->falseColor('gray')                 // Cor cinza para nacional
+                    ->toggleable(isToggledHiddenByDefault: false), // Permite ocultar/exibir nas opções da tabela
+
                 TextColumn::make('created_at')
                     ->label('Dta Inclusão')
                     ->date('d/m/Y')
@@ -438,7 +448,13 @@ class ClientResource extends Resource
                         return $query
                             ->whereMonth('birth_date', now()->month)
                             ->whereDay('birth_date', now()->day);
-                    })
+                    }),
+
+                Filter::make('is_international')
+                    ->label('Apenas Internacionais')
+                    ->toggle() // 👈 Isso transforma o filtro em um componente de Toggle visual
+                    ->query(fn(Builder $query): Builder => $query->where('is_international', true)),
+                    
             ], layout: FiltersLayout::Dropdown)
             ->actions([
                 ActionGroup::make([
