@@ -19,6 +19,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use App\Models\Event;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Storage;
 use Filament\Notifications\Notification;
@@ -273,72 +274,105 @@ class LotesRelationManager extends RelationManager
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
                 Action::make('importarLotes')
-                    ->label('Importar Lotes de outro Evento')
+                    ->label('Importar Lotes')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->color('primary')
+                    ->modalWidth('3xl') // Aumentamos a largura para acomodar melhor as abas e colunas
                     ->form([
-                        // 1. Seleciona o evento de origem
-                        Select::make('source_event_id')
-                            ->label('Evento de Origem')
-                            ->options(function () {
-                                return Event::where('id', '!=', $this->getOwnerRecord()->id)
-                                    ->orderBy('start_date', 'desc')
-                                    ->pluck('name', 'id');
-                            })
-                            ->required()
-                            ->live(),
+                        Tabs::make('Abas de Importação')
+                            ->tabs([
 
-                        // 2. Mensagem de Alerta (Exibida APENAS se o evento for selecionado E não tiver lotes)
-                        Placeholder::make('no_lots_warning')
-                            ->hiddenLabel()
-                            ->content('⚠️ Nenhum lote encontrado para o evento selecionado.')
-                            ->visible(function (Get $get) {
-                                $eventId = $get('source_event_id');
-                                if (! $eventId) {
-                                    return false;
-                                }
+                                // 🔹 ABA 1: IMPORTAÇÃO POR EVENTO
+                                Tabs\Tab::make('Por Evento')
+                                    ->icon('heroicon-o-calendar')
+                                    ->schema([
+                                        Select::make('source_event_id')
+                                            ->label('Evento de Origem')
+                                            ->options(function () {
+                                                return Event::where('id', '!=', $this->getOwnerRecord()->id)
+                                                    ->orderBy('start_date', 'desc')
+                                                    ->pluck('name', 'id');
+                                            })
+                                            ->live(),
 
-                                // Fica visível se o evento foi escolhido mas a contagem de lotes for zero
-                                return AnimalEvent::where('event_id', $eventId)->count() === 0;
-                            }),
+                                        Placeholder::make('no_lots_warning')
+                                            ->hiddenLabel()
+                                            ->content('⚠️ Nenhum lote encontrado para o evento selecionado.')
+                                            ->visible(function (Get $get) {
+                                                $eventId = $get('source_event_id');
+                                                return $eventId && AnimalEvent::where('event_id', $eventId)->count() === 0;
+                                            }),
 
-                        // 3. Lista os lotes do evento selecionado (Oculta se não houver lotes)
-                        CheckboxList::make('selected_lots')
-                            ->label('Selecione os Lotes para Clonar')
-                            ->helperText('Escolha os lotes do evento de origem que deseja trazer para o evento atual.')
-                            ->options(function (Get $get) {
-                                $eventId = $get('source_event_id');
-                                if (! $eventId) {
-                                    return [];
-                                }
+                                        CheckboxList::make('selected_lots_by_event')
+                                            ->label('Selecione os Lotes para Clonar')
+                                            ->options(function (Get $get) {
+                                                $eventId = $get('source_event_id');
+                                                if (! $eventId) return [];
 
-                                return AnimalEvent::where('event_id', $eventId)
-                                    ->get()
-                                    ->mapWithKeys(function ($lot) {
-                                        return [$lot->id => "Lote {$lot->lot_number} - {$lot->name}"];
-                                    })
-                                    ->toArray();
-                            })
-                            ->columns(2)
-                            ->required()
-                            ->visible(function (Get $get) {
-                                $eventId = $get('source_event_id');
-                                if (! $eventId) {
-                                    return false;
-                                }
+                                                return AnimalEvent::where('event_id', $eventId)
+                                                    ->get()
+                                                    ->mapWithKeys(fn($lot) => [$lot->id => "Lote {$lot->lot_number} - {$lot->name}"])
+                                                    ->toArray();
+                                            })
+                                            ->columns(2)
+                                            ->visible(function (Get $get) {
+                                                $eventId = $get('source_event_id');
+                                                return $eventId && AnimalEvent::where('event_id', $eventId)->count() > 0;
+                                            }),
+                                    ]),
 
-                                // Só exibe a lista se houver pelo menos 1 lote cadastrado no evento
-                                return AnimalEvent::where('event_id', $eventId)->count() > 0;
-                            }),
+                                // 🔹 ABA 2: IMPORTAÇÃO POR BUSCA INDIVIDUAL (NOME)
+                                Tabs\Tab::make('Por Busca Individual')
+                                    ->icon('heroicon-o-magnifying-glass')
+                                    ->schema([
+                                        Select::make('selected_lots_by_search')
+                                            ->label('Buscar Lotes pelo Nome')
+                                            ->placeholder('Digite parte do nome do lote/animal...')
+                                            ->helperText('Você pode selecionar múltiplos lotes digitando e adicionando um por um.')
+                                            ->multiple() // Permite adicionar vários lotes específicos de eventos diferentes
+                                            ->searchable()
+                                            ->getSearchResultsUsing(function (string $search) {
+                                                // Busca assíncrona no banco conforme o usuário digita
+                                                return AnimalEvent::query()
+                                                    ->with('event')
+                                                    ->where('event_id', '!=', $this->getOwnerRecord()->id) // ignora o evento atual
+                                                    ->where('name', 'like', "%{$search}%")
+                                                    ->limit(20)
+                                                    ->get()
+                                                    ->mapWithKeys(function ($lot) {
+                                                        $eventName = $lot->event?->name ?? 'Sem Evento';
+                                                        return [$lot->id => "{$lot->name} (Lote {$lot->lot_number} - Ref: {$eventName})"];
+                                                    })
+                                                    ->toArray();
+                                            })
+                                            ->getOptionLabelsUsing(function (array $values) {
+                                                return AnimalEvent::query()
+                                                    ->with('event')
+                                                    ->whereIn('id', $values)
+                                                    ->get()
+                                                    ->mapWithKeys(fn($lot) => [$lot->id => "{$lot->name} (Lote {$lot->lot_number})"])
+                                                    ->toArray();
+                                            }),
+                                    ]),
+                            ])->columnSpanFull(),
                     ])
                     ->action(function (array $data) {
-                        // Prevenção caso o usuário envie o formulário vazio sem querer (embora esteja oculto)
-                        if (empty($data['selected_lots'])) {
+                        // Unifica os IDs selecionados de ambas as abas em uma única coleção única
+                        $lotsFromEvent = $data['selected_lots_by_event'] ?? [];
+                        $lotsFromSearch = $data['selected_lots_by_search'] ?? [];
+
+                        $allSelectedIds = array_unique(array_merge($lotsFromEvent, $lotsFromSearch));
+
+                        if (empty($allSelectedIds)) {
+                            Notification::make()
+                                ->title('Nenhum lote foi selecionado para importação.')
+                                ->warning()
+                                ->send();
                             return;
                         }
 
                         $destinationEvent = $this->getOwnerRecord();
-                        $lotsToClone = AnimalEvent::whereIn('id', $data['selected_lots'])->get();
+                        $lotsToClone = AnimalEvent::whereIn('id', $allSelectedIds)->get();
 
                         foreach ($lotsToClone as $oldLot) {
                             $pivotData = $oldLot->toArray();
