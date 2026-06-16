@@ -6,7 +6,6 @@ use App\Filament\Forms\AnimalForm;
 use App\Models\Animal;
 use App\Models\AnimalEvent;
 use App\Models\Bid;
-use Filament\Forms;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -16,9 +15,13 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Leandrocfe\FilamentPtbrFormFields\Money;
+use Filament\Tables\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use App\Models\Event;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Get;
+use Illuminate\Support\Facades\Storage;
+use Filament\Notifications\Notification;
 
 class LotesRelationManager extends RelationManager
 {
@@ -269,6 +272,100 @@ class LotesRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
+                Action::make('importarLotes')
+                    ->label('Importar Lotes de outro Evento')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->color('primary')
+                    ->form([
+                        // 1. Seleciona o evento de origem
+                        Select::make('source_event_id')
+                            ->label('Evento de Origem')
+                            ->options(function () {
+                                return Event::where('id', '!=', $this->getOwnerRecord()->id)
+                                    ->orderBy('start_date', 'desc')
+                                    ->pluck('name', 'id');
+                            })
+                            ->required()
+                            ->live(),
+
+                        // 2. Mensagem de Alerta (Exibida APENAS se o evento for selecionado E não tiver lotes)
+                        Placeholder::make('no_lots_warning')
+                            ->hiddenLabel()
+                            ->content('⚠️ Nenhum lote encontrado para o evento selecionado.')
+                            ->visible(function (Get $get) {
+                                $eventId = $get('source_event_id');
+                                if (! $eventId) {
+                                    return false;
+                                }
+
+                                // Fica visível se o evento foi escolhido mas a contagem de lotes for zero
+                                return AnimalEvent::where('event_id', $eventId)->count() === 0;
+                            }),
+
+                        // 3. Lista os lotes do evento selecionado (Oculta se não houver lotes)
+                        CheckboxList::make('selected_lots')
+                            ->label('Selecione os Lotes para Clonar')
+                            ->helperText('Escolha os lotes do evento de origem que deseja trazer para o evento atual.')
+                            ->options(function (Get $get) {
+                                $eventId = $get('source_event_id');
+                                if (! $eventId) {
+                                    return [];
+                                }
+
+                                return AnimalEvent::where('event_id', $eventId)
+                                    ->get()
+                                    ->mapWithKeys(function ($lot) {
+                                        return [$lot->id => "Lote {$lot->lot_number} - {$lot->name}"];
+                                    })
+                                    ->toArray();
+                            })
+                            ->columns(2)
+                            ->required()
+                            ->visible(function (Get $get) {
+                                $eventId = $get('source_event_id');
+                                if (! $eventId) {
+                                    return false;
+                                }
+
+                                // Só exibe a lista se houver pelo menos 1 lote cadastrado no evento
+                                return AnimalEvent::where('event_id', $eventId)->count() > 0;
+                            }),
+                    ])
+                    ->action(function (array $data) {
+                        // Prevenção caso o usuário envie o formulário vazio sem querer (embora esteja oculto)
+                        if (empty($data['selected_lots'])) {
+                            return;
+                        }
+
+                        $destinationEvent = $this->getOwnerRecord();
+                        $lotsToClone = AnimalEvent::whereIn('id', $data['selected_lots'])->get();
+
+                        foreach ($lotsToClone as $oldLot) {
+                            $pivotData = $oldLot->toArray();
+
+                            unset(
+                                $pivotData['id'],
+                                $pivotData['event_id'],
+                                $pivotData['created_at'],
+                                $pivotData['updated_at']
+                            );
+
+                            foreach (['photo', 'photo_full'] as $photoField) {
+                                if (!empty($oldLot->$photoField) && Storage::disk('public')->exists($oldLot->$photoField)) {
+                                    $newPath = 'animals/copies/' . basename($oldLot->$photoField);
+                                    Storage::disk('public')->copy($oldLot->$photoField, $newPath);
+                                    $pivotData[$photoField] = $newPath;
+                                }
+                            }
+
+                            $destinationEvent->animals()->attach($oldLot->animal_id, $pivotData);
+                        }
+
+                        Notification::make()
+                            ->title('Lotes importados com sucesso!')
+                            ->success()
+                            ->send();
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

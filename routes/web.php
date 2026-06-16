@@ -63,13 +63,50 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('/teste', function () {
-    $now = \Carbon\Carbon::now();
+    $inputStr = 'ana';
 
-    $count = \App\Models\Event::where('published', true)
-        ->where('finish_date', '<', $now->subHours(5))
-        ->get();
+    // Conta frequência das letras
+    $freq = [];
 
-    dd($count);
+    foreach (str_split($inputStr) as $char) {
+        $freq[$char] = ($freq[$char] ?? 0) + 1;
+    }
+
+    // Conta quantas letras possuem frequência ímpar
+    $oddCount = 0;
+
+    foreach ($freq as $count) {
+        if ($count % 2 !== 0) {
+            $oddCount++;
+        }
+    }
+
+    $result = 0;
+
+    // Opção de não adicionar nenhuma letra
+    if ($oddCount <= 1) {
+        $result++;
+    }
+
+    // Testa adicionar cada letra do alfabeto
+    for ($i = ord('a'); $i <= ord('z'); $i++) {
+        $letter = chr($i);
+
+        $currentFreq = $freq[$letter] ?? 0;
+
+        // Adicionar uma letra troca sua paridade
+        if ($currentFreq % 2 === 0) {
+            $newOddCount = $oddCount + 1;
+        } else {
+            $newOddCount = $oddCount - 1;
+        }
+
+        if ($newOddCount <= 1) {
+            $result++;
+        }
+    }
+
+    return $result;
 });
 
 Route::get('/', function () {

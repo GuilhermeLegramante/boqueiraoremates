@@ -37,7 +37,7 @@ class ApprovedInactiveBidResource extends Resource
             ->header(fn() => view('filament.tables.headers.bid-filters', [
                 'sessionPrefix' => self::$sessionPrefix,
                 'events' => \App\Models\Event::where('published', false)->pluck('name', 'id'),
-                'lots' => \App\Models\AnimalEvent::all(), // coleção completa, com event_id
+                'lots' => \App\Models\AnimalEvent::orderBy('lot_number')->get(), // coleção completa, com event_id
                 'users' => \App\Models\User::with('bids')->get(), // pegar objetos para poder filtrar por evento
                 'statusOptions' => [0, 1, 2],
                 'statusDefault' => 1,
