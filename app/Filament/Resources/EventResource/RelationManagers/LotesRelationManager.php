@@ -217,8 +217,9 @@ class LotesRelationManager extends RelationManager
                     ->color('primary')
                     ->weight('bold'),
 
-                Tables\Columns\TextColumn::make('lot_number')
+                Tables\Columns\TextInputColumn::make('lot_number')
                     ->label('Lote')
+                    ->rules(['required', 'max:255']) // Regras de validação opcionais
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.lot_number', $direction)),
 
 
