@@ -290,8 +290,7 @@ class LotesRelationManager extends RelationManager
                                         Select::make('source_event_id')
                                             ->label('Evento de Origem')
                                             ->options(function () {
-                                                return Event::where('id', '!=', $this->getOwnerRecord()->id)
-                                                    ->orderBy('start_date', 'desc')
+                                                return Event::orderBy('start_date', 'desc')
                                                     ->pluck('name', 'id');
                                             })
                                             ->live(),
@@ -336,7 +335,6 @@ class LotesRelationManager extends RelationManager
                                                 // Busca assíncrona no banco conforme o usuário digita
                                                 return AnimalEvent::query()
                                                     ->with('event')
-                                                    ->where('event_id', '!=', $this->getOwnerRecord()->id) // ignora o evento atual
                                                     ->where('name', 'like', "%{$search}%")
                                                     ->limit(20)
                                                     ->get()
