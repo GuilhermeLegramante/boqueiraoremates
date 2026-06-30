@@ -165,42 +165,130 @@ trait WithParcels
 
     public function resolveParcels(): void
     {
+        // Obtém todos os dados preenchidos no formulário
         $data = $this->form->getState();
 
-        // Data base inicial
-        [$year, $month, $day] = array_map('intval', explode('-', $data['first_due_date']));
+        // Converte a data do primeiro vencimento (YYYY-MM-DD) em ano, mês e dia
+        [$year, $month, $day] = array_map(
+            'intval',
+            explode('-', $data['first_due_date'])
+        );
 
+        // Busca a forma de pagamento selecionada
+        // Ex.: "2+48", "0+20", "20", "2+2+2+2"
         $paymentWay = PaymentWay::find($data['payment_way_id']);
-        // Filtramos o array para remover zeros (como o '0' em '0+20') para evitar loops vazios ou erros de cálculo
-        $groups = array_filter(array_map('intval', explode('+', $paymentWay->name)), fn($value) => $value > 0);
 
-        // Reindexar o array após o filtro
-        $groups = array_values($groups);
+        // Divide a forma de pagamento em grupos
+        // Ex.: "2+48" => [2,48]
+        // Ex.: "0+20" => [0,20]
+        // Ex.: "2+2+2" => [2,2,2]
+        $groups = array_map('intval', explode('+', $paymentWay->name));
 
+        // Remove grupos iguais a zero
+        // Isso faz com que "0+20" vire simplesmente [20]
+        $groups = array_values(array_filter(
+            $groups,
+            fn($value) => $value > 0
+        ));
+
+        // Se por algum motivo não existir nenhum grupo, apenas encerra
+        if (empty($groups)) {
+            return;
+        }
+
+        // Valor individual de cada parcela
+        $parcelValue = (float) ($data['parcel_value'] ?? 0);
+
+        // Soma todas as parcelas da forma de pagamento
+        // Ex.: [2,48] = 50 parcelas
         $totalParcels = array_sum($groups);
 
-        // Inicializações de estado
-        $this->parcels       = [];
-        $this->values        = [];
-        $this->parcelsDates  = [];
-        $this->sum           = 0;
+        // Limpa todas as listas antes de recalcular
+        $this->parcels = [];
+        $this->values = [];
+        $this->parcelsDates = [];
+        $this->sum = 0;
 
+        // Número da próxima parcela que será criada
         $currentParcel = 1;
-        $lastGroupIndex = count($groups) - 1;
 
-        foreach ($groups as $groupIndex => $groupSize) {
+        // Índice do último grupo
+        $lastIndex = count($groups) - 1;
 
-            // Se chegamos aqui, o groupSize é pelo menos 1 devido ao array_filter
+        // Percorre cada grupo da forma de pagamento
+        foreach ($groups as $index => $groupSize) {
 
-            // ====== ÚLTIMO GRUPO OU GRUPO UNITÁRIO ======
-            // Se for o último grupo (ex: o '20' no '0+20') ou se for apenas uma parcela, expandimos.
-            $isLastGroup = ($groupIndex === $lastGroupIndex);
+            // Verifica se estamos processando o último grupo
+            $isLastGroup = ($index === $lastIndex);
 
-            if ($isLastGroup) {
+            // Obtém o grupo anterior (caso exista)
+            $previousGroup = $groups[$index - 1] ?? null;
+
+            /**
+             * Decide se este grupo será expandido.
+             *
+             * Expandir significa criar uma linha para cada parcela.
+             *
+             * Exemplo:
+             * 20
+             *   1/20
+             *   2/20
+             *   ...
+             *   20/20
+             *
+             * Agrupar significa criar apenas uma linha.
+             *
+             * Exemplo:
+             * 2 parcelas
+             *   1-2/50
+             */
+            $expandGroup = false;
+
+            // Caso exista apenas um grupo
+            //
+            // Exemplo:
+            // 20
+            // 60
+            //
+            // Sempre expandimos todas as parcelas.
+            if (count($groups) === 1) {
+
+                $expandGroup = true;
+            }
+
+            // Caso seja o último grupo E seja maior que o grupo anterior.
+            //
+            // Exemplos:
+            // 2+48
+            // 5+10
+            // 1+59
+            //
+            // Nesse cenário entendemos que o último grupo representa
+            // as parcelas mensais do financiamento.
+            elseif (
+                $isLastGroup &&
+                $previousGroup !== null &&
+                $groupSize > $previousGroup
+            ) {
+
+                $expandGroup = true;
+            }
+
+            /**
+             * ===========================================================
+             * EXPANDE O GRUPO
+             * ===========================================================
+             *
+             * Cria uma linha para cada parcela.
+             */
+            if ($expandGroup) {
+
                 for ($i = 0; $i < $groupSize; $i++) {
+
+                    // Ex.: 3/50
                     $ord = "{$currentParcel}/{$totalParcels}";
 
-                    // Adiciona o sufixo (Ent.) apenas se for a primeiríssima parcela do total
+                    // Apenas a primeira parcela recebe "(Ent.)"
                     if ($currentParcel === 1) {
                         $ord .= " (Ent.)";
                     }
@@ -210,49 +298,73 @@ trait WithParcels
                         $year,
                         $month,
                         $day,
-                        (float) ($data['parcel_value'] ?? 0)
+                        $parcelValue
                     );
+
                     $currentParcel++;
                 }
+
+                // Como este grupo já foi tratado,
+                // passamos para o próximo.
+                continue;
             }
-            // ====== GRUPOS INTERMÉDIOS/ENTRADA AGRUPADA ======
+
+            /**
+             * ===========================================================
+             * AGRUPA O GRUPO
+             * ===========================================================
+             */
+
+            // Caso o grupo possua apenas uma parcela
+            if ($groupSize === 1) {
+
+                // Ex.: 1/60
+                $ord = "{$currentParcel}/{$totalParcels}";
+
+                if ($currentParcel === 1) {
+                    $ord .= " (Ent.)";
+                }
+
+                $value = $parcelValue;
+            }
+
+            // Grupo com mais de uma parcela
             else {
-                // Se não for o último e for maior que 1, agrupamos visualmente (ex: 2+48)
-                if ($groupSize > 1) {
-                    $start = $currentParcel;
-                    $end   = $currentParcel + $groupSize - 1;
-                    $ord = "{$start}-{$end}/{$totalParcels}";
-                    if ($start === 1) $ord .= " (Ent.)";
 
-                    $this->pushParcel(
-                        $ord,
-                        $year,
-                        $month,
-                        $day,
-                        floatval($data['parcel_value']) * $groupSize
-                    );
-                    $currentParcel += $groupSize;
-                } else {
-                    // Caso seja um grupo de apenas 1 parcela (ex: 1+1+40)
-                    $ord = "{$currentParcel}/{$totalParcels}";
-                    if ($currentParcel === 1) $ord .= " (Ent.)";
+                // Ex.: 3-4/50
+                $start = $currentParcel;
+                $end = $currentParcel + $groupSize - 1;
 
-                    $this->pushParcel(
-                        $ord,
-                        $year,
-                        $month,
-                        $day,
-                        (float) ($data['parcel_value'] ?? 0)
-                    );
-                    $currentParcel++;
+                $ord = "{$start}-{$end}/{$totalParcels}";
+
+                if ($start === 1) {
+                    $ord .= " (Ent.)";
                 }
+
+                // Soma o valor das parcelas agrupadas
+                $value = $parcelValue * $groupSize;
             }
+
+            // Adiciona apenas uma linha representando o grupo
+            $this->pushParcel(
+                $ord,
+                $year,
+                $month,
+                $day,
+                $value
+            );
+
+            // Avança o contador das parcelas
+            $currentParcel += $groupSize;
         }
 
+        // Recalcula os meses de vencimento das parcelas
         $this->adjustMonths();
+
+        // Exibe a tabela de parcelas
         $this->showParcels = true;
     }
-
+    
     private function pushParcel(string $ord, int &$year, int &$month, int $day, ?float $value): void
     {
         $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
