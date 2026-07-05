@@ -184,7 +184,7 @@
                                     @if ($isCobertura)
                                         @php
                                             // Se o evento for de coberturas, sempre mostra o lance-alvo, mesmo que seja 0
-                                            $showTargetValue = true;
+                                            $alreadyDisplayedTargetValue = true;
                                         @endphp
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
