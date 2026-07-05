@@ -174,7 +174,7 @@
                                     @endif
 
                                     {{-- Mostra lance alvo se for venda de coberturas --}}
-                                    @if (str_contains(strtolower($event->name), 'cobertura'))
+                                    {{-- @if (str_contains(strtolower($event->name), 'cobertura'))
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
 
@@ -192,7 +192,7 @@
                                                 </span>
                                             @endif
                                         </div>
-                                    @endif
+                                    @endif --}}
 
                                     {{-- Só mostra valores para eventos que não são VENDA DIRETA --}}
                                     @if (!$event->is_permanent)
