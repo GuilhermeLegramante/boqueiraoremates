@@ -19,6 +19,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use App\Models\Event;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Get;
 use Illuminate\Support\Facades\Storage;
@@ -401,6 +402,55 @@ class LotesRelationManager extends RelationManager
                     }),
             ])
             ->actions([
+                Tables\Actions\Action::make('photos')
+                    ->label('Fotos')
+                    ->icon('heroicon-o-photo')
+                    ->color('warning')
+                    ->modalHeading('Gerenciar Fotos')
+                    ->modalWidth('4xl')
+                    ->mountUsing(function ($form, $record) {
+
+                        $form->fill([
+                            'photo' => $record->photo,
+                            'photo_full' => $record->photo_full,
+
+                            'animal_photo' => $record->animal?->photo,
+                            'animal_photo_full' => $record->animal?->photo_full,
+                        ]);
+                    })
+                    ->form([
+                        Section::make('Fotos do Lote')
+                            ->columns(2)
+                            ->schema([
+
+                                FileUpload::make('photo')
+                                    ->label('Foto (Miniatura)')
+                                    ->image()
+                                    ->directory('animals/photos')
+                                    ->nullable(),
+
+                                FileUpload::make('photo_full')
+                                    ->label('Foto (Grande)')
+                                    ->image()
+                                    ->directory('animals/photos_full')
+                                    ->nullable(),
+
+                            ]),
+
+
+                    ])
+                    ->action(function (array $data, $record) {
+                        // Atualiza o lote
+                        $record->update([
+                            'photo' => $data['photo'] ?? null,
+                            'photo_full' => $data['photo_full'] ?? null,
+                        ]);
+
+                        Notification::make()
+                            ->title('Fotos atualizadas com sucesso!')
+                            ->success()
+                            ->send();
+                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
