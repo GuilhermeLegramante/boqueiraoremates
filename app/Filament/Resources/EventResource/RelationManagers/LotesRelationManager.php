@@ -190,11 +190,16 @@ class LotesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->recordAction(null)
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\ImageColumn::make('photo')
-                    ->label('Foto')
-                    ->square(),
+                Tables\Columns\ViewColumn::make('photo')
+                    ->label('Foto (Mini)')
+                    ->view('filament.tables.columns.inline-uploader'),
+
+                Tables\Columns\ViewColumn::make('photo_full')
+                    ->label('Foto (Grande)')
+                    ->view('filament.tables.columns.inline-uploader'),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label('Animal')
@@ -222,8 +227,6 @@ class LotesRelationManager extends RelationManager
                     ->label('Lote')
                     ->rules(['required', 'max:255']) // Regras de validação opcionais
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.lot_number', $direction)),
-
-
 
                 Tables\Columns\TextColumn::make('min_value')
                     ->label('Lance Inicial')
@@ -402,55 +405,6 @@ class LotesRelationManager extends RelationManager
                     }),
             ])
             ->actions([
-                Tables\Actions\Action::make('photos')
-                    ->label('Fotos')
-                    ->icon('heroicon-o-photo')
-                    ->color('warning')
-                    ->modalHeading('Gerenciar Fotos')
-                    ->modalWidth('4xl')
-                    ->mountUsing(function ($form, $record) {
-
-                        $form->fill([
-                            'photo' => $record->photo,
-                            'photo_full' => $record->photo_full,
-
-                            'animal_photo' => $record->animal?->photo,
-                            'animal_photo_full' => $record->animal?->photo_full,
-                        ]);
-                    })
-                    ->form([
-                        Section::make('Fotos do Lote')
-                            ->columns(2)
-                            ->schema([
-
-                                FileUpload::make('photo')
-                                    ->label('Foto (Miniatura)')
-                                    ->image()
-                                    ->directory('animals/photos')
-                                    ->nullable(),
-
-                                FileUpload::make('photo_full')
-                                    ->label('Foto (Grande)')
-                                    ->image()
-                                    ->directory('animals/photos_full')
-                                    ->nullable(),
-
-                            ]),
-
-
-                    ])
-                    ->action(function (array $data, $record) {
-                        // Atualiza o lote
-                        $record->update([
-                            'photo' => $data['photo'] ?? null,
-                            'photo_full' => $data['photo_full'] ?? null,
-                        ]);
-
-                        Notification::make()
-                            ->title('Fotos atualizadas com sucesso!')
-                            ->success()
-                            ->send();
-                    }),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ])
@@ -459,5 +413,47 @@ class LotesRelationManager extends RelationManager
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    // Adicione este método dentro da classe LotesRelationManager
+
+    public function updated($property, $value)
+    {
+        // Verifica se a propriedade alterada vem do nosso uploader customizado
+        // Formato esperado: mountedTableActionsData.{id}.{campo}
+        if (str_starts_with($property, 'mountedTableActionsData.')) {
+            $parts = explode('.', $property);
+
+            if (count($parts) === 3) {
+                $recordId = $parts[1];
+                $fieldName = $parts[2]; // 'photo' ou 'photo_full'
+
+                // Valida se é um dos nossos campos de imagem
+                if (in_array($fieldName, ['photo', 'photo_full']) && $value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+
+                    // Busca o registro do lote (AnimalEvent)
+                    $record = $this->getOwnerRecord()->lotes()->find($recordId);
+
+                    if ($record) {
+                        // Define o diretório baseado no campo
+                        $directory = $fieldName === 'photo' ? 'animals/photos' : 'animals/photos_full';
+
+                        // Salva o arquivo permanentemente no disco público
+                        $path = $value->store($directory, 'public');
+
+                        // Atualiza o banco de dados
+                        $record->update([
+                            $fieldName => $path
+                        ]);
+
+                        // Opcional: envia notificação toast discreta
+                        $this->dispatch('notify', [
+                            'status' => 'success',
+                            'message' => 'Imagem do lote atualizada!',
+                        ]);
+                    }
+                }
+            }
+        }
     }
 }
