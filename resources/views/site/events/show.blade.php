@@ -195,11 +195,13 @@
                                                     class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                     R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                                 </span>
-                                                <span>Qtde de Parcelas:</span>
-                                                <span
-                                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    {{ $animal->pivot->parcels_quantity }}
-                                                </span>
+                                                @if ($animal->pivot->parcels_quantity > 0)
+                                                    <span>Qtde de Parcelas:</span>
+                                                    <span
+                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                        {{ $animal->pivot->parcels_quantity }}
+                                                    </span>
+                                                @endif
                                             @else
                                                 <span>&nbsp;</span>
                                                 <span
@@ -251,11 +253,13 @@
                                                         class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                         R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                                     </span>
-                                                    <span>Qtde de Parcelas:</span>
-                                                    <span
-                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                        {{ $animal->pivot->parcels_quantity }}
-                                                    </span>
+                                                    @if ($animal->pivot->parcels_quantity > 0)
+                                                        <span>Qtde de Parcelas:</span>
+                                                        <span
+                                                            class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                            {{ $animal->pivot->parcels_quantity }}
+                                                        </span>
+                                                    @endif
                                                 @else
                                                     {{-- Espaçador invisível para manter o alinhamento visual dos cards --}}
                                                     <span>&nbsp;</span>
