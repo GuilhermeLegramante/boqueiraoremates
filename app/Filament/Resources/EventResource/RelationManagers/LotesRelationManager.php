@@ -22,6 +22,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Support\Facades\Storage;
 use Filament\Notifications\Notification;
 
@@ -143,8 +144,19 @@ class LotesRelationManager extends RelationManager
                     ->prefix('R$')
                     ->numeric()
                     ->live()
-                    ->debounce(1000)
-                    ->nullable(),
+                    ->afterStateUpdated(function (Set $set, $state) {
+                        if (blank($state)) {
+                            $set('parcels_quantity', null);
+                        }
+                    }),
+
+                TextInput::make('parcels_quantity')
+                    ->label('Total de Parcelas')
+                    ->numeric()
+                    ->minValue(1)
+                    ->default(1)
+                    ->visible(fn(Get $get): bool => filled($get('target_value')))
+                    ->required(fn(Get $get): bool => filled($get('target_value'))),
 
                 // 🔹 NOVO CAMPO: Lote Vinculado (Múltipla-escolha)
                 Select::make('linked_animal_event_id')

@@ -195,6 +195,11 @@
                                                     class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                     R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                                 </span>
+                                                <span>Qtde de Parcelas:</span>
+                                                <span
+                                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    {{ $animal->pivot->parcels_quantity }}
+                                                </span>
                                             @else
                                                 <span>&nbsp;</span>
                                                 <span
@@ -245,6 +250,11 @@
                                                     <span
                                                         class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                         R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
+                                                    </span>
+                                                    <span>Qtde de Parcelas:</span>
+                                                    <span
+                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                        {{ $animal->pivot->parcels_quantity }}
                                                     </span>
                                                 @else
                                                     {{-- Espaçador invisível para manter o alinhamento visual dos cards --}}

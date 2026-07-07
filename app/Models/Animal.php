@@ -85,6 +85,7 @@ class Animal extends Model
                 'video_link',
                 'visible',
                 'linked_animal_event_id', // 🔹 Adicionado aqui múltipla escolha
+                'parcels_quantity',
             ])
             ->withTimestamps();
     }

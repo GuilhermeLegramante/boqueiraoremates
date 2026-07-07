@@ -24,7 +24,8 @@ class AnimalEvent extends Pivot
         'note',
         'video_link',
         'visible',
-        'linked_animal_event_id', // 🔹 Adicionado aqui múltipla escolha
+        'linked_animal_event_id',
+        'parcels_quantity',
     ];
 
     public $timestamps = true;
