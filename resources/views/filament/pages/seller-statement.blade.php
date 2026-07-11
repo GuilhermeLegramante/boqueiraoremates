@@ -6,7 +6,7 @@
         <br>
         <br>
 
-        <x-filament::button type="submit" form="submit">
+        <x-filament::button type="submit" form="submit" x-on:click="document.getElementById('submit').target = '_blank'">
             Gerar Extrato do Vendedor
         </x-filament::button>
     </form>
