@@ -396,10 +396,14 @@ class SellerStatement extends Page
                 ->success()
                 ->send();
 
-            return redirect()->route('seller-statement-pdf', [
+            // return redirect()->route('seller-statement-pdf', [
+            //     'eventId' => $eventId,
+            //     'sellerId' => $sellerId,
+            // ]);
+            $this->dispatch('open-pdf', url: route('seller-statement-pdf', [
                 'eventId' => $eventId,
                 'sellerId' => $sellerId,
-            ]);
+            ]));
         } catch (\Exception $e) {
             Notification::make()
                 ->title('Erro ao salvar')
