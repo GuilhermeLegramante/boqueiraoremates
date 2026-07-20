@@ -32,16 +32,19 @@ class BidTable
             TextColumn::make('created_at')
                 ->label('Data')
                 ->date('d/m/y')
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->sortable(),
 
             TextColumn::make('amount')
                 ->label('Valor')
                 ->money('BRL')
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->sortable(),
 
             TextColumn::make('lot_number')
                 // ->searchable()
                 // ->sortable()
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->label('Lote'),
 
             TextColumn::make('event.name')
@@ -51,6 +54,7 @@ class BidTable
                 ->extraAttributes([
                     'class' => 'text-xs',
                 ])
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->label('Evento')
                 ->formatStateUsing(function (?string $state): string {
                     if (!$state) {
@@ -81,16 +85,58 @@ class BidTable
             TextColumn::make('user.name')
                 ->label('Cliente')
                 ->sortable(false)
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->copyable()
                 ->searchable(['users.name'])
                 ->getStateUsing(function ($record) {
                     return $record->user?->name ?? '—';
                 }),
 
+            TextColumn::make('user.client.cpf_cnpj')
+                ->label('CPF/CNPJ')
+                ->sortable(false)
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->copyable()
+                ->searchable(['users.client.cpf_cnpj'])
+                ->getStateUsing(function ($record) {
+                    return $record->user?->client?->cpf_cnpj ?? '—';
+                }),
+
+            TextColumn::make('user.client.whatsapp')
+                ->label('WhatsApp')
+                ->sortable(false)
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->copyable()
+                ->searchable(['users.client.whatsapp'])
+                ->getStateUsing(function ($record) {
+                    return $record->user?->client?->whatsapp ?? '—';
+                }),
+
+            TextColumn::make('user.client.address.city')
+                ->label('Cidade')
+                ->sortable(false)
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->copyable()
+                ->searchable(['users.client.address.city'])
+                ->getStateUsing(function ($record) {
+                    return $record->user?->client?->address?->city ?? '—';
+                }),
+
+            TextColumn::make('user.client.address.state')
+                ->label('Estado')
+                ->sortable(false)
+                ->toggleable(isToggledHiddenByDefault: true)
+                ->copyable()
+                ->searchable(['users.client.address.state'])
+                ->getStateUsing(function ($record) {
+                    return $record->user?->client?->address?->state ?? '—';
+                }),
+
             TextColumn::make('animalToFilament.name')
                 ->searchable(['animals.name'])
                 ->label('Animal')
-                ->sortable(['animals.name']),
+                ->sortable(['animals.name'])
+                ->toggleable(isToggledHiddenByDefault: false),
 
             TextColumn::make('approvedBy.name')
                 ->label('Aprovado por')
