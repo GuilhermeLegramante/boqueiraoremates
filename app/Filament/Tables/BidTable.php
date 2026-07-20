@@ -31,7 +31,7 @@ class BidTable
 
             TextColumn::make('created_at')
                 ->label('Data')
-                ->date()
+                ->date('d/m/y')
                 ->sortable(),
 
             TextColumn::make('amount')
