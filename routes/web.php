@@ -12,6 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SalesMapController;
 use App\Http\Controllers\SellerStatementController;
+use App\Models\Bid;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -228,3 +229,15 @@ Route::get('/teste-cpf', function () {
         'id_do_usuario_no_cliente' => $client->registered_user_id
     ]);
 });
+
+Route::get('/historico-lote/{bid}', function (Bid $bid) {
+
+    session([
+        '_approved_active_selected_event_id'  => $bid->event_id,
+        '_approved_active_selected_lot_id'    => $bid->animal_event_id,
+        '_approved_active_selected_client_id' => $bid->user_id,
+        // '_approved_active_selected_status_id' => 1,
+    ]);
+
+    return redirect()->route('filament.admin.resources.lances-aprovados-leiloes-ativos.index');
+})->name('historico-lote');

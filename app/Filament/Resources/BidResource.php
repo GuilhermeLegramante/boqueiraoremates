@@ -22,6 +22,7 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
 use Illuminate\Support\HtmlString;
+
 class BidResource extends Resource
 {
     protected static ?string $model = Bid::class;
@@ -189,6 +190,13 @@ class BidResource extends Resource
                             'status' => 0,
                             'approved_by' => null,
                         ])),
+
+                    Action::make('historico')
+                        ->label('Histórico de Lances')
+                        ->icon('heroicon-o-clock')
+                        ->color('success')
+                        ->url(fn(Bid $record) => route('historico-lote', $record))
+                        ->openUrlInNewTab(),
                 ])
                     ->label('Ações') // texto do botão do grupo
                     ->icon('heroicon-o-cog-6-tooth')

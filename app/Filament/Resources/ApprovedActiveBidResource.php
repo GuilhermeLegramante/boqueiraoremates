@@ -61,7 +61,7 @@ class ApprovedActiveBidResource extends Resource
 
                 // Se não houver status selecionado, define o padrão como 1
                 if ($statusId === null || $statusId === '') {
-                    $statusId = 1;
+                    // $statusId = 1;
                 }
 
                 // Aplica os filtros
