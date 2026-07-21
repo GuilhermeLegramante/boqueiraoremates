@@ -235,7 +235,7 @@ Route::get('/historico-lote/{bid}', function (Bid $bid) {
     session([
         '_approved_active_selected_event_id'  => $bid->event_id,
         '_approved_active_selected_lot_id'    => $bid->animal_event_id,
-        '_approved_active_selected_client_id' => $bid->user_id,
+        // '_approved_active_selected_client_id' => $bid->user_id,
         // '_approved_active_selected_status_id' => 1,
     ]);
 
