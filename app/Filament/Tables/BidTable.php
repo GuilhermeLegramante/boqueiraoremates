@@ -97,7 +97,7 @@ class BidTable
                 ->sortable(false)
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->copyable()
-                ->searchable(['users.client.cpf_cnpj'])
+                // ->searchable(['users.client.cpf_cnpj'])
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->cpf_cnpj ?? '—';
                 }),
@@ -107,7 +107,7 @@ class BidTable
                 ->sortable(false)
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->copyable()
-                ->searchable(['users.client.whatsapp'])
+                // ->searchable(['users.client.whatsapp'])
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->whatsapp ?? '—';
                 }),
