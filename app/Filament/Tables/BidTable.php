@@ -117,7 +117,7 @@ class BidTable
                 ->sortable(false)
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->copyable()
-                ->searchable(['users.client.address.city'])
+                // ->searchable(['users.client.address.city'])
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->address?->city ?? '—';
                 }),
@@ -127,7 +127,7 @@ class BidTable
                 ->sortable(false)
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->copyable()
-                ->searchable(['users.client.address.state'])
+                // ->searchable(['users.client.address.state'])
                 ->getStateUsing(function ($record) {
                     return $record->user?->client?->address?->state ?? '—';
                 }),
