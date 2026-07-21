@@ -165,4 +165,11 @@ class ApprovedActiveBidResource extends Resource
             'index' => ListApprovedActiveBids::route('/'),
         ];
     }
+
+    public static function getPluralLabel(): ?string
+    {
+        return session('history_mode')
+            ? 'Histórico de Lances'
+            : 'Lances Aprovados';
+    }
 }
