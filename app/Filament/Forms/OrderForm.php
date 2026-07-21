@@ -288,7 +288,7 @@ class OrderForm
                 Select::make('sale_type')
                     ->label('Tipo de Venda')
                     ->options([
-                        'animal_inteiro' => 'Animal Inteiro',
+                        'animal_inteiro' => 'O Animal',
                         'cota' => 'Cota',
                         'direito_de_uso' => 'Direito de Uso',
                         'cobertura' => 'Cobertura',

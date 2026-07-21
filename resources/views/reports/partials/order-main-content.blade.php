@@ -133,7 +133,7 @@
 
                     @switch($order->sale_type)
                         @case('animal_inteiro')
-                            Animal Inteiro
+                            O Animal
                         @break
 
                         @case('cota')

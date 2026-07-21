@@ -86,7 +86,7 @@ class OrderResource extends Resource
                     ->label('Tipo de Venda')
                     ->formatStateUsing(function ($state, $record) {
                         return match ($state) {
-                            'animal_inteiro' => 'Animal Inteiro',
+                            'animal_inteiro' => 'O Animal',
                             'cota' => 'Cota (' . $record->sale_type_percentage . '%)',
                             'direito_de_uso' => 'Direito de Uso (' . $record->sale_type_percentage . '%)',
                             'cobertura' => 'Cobertura (' . $record->sale_type_quantity . ')',
