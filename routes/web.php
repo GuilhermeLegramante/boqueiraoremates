@@ -237,6 +237,7 @@ Route::get('/historico-lote/{bid}', function (Bid $bid) {
         '_approved_active_selected_lot_id'    => $bid->animal_event_id,
         // '_approved_active_selected_client_id' => $bid->user_id,
         // '_approved_active_selected_status_id' => 1,
+        'history_mode' => true, // Para indicar que estamos em modo histórico, e não em modo de lances ativos
     ]);
 
     return redirect()->route('filament.admin.resources.lances-aprovados-leiloes-ativos.index');

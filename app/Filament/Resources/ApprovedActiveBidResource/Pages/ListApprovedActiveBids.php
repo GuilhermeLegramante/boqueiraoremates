@@ -16,4 +16,11 @@ class ListApprovedActiveBids extends ListRecords
             // Actions\CreateAction::make(),
         ];
     }
+
+    public function getTitle(): string
+    {
+        return session('history_mode')
+            ? 'Histórico de Lances'
+            : 'Lances Aprovados - Leilões ATIVOS';
+    }
 }
