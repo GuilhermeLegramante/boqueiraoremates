@@ -23,4 +23,11 @@ class ListApprovedActiveBids extends ListRecords
             ? 'Histórico de Lances'
             : 'Lances Aprovados - Leilões ATIVOS';
     }
+
+    public function getBreadcrumb(): string
+    {
+        return session('history_mode')
+            ? 'Histórico de Lances'
+            : 'Lances Aprovados';
+    }
 }
