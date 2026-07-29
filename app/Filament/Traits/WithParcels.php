@@ -364,7 +364,7 @@ trait WithParcels
         // Exibe a tabela de parcelas
         $this->showParcels = true;
     }
-    
+
     private function pushParcel(string $ord, int &$year, int &$month, int $day, ?float $value): void
     {
         $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
@@ -457,52 +457,38 @@ trait WithParcels
     {
         $data = $this->form->getState();
 
-        $parcel = [];
-        $month = 1;
-        $year = 0;
         $this->buyerSum = 0;
         $this->buyerParcels = [];
         $this->buyerValues = [];
+        $this->buyerParcelsDates = [];
 
-        $parcelValue = floatval($data['buyer_comission_value']) / $data['buyer_commission_installments_number'];
+        $installments = (int) $data['buyer_commission_installments_number'];
+        $parcelValue = (float) $data['buyer_comission_value'] / $installments;
+        $dueDay = (int) $data['buyer_due_day'];
 
-        $this->buyerValues[0] = number_format($parcelValue, 2);
+        // Primeira parcela:
+        // 1 parcela -> mês atual
+        // mais de 1 parcela -> mês seguinte
+        $firstDate = $installments == 1
+            ? now()->startOfMonth()
+            : now()->addMonth()->startOfMonth();
 
-        for ($i = 0; $i < floatval($data['buyer_commission_installments_number']); $i++) {
-            $day = str_pad(floatval($data['buyer_due_day']), 2, '0', STR_PAD_LEFT);
+        for ($i = 0; $i < $installments; $i++) {
 
-            $year = $year == 0 ? now()->format('Y') : $year;
+            $date = $firstDate->copy()->addMonths($i);
 
-            $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+            // Ajusta o dia para o último dia do mês caso necessário
+            $date->day(min($dueDay, $date->daysInMonth));
 
-            $parcel['ord'] = $i + 1 . '/' . $data['buyer_commission_installments_number'];
-            $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
+            $parcel = [
+                'ord'  => ($i + 1) . '/' . $installments,
+                'date' => $date->format('Y-m-d'),
+            ];
 
-            $this->buyerValues[$i] = number_format($parcelValue, 2);
+            $this->buyerParcels[] = $parcel;
             $this->buyerParcelsDates[$i] = $parcel['date'];
-
-            $this->buyerSum += doubleval($parcelValue);
-
-            if (intval($month) <= 11) {
-                $month++;
-                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-            } else {
-                $month = 1;
-                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-                $year++;
-            }
-
-            if ((($day == '30') || ($day == '29') || ($day == '31')) && ($month == 2)) {
-                $day = '28';
-            } else {
-                $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
-            }
-
-            array_push($this->buyerParcels, $parcel);
-        }
-
-        for ($i = 0; $i < count($this->buyerValues); $i++) {
-            $this->buyerValues[$i] = str_replace(",", "", str_replace("11223344", "", $this->buyerValues[$i]));
+            $this->buyerValues[$i] = number_format($parcelValue, 2, '.', '');
+            $this->buyerSum += $parcelValue;
         }
 
         $this->showBuyerParcels = true;
@@ -512,51 +498,38 @@ trait WithParcels
     {
         $data = $this->form->getState();
 
-        $parcel = [];
-        $month = 1;
-        $year = 0;
         $this->sellerSum = 0;
         $this->sellerParcels = [];
+        $this->sellerValues = [];
+        $this->sellerParcelsDates = [];
 
-        $parcelValue = floatval($data['seller_comission_value']) / $data['seller_commission_installments_number'];
+        $installments = (int) $data['seller_commission_installments_number'];
+        $parcelValue = (float) $data['seller_comission_value'] / $installments;
+        $dueDay = (int) $data['seller_due_day'];
 
-        $this->sellerValues[0] = $parcelValue;
+        // Primeira parcela:
+        // 1 parcela -> mês atual
+        // mais de 1 parcela -> mês seguinte
+        $firstDate = $installments == 1
+            ? now()->startOfMonth()
+            : now()->addMonth()->startOfMonth();
 
-        for ($i = 0; $i < floatval($data['seller_commission_installments_number']); $i++) {
-            $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
+        for ($i = 0; $i < $installments; $i++) {
 
-            $year = $year == 0 ? now()->format('Y') : $year;
+            $date = $firstDate->copy()->addMonths($i);
 
-            $month = ($month == 1 && $year == now()->format('Y')) ? now()->addMonths(1)->format('n') : $month;
+            // Ajusta para o último dia do mês caso o dia informado não exista
+            $date->day(min($dueDay, $date->daysInMonth));
 
-            $parcel['ord'] = $i + 1 . '/' . $data['seller_commission_installments_number'];
-            $parcel['date'] = $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) .  '-' . $day;
+            $parcel = [
+                'ord'  => ($i + 1) . '/' . $installments,
+                'date' => $date->format('Y-m-d'),
+            ];
 
-            $this->sellerValues[$i] = number_format($parcelValue, 2);
+            $this->sellerParcels[] = $parcel;
             $this->sellerParcelsDates[$i] = $parcel['date'];
-
-            $this->sellerSum += doubleval($parcelValue);
-
-            if (intval($month) <= 11) {
-                $month++;
-                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-            } else {
-                $month = 1;
-                $month = str_pad($month, 2, '0', STR_PAD_LEFT);
-                $year++;
-            }
-
-            if ((($day == '30') || ($day == '29') || ($day == '31')) && ($month == 2)) {
-                $day = '28';
-            } else {
-                $day = str_pad(floatval($data['seller_due_day']), 2, '0', STR_PAD_LEFT);
-            }
-
-            array_push($this->sellerParcels, $parcel);
-        }
-
-        for ($i = 0; $i < count($this->sellerValues); $i++) {
-            $this->sellerValues[$i] = str_replace(",", "", $this->sellerValues[$i]);
+            $this->sellerValues[$i] = number_format($parcelValue, 2, '.', '');
+            $this->sellerSum += $parcelValue;
         }
 
         $this->showSellerParcels = true;
