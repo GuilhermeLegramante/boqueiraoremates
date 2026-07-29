@@ -478,9 +478,7 @@ trait WithParcels
             $date = $firstDate->copy()->addMonths($i);
 
             // Ajusta o dia para o último dia do mês caso necessário
-            if ($installments > 1) {
-                $date->day(min($dueDay, $date->daysInMonth));
-            }
+            $date->day(min($dueDay, $date->daysInMonth));
 
             $parcel = [
                 'ord'  => ($i + 1) . '/' . $installments,
@@ -521,9 +519,7 @@ trait WithParcels
             $date = $firstDate->copy()->addMonths($i);
 
             // Ajusta para o último dia do mês caso o dia informado não exista
-            if ($installments > 1) {
-                $date->day(min($dueDay, $date->daysInMonth));
-            }
+            $date->day(min($dueDay, $date->daysInMonth));
 
             $parcel = [
                 'ord'  => ($i + 1) . '/' . $installments,
