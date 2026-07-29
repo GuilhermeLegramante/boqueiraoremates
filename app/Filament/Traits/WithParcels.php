@@ -467,10 +467,10 @@ trait WithParcels
         $dueDay = (int) $data['buyer_due_day'];
 
         // Primeira parcela:
-        // 1 parcela -> mês atual
+        // 1 parcela -> mês atual (hoje)
         // mais de 1 parcela -> mês seguinte
         $firstDate = $installments == 1
-            ? now()->startOfMonth()
+            ? now()
             : now()->addMonth()->startOfMonth();
 
         for ($i = 0; $i < $installments; $i++) {
@@ -508,10 +508,10 @@ trait WithParcels
         $dueDay = (int) $data['seller_due_day'];
 
         // Primeira parcela:
-        // 1 parcela -> mês atual
+        // 1 parcela -> mês atual (hoje)
         // mais de 1 parcela -> mês seguinte
         $firstDate = $installments == 1
-            ? now()->startOfMonth()
+            ? now()
             : now()->addMonth()->startOfMonth();
 
         for ($i = 0; $i < $installments; $i++) {
