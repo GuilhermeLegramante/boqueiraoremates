@@ -191,7 +191,7 @@
                             $isAvailable = strtolower($animal->pivot->status) === 'disponivel';
                             $isEventOpen = !$event->closed;
                             $hasTargetValue = (float) $animal->pivot->target_value > 0;
-                            $canParticipateInPermanentEvent = !$event->is_permanent;
+                            $canParticipateInPermanentEvent = !$event->is_permanent || $hasTargetValue;
 
                         @endphp
 
@@ -200,6 +200,10 @@
                              Se o evento não é permanente, passa.
                              Se o evento é permanente, então o target_value deve ser maior que zero.  --}}
                         @if ($isAvailable && $isEventOpen && $canParticipateInPermanentEvent)
+
+                            <p>{{ $isAvailable ? 'Disponível' : 'Indisponível' }}</p>
+                            <p>{{ $isEventOpen ? 'Evento aberto' : 'Evento fechado' }}</p>
+                            <p>{{ $canParticipateInPermanentEvent ? 'Pode participar' : 'Não pode participar' }}</p>
 
                             {{-- Cliente está apto --}}
                             @if ($client && $client->situation === 'able')
