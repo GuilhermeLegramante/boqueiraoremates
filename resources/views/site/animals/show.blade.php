@@ -191,7 +191,7 @@
                             $isAvailable = strtolower($animal->pivot->status) === 'disponivel';
                             $isEventOpen = !$event->closed;
                             $hasTargetValue = (float) $animal->pivot->target_value > 0;
-                            $canParticipateInPermanentEvent = !$event->is_permanent || $hasTargetValue;
+                            $canParticipateInPermanentEvent = !$event->is_permanent;
 
                         @endphp
 
