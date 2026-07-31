@@ -151,7 +151,7 @@ class EventForm
 
             Toggle::make('can_offer')
                 ->label('Permitir Ofertas')
-                ->default(false),
+                ->default(true),
         ];
     }
 }
