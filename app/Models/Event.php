@@ -27,12 +27,14 @@ class Event extends Model
         'regulation_image_path',
         'benefits_image_path',
         'is_permanent',
+        'can_offer'
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'finish_date' => 'datetime',
         'multiplier' => 'double',
+        'can_offer' => 'boolean'
     ];
 
     public function orders(): HasMany

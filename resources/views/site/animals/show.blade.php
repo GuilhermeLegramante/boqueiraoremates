@@ -192,14 +192,16 @@
                             $isEventOpen = !$event->closed;
                             $hasTargetValue = (float) $animal->pivot->target_value > 0;
                             $canParticipateInPermanentEvent = !$event->is_permanent || $hasTargetValue;
+                            $canOffer = $event->can_offer; // Verifica se o evento permite ofertas
 
                         @endphp
 
                         {{-- O animal deve estar disponível.
                              O evento não pode estar encerrado.
                              Se o evento não é permanente, passa.
-                             Se o evento é permanente, então o target_value deve ser maior que zero.  --}}
-                        @if ($isAvailable && $isEventOpen && $canParticipateInPermanentEvent)
+                             Se o evento é permanente, então o target_value deve ser maior que zero.  
+                             Se o evento permite ofertas, então o cliente pode participar. --}}
+                        @if ($isAvailable && $isEventOpen && $canParticipateInPermanentEvent && $canOffer)
 
 
                             {{-- Cliente está apto --}}

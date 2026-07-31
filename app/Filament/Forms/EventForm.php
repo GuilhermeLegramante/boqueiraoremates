@@ -148,6 +148,10 @@ class EventForm
             Toggle::make('is_permanent')
                 ->label('Venda Permanente')
                 ->default(false),
+
+            Toggle::make('can_offer')
+                ->label('Permitir Ofertas')
+                ->default(false),
         ];
     }
 }
