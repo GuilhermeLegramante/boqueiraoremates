@@ -187,12 +187,20 @@
                             $client = Auth::user()->client;
 
                             $plantao = \App\Models\PlantaoConfig::where('is_active', true)->get()->first();
+
+                            $isAvailable = strtolower($animal->pivot->status) === 'disponivel';
+                            $isEventOpen = !$event->closed;
+                            $hasTargetValue = (float) $animal->pivot->target_value > 0;
+                            $canParticipateInPermanentEvent = !$event->is_permanent || $hasTargetValue;
+
                         @endphp
 
-                        {{-- Pode dar lance somente se estiver disponível e evento não fechado --}}
-                        @if (strtolower($animal->pivot->status) === 'disponivel' &&
-                                !$event->closed &&
-                                (!$event->is_permanent || (float) $animal->pivot->target_value > 0))
+                        {{-- O animal deve estar disponível.
+                             O evento não pode estar encerrado.
+                             Se o evento não é permanente, passa.
+                             Se o evento é permanente, então o target_value deve ser maior que zero.  --}}
+                        @if ($isAvailable && $isEventOpen && $canParticipateInPermanentEvent)
+
                             {{-- Cliente está apto --}}
                             @if ($client && $client->situation === 'able')
                                 {{-- FORMULÁRIO DE LANCE --}}
