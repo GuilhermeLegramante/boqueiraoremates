@@ -337,6 +337,7 @@
                     $parts = explode('.', $a->pivot->lot_number);
                     return [(int) $parts[0], (int) ($parts[1] ?? 0)];
                 })
+                ->where('pivot.visible', true)
                 ->values();
 
             $currentAnimalIndex = $animalsOrdered->search(fn($a) => $a->pivot->id === $animal->pivot->id);
