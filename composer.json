@@ -18,6 +18,7 @@
         "filipfonal/filament-log-manager": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "hasnayeen/themes": "^3.0",
+        "kwn/number-to-words": "^3.0",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",

@@ -61,6 +61,15 @@ class EditOrder extends EditRecord
         return $data;
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if ($this->record->hasContract()) {
+            abort(403, 'Esta Ordem de Serviço possui contrato emitido e não pode mais ser alterada.');
+        }
+
+        return $data;
+    }
+
     public function save(bool $shouldRedirect = true): void
     {
         $this->authorizeAccess();

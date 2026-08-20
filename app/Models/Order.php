@@ -201,4 +201,14 @@ class Order extends Model
     {
         return 'OS';
     }
+
+    public function contract(): HasOne
+    {
+        return $this->hasOne(Contract::class);
+    }
+
+    public function hasContract(): bool
+    {
+        return $this->contract()->exists();
+    }
 }

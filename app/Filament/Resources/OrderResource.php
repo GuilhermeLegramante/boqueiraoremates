@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Forms\OrderForm;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers\BuyerParcelsRelationManager;
+use App\Filament\Resources\OrderResource\RelationManagers\ContractsRelationManager;
 use App\Filament\Resources\OrderResource\RelationManagers\ParcelsRelationManager;
 use App\Filament\Resources\OrderResource\RelationManagers\SellerParcelsRelationManager;
 use App\Filament\Resources\OrderResource\Widgets\ActiveOrdersChart;
@@ -269,6 +270,7 @@ class OrderResource extends Resource
             ParcelsRelationManager::class,
             BuyerParcelsRelationManager::class,
             SellerParcelsRelationManager::class,
+            // ContractsRelationManager::class,
         ];
     }
 

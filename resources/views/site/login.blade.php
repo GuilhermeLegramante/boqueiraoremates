@@ -57,7 +57,8 @@
 
                     {{-- Usuário / CPF --}}
                     <div>
-                        <label for="username" id="usernameLabel" class="block font-semibold mb-1">Usuário ou CPF/CNPJ</label>
+                        <label for="username" id="usernameLabel" class="block font-semibold mb-1">Usuário ou
+                            CPF/CNPJ</label>
                         <input type="text" name="username" id="username"
                             class="w-full border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 outline-none"
                             placeholder="Digite seu usuário ou CPF" required>
@@ -113,9 +114,9 @@
                             <input type="checkbox" name="remember" class="mr-2">
                             <span>Lembrar-me</span>
                         </label>
-                        {{-- <button type="button" id="forgotPasswordBtn" class="text-green-700 hover:underline text-sm">
+                        <a href="{{ route('password.request') }}" class="text-green-700 hover:underline text-sm">
                             Esqueci minha senha
-                        </button> --}}
+                        </a>
                     </div>
 
                     {{-- Botão de login --}}
