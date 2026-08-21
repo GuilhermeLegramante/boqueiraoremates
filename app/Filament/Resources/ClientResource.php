@@ -91,11 +91,40 @@ class ClientResource extends Resource
                 TextColumn::make('status.name')
                     ->label('Status')
                     ->badge()
-                    ->color(fn($record) => $record->status?->color ?? '#6B7280')
+                    ->color(function ($record) {
+                        if (!$record->status) {
+                            return 'gray';
+                        }
+
+                        if (strtoupper($record->status->name) === 'CONCLUÍDO') {
+                            return 'success';
+                        }
+
+                        if (strtoupper($record->status->name) === 'EM ANDAMENTO') {
+                            return 'warning';
+                        }
+
+                        return 'gray';
+                    })
+                    ->extraAttributes(function ($record) {
+                        if (
+                            $record->status &&
+                            !in_array(strtoupper($record->status->name), ['CONCLUÍDO', 'EM ANDAMENTO'])
+                        ) {
+                            return [
+                                'style' => "
+                    background-color: {$record->status->color} !important;
+                    color: #fff !important;
+                ",
+                            ];
+                        }
+
+                        return [];
+                    })
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->sortable(),
-
+                    
                 TextColumn::make('name')
                     ->label('Nome')
                     ->color(fn($record) => self::getColor($record))
