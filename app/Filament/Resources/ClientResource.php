@@ -59,6 +59,11 @@ class ClientResource extends Resource
             return 'info';
         }
 
+        // EM ANDAMENTO → laranja
+        if (strtoupper($record->status->name) === 'EM ANDAMENTO') {
+            return 'warning';
+        }
+
         // Status CONCLUÍDO
         if (strtoupper($record->status->name) === 'CONCLUÍDO') {
             // Habilitado → preto
