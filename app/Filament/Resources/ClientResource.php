@@ -124,7 +124,7 @@ class ClientResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->sortable(),
-                    
+
                 TextColumn::make('name')
                     ->label('Nome')
                     ->color(fn($record) => self::getColor($record))
@@ -263,6 +263,12 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('client_status_id')
+                    ->label('Status')
+                    ->relationship('status', 'name')
+                    ->searchable()
+                    ->preload(),
+
                 SelectFilter::make('situation')
                     ->label(__('fields.situation'))
                     ->options([
