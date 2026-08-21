@@ -302,6 +302,12 @@ class ClientResource extends Resource
                     }),
 
             ], layout: FiltersLayout::Dropdown)
+            ->deferFilters()
+            ->filtersApplyAction(
+                fn(Action $action) => $action
+                    ->link()
+                    ->label('Aplicar Filtro(s)'),
+            )
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\EditAction::make(),
