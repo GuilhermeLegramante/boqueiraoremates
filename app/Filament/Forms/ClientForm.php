@@ -5,9 +5,11 @@ namespace App\Filament\Forms;
 use App\Models\Bank;
 use App\Models\City;
 use App\Models\Client;
+use App\Models\ClientStatus;
 use App\Models\DocumentType;
 use App\Models\State;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -42,6 +44,44 @@ class ClientForm
                 ->schema([
                     Fieldset::make('Informações Pessoais')
                         ->schema([
+                            Select::make('client_status_id')
+                                ->label('Status')
+                                ->relationship('status', 'name')
+                                ->searchable()
+                                ->preload()
+                                ->native(false)
+                                ->createOptionForm([
+                                    TextInput::make('name')
+                                        ->label('Nome')
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    ColorPicker::make('color')
+                                        ->label('Cor')
+                                        ->required()
+                                        ->default('#6B7280'),
+
+                                    Toggle::make('active')
+                                        ->label('Ativo')
+                                        ->default(true),
+                                ])
+                                ->createOptionUsing(function (array $data): int {
+                                    return ClientStatus::create($data)->getKey();
+                                })
+                                ->editOptionForm([
+                                    TextInput::make('name')
+                                        ->label('Nome')
+                                        ->required()
+                                        ->maxLength(255),
+
+                                    ColorPicker::make('color')
+                                        ->label('Cor')
+                                        ->required(),
+
+                                    Toggle::make('active')
+                                        ->label('Ativo'),
+                                ]),
+
                             TextInput::make('name')
                                 ->label(__('fields.name'))
                                 ->required()
@@ -52,7 +92,7 @@ class ClientForm
                                 ->required()
                                 ->email()
                                 ->live()
-                                ->required(fn (Get $get): bool => (bool) $get('is_international')),
+                                ->required(fn(Get $get): bool => (bool) $get('is_international')),
 
                             TextInput::make('birth_date')
                                 ->label('Data de Nascimento')

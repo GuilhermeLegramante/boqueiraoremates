@@ -52,6 +52,7 @@ class Client extends Model
         'instagram',
         'facebook',
         'income_range',
+        'client_status_id',
     ];
 
     protected $casts = [
@@ -269,5 +270,10 @@ class Client extends Model
         }
 
         return true;
+    }
+
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(ClientStatus::class, 'client_status_id');
     }
 }

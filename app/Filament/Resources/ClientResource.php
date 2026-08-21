@@ -61,6 +61,14 @@ class ClientResource extends Resource
                     ->label(__('fields.code'))
                     ->toggleable(isToggledHiddenByDefault: true),
 
+                TextColumn::make('status.name')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn($record) => $record->status?->color ?? '#6B7280')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->sortable(),
+
                 TextColumn::make('name')
                     ->label('Nome')
                     ->color(function ($record) {
