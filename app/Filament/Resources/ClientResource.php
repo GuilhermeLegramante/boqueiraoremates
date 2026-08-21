@@ -52,6 +52,28 @@ class ClientResource extends Resource
             ->schema(ClientForm::form());
     }
 
+    public static function getColor($record): ?string
+    {
+        // Sem status → azul
+        if (!$record->status) {
+            return 'info';
+        }
+
+        // Status CONCLUÍDO
+        if (strtoupper($record->status->name) === 'CONCLUÍDO') {
+            // Habilitado → preto
+            if ($record->situation === 'able') {
+                return 'gray';
+            }
+
+            // Não habilitado → vermelho
+            return 'danger';
+        }
+
+        // Demais status → cor cadastrada no status
+        return $record->status->color;
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -71,27 +93,7 @@ class ClientResource extends Resource
 
                 TextColumn::make('name')
                     ->label('Nome')
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->getStateUsing(function ($record) {
                         return $record->name ?? '—';
                     })
@@ -109,54 +111,14 @@ class ClientResource extends Resource
                 TextColumn::make('cpf_cnpj')
                     ->label(__('fields.cpf_cnpj'))
                     ->copyable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
 
                 TextColumn::make('email')
                     ->label(__('fields.email'))
                     ->copyable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->icon('heroicon-m-envelope'),
 
@@ -165,27 +127,7 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->alignment(Alignment::Center)
                     ->badge()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->formatStateUsing(
                         fn(string $state): string => (($state == 'able' ? 'HABILITADO' : ($state == 'disabled' ? 'INABILITADO' : 'INATIVO')))
                     )
@@ -226,135 +168,35 @@ class ClientResource extends Resource
                 TextColumn::make('whatsapp')
                     ->label('Whatsapp')
                     ->searchable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cel_phone')
                     ->label('Celular')
                     ->searchable()
                     ->copyable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('business_phone')
                     ->label('Tel. Comercial')
                     ->searchable()
                     ->copyable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('home_phone')
                     ->label('Tel. Res.')
                     ->searchable()
                     ->copyable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('address.city')
                     ->label('Cidade')
                     ->searchable()
                     ->copyable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('birth_date')
@@ -376,54 +218,14 @@ class ClientResource extends Resource
                 TextColumn::make('created_at')
                     ->label('Dta Inclusão')
                     ->date('d/m/Y')
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->sortable(),
 
                 TextColumn::make('updated_at')
                     ->label(__('fields.updated_at'))
                     ->dateTime()
                     ->sortable()
-                    ->color(function ($record) {
-
-                        $lastNote = $record->notes()
-                            ->latest()
-                            ->first();
-
-                        // Cliente não able + última nota do user 1
-                        if (
-                            $record->situation !== 'able' &&
-                            $lastNote?->user_id === 1
-                        ) {
-                            return 'warning'; // amarelo/laranja
-                        }
-
-                        // regra antiga
-                        if ($record->situation !== 'able') {
-                            return 'danger';
-                        }
-
-                        return null;
-                    })
+                    ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
