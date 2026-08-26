@@ -185,6 +185,7 @@ class ClientForm
 
                             TextInput::make('rg')
                                 ->label(__('fields.rg'))
+                                ->required()
                                 ->numeric(),
                         ])
                         ->columns(2),
@@ -196,6 +197,7 @@ class ClientForm
                                 ->label(__('fields.mother')),
 
                             TextInput::make('father')
+                                ->required()
                                 ->label(__('fields.father')),
                         ])
                         ->columns(2),
@@ -462,6 +464,7 @@ class ClientForm
 
             TextInput::make('rg')
                 ->label(__('fields.rg'))
+                ->required()
                 ->numeric(),
 
             // DatePicker::make('birth_date')
@@ -643,11 +646,12 @@ class ClientForm
             Select::make('bank_id')
                 ->label(__('fields.bank'))
                 ->options(Bank::pluck('name', 'id')->toArray())
+                ->required()
                 ->preload(),
 
-            TextInput::make('bank_agency')->label(__('fields.bank_agency')),
+            TextInput::make('bank_agency')->label(__('fields.bank_agency'))->required(),
 
-            TextInput::make('current_account')->label(__('fields.current_account')),
+            TextInput::make('current_account')->label(__('fields.current_account'))->required(),
 
             Toggle::make('has_register_in_another_auctioneer')->label(__('fields.has_register_in_another_auctioneer')),
 
