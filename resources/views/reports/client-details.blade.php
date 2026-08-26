@@ -133,7 +133,7 @@
             <tr style="font-size: 11px;">
                 <td class="collumn-left"><strong>Canal de Inclusão:</strong>
                     @if ($client->register_origin == 'marketing')
-                        DIVULGAÇÃO
+                        ADM/VENDAS
                     @endif
                     @if ($client->register_origin == 'local')
                         RECINTO
@@ -154,6 +154,9 @@
                     @endif
                     @if ($client->profile == 'both')
                         COMPRA E VENDA
+                    @endif
+                    @if ($client->profile == 'marketing')
+                        DIVULGAÇÃO
                     @endif
                 </td>
                 <td class="collumn-right"></td>

@@ -190,13 +190,21 @@ class ClientResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
-                        fn(string $state): string => (($state == 'purchase' ? 'COMPRA' : ($state == 'sale' ? 'VENDA' : 'AMBOS')))
+                        fn(?string $state): string => match ($state) {
+                            'purchase' => 'COMPRA',
+                            'sale' => 'VENDA',
+                            'both' => 'COMPRA E VENDA',
+                            'marketing' => 'MARKETING',
+                            default => '-',
+                        }
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn(?string $state): string => match ($state) {
                         'purchase' => 'primary',
                         'sale' => 'gray',
                         'both' => 'success',
+                        'marketing' => 'warning',
+                        default => 'gray',
                     }),
 
                 TextColumn::make('whatsapp')
@@ -280,7 +288,7 @@ class ClientResource extends Resource
                 SelectFilter::make('register_origin')
                     ->label(__('fields.register_origin'))
                     ->options([
-                        'marketing' => 'Divulgação',
+                        'marketing' => 'ADM/VENDAS',
                         'local' => 'Recinto',
                         'site' => 'Site'
                     ]),
@@ -290,7 +298,7 @@ class ClientResource extends Resource
                     ->options([
                         'purchase' => 'Compra',
                         'sale' => 'Venda',
-                        'both' => 'Ambos'
+                        'both' => 'Compra e Venda'
                     ]),
 
                 Filter::make('birthday_today')

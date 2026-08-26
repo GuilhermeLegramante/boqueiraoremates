@@ -325,16 +325,17 @@ class ClientForm
                             Radio::make('register_origin')
                                 ->label(__('fields.register_origin'))
                                 ->options([
-                                    'marketing' => 'Divulgação',
-                                    'local' => 'Recinto',
-                                    'site' => 'Site'
+                                    'marketing' => 'ADM/VENDAS',
+                                    'local' => 'RECINTO',
+                                    'site' => 'SITE'
                                 ]),
                             Radio::make('profile')
                                 ->label(__('fields.profile'))
                                 ->options([
                                     'purchase' => 'Compra',
                                     'sale' => 'Venda',
-                                    'both' => 'Ambos'
+                                    'both' => 'Compra e Venda',
+                                    'marketing' => 'Divulgação'
                                 ]),
                             Toggle::make('has_register_in_another_auctioneer')
                                 ->label(__('fields.has_register_in_another_auctioneer')),

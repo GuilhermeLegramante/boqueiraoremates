@@ -25,7 +25,7 @@ class ClientRegisterOriginChart extends ChartWidget
                     'data' => [$marketing, $local, $site],
                 ],
             ],
-            'labels' => ['Divulgação', 'Recinto', 'Site'],
+            'labels' => ['ADM/VENDAS', 'RECINTO', 'SITE'],
         ];
     }
 
