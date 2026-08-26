@@ -325,9 +325,9 @@ class ClientForm
                             Radio::make('register_origin')
                                 ->label(__('fields.register_origin'))
                                 ->options([
-                                    'marketing' => 'ADM/VENDAS',
-                                    'local' => 'RECINTO',
-                                    'site' => 'SITE'
+                                    'marketing' => 'Adm/Vendas',
+                                    'local' => 'Recinto',
+                                    'site' => 'Site'
                                 ]),
                             Radio::make('profile')
                                 ->label(__('fields.profile'))
