@@ -84,7 +84,7 @@
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Profissão </label>
+                            <label class="block font-semibold text-gray-700">Profissão *</label>
                             <input type="text" name="occupation" id="occupation"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
@@ -304,6 +304,7 @@
         function goToStep(s) {
             // Se o usuário está tentando ir para o passo 2, validamos o passo 1
             if (s === 2) {
+                const cpfCnpj = document.getElementById('cpf_cnpj').value.trim();
                 const nome = document.getElementById('name').value.trim();
                 const whatsapp = document.getElementById('whatsapp').value.trim();
                 const nomeMae = document.getElementById('mother').value.trim();
@@ -311,6 +312,14 @@
                 const p1 = document.getElementsByName('password')[0].value;
                 const p2 = document.getElementsByName('passwordConfirmation')[0].value;
                 const income = document.getElementById('income').value.trim();
+                const occupation = document.getElementById('occupation').value.trim();
+
+
+
+                if (!cpfCnpj) {
+                    Swal.fire('Atenção', 'O CPF ou CNPJ é obrigatório.', 'warning');
+                    return;
+                }
 
                 if (!nome) {
                     Swal.fire('Atenção', 'O nome é obrigatório.', 'warning');
@@ -347,6 +356,11 @@
                 }
                 if (p1 !== p2) {
                     Swal.fire('Erro', 'As senhas não conferem!', 'error');
+                    return;
+                }
+
+                if (!occupation) {
+                    Swal.fire('Atenção', 'A profissão é obrigatória.', 'warning');
                     return;
                 }
             }
