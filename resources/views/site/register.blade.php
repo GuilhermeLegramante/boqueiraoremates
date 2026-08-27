@@ -38,7 +38,7 @@
                 <form id="registerForm" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
-                    {{-- STEP 1: DADOS PESSOAIS --}}
+                    {{-- STEP 1: DADOS PESSOAIS E BANCÁRIOS --}}
                     <div id="step-1" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="md:col-span-2">
                             <label class="block font-semibold text-gray-700">CPF ou CNPJ *</label>
@@ -54,12 +54,17 @@
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
+                            <label class="block font-semibold text-gray-700">RG *</label>
+                            <input type="text" name="rg" id="rg"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+                        <div>
                             <label class="block font-semibold text-gray-700">E-mail *</label>
                             <input type="email" name="email" id="email"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Data de Nascimento </label>
+                            <label class="block font-semibold text-gray-700">Data de Nascimento *</label>
                             <input type="text" name="birth_date" id="birth_date" placeholder="dd/mm/aaaa"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
@@ -79,6 +84,11 @@
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
                         <div>
+                            <label class="block font-semibold text-gray-700">Nome do Pai *</label>
+                            <input type="text" name="father" id="father"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+                        <div>
                             <label class="block font-semibold text-gray-700">Nome da Mãe *</label>
                             <input type="text" name="mother" id="mother"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
@@ -89,12 +99,40 @@
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
                         </div>
                         <div>
-                            <label class="block font-semibold text-gray-700">Renda Mensal </label>
+                            <label class="block font-semibold text-gray-700">Renda Mensal *</label>
                             <input type="text" name="income" id="income" placeholder="R$ 0,00"
                                 class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500">
                         </div>
+
+                        {{-- Bloco de Dados Bancários --}}
+                        <div class="md:col-span-2 pt-4 border-t border-gray-200 mt-2">
+                            <h3 class="text-lg font-bold text-gray-800 mb-3">Dados Bancários</h3>
+                        </div>
+
+                        <div class="md:col-span-2">
+                            <label class="block font-semibold text-gray-700">Banco *</label>
+                            <select name="bank_id" id="bank_id"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 bg-white">
+                                <option value="">Selecione o Banco</option>
+                                @foreach (\App\Models\Bank::orderBy('name')->get() as $bank)
+                                    <option value="{{ $bank->id }}">
+                                        {{ $bank->code ? $bank->code . ' - ' : '' }}{{ $bank->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Agência *</label>
+                            <input type="text" name="bank_agency" id="bank_agency" placeholder="Ex: 0001"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+                        <div>
+                            <label class="block font-semibold text-gray-700">Conta Corrente *</label>
+                            <input type="text" name="current_account" id="current_account" placeholder="Ex: 12345-6"
+                                class="w-full border rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-green-500 uppercase">
+                        </div>
+
                         <button type="button" onclick="goToStep(2)"
-                            class="md:col-span-2 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition-all uppercase">Próximo
+                            class="md:col-span-2 bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition-all uppercase mt-4">Próximo
                             Passo</button>
                     </div>
 
@@ -266,21 +304,27 @@
                         Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
                             'info');
                         document.getElementById('name').value = d.name || '';
+                        document.getElementById('rg').value = d.rg || '';
                         document.getElementById('email').value = d.email || '';
                         if (d.whatsapp) {
                             document.getElementById('whatsapp').value = phoneMask(d.whatsapp);
                         }
                         document.getElementById('birth_date').value = d.birth_date || '';
 
-
                         if (d.birth_date && d.birth_date.includes('-')) {
                             const [y, m, d_part] = d.birth_date.split('-');
                             document.getElementById('birth_date').value = `${d_part}/${m}/${y}`;
                         }
 
+                        document.getElementById('father').value = d.father || '';
                         document.getElementById('mother').value = d.mother || '';
                         document.getElementById('occupation').value = d.occupation || '';
                         document.getElementById('income').value = d.income || '';
+
+                        // Preencher Dados Bancários
+                        if (d.bank_id) document.getElementById('bank_id').value = d.bank_id;
+                        document.getElementById('bank_agency').value = d.bank_agency || '';
+                        document.getElementById('current_account').value = d.current_account || '';
 
                         if (d.address) {
                             document.getElementById('postal_code').value = cepMask(d.address
@@ -306,7 +350,10 @@
             if (s === 2) {
                 const cpfCnpj = document.getElementById('cpf_cnpj').value.trim();
                 const nome = document.getElementById('name').value.trim();
+                const rg = document.getElementById('rg').value.trim();
+                const birthDate = document.getElementById('birth_date').value.trim();
                 const whatsapp = document.getElementById('whatsapp').value.trim();
+                const nomePai = document.getElementById('father').value.trim();
                 const nomeMae = document.getElementById('mother').value.trim();
                 const email = document.getElementById('email').value.trim();
                 const p1 = document.getElementsByName('password')[0].value;
@@ -314,7 +361,10 @@
                 const income = document.getElementById('income').value.trim();
                 const occupation = document.getElementById('occupation').value.trim();
 
-
+                // Dados bancários
+                const bankId = document.getElementById('bank_id').value;
+                const bankAgency = document.getElementById('bank_agency').value.trim();
+                const currentAccount = document.getElementById('current_account').value.trim();
 
                 if (!cpfCnpj) {
                     Swal.fire('Atenção', 'O CPF ou CNPJ é obrigatório.', 'warning');
@@ -326,6 +376,11 @@
                     return;
                 }
 
+                if (!rg) {
+                    Swal.fire('Atenção', 'O RG é obrigatório.', 'warning');
+                    return;
+                }
+
                 // Validação de E-mail (Regex Simples)
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!email || !emailRegex.test(email)) {
@@ -333,19 +388,13 @@
                     return;
                 }
 
+                if (!birthDate) {
+                    Swal.fire('Atenção', 'A data de nascimento é obrigatória.', 'warning');
+                    return;
+                }
+
                 if (!whatsapp) {
                     Swal.fire('Atenção', 'O WhatsApp é obrigatório.', 'warning');
-                    return;
-                }
-
-                // Validação Nome da Mãe
-                if (!nomeMae) {
-                    Swal.fire('Atenção', 'O nome da mãe é obrigatório.', 'warning');
-                    return;
-                }
-
-                if (!income) {
-                    Swal.fire('Atenção', 'A renda mensal é obrigatória.', 'warning');
                     return;
                 }
 
@@ -359,8 +408,41 @@
                     return;
                 }
 
+                // Validação Nome do Pai
+                if (!nomePai) {
+                    Swal.fire('Atenção', 'O nome do pai é obrigatório.', 'warning');
+                    return;
+                }
+
+                // Validação Nome da Mãe
+                if (!nomeMae) {
+                    Swal.fire('Atenção', 'O nome da mãe é obrigatório.', 'warning');
+                    return;
+                }
+
                 if (!occupation) {
                     Swal.fire('Atenção', 'A profissão é obrigatória.', 'warning');
+                    return;
+                }
+
+                if (!income) {
+                    Swal.fire('Atenção', 'A renda mensal é obrigatória.', 'warning');
+                    return;
+                }
+
+                // Validação de Dados Bancários
+                if (!bankId) {
+                    Swal.fire('Atenção', 'Por favor, selecione o banco.', 'warning');
+                    return;
+                }
+
+                if (!bankAgency) {
+                    Swal.fire('Atenção', 'A agência bancária é obrigatória.', 'warning');
+                    return;
+                }
+
+                if (!currentAccount) {
+                    Swal.fire('Atenção', 'A conta corrente é obrigatória.', 'warning');
                     return;
                 }
             }

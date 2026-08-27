@@ -9,10 +9,10 @@ use App\Models\Client;
 use App\Models\Address;
 use App\Models\Document;
 use App\Models\DocumentType;
+use App\Models\Bank;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
 
 class CustomRegisterController extends Controller
 {
@@ -38,18 +38,23 @@ class CustomRegisterController extends Controller
                 return response()->json([
                     'exists' => true,
                     'data' => [
-                        'name'          => $client->name,
-                        'mother'   => $client->mother, // NOVO
-                        'occupation'    => $client->occupation,  // NOVO
-                        'income'        => $client->income,      // NOVO
-                        'email'         => $client->registeredUser->email ?? $client->email ?? '',
-                        'whatsapp'      => $client->whatsapp,
-                        'birth_date'    => $client->birth_date ? \Carbon\Carbon::parse($client->birth_date)->format('d/m/Y') : '',
-                        'address'       => [
+                        'name'            => $client->name,
+                        'mother'          => $client->mother,
+                        'father'          => $client->father, // NOVO
+                        'rg'              => $client->rg,     // NOVO
+                        'occupation'      => $client->occupation,
+                        'income'          => $client->income,
+                        'bank_id'         => $client->bank_id,         // NOVO
+                        'bank_agency'     => $client->bank_agency,     // NOVO
+                        'current_account' => $client->current_account, // NOVO
+                        'email'           => $client->registeredUser->email ?? $client->email ?? '',
+                        'whatsapp'        => $client->whatsapp,
+                        'birth_date'      => $client->birth_date ? \Carbon\Carbon::parse($client->birth_date)->format('d/m/Y') : '',
+                        'address'         => [
                             'postal_code' => $client->address->postal_code ?? '',
                             'street'      => $client->address->street ?? '',
                             'number'      => $client->address->number ?? '',
-                            'complement'  => $client->address->complement ?? '', // NOVO
+                            'complement'  => $client->address->complement ?? '',
                             'district'    => $client->address->district ?? '',
                             'city'        => $client->address->city ?? '',
                             'state'       => $client->address->state ?? '',
@@ -74,18 +79,29 @@ class CustomRegisterController extends Controller
     {
         // 1. Validação de Campos Obrigatórios e Formato de E-mail
         $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
-            'name'        => 'required|string|max:255',
-            'mother'      => 'required|string|max:255', // Nome da mãe obrigatório
-            'email'       => 'required|email:rfc,dns',  // E-mail obrigatório e formato válido
-            'birth_date'  => 'required',
-            'whatsapp'    => 'required',
-            'password'    => 'required|min:6',
-            'income'      => 'required', // Renda obrigatória
-            'occupation'  => 'required', // Profissão obrigatória
+            'name'            => 'required|string|max:255',
+            'rg'              => 'required|string|max:50',  // RG Obrigatório
+            'father'          => 'required|string|max:255', // Nome do pai obrigatório
+            'mother'          => 'required|string|max:255', // Nome da mãe obrigatório
+            'email'           => 'required|email:rfc,dns',  // E-mail obrigatório e formato válido
+            'birth_date'      => 'required',
+            'whatsapp'        => 'required',
+            'password'        => 'required|min:6',
+            'income'          => 'required', // Renda obrigatória
+            'occupation'      => 'required', // Profissão obrigatória
+            'bank_id'         => 'required|exists:banks,id', // Banco obrigatório
+            'bank_agency'     => 'required|string|max:20',    // Agência obrigatória
+            'current_account' => 'required|string|max:30',    // Conta corrente obrigatória
         ], [
-            'mother.required' => 'O nome da mãe é obrigatório.',
-            'email.required'  => 'O e-mail é obrigatório.',
-            'email.email'     => 'Por favor, insira um endereço de e-mail válido.',
+            'rg.required'              => 'O RG é obrigatório.',
+            'father.required'          => 'O nome do pai é obrigatório.',
+            'mother.required'          => 'O nome da mãe é obrigatório.',
+            'email.required'           => 'O e-mail é obrigatório.',
+            'email.email'              => 'Por favor, insira um endereço de e-mail válido.',
+            'bank_id.required'         => 'Selecione o banco.',
+            'bank_id.exists'           => 'O banco selecionado é inválido.',
+            'bank_agency.required'     => 'A agência bancária é obrigatória.',
+            'current_account.required' => 'A conta corrente é obrigatória.',
         ]);
 
         if ($validator->fails()) {
@@ -94,7 +110,7 @@ class CustomRegisterController extends Controller
                 'message' => $validator->errors()->first()
             ], 422);
         }
-        
+
         // 1. Tratamento da Data e Validação de Idade
         try {
             $dateObj = Carbon::createFromFormat('d/m/Y', $request->birth_date);
@@ -141,14 +157,19 @@ class CustomRegisterController extends Controller
                 $income = (float) $income;
             }
 
-            // 3. Cliente (Campos novos adicionados)
+            // 3. Cliente (Campos novos e bancários adicionados)
             $client = Client::updateOrCreate(
                 ['cpf_cnpj' => $cpfComMascara],
                 [
                     'name'               => strtoupper($data['name']),
-                    'mother'             => strtoupper($data['mother'] ?? ''),
-                    'occupation'         => strtoupper($data['occupation'] ?? ''),
+                    'rg'                 => strtoupper($data['rg']),
+                    'father'             => strtoupper($data['father']),
+                    'mother'             => strtoupper($data['mother']),
+                    'occupation'         => strtoupper($data['occupation']),
                     'income'             => $income ?? null,
+                    'bank_id'            => $data['bank_id'],
+                    'bank_agency'        => strtoupper($data['bank_agency']),
+                    'current_account'    => strtoupper($data['current_account']),
                     'email'              => strtolower($data['email']),
                     'birth_date'         => $birthDateDb,
                     'whatsapp'           => $data['whatsapp'], // Com máscara
