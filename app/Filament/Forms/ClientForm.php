@@ -89,7 +89,6 @@ class ClientForm
 
                             TextInput::make('email')
                                 ->label(__('fields.email'))
-                                ->required()
                                 ->email()
                                 ->live()
                                 ->required(fn(Get $get): bool => (bool) $get('is_international')),
@@ -98,7 +97,6 @@ class ClientForm
                                 ->label('Data de Nascimento')
                                 ->mask('99/99/9999')
                                 ->placeholder('dd/mm/aaaa')
-                                ->required()
                                 ->rule('date_format:d/m/Y')
                                 ->rule(function () {
                                     return function (string $attribute, $value, $fail) {
@@ -170,7 +168,6 @@ class ClientForm
                                 }),
 
                             Document::make('cpf_cnpj')
-                                ->required()
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
                                 ->live()
@@ -185,7 +182,6 @@ class ClientForm
 
                             TextInput::make('rg')
                                 ->label(__('fields.rg'))
-                                ->required()
                                 ->numeric(),
                         ])
                         ->columns(2),
@@ -193,11 +189,9 @@ class ClientForm
                     Fieldset::make('Filiação')
                         ->schema([
                             TextInput::make('mother')
-                                ->required()
                                 ->label(__('fields.mother')),
 
                             TextInput::make('father')
-                                ->required()
                                 ->label(__('fields.father')),
                         ])
                         ->columns(2),
@@ -256,14 +250,12 @@ class ClientForm
 
                             // TextInput::make('state')
                             //     ->label(__('fields.state'))
-                            //     ->required()
                             //     ->maxLength(2)
                             //     ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
                             //     ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
                             //     ->helperText('Informe apenas duas letras do estado'),
                             Select::make('state')
                                 ->label(__('fields.state'))
-                                ->required()
                                 ->options([
                                     'RS' => 'RS - Rio Grande do Sul',
                                     'SC' => 'SC - Santa Catarina',
@@ -372,7 +364,6 @@ class ClientForm
 
         return [
             Document::make('cpf_cnpj')
-                ->required()
                 ->label(__('fields.cpf_cnpj'))
                 ->dynamic()
                 ->reactive()
@@ -432,20 +423,17 @@ class ClientForm
 
             TextInput::make('name')
                 ->label(__('filament-panels::pages/auth/register.form.name.label'))
-                ->required()
                 ->maxLength(255),
 
             TextInput::make('email')
                 ->label(__('filament-panels::pages/auth/register.form.email.label'))
                 ->email()
-                ->required()
                 ->maxLength(255),
             // ->unique(table: 'users', column: 'email'),
 
             TextInput::make('password')
                 ->label('Senha')
                 ->password()
-                ->required()
                 ->rule('min:4')
                 ->dehydrateStateUsing(fn($state) => Hash::make($state))
                 ->same('passwordConfirmation')
@@ -464,12 +452,10 @@ class ClientForm
 
             TextInput::make('rg')
                 ->label(__('fields.rg'))
-                ->required()
                 ->numeric(),
 
             // DatePicker::make('birth_date')
             //     ->label('Data de Nascimento')
-            //     // ->required()
             //     ->native(false)
             //     ->maxDate(now()->subYears(18)) // Impede selecionar quem tem menos de 18 anos
             //     ->rule('before_or_equal:' . now()->subYears(18)->toDateString(), 'O cliente deve ter pelo menos 18 anos.'),
@@ -478,7 +464,6 @@ class ClientForm
                 ->label('Data de Nascimento')
                 ->mask('99/99/9999')
                 ->placeholder('dd/mm/aaaa')
-                ->required()
                 ->rule('date_format:d/m/Y')
                 ->rule(function () {
                     return function (string $attribute, $value, $fail) {
@@ -508,14 +493,12 @@ class ClientForm
 
             Radio::make('gender')
                 ->label(__('fields.gender'))
-                ->required()
                 ->options(['male' => 'Masculino', 'female' => 'Feminino']),
 
             TextInput::make('establishment')
                 ->label(__('fields.establishment')),
 
             TextInput::make('occupation')
-                ->required()
                 ->label(__('fields.occupation')),
 
             TextInput::make('note_occupation')
@@ -530,17 +513,14 @@ class ClientForm
             // Select::make('income_range')
             //     ->label('Faixa de Renda (IBGE)')
             //     ->options(config('income.ranges'))
-            //     ->native(false)
-            //     ->required(),
+            //     ->native(false),
 
             PhoneNumber::make('whatsapp')
                 ->label(__('fields.whatsapp'))
-                ->required()
                 ->format('(99) 99999-9999'),
 
             PhoneNumber::make('cel_phone')
                 ->label(__('fields.cel_phone'))
-                ->required()
                 ->format('(99) 99999-9999'),
 
             PhoneNumber::make('business_phone')
@@ -552,8 +532,7 @@ class ClientForm
                 ->format('(99) 99999-9999'),
 
             TextInput::make('mother')
-                ->label(__('fields.mother'))
-                ->required(),
+                ->label(__('fields.mother')),
 
             TextInput::make('father')->label(__('fields.father')),
             // Novos campos de redes sociais
@@ -565,7 +544,6 @@ class ClientForm
     {
         return [
             Cep::make('postal_code')
-                ->required()
                 ->label(__('fields.cep')),
             // ->viaCep(
             //     mode: 'suffix',
@@ -584,24 +562,22 @@ class ClientForm
             //     $set('state', strtoupper((string) $get('state')));
             // }),
             TextInput::make('street')
-                ->required()
                 ->label(__('fields.street'))->afterStateUpdated(fn($state, $set) => $set('street', strtoupper($state))),
-            TextInput::make('number')->required()->label(__('fields.number'))->afterStateUpdated(fn($state, $set) => $set('number', strtoupper($state))),
+            TextInput::make('number')->label(__('fields.number'))->afterStateUpdated(fn($state, $set) => $set('number', strtoupper($state))),
             TextInput::make('complement')->label(__('fields.complement'))->afterStateUpdated(fn($state, $set) => $set('complement', strtoupper($state))),
             TextInput::make('reference')->label(__('fields.reference'))->afterStateUpdated(fn($state, $set) => $set('reference', strtoupper($state))),
-            TextInput::make('district')->required()->label(__('fields.district'))->afterStateUpdated(fn($state, $set) => $set('district', strtoupper($state))),
-            TextInput::make('city')->required()->label(__('fields.city'))->afterStateUpdated(fn($state, $set) => $set('city', strtoupper($state))),
+            TextInput::make('district')->label(__('fields.district'))->afterStateUpdated(fn($state, $set) => $set('district', strtoupper($state))),
+            TextInput::make('city')->label(__('fields.city'))->afterStateUpdated(fn($state, $set) => $set('city', strtoupper($state))),
 
             // TextInput::make('state')
             //     ->label(__('fields.state'))
-            //     ->required()
+            //     
             //     ->maxLength(2)
             //     ->afterStateUpdated(fn($state, $set) => $set('state', strtoupper($state)))
             //     ->regex('/^[A-Za-z]{2}$/') // garante exatamente 2 letras
             //     ->helperText('Informe apenas duas letras do estado'),
             Select::make('state')
                 ->label(__('fields.state'))
-                ->required()
                 ->options([
                     'RS' => 'RS - Rio Grande do Sul',
                     'SC' => 'SC - Santa Catarina',
@@ -646,12 +622,11 @@ class ClientForm
             Select::make('bank_id')
                 ->label(__('fields.bank'))
                 ->options(Bank::pluck('name', 'id')->toArray())
-                ->required()
                 ->preload(),
 
-            TextInput::make('bank_agency')->label(__('fields.bank_agency'))->required(),
+            TextInput::make('bank_agency')->label(__('fields.bank_agency')),
 
-            TextInput::make('current_account')->label(__('fields.current_account'))->required(),
+            TextInput::make('current_account')->label(__('fields.current_account')),
 
             Toggle::make('has_register_in_another_auctioneer')->label(__('fields.has_register_in_another_auctioneer')),
 
