@@ -194,7 +194,7 @@ class ClientResource extends Resource
                             'purchase' => 'COMPRA',
                             'sale' => 'VENDA',
                             'both' => 'COMPRA E VENDA',
-                            'marketing' => 'MARKETING',
+                            'marketing' => 'ADM/VENDAS',
                             default => '-',
                         }
                     )
