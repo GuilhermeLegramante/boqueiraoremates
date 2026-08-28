@@ -21,7 +21,7 @@ class ContractResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $navigationGroup = 'Vendas';
+    // protected static ?string $navigationGroup = 'Vendas';
 
     protected static ?string $recordTitleAttribute = 'id';
 
@@ -30,7 +30,7 @@ class ContractResource extends Resource
     protected static ?string $pluralModelLabel = 'Contratos';
 
     protected static ?string $slug = 'contratos';
-    
+
     protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
@@ -187,6 +187,6 @@ class ContractResource extends Resource
 
     public static function canDelete($record): bool
     {
-        return false;
+        return true;
     }
 }

@@ -56,7 +56,7 @@ return [
     'rb' => 'RP',
     'breeding' => 'Capacidade de Reprodução',
     'blood_level' => 'Grau de Sangue',
-    'blodd_percentual' => 'Percentual',
+    'blood_percentual' => 'Percentual',
     'quantity' => 'Quantidade',
     'event' => 'Evento',
     'seller' => 'Vendedor',

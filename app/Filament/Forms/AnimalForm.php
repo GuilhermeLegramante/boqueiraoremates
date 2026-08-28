@@ -82,8 +82,8 @@ class AnimalForm
                 ])
                 ->visible(fn(Get $get): bool => self::isQuartoDeMilha($get('breed_id'))),
 
-            TextInput::make('blodd_percentual')
-                ->label(__('fields.blodd_percentual'))
+            TextInput::make('blood_percentual')
+                ->label(__('fields.blood_percentual'))
                 ->live()
                 ->numeric()
                 ->visible(fn(Get $get): bool => $get('blood_level') == 'mixed'),

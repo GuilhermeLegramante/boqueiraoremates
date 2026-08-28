@@ -270,7 +270,7 @@ class OrderResource extends Resource
             ParcelsRelationManager::class,
             BuyerParcelsRelationManager::class,
             SellerParcelsRelationManager::class,
-            // ContractsRelationManager::class,
+            ContractsRelationManager::class,
         ];
     }
 

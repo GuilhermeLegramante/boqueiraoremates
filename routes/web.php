@@ -52,7 +52,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/report/bids-pdf/{eventId}', [App\Http\Controllers\BidReportController::class, 'generateEventBidsPdf'])
         ->name('report.bids.pdf');
 
-    Route::get('/contrato/{id}', [ContractController::class, 'getPdf'])->name('contract-pdf');
+    Route::get('/contracts/{contract}/pdf', [ContractController::class, 'getPdf'])
+        ->name('contract-pdf');
+
+    Route::get('/contracts/{contract}/promissory-note', [ContractController::class, 'showPromissoryNote'])
+        ->name('promissory-note-pdf');
+
+    Route::get('/contracts/{contract}/regulation', [ContractController::class, 'showRegulation'])
+        ->name('contract-regulation-pdf');
 });
 
 Route::get('/teste', function () {});

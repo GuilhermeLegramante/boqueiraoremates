@@ -133,6 +133,22 @@ class EventForm
                 ->maxSize(2048)
                 ->helperText('Envie uma imagem ilustrando os benefícios do evento.'),
 
+            TextInput::make('auctioneer')
+                ->label('Leiloeiro')
+                ->columnSpanFull()
+                ->visible($operation != 'view')
+                ->maxLength(255),
+
+            TextInput::make('witness_1_name')
+                ->label('Nome da Testemunha 1')
+                ->visible($operation != 'view')
+                ->maxLength(255),
+
+            TextInput::make('witness_2_name')
+                ->label('Nome da Testemunha 2')
+                ->visible($operation != 'view')
+                ->maxLength(255),
+
             Toggle::make('published')
                 ->label('Publicado')
                 ->default(false),

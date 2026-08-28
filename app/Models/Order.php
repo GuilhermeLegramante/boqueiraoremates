@@ -121,6 +121,12 @@ class Order extends Model
         return $this->belongsTo(Animal::class);
     }
 
+    public function animalEvent(): BelongsTo
+    {
+        return $this->belongsTo(AnimalEvent::class, 'animal_id', 'animal_id')
+            ->where('event_id', $this->event_id);
+    }
+
     public function paymentWay(): BelongsTo
     {
         return $this->belongsTo(PaymentWay::class);

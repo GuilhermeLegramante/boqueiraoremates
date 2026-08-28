@@ -27,7 +27,10 @@ class Event extends Model
         'regulation_image_path',
         'benefits_image_path',
         'is_permanent',
-        'can_offer'
+        'can_offer',
+        'auctioneer',
+        'witness_1_name',
+        'witness_2_name',
     ];
 
     protected $casts = [

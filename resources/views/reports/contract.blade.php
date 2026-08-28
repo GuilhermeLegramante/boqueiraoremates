@@ -184,10 +184,10 @@
                 {{-- Nome do Evento e Cidade (Centro) --}}
                 <td style="width: 40%; text-align: center;">
                     <div class="event-title-center">
-                        {{ $event->name ?? $seller->name }}
+                        {{ $seller->establishment }}
                     </div>
                     <div class="contract-city">
-                        URUGUAIANA - RS
+                        {{ $seller->address->city ?? '' }} - {{ $seller->address->state ?? '' }}
                     </div>
                 </td>
 
@@ -210,12 +210,21 @@
         {{-- TÍTULO DO CONTRATO E NÚMERO DA OS --}}
         <table class="title-row-table">
             <tr>
-                <td style="width: 92%;">
+                <td style="width: 80%;">
                     <span class="contract-title">
                         NOTA DE LEILÃO E CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO
                     </span>
+
+                    {{-- Indicação da Via --}}
+                    @if (isset($via))
+                        <div
+                            style="text-align: center; font-size: 10px; font-weight: bold; color: #555; margin-top: 2px;">
+                            ({{ $via }}ª VIA)
+                        </div>
+                    @endif
                 </td>
-                <td style="width: 8%;">
+
+                <td style="width: 20%; text-align: right;">
                     <div class="contract-number">
                         Nº {{ $order->number }} / {{ $contractDate->format('Y') }}
                     </div>
@@ -334,8 +343,35 @@
             OBJETO
         </div>
 
+        @php
+            $objetoTexto = match ($order->sale_type) {
+                'cota' => 'Cota ' .
+                    ($order->sale_type_percentage ? $order->sale_type_percentage . '%' : '') .
+                    ' do animal equino com as informações a seguir descritas:',
+                'direito_de_uso' => 'Direito de uso (' .
+                    ($order->sale_type_percentage ? $order->sale_type_percentage . '%' : '') .
+                    ') do animal equino com as informações a seguir descritas:',
+                'cobertura' => 'Cobertura (' .
+                    ($order->sale_type_quantity ? $order->sale_type_quantity . ' unidades' : '') .
+                    ') do animal equino com as informações a seguir descritas:',
+                default => 'Animal equino com as informações a seguir descritas:',
+            };
+
+            $breedName = mb_strtoupper($animal->breed->name ?? '', 'UTF-8');
+            $isQuartoDeMilha = $breedName === 'QUARTO DE MILHA';
+        @endphp
+
+        <p class="contract-text" style="margin-bottom: 4px; font-weight: bold;">
+            {{ $objetoTexto }}
+        </p>
+
         <table class="data-table">
             <tr>
+                <td>
+                    <span class="label">Lote:</span>
+                    {{ $order->animalEvent->lot_number ?? ($order->batch ?? '') }}
+                </td>
+
                 <td>
                     <span class="label">Raça:</span>
                     {{ $animal->breed->name ?? '' }}
@@ -343,29 +379,66 @@
 
                 <td>
                     <span class="label">Nome:</span>
-                    {{ $animal->name ?? '' }}
+                    {{ $order->animalEvent->name ?? ($animal->name ?? '') }}
                 </td>
 
-                <td>
-                    <span class="label">RP:</span>
-                    {{ $animal->rb ?? '' }}
-                </td>
+                @if ($isQuartoDeMilha)
+                    <td>
+                        <span class="label">Registro:</span>
+                        {{ $animal->register ?? '' }}
+                    </td>
+
+                    <td>
+                        <span class="label">Grau de Sangue:</span>
+                        @if ($animal->blood_level === 'pure')
+                            Puro
+                        @elseif ($animal->blood_level === 'mixed')
+                            Mestiço {{ $animal->blood_percentual ? '(' . $animal->blood_percentual . '%)' : '' }}
+                        @endif
+                    </td>
+                @else
+                    <td>
+                        <span class="label">RP:</span>
+                        {{ $animal->rb ?? '' }}
+                    </td>
+                @endif
             </tr>
 
-            <tr>
-                <td colspan="3">
-                    <span class="label">Descrição:</span>
-                    {{-- {{ $animalDescription }} --}}
-                </td>
-            </tr>
+            @if (!empty($order->sale_type))
+                <tr>
+                    <td colspan="{{ $isQuartoDeMilha ? 5 : 4 }}">
+                        <span class="label">Tipo de Venda:</span>
+                        @switch($order->sale_type)
+                            @case('animal_inteiro')
+                                O Animal
+                            @break
+
+                            @case('cota')
+                                Cota ({{ $order->sale_type_percentage }}%)
+                            @break
+
+                            @case('direito_de_uso')
+                                Direito de Uso ({{ $order->sale_type_percentage }}%)
+                            @break
+
+                            @case('cobertura')
+                                Cobertura ({{ $order->sale_type_quantity }} unidades)
+                            @break
+
+                            @default
+                                {{ ucfirst($order->sale_type) }}
+                        @endswitch
+                    </td>
+                </tr>
+            @endif
 
             <tr>
-                <td colspan="2">
+                <td colspan="{{ $isQuartoDeMilha ? 3 : 3 }}">
                     <span class="label">Valor Total:</span>
                     R$ {{ number_format($order->gross_value, 2, ',', '.') }}
                 </td>
 
-                <td>
+                <td colspan="{{ $isQuartoDeMilha ? 2 : 1 }}">
                     <span class="label">Fatura de Venda/OS:</span>
                     {{ $order->number }}
                 </td>
@@ -427,7 +500,7 @@
         </p>
 
         <p style="text-align: center; font-size: 9.5px; margin-top: 12px;">
-            Uruguaiana - RS,
+            {{ $seller->address->city ?? 'Uruguaiana' }} - {{ $seller->address->state ?? 'RS' }},
             {{ \Carbon\Carbon::parse($contractDate)->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}
         </p>
 
@@ -450,13 +523,13 @@
             <tr>
                 <td>
                     <div class="signature-line"></div>
-                    <div class="signature-name">{{ $witness1Name ?? '' }}</div>
+                    <div class="signature-name">{{ mb_strtoupper($event->witness_1_name ?? '', 'UTF-8') }}</div>
                     <div class="signature-role">TESTEMUNHA 1</div>
                 </td>
 
                 <td>
                     <div class="signature-line"></div>
-                    <div class="signature-name">{{ $witness2Name ?? '' }}</div>
+                    <div class="signature-name">{{ mb_strtoupper($event->witness_2_name ?? '', 'UTF-8') }}</div>
                     <div class="signature-role">TESTEMUNHA 2</div>
                 </td>
             </tr>
