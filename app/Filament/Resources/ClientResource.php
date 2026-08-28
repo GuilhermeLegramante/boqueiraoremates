@@ -176,7 +176,7 @@ class ClientResource extends Resource
                     ->alignment(Alignment::Center)
                     ->badge()
                     ->formatStateUsing(
-                        fn(string $state): string => (($state == 'marketing' ? 'MARKETING' : ($state == 'local' ? 'RECINTO' : 'SITE')))
+                        fn(string $state): string => (($state == 'marketing' ? 'ADM/VENDAS' : ($state == 'local' ? 'RECINTO' : 'SITE')))
                     )
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->color(fn(string $state): string => match ($state) {
@@ -194,7 +194,7 @@ class ClientResource extends Resource
                             'purchase' => 'COMPRA',
                             'sale' => 'VENDA',
                             'both' => 'COMPRA E VENDA',
-                            'marketing' => 'ADM/VENDAS',
+                            'marketing' => 'DIVULGAÇÃO',
                             default => '-',
                         }
                     )
