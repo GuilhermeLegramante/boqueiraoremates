@@ -53,7 +53,7 @@ class BidResource extends Resource
                             ->relationship(
                                 name: 'event',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn($query) => $query->where('closed', 0)
+                                modifyQueryUsing: fn($query) => $query->where('published', 1)
                             )
                             ->live()
                             ->afterStateUpdated(fn($set) => $set('animal_event_id', null))
