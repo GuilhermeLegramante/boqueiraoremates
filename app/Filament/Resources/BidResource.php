@@ -50,7 +50,11 @@ class BidResource extends Resource
                         // Seleção do Evento
                         Forms\Components\Select::make('event_id')
                             ->label('Evento')
-                            ->relationship('event', 'name')
+                            ->relationship(
+                                name: 'event',
+                                titleAttribute: 'name',
+                                modifyQueryUsing: fn($query) => $query->where('closed', 0)
+                            )
                             ->live()
                             ->afterStateUpdated(fn($set) => $set('animal_event_id', null))
                             ->required(),
