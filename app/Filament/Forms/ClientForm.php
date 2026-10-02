@@ -181,8 +181,7 @@ class ClientForm
                                 ->maxLength(10),
 
                             TextInput::make('rg')
-                                ->label(__('fields.rg'))
-                                ->numeric(),
+                                ->label(__('fields.rg')),
                         ])
                         ->columns(2),
 
@@ -451,8 +450,7 @@ class ClientForm
                 ->maxLength(10),
 
             TextInput::make('rg')
-                ->label(__('fields.rg'))
-                ->numeric(),
+                ->label(__('fields.rg')),
 
             // DatePicker::make('birth_date')
             //     ->label('Data de Nascimento')
