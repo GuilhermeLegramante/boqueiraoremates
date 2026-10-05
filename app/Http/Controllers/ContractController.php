@@ -397,6 +397,7 @@ class ContractController extends Controller
             'paymentText' => $paymentText,
             'contractDate' => now(),
             'via' => $via,
+            'isPreview' => true,
             'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
             'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
             'boqueiraoLogo' => public_path('img/logo_completa.png'),
@@ -415,7 +416,7 @@ class ContractController extends Controller
      */
     public function previewPromissoryPdf(Order $order)
     {
-         // Carrega as relações necessárias diretamente do Order
+        // Carrega as relações necessárias diretamente do Order
         $order->load([
             'event',
             'seller.address',
@@ -437,6 +438,7 @@ class ContractController extends Controller
             'seller' => $seller,
             'buyer' => $buyer,
             'animal' => $animal,
+            'isPreview' => true,
             'contractDate' => now(),
             'title' => 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA',
         ];

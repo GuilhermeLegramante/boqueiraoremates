@@ -160,10 +160,33 @@
             border: 1px solid #000;
             padding: 12px;
         }
+
+        /* MARCA D'ÁGUA DE PRÉ-VISUALIZAÇÃO */
+        .watermark {
+            position: fixed;
+            top: 35%;
+            left: 5%;
+            width: 90%;
+            text-align: center;
+            font-size: 52px;
+            font-weight: bold;
+            color: rgba(200, 0, 0, 0.18);
+            /* Vermelho translúcido */
+            text-transform: uppercase;
+            transform: rotate(-35deg);
+            transform-origin: center center;
+            z-index: 9999;
+            pointer-events: none;
+            letter-spacing: 4px;
+        }
     </style>
 </head>
 
 <body>
+    @if (!empty($isPreview) && $isPreview)
+        <div class="watermark">PRÉ-VISUALIZAÇÃO</div>
+    @endif
+    
     <div class="contract contract-page">
 
         {{-- CABEÇALHO --}}
