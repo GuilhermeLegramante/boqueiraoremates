@@ -507,31 +507,38 @@
         {{-- ASSINATURAS --}}
         <table class="signature-table">
             <tr>
+                {{-- VENDEDOR --}}
                 <td>
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $seller->name }}</div>
-                    @if (!empty($event->representative_name))
-                        <div class="signature-role">REPRESENTANTE: {{ $event->representative_name }} @if (!empty($event->representative_role))
-                                ({{ $event->representative_role }})
-                            @endif
-                        </div>
-                    @endif
                     <div class="signature-role">VENDEDOR</div>
                 </td>
 
+                {{-- COMPRADOR --}}
                 <td>
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $buyer->name }}</div>
-                    @if (!empty($event->representative_name))
-                        <div class="signature-role">REPRESENTANTE: {{ $event->representative_name }} @if (!empty($event->representative_role))
-                                ({{ $event->representative_role }})
-                            @endif
-                        </div>
-                    @endif
                     <div class="signature-role">COMPRADOR</div>
                 </td>
             </tr>
 
+            {{-- LINHA DO REPRESENTANTE (EXIBIDA APENAS SE ESTIVER PREENCHIDO) --}}
+            @if (!empty($event->representative_name))
+                <tr>
+                    <td colspan="2" style="text-align: center; padding-top: 30px;">
+                        <div class="signature-line" style="width: 50%; margin: 0 auto 4px auto;"></div>
+                        <div class="signature-name">{{ mb_strtoupper($event->representative_name, 'UTF-8') }}</div>
+                        <div class="signature-role">
+                            REPRESENTANTE LEGAL
+                            @if (!empty($event->representative_role))
+                                ({{ mb_strtoupper($event->representative_role, 'UTF-8') }})
+                            @endif
+                        </div>
+                    </td>
+                </tr>
+            @endif
+
+            {{-- TESTEMUNHAS --}}
             <tr>
                 <td>
                     <div class="signature-line"></div>
