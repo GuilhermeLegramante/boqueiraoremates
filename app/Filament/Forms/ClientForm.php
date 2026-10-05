@@ -134,6 +134,15 @@ class ClientForm
                             TextInput::make('establishment')
                                 ->label(__('fields.establishment')),
 
+                            TextInput::make('representative_name')
+                                ->label('Nome do Representante'),
+
+                            TextInput::make('representative_role')
+                                ->label('Função do Representante'),
+
+                            TextInput::make('representative_document')
+                                ->label('CPF/CNPJ do Representante'),
+
                             TextInput::make('occupation')
                                 ->label(__('fields.occupation')),
 

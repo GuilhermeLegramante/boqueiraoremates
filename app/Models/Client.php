@@ -53,6 +53,9 @@ class Client extends Model
         'facebook',
         'income_range',
         'client_status_id',
+        'representative_name',
+        'representative_role',
+        'representative_document',
     ];
 
     protected $casts = [

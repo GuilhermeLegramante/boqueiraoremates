@@ -512,6 +512,20 @@
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $seller->name }}</div>
                     <div class="signature-role">VENDEDOR</div>
+
+                    {{-- REPRESENTANTE DO VENDEDOR (SE PREENCHIDO NO CLIENTE) --}}
+                    @if (!empty($seller->representative_name))
+                        <div style="margin-top: 8px; font-size: 8.5px; color: #333;">
+                            <span class="label">Rep. Legal:</span>
+                            {{ mb_strtoupper($seller->representative_name, 'UTF-8') }}
+                            @if (!empty($seller->representative_role))
+                                ({{ mb_strtoupper($seller->representative_role, 'UTF-8') }})
+                            @endif
+                            @if (!empty($seller->representative_document))
+                                <br><span class="label">CPF/CNPJ:</span> {{ $seller->representative_document }}
+                            @endif
+                        </div>
+                    @endif
                 </td>
 
                 {{-- COMPRADOR --}}
@@ -519,24 +533,22 @@
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $buyer->name }}</div>
                     <div class="signature-role">COMPRADOR</div>
-                </td>
-            </tr>
 
-            {{-- LINHA DO REPRESENTANTE (EXIBIDA APENAS SE ESTIVER PREENCHIDO) --}}
-            @if (!empty($event->representative_name))
-                <tr>
-                    <td colspan="2" style="text-align: center; padding-top: 30px;">
-                        <div class="signature-line" style="width: 50%; margin: 0 auto 4px auto;"></div>
-                        <div class="signature-name">{{ mb_strtoupper($event->representative_name, 'UTF-8') }}</div>
-                        <div class="signature-role">
-                            REPRESENTANTE LEGAL
-                            @if (!empty($event->representative_role))
-                                ({{ mb_strtoupper($event->representative_role, 'UTF-8') }})
+                    {{-- CASO O COMPRADOR TAMBÉM POSSA TER REPRESENTANTE NO FUTURO --}}
+                    @if (!empty($buyer->representative_name))
+                        <div style="margin-top: 8px; font-size: 8.5px; color: #333;">
+                            <span class="label">Rep. Legal:</span>
+                            {{ mb_strtoupper($buyer->representative_name, 'UTF-8') }}
+                            @if (!empty($buyer->representative_role))
+                                ({{ mb_strtoupper($buyer->representative_role, 'UTF-8') }})
+                            @endif
+                            @if (!empty($buyer->representative_document))
+                                <br><span class="label">CPF/CNPJ:</span> {{ $buyer->representative_document }}
                             @endif
                         </div>
-                    </td>
-                </tr>
-            @endif
+                    @endif
+                </td>
+            </tr>
 
             {{-- TESTEMUNHAS --}}
             <tr>

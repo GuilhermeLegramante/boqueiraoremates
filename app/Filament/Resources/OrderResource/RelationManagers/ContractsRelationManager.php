@@ -209,6 +209,9 @@ class ContractsRelationManager extends RelationManager
                 'cpf_cnpj' => $order->seller->cpf_cnpj ?? null,
                 'phone' => $order->seller->phone ?? null,
                 'email' => $order->seller->email ?? null,
+                'representative_name' => $order->seller->representative_name ?? null,
+                'representative_role' => $order->seller->representative_role ?? null,
+                'representative_document' => $order->seller->representative_document ?? null,
                 'address' => $order->seller->address ? [
                     'street' => $order->seller->address->street ?? null,
                     'district' => $order->seller->address->district ?? null,
