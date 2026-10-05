@@ -415,18 +415,28 @@ class ContractController extends Controller
      */
     public function previewPromissoryPdf(Order $order)
     {
+         // Carrega as relações necessárias diretamente do Order
         $order->load([
             'event',
             'seller.address',
             'buyer.address',
+            'animal.breed',
+            'animalEvent',
+            'paymentWay',
             'parcels',
         ]);
 
+        $event = $order->event;
+        $seller = $order->seller;
+        $buyer = $order->buyer;
+        $animal = $order->animal;
+
         $data = [
             'order' => $order,
-            'event' => $order->event,
-            'seller' => $order->seller,
-            'buyer' => $order->buyer,
+            'event' => $event,
+            'seller' => $seller,
+            'buyer' => $buyer,
+            'animal' => $animal,
             'title' => 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA',
         ];
 
