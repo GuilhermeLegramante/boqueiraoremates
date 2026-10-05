@@ -149,16 +149,6 @@ class EventForm
                 ->visible($operation != 'view')
                 ->maxLength(255),
 
-            TextInput::make('representative_name')
-                ->label('Nome do Representante')
-                ->visible($operation != 'view')
-                ->maxLength(255),
-
-            TextInput::make('representative_role')
-                ->label('Função do Representante')
-                ->visible($operation != 'view')
-                ->maxLength(255),
-
             Toggle::make('published')
                 ->label('Publicado')
                 ->default(false),
