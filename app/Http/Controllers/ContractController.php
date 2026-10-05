@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\Order;
 use App\Utils\ReportFactory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use NumberToWords\Exception\InvalidArgumentException;
 use NumberToWords\NumberToWords;
+use Barryvdh\DomPDF\PDF;
 
 class ContractController extends Controller
 {
@@ -357,6 +359,82 @@ class ContractController extends Controller
             'reports.regulation',
             $data,
             $fileName
+        );
+    }
+
+    /**
+     * Pré-visualiza o contrato antes de ser gerado/fechado
+     */
+    public function previewPdf(Order $order, Request $request)
+    {
+        $via = $request->get('via', 1);
+
+        // Carrega as relações necessárias diretamente do Order
+        $order->load([
+            'event',
+            'seller.address',
+            'buyer.address',
+            'animal.breed',
+            'animalEvent',
+            'paymentWay',
+            'parcels',
+        ]);
+
+        $event = $order->event;
+        $seller = $order->seller;
+        $buyer = $order->buyer;
+        $animal = $order->animal;
+
+        // Monta o texto de pagamento dinâmico se tiver um método/helper
+        $paymentText = $order->payment_text ?? '';
+
+        $data = [
+            'order' => $order,
+            'event' => $event,
+            'seller' => $seller,
+            'buyer' => $buyer,
+            'animal' => $animal,
+            'paymentText' => $paymentText,
+            'contractDate' => now(),
+            'via' => $via,
+            'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
+            'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
+            'boqueiraoLogo' => public_path('img/logo_completa.png'),
+        ];
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.contract', // caminho da sua blade
+            $data,
+            "previa_contrato_OS_{$order->number}_via_{$via}.pdf"
+        );
+    }
+
+    /**
+     * Pré-visualiza a Nota Promissória antes de ser gerada/fechada
+     */
+    public function previewPromissoryPdf(Order $order)
+    {
+        $order->load([
+            'event',
+            'seller.address',
+            'buyer.address',
+            'parcels',
+        ]);
+
+        $data = [
+            'order' => $order,
+            'event' => $order->event,
+            'seller' => $order->seller,
+            'buyer' => $order->buyer,
+            'title' => 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA',
+        ];
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.promissory-note', // ajuste para a sua blade de promissória
+            $data,
+            "previa_promissoria_OS_{$order->number}.pdf"
         );
     }
 }

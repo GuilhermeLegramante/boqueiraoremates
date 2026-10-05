@@ -29,8 +29,11 @@ class Event extends Model
         'is_permanent',
         'can_offer',
         'auctioneer',
+        'representative_name',
+        'representative_role',
         'witness_1_name',
         'witness_2_name',
+
     ];
 
     protected $casts = [

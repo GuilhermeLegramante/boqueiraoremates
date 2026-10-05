@@ -91,7 +91,7 @@ class EventForm
                 ->label(__('fields.multiplier'))
                 ->visible($operation != 'view')
                 ->numeric(),
-           
+
             Textarea::make('note')
                 ->label(__('fields.note'))
                 ->visible($operation != 'view')
@@ -146,6 +146,16 @@ class EventForm
 
             TextInput::make('witness_2_name')
                 ->label('Nome da Testemunha 2')
+                ->visible($operation != 'view')
+                ->maxLength(255),
+
+            TextInput::make('representative_name')
+                ->label('Nome do Representante')
+                ->visible($operation != 'view')
+                ->maxLength(255),
+
+            TextInput::make('representative_role')
+                ->label('Função do Representante')
                 ->visible($operation != 'view')
                 ->maxLength(255),
 

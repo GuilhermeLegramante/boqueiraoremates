@@ -6,7 +6,6 @@ use App\Models\Contract;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -21,8 +20,7 @@ class ContractsRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([]);
+        return $form->schema([]);
     }
 
     public function table(Table $table): Table
@@ -30,9 +28,7 @@ class ContractsRelationManager extends RelationManager
         return $table
             ->heading('Contrato da Venda')
             ->columns([
-                TextColumn::make('id')
-                    ->label('Contrato'),
-
+                TextColumn::make('id')->label('Contrato'),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -41,28 +37,46 @@ class ContractsRelationManager extends RelationManager
                         'cancelled' => 'Cancelado',
                         default => ucfirst($state),
                     }),
-
-                TextColumn::make('version')
-                    ->label('Versão'),
-
+                TextColumn::make('version')->label('Versão'),
                 TextColumn::make('generated_at')
                     ->label('Emitido em')
                     ->dateTime('d/m/Y H:i'),
-
-                TextColumn::make('generatedBy.name')
-                    ->label('Emitido por'),
+                TextColumn::make('generatedBy.name')->label('Emitido por'),
             ])
             ->headerActions([
+                // 🔹 GRUPO DE PRÉ-VISUALIZAÇÃO (Sem travar a fatura)
+                ActionGroup::make([
+                    Tables\Actions\Action::make('preview_via1')
+                        ->label('1ª Via (Prévia)')
+                        ->icon('heroicon-o-eye')
+                        ->url(fn(): string => route('order-preview-pdf', ['order' => $this->getOwnerRecord()->id, 'via' => 1]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('preview_via2')
+                        ->label('2ª Via (Prévia)')
+                        ->icon('heroicon-o-eye')
+                        ->url(fn(): string => route('order-preview-pdf', ['order' => $this->getOwnerRecord()->id, 'via' => 2]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('preview_promissory')
+                        ->label('Nota Promissória (Prévia)')
+                        ->icon('heroicon-o-eye')
+                        ->url(fn(): string => route('order-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
+                        ->openUrlInNewTab(),
+                ])
+                    ->label('Pré-visualizar Documentos')
+                    ->icon('heroicon-o-eye')
+                    ->color('warning'),
+
+                // BOTÃO DE GERAR E OFICIALIZAR
                 Tables\Actions\Action::make('generate')
-                    ->label('Gerar Contrato')
+                    ->label('Gerar Contrato (Fechar Fatura)')
                     ->icon('heroicon-o-document-plus')
                     ->color('primary')
                     ->visible(fn(): bool => ! $this->getOwnerRecord()->hasContract())
                     ->requiresConfirmation()
                     ->modalHeading('Gerar Contrato')
-                    ->modalDescription(
-                        'Ao gerar o Contrato, a Fatura de Venda/OS será considerada fechada e não poderá mais ser alterada.'
-                    )
+                    ->modalDescription('Ao gerar o Contrato, a Fatura de Venda/OS será considerada fechada e não poderá mais ser alterada.')
                     ->action(function (): void {
                         $order = $this->getOwnerRecord();
 
@@ -80,49 +94,34 @@ class ContractsRelationManager extends RelationManager
                         ]);
 
                         \Filament\Notifications\Notification::make()
-                            ->title('Contrato gerado')
+                            ->title('Contrato gerado com sucesso!')
                             ->success()
                             ->send();
                     }),
             ])
-
-
             ->actions([
                 ActionGroup::make([
-                    // 1ª Via do Contrato
                     Tables\Actions\Action::make('pdf_via1')
                         ->label('1ª Via')
                         ->icon('heroicon-o-document-text')
                         ->color('info')
-                        ->url(
-                            fn(Contract $record): string =>
-                            route('contract-pdf', ['contract' => $record->id, 'via' => 1])
-                        )
+                        ->url(fn(Contract $record): string => route('contract-pdf', ['contract' => $record->id, 'via' => 1]))
                         ->openUrlInNewTab(),
 
-                    // 2ª Via do Contrato
                     Tables\Actions\Action::make('pdf_via2')
                         ->label('2ª Via')
                         ->icon('heroicon-o-document-duplicate')
                         ->color('gray')
-                        ->url(
-                            fn(Contract $record): string =>
-                            route('contract-pdf', ['contract' => $record->id, 'via' => 2])
-                        )
+                        ->url(fn(Contract $record): string => route('contract-pdf', ['contract' => $record->id, 'via' => 2]))
                         ->openUrlInNewTab(),
 
-                    // Nota Promissória
                     Tables\Actions\Action::make('promissory_note')
                         ->label('Nota Promissória')
                         ->icon('heroicon-o-banknotes')
                         ->color('warning')
-                        ->url(
-                            fn(Contract $record): string =>
-                            route('promissory-note-pdf', ['contract' => $record->id])
-                        )
+                        ->url(fn(Contract $record): string => route('promissory-note-pdf', ['contract' => $record->id]))
                         ->openUrlInNewTab(),
 
-                    // Regulamento
                     Tables\Actions\Action::make('regulation')
                         ->label('Regulamento')
                         ->icon('heroicon-o-document-text')
@@ -197,6 +196,8 @@ class ContractsRelationManager extends RelationManager
                     ? \Carbon\Carbon::parse($order->event->pre_finish_date)->format('Y-m-d')
                     : null,
                 'auctioneer' => $order->event->auctioneer,
+                'representative_name' => $order->event->representative_name ?? null, // 🔹 Adicionado
+                'representative_role' => $order->event->representative_role ?? null, // 🔹 Adicionado
                 'witness_1_name' => $order->event->witness_1_name,
                 'witness_2_name' => $order->event->witness_2_name
             ] : null,

@@ -60,6 +60,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/contracts/{contract}/regulation', [ContractController::class, 'showRegulation'])
         ->name('contract-regulation-pdf');
+
+    Route::get('/orders/{order}/preview-pdf', [ContractController::class, 'previewPdf'])->name('order-preview-pdf');
+    Route::get('/orders/{order}/preview-promissory-pdf', [ContractController::class, 'previewPromissoryPdf'])->name('order-promissory-preview-pdf');
 });
 
 Route::get('/teste', function () {});

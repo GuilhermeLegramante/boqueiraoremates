@@ -510,12 +510,24 @@
                 <td>
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $seller->name }}</div>
+                    @if (!empty($event->representative_name))
+                        <div class="signature-role">REPRESENTANTE: {{ $event->representative_name }} @if (!empty($event->representative_role))
+                                ({{ $event->representative_role }})
+                            @endif
+                        </div>
+                    @endif
                     <div class="signature-role">VENDEDOR</div>
                 </td>
 
                 <td>
                     <div class="signature-line"></div>
                     <div class="signature-name">{{ $buyer->name }}</div>
+                    @if (!empty($event->representative_name))
+                        <div class="signature-role">REPRESENTANTE: {{ $event->representative_name }} @if (!empty($event->representative_role))
+                                ({{ $event->representative_role }})
+                            @endif
+                        </div>
+                    @endif
                     <div class="signature-role">COMPRADOR</div>
                 </td>
             </tr>
