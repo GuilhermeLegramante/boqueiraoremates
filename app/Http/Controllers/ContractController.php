@@ -437,6 +437,7 @@ class ContractController extends Controller
             'seller' => $seller,
             'buyer' => $buyer,
             'animal' => $animal,
+            'contractDate' => now(),
             'title' => 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA',
         ];
 
