@@ -204,10 +204,10 @@
                     @endif
                 </td>
 
-                {{-- Nome do Evento e Cidade (Centro) --}}
+                {{-- Nome do Estabelecimento e Cidade (Centro) --}}
                 <td style="width: 40%; text-align: center;">
                     <div class="event-title-center">
-                        {{ $event->name }}
+                        {{ $seller->establishment }}
                     </div>
                     <div class="contract-city">
                         {{ $seller->address->city ?? '' }} - {{ $seller->address->state ?? '' }}
