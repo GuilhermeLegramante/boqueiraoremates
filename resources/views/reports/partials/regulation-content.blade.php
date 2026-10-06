@@ -7,7 +7,7 @@
             @endif
         </td>
         <td style="width: 60%;" class="header-title">
-            <h2>REGULAMENTO DO REMATE</h2>
+            <h2>REGULAMENTO DO LEILÃO / REMATE</h2>
             <h3>{{ $event->name ?? 'REMATE' }}</h3>
         </td>
         <td style="width: 20%; text-align: right;">
