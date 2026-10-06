@@ -66,33 +66,56 @@
     <table class="data-table">
         <tr>
             <td colspan="2"><span class="label">Nome:</span> {{ data_get($seller, 'name') }}</td>
-            <td><span class="label">CNPJ/CPF:</span>
-                {{ data_get($seller, 'cpf_cnpj', data_get($seller, 'document')) }}</td>
-            <td><span class="label">Telefone:</span>
-                {{ data_get($seller, 'whatsapp', data_get($seller, 'phone', data_get($seller, 'cellphone'))) }}</td>
+            <td>
+                <span class="label">CNPJ/CPF:</span>
+                {{ data_get($seller, 'cpf_cnpj', data_get($seller, 'cpf', data_get($seller, 'cnpj', data_get($seller, 'document')))) }}
+            </td>
+            <td>
+                <span class="label">Telefone:</span>
+                {{ data_get($seller, 'whatsapp', data_get($seller, 'phone', data_get($seller, 'cellphone', data_get($seller, 'celular', data_get($seller, 'telefone'))))) }}
+            </td>
         </tr>
         <tr>
             <td colspan="2"><span class="label">E-mail:</span> {{ data_get($seller, 'email') }}</td>
             <td colspan="2">
                 <span class="label">Endereço:</span>
                 {{ data_get($seller, 'address.street', data_get($seller, 'street')) }}
-                @if (data_get($seller, 'address.number', data_get($seller, 'address.street_number', data_get($seller, 'number'))))
-                    ,
-                    {{ data_get($seller, 'address.number', data_get($seller, 'address.street_number', data_get($seller, 'number'))) }}
+                @php
+                    $sellerNumber = data_get(
+                        $seller,
+                        'address.number',
+                        data_get(
+                            $seller,
+                            'address.street_number',
+                            data_get($seller, 'number', data_get($seller, 'numero')),
+                        ),
+                    );
+                    $sellerComplement = data_get(
+                        $seller,
+                        'address.complement',
+                        data_get($seller, 'complemento', data_get($seller, 'complement')),
+                    );
+                @endphp
+                @if (!empty($sellerNumber))
+                    , {{ $sellerNumber }}
                 @endif
-                @if (data_get($seller, 'address.complement', data_get($seller, 'complement')))
-                    - {{ data_get($seller, 'address.complement', data_get($seller, 'complement')) }}
+                @if (!empty($sellerComplement))
+                    - {{ $sellerComplement }}
                 @endif
             </td>
         </tr>
         <tr>
             <td><span class="label">Bairro:</span>
-                {{ data_get($seller, 'address.district', data_get($seller, 'district')) }}</td>
-            <td><span class="label">Cidade/UF:</span>
-                {{ data_get($seller, 'address.city', data_get($seller, 'city')) }} /
-                {{ data_get($seller, 'address.state', data_get($seller, 'state')) }}</td>
-            <td colspan="2"><span class="label">CEP:</span>
-                {{ data_get($seller, 'address.postal_code', data_get($seller, 'postal_code', data_get($seller, 'zip_code'))) }}
+                {{ data_get($seller, 'address.district', data_get($seller, 'district', data_get($seller, 'bairro'))) }}
+            </td>
+            <td>
+                <span class="label">Cidade/UF:</span>
+                {{ data_get($seller, 'address.city', data_get($seller, 'city', data_get($seller, 'cidade'))) }} /
+                {{ data_get($seller, 'address.state', data_get($seller, 'state', data_get($seller, 'uf'))) }}
+            </td>
+            <td colspan="2">
+                <span class="label">CEP:</span>
+                {{ data_get($seller, 'address.postal_code', data_get($seller, 'postal_code', data_get($seller, 'zip_code', data_get($seller, 'cep')))) }}
             </td>
         </tr>
     </table>
@@ -102,32 +125,56 @@
     <table class="data-table">
         <tr>
             <td colspan="2"><span class="label">Nome:</span> {{ data_get($buyer, 'name') }}</td>
-            <td><span class="label">CNPJ/CPF:</span> {{ data_get($buyer, 'cpf_cnpj', data_get($buyer, 'document')) }}
+            <td>
+                <span class="label">CNPJ/CPF:</span>
+                {{ data_get($buyer, 'cpf_cnpj', data_get($buyer, 'cpf', data_get($buyer, 'cnpj', data_get($buyer, 'document')))) }}
             </td>
-            <td><span class="label">Telefone:</span>
-                {{ data_get($buyer, 'whatsapp', data_get($buyer, 'phone', data_get($buyer, 'cellphone'))) }}</td>
+            <td>
+                <span class="label">Telefone:</span>
+                {{ data_get($buyer, 'whatsapp', data_get($buyer, 'phone', data_get($buyer, 'cellphone', data_get($buyer, 'celular', data_get($buyer, 'telefone'))))) }}
+            </td>
         </tr>
         <tr>
             <td colspan="2"><span class="label">E-mail:</span> {{ data_get($buyer, 'email') }}</td>
             <td colspan="2">
                 <span class="label">Endereço:</span>
                 {{ data_get($buyer, 'address.street', data_get($buyer, 'street')) }}
-                @if (data_get($buyer, 'address.number', data_get($buyer, 'address.street_number', data_get($buyer, 'number'))))
-                    ,
-                    {{ data_get($buyer, 'address.number', data_get($buyer, 'address.street_number', data_get($buyer, 'number'))) }}
+                @php
+                    $buyerNumber = data_get(
+                        $buyer,
+                        'address.number',
+                        data_get(
+                            $buyer,
+                            'address.street_number',
+                            data_get($buyer, 'number', data_get($buyer, 'numero')),
+                        ),
+                    );
+                    $buyerComplement = data_get(
+                        $buyer,
+                        'address.complement',
+                        data_get($buyer, 'complemento', data_get($buyer, 'complement')),
+                    );
+                @endphp
+                @if (!empty($buyerNumber))
+                    , {{ $buyerNumber }}
                 @endif
-                @if (data_get($buyer, 'address.complement', data_get($buyer, 'complement')))
-                    - {{ data_get($buyer, 'address.complement', data_get($buyer, 'complement')) }}
+                @if (!empty($buyerComplement))
+                    - {{ $buyerComplement }}
                 @endif
             </td>
         </tr>
         <tr>
             <td><span class="label">Bairro:</span>
-                {{ data_get($buyer, 'address.district', data_get($buyer, 'district')) }}</td>
-            <td><span class="label">Cidade/UF:</span> {{ data_get($buyer, 'address.city', data_get($buyer, 'city')) }}
-                / {{ data_get($buyer, 'address.state', data_get($buyer, 'state')) }}</td>
-            <td colspan="2"><span class="label">CEP:</span>
-                {{ data_get($buyer, 'address.postal_code', data_get($buyer, 'postal_code', data_get($buyer, 'zip_code'))) }}
+                {{ data_get($buyer, 'address.district', data_get($buyer, 'district', data_get($buyer, 'bairro'))) }}
+            </td>
+            <td>
+                <span class="label">Cidade/UF:</span>
+                {{ data_get($buyer, 'address.city', data_get($buyer, 'city', data_get($buyer, 'cidade'))) }} /
+                {{ data_get($buyer, 'address.state', data_get($buyer, 'state', data_get($buyer, 'uf'))) }}
+            </td>
+            <td colspan="2">
+                <span class="label">CEP:</span>
+                {{ data_get($buyer, 'address.postal_code', data_get($buyer, 'postal_code', data_get($buyer, 'zip_code', data_get($buyer, 'cep')))) }}
             </td>
         </tr>
     </table>
