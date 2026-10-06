@@ -36,7 +36,7 @@ class ClientResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    // protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -370,14 +370,14 @@ class ClientResource extends Resource
             ]);
     }
 
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            Pages\CreateClient::class,
-            Pages\EditClient::class,
-            Pages\ListClients::class,
-        ]);
-    }
+    // public static function getRecordSubNavigation(Page $page): array
+    // {
+    //     return $page->generateNavigationItems([
+    //         Pages\CreateClient::class,
+    //         Pages\EditClient::class,
+    //         Pages\ListClients::class,
+    //     ]);
+    // }
 
     public static function getNavigationBadge(): ?string
     {
