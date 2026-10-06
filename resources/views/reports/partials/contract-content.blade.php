@@ -65,16 +65,17 @@
     <div class="section-title">VENDEDOR</div>
     <table class="data-table">
         <tr>
-            <td colspan="2"><span class="label">Nome:</span> {{ $seller->name }}</td>
-            <td><span class="label">CNPJ/CPF:</span> {{ $seller->cpf_cnpj }}</td>
+            <td colspan="2"><span class="label">Nome:</span> {{ $seller->name ?? '' }}</td>
+            <td><span class="label">CNPJ/CPF:</span> {{ $seller->cpf_cnpj ?? '' }}</td>
             <td><span class="label">Telefone:</span> {{ $seller->whatsapp ?? '' }}</td>
         </tr>
         <tr>
             <td colspan="2"><span class="label">E-mail:</span> {{ $seller->email ?? '' }}</td>
             <td colspan="2">
                 <span class="label">Endereço:</span>
-                {{ $seller->address->street ?? '' }}{{ $seller->address->number ? ', ' . $seller->address->number : '' }}
-                {{ $seller->address->complement ? ' - ' . $seller->address->complement : '' }}
+                {{ $seller->address->street ?? '' }}
+                {{ !empty($seller->address->number ?? null) ? ', ' . $seller->address->number : '' }}
+                {{ !empty($seller->address->complement ?? null) ? ' - ' . $seller->address->complement : '' }}
             </td>
         </tr>
         <tr>
@@ -89,13 +90,18 @@
     <div class="section-title">COMPRADOR</div>
     <table class="data-table">
         <tr>
-            <td colspan="2"><span class="label">Nome:</span> {{ $buyer->name }}</td>
-            <td><span class="label">CNPJ/CPF:</span> {{ $buyer->cpf_cnpj }}</td>
+            <td colspan="2"><span class="label">Nome:</span> {{ $buyer->name ?? '' }}</td>
+            <td><span class="label">CNPJ/CPF:</span> {{ $buyer->cpf_cnpj ?? '' }}</td>
             <td><span class="label">Telefone:</span> {{ $buyer->whatsapp ?? '' }}</td>
         </tr>
         <tr>
             <td colspan="2"><span class="label">E-mail:</span> {{ $buyer->email ?? '' }}</td>
-            <td colspan="2"><span class="label">Endereço:</span> {{ $buyer->address->street ?? '' }}</td>
+            <td colspan="2">
+                <span class="label">Endereço:</span>
+                {{ $buyer->address->street ?? '' }}
+                {{ !empty($buyer->address->number ?? null) ? ', ' . $buyer->address->number : '' }}
+                {{ !empty($buyer->address->complement ?? null) ? ' - ' . $buyer->address->complement : '' }}
+            </td>
         </tr>
         <tr>
             <td><span class="label">Bairro:</span> {{ $buyer->address->district ?? '' }}</td>
