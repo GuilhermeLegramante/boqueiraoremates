@@ -205,7 +205,7 @@
                 </td>
 
                 {{-- Nome do Estabelecimento e Cidade (Centro) --}}
-                <td style="width: 40%; text-align: center;">
+                <td style="width: 40%; text-align: center; font-size: 12px; font-weight: bold; color: #000;">
                     <div class="event-title-center">
                         {{ $seller->establishment }}
                     </div>
