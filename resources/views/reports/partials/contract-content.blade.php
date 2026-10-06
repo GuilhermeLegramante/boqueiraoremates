@@ -65,24 +65,35 @@
     <div class="section-title">VENDEDOR</div>
     <table class="data-table">
         <tr>
-            <td colspan="2"><span class="label">Nome:</span> {{ $seller->name ?? '' }}</td>
-            <td><span class="label">CNPJ/CPF:</span> {{ $seller->cpf_cnpj ?? '' }}</td>
-            <td><span class="label">Telefone:</span> {{ $seller->whatsapp ?? '' }}</td>
+            <td colspan="2"><span class="label">Nome:</span> {{ data_get($seller, 'name') }}</td>
+            <td><span class="label">CNPJ/CPF:</span>
+                {{ data_get($seller, 'cpf_cnpj', data_get($seller, 'document')) }}</td>
+            <td><span class="label">Telefone:</span>
+                {{ data_get($seller, 'whatsapp', data_get($seller, 'phone', data_get($seller, 'cellphone'))) }}</td>
         </tr>
         <tr>
-            <td colspan="2"><span class="label">E-mail:</span> {{ $seller->email ?? '' }}</td>
+            <td colspan="2"><span class="label">E-mail:</span> {{ data_get($seller, 'email') }}</td>
             <td colspan="2">
                 <span class="label">Endereço:</span>
-                {{ $seller->address->street ?? '' }}
-                {{ !empty($seller->address->number ?? null) ? ', ' . $seller->address->number : '' }}
-                {{ !empty($seller->address->complement ?? null) ? ' - ' . $seller->address->complement : '' }}
+                {{ data_get($seller, 'address.street', data_get($seller, 'street')) }}
+                @if (data_get($seller, 'address.number', data_get($seller, 'address.street_number', data_get($seller, 'number'))))
+                    ,
+                    {{ data_get($seller, 'address.number', data_get($seller, 'address.street_number', data_get($seller, 'number'))) }}
+                @endif
+                @if (data_get($seller, 'address.complement', data_get($seller, 'complement')))
+                    - {{ data_get($seller, 'address.complement', data_get($seller, 'complement')) }}
+                @endif
             </td>
         </tr>
         <tr>
-            <td><span class="label">Bairro:</span> {{ $seller->address->district ?? '' }}</td>
-            <td><span class="label">Cidade/UF:</span> {{ $seller->address->city ?? '' }} /
-                {{ $seller->address->state ?? '' }}</td>
-            <td colspan="2"><span class="label">CEP:</span> {{ $seller->address->postal_code ?? '' }}</td>
+            <td><span class="label">Bairro:</span>
+                {{ data_get($seller, 'address.district', data_get($seller, 'district')) }}</td>
+            <td><span class="label">Cidade/UF:</span>
+                {{ data_get($seller, 'address.city', data_get($seller, 'city')) }} /
+                {{ data_get($seller, 'address.state', data_get($seller, 'state')) }}</td>
+            <td colspan="2"><span class="label">CEP:</span>
+                {{ data_get($seller, 'address.postal_code', data_get($seller, 'postal_code', data_get($seller, 'zip_code'))) }}
+            </td>
         </tr>
     </table>
 
@@ -90,24 +101,34 @@
     <div class="section-title">COMPRADOR</div>
     <table class="data-table">
         <tr>
-            <td colspan="2"><span class="label">Nome:</span> {{ $buyer->name ?? '' }}</td>
-            <td><span class="label">CNPJ/CPF:</span> {{ $buyer->cpf_cnpj ?? '' }}</td>
-            <td><span class="label">Telefone:</span> {{ $buyer->whatsapp ?? '' }}</td>
+            <td colspan="2"><span class="label">Nome:</span> {{ data_get($buyer, 'name') }}</td>
+            <td><span class="label">CNPJ/CPF:</span> {{ data_get($buyer, 'cpf_cnpj', data_get($buyer, 'document')) }}
+            </td>
+            <td><span class="label">Telefone:</span>
+                {{ data_get($buyer, 'whatsapp', data_get($buyer, 'phone', data_get($buyer, 'cellphone'))) }}</td>
         </tr>
         <tr>
-            <td colspan="2"><span class="label">E-mail:</span> {{ $buyer->email ?? '' }}</td>
+            <td colspan="2"><span class="label">E-mail:</span> {{ data_get($buyer, 'email') }}</td>
             <td colspan="2">
                 <span class="label">Endereço:</span>
-                {{ $buyer->address->street ?? '' }}
-                {{ !empty($buyer->address->number ?? null) ? ', ' . $buyer->address->number : '' }}
-                {{ !empty($buyer->address->complement ?? null) ? ' - ' . $buyer->address->complement : '' }}
+                {{ data_get($buyer, 'address.street', data_get($buyer, 'street')) }}
+                @if (data_get($buyer, 'address.number', data_get($buyer, 'address.street_number', data_get($buyer, 'number'))))
+                    ,
+                    {{ data_get($buyer, 'address.number', data_get($buyer, 'address.street_number', data_get($buyer, 'number'))) }}
+                @endif
+                @if (data_get($buyer, 'address.complement', data_get($buyer, 'complement')))
+                    - {{ data_get($buyer, 'address.complement', data_get($buyer, 'complement')) }}
+                @endif
             </td>
         </tr>
         <tr>
-            <td><span class="label">Bairro:</span> {{ $buyer->address->district ?? '' }}</td>
-            <td><span class="label">Cidade/UF:</span> {{ $buyer->address->city ?? '' }} /
-                {{ $buyer->address->state ?? '' }}</td>
-            <td colspan="2"><span class="label">CEP:</span> {{ $buyer->address->postal_code ?? '' }}</td>
+            <td><span class="label">Bairro:</span>
+                {{ data_get($buyer, 'address.district', data_get($buyer, 'district')) }}</td>
+            <td><span class="label">Cidade/UF:</span> {{ data_get($buyer, 'address.city', data_get($buyer, 'city')) }}
+                / {{ data_get($buyer, 'address.state', data_get($buyer, 'state')) }}</td>
+            <td colspan="2"><span class="label">CEP:</span>
+                {{ data_get($buyer, 'address.postal_code', data_get($buyer, 'postal_code', data_get($buyer, 'zip_code'))) }}
+            </td>
         </tr>
     </table>
 
