@@ -391,7 +391,7 @@
         tribunal, custos de agencia de cobrança e honorários advocatícios no valor estabelecido pelo tribunal.
     </p>
     <p class="clause-text">
-        Fica eleito o Foro da Comarca de Uruguaiana (RS) para dirimir qualquer questão atinente ao presente
+        Fica eleito o Foro da Comarca da cidade do vendedor para dirimir qualquer questão atinente ao presente
         contrato.
     </p>
     <p class="clause-text">
