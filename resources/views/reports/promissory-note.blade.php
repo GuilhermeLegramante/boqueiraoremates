@@ -367,9 +367,9 @@
                                                 {{ number_format(data_get($parcelsArray[$i], 'value', 0), 2, ',', '.') }}
                                             </td>
                                         @else
-                                            <td>&nbsp; --- </td>
-                                            <td>&nbsp; --- </td>
-                                            <td>&nbsp; --- </td>
+                                            <td>—</td>
+                                            <td>—</td>
+                                            <td>—</td>
                                         @endif
                                     </tr>
                                 @endfor
