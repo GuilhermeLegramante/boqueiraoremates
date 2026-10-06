@@ -47,7 +47,7 @@ class ContractsRelationManager extends RelationManager
                 // 🔹 GRUPO DE PRÉ-VISUALIZAÇÃO (Sem travar a fatura)
                 ActionGroup::make([
                     Tables\Actions\Action::make('preview_bundle')
-                        ->label('Todos os Docs (Agrupados)')
+                        ->label('Todos os Documentos')
                         ->icon('heroicon-o-document-duplicate')
                         ->color('success')
                         ->url(fn(): string => route('order-bundle-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
