@@ -47,7 +47,7 @@
         /* Título do evento no centro */
         .event-title-center {
             text-align: center;
-            font-size: 15px;
+            font-size: 18px;
             font-weight: bold;
             text-transform: uppercase;
             color: #000;
@@ -205,7 +205,7 @@
                 </td>
 
                 {{-- Nome do Estabelecimento e Cidade (Centro) --}}
-                <td style="width: 40%; text-align: center; font-size: 15px; font-weight: bold; color: #000;">
+                <td style="width: 40%; text-align: center;">
                     <div class="event-title-center">
                         {{ $seller->establishment }}
                     </div>
