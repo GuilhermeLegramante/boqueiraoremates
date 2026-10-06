@@ -64,7 +64,7 @@
 
         .contract-city {
             text-align: center;
-            font-size: 10px;
+            font-size: 15px;
             margin-top: 2px;
         }
 
