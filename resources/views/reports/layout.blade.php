@@ -117,7 +117,7 @@
 
         .event-title-center {
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             text-transform: uppercase;
             color: #000;
