@@ -514,7 +514,7 @@
         </p>
 
         <p class="contract-text">
-            Fica eleito o Foro da Comarca de Uruguaiana (RS) para dirimir qualquer questão
+            Fica eleito o Foro da Comarca da cidade do vendedor para dirimir qualquer questão
             atinente ao presente contrato.
         </p>
 
