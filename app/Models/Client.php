@@ -239,21 +239,19 @@ class Client extends Model
         $password = substr($cpfCnpj, 0, 6);
         $email = $client->email ?? "{$cpfCnpj}@example.com";
 
-        // Evita duplicidade de cliente nacional
+        // Verifica duplicidade
         $existingClient = Client::where('cpf_cnpj', $cpfCnpj)
             ->orWhere('cpf_cnpj', $client->cpf_cnpj)
             ->first();
 
         if ($existingClient) {
-            $existingClient->update([
-                'name' => $client->name,
-                'email' => $client->email,
+            // Em vez de retornar false e cancelar silenciosamente, lança exceção para o Filament tratar
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'cpf_cnpj' => "Já existe um cliente registado com o CPF/CNPJ {$client->cpf_cnpj}.",
             ]);
-
-            return false; // Aborta a criação do novo registro no banco
         }
 
-        // Busca ou vincula o usuário correspondente ao CPF/CNPJ
+        // Busca ou vincula o utilizador correspondente
         $existingUser = User::where('username', $cpfCnpj)
             ->orWhere('username', $client->cpf_cnpj)
             ->first();
