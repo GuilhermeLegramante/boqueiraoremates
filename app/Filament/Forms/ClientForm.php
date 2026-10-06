@@ -179,6 +179,7 @@ class ClientForm
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
+                                ->unique(table: Client::class, column: 'cpf_cnpj', ignoreRecord: true)
                                 ->live()
                                 // Oculta o campo se for um cliente internacional
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
