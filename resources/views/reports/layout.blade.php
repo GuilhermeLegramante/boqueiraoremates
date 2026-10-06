@@ -28,6 +28,11 @@
             break-before: page;
         }
 
+        .no-break {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
         /* Utilitários e Tabelas */
         .w-100 {
             width: 100%;
@@ -64,21 +69,22 @@
             font-weight: bold;
             font-size: 10px;
             padding: 2px 0;
-            margin: 6px 0 4px 0;
+            margin: 4px 0 3px 0;
             text-transform: uppercase;
         }
 
         .data-table,
         .info-table {
-            width: 100%;
+            width: 100% !important;
+            box-sizing: border-box;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .data-table td,
         .info-table td {
             border: 1px solid #000;
-            padding: 3px 4px;
+            padding: 2px 4px;
             font-size: 9px;
             vertical-align: top;
         }
@@ -166,13 +172,13 @@
         .signature-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 35px;
+            margin-top: 20px;
         }
 
         .signature-table td {
             width: 50%;
             text-align: center;
-            padding: 30px 15px 0 15px;
+            padding: 15px 15px 0 15px;
         }
 
         .signature-line {
@@ -198,13 +204,13 @@
         /* Estilos da Promissória */
         .promissory-container {
             border: 1px solid #000;
-            padding: 10px;
+            padding: 8px;
         }
 
         .promissory-header {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .promissory-header td {
@@ -212,18 +218,18 @@
         }
 
         .promissory-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             font-style: italic;
             text-decoration: underline;
             text-transform: uppercase;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
 
         .parcels-wrapper {
             width: 100%;
-            margin-top: 6px;
-            margin-bottom: 8px;
+            margin-top: 4px;
+            margin-bottom: 6px;
         }
 
         .parcels-columns-table {
@@ -233,7 +239,7 @@
 
         .parcels-columns-table>tbody>tr>td {
             vertical-align: top;
-            padding: 0 4px;
+            padding: 0 2px;
         }
 
         .parcels-table {
@@ -245,8 +251,8 @@
         .parcels-table th,
         .parcels-table td {
             border: 1px solid #000;
-            padding: 2px;
-            font-size: 8.5px;
+            padding: 1.5px 2px;
+            font-size: 8px;
             text-align: center;
         }
 
@@ -255,18 +261,18 @@
         }
 
         .clause-text {
-            font-size: 8.5px;
-            line-height: 1.35;
+            font-size: 8px;
+            line-height: 1.25;
             text-align: justify;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .city-date {
             text-align: center;
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin-top: 6px;
+            margin-bottom: 10px;
             text-transform: uppercase;
         }
 
@@ -274,10 +280,12 @@
             width: 60%;
             margin: 0 auto;
             text-align: center;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .promissory-signature-box {
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         /* Estilos do Regulamento */
@@ -345,13 +353,15 @@
 
         .signatures-container {
             width: 100%;
-            margin-top: 25px;
+            margin-top: 20px;
             text-align: center;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
         .signature-block {
             width: 320px;
-            margin: 0 auto 18px auto;
+            margin: 0 auto 12px auto;
             text-align: center;
         }
 

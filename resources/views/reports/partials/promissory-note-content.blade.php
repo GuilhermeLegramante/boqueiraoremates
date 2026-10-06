@@ -14,7 +14,7 @@
             </td>
             <td style="width: 60%; text-align: right;">
                 <div class="promissory-title">NOTA PROMISSÓRIA - ÚNICA</div>
-                <div style="font-size: 10px; line-height: 1.3;">
+                <div style="font-size: 9.5px; line-height: 1.25;">
                     <div><span class="label">Nota do:</span> {{ mb_strtoupper($event->name ?? '', 'UTF-8') }}</div>
                     <div><span class="label">NP Nº:</span> {{ $order->number }}</div>
                     <div><span class="label">Escritório/Leiloeiro:</span> {{ $event->auctioneer ?? '' }}</div>
@@ -87,15 +87,15 @@
         $isQuartoDeMilha = $breedName === 'QUARTO DE MILHA';
     @endphp
 
-    <div style="text-align: center; font-weight: bold; font-size: 9.5px; margin: 3px 0;">
+    <div style="text-align: center; font-weight: bold; font-size: 9px; margin: 2px 0;">
         {{ $objetoTexto }}
     </div>
 
     <table class="info-table">
         <tr>
-            <td><span class="label">Nº Lote(s):</span> {{ $order->animalEvent->lot_number ?? ($order->batch ?? '') }}
-            </td>
-            <td colspan="2"><span class="label">Nome(s):</span>
+            <td style="width: 25%;"><span class="label">Nº Lote(s):</span>
+                {{ $order->animalEvent->lot_number ?? ($order->batch ?? '') }}</td>
+            <td style="width: 75%;" colspan="2"><span class="label">Nome(s):</span>
                 {{ $order->animalEvent->name ?? ($animal->name ?? '') }}</td>
         </tr>
         <tr>
@@ -125,12 +125,13 @@
 
     {{-- ACERTO FINANCEIRO --}}
     <div class="section-header">ACERTO FINANCEIRO</div>
-    <table class="info-table">
+    <table class="info-table" style="width: 100%;">
         <tr>
-            <td><span class="label">Dta da Compra:</span>
+            <td style="width: 33%;"><span class="label">Dta da Compra:</span>
                 {{ \Carbon\Carbon::parse($order->base_date ?? now())->format('d/m/Y') }}</td>
-            <td><span class="label">Cond.:</span> {{ $order->paymentWay->name ?? '' }}</td>
-            <td class="text-right"><span class="label">/{{ count($order->parcels ?? []) }} PARCELAS</span></td>
+            <td style="width: 34%;"><span class="label">Cond.:</span> {{ $order->paymentWay->name ?? '' }}</td>
+            <td style="width: 33%;" class="text-right"><span class="label">/{{ count($order->parcels ?? []) }}
+                    PARCELAS</span></td>
         </tr>
         <tr>
             <td><span class="label">Vlr Bruto:</span> R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}
@@ -222,24 +223,24 @@
         {{ \Carbon\Carbon::parse($order->base_date ?? now())->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}
     </div>
 
-    {{-- ASSINATURAS --}}
-    <div class="promissory-signatures">
+    {{-- ASSINATURAS (Protegidas para não quebrar de página) --}}
+    <div class="promissory-signatures no-break">
         <div class="promissory-signature-box">
             <div class="signature-line"></div>
             <div class="signature-name">{{ $buyer->name }}</div>
-            <div style="font-size: 8.5px; text-transform: uppercase;">CPF/CNPJ: {{ $buyer->cpf_cnpj }}</div>
+            <div style="font-size: 8px; text-transform: uppercase;">COMPRADOR - CPF/CNPJ: {{ $buyer->cpf_cnpj }}</div>
         </div>
 
-        <div class="promissory-signature-box" style="margin-top: 25px;">
+        <div class="promissory-signature-box" style="margin-top: 15px;">
             <div class="signature-line"></div>
             <div class="signature-name">{{ $event->witness_1_name ?? 'TESTEMUNHA 1' }}</div>
-            <div style="font-size: 8.5px; text-transform: uppercase;">TESTEMUNHA</div>
+            <div style="font-size: 8px; text-transform: uppercase;">TESTEMUNHA</div>
         </div>
 
-        <div class="promissory-signature-box" style="margin-top: 25px;">
+        <div class="promissory-signature-box" style="margin-top: 15px;">
             <div class="signature-line"></div>
             <div class="signature-name">{{ $event->witness_2_name ?? 'TESTEMUNHA 2' }}</div>
-            <div style="font-size: 8.5px; text-transform: uppercase;">TESTEMUNHA</div>
+            <div style="font-size: 8px; text-transform: uppercase;">TESTEMUNHA</div>
         </div>
     </div>
 </div>
