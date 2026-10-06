@@ -135,7 +135,8 @@
             <td class="num">1 )</td>
             <td>O leilão será realizado no dia
                 <strong>{{ !empty($event->date) ? \Carbon\Carbon::parse($event->date)->format('d/m/Y') : $contractDate->format('d/m/Y') }}</strong>,
-                às <strong>{{ $event->time ?? '19h' }}</strong>, na cidade de <strong>{{ $contractCity }}</strong>.
+                às <strong>{{ $event->time ?? '19h' }}</strong>, na cidade de
+                <strong>{{ $contractCity ?? ($seller->address->city ?? 'Uruguaiana') . ' - ' . ($seller->address->state ?? 'RS') }}</strong>.
             </td>
         </tr>
         <tr>

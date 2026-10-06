@@ -577,6 +577,10 @@ class ContractController extends Controller
 
         $paymentText = $this->buildPaymentText($order, $netValue, $installments, $firstParcelValue, $firstDueDate);
 
+        // Cidade e Estado do Vendedor (fallback para 'Uruguaiana - RS')
+        $city = $seller->address->city ?? 'Uruguaiana';
+        $state = $seller->address->state ?? 'RS';
+
         $data = [
             'order' => $order,
             'event' => $event,
@@ -596,6 +600,10 @@ class ContractController extends Controller
             'title' => 'PRÉ-VISUALIZAÇÃO - PACOTE COMPLETO',
             'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
             'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
+
+            // 🔹 VARIÁVEIS ADICIONADAS PARA EVITAR O ERRO:
+            'contractCity' => "{$city} - {$state}",
+            'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
 
         return ReportFactory::getBasicPdf(
