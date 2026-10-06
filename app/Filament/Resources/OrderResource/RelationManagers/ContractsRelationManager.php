@@ -83,7 +83,7 @@ class ContractsRelationManager extends RelationManager
 
                 // BOTÃO DE GERAR E OFICIALIZAR
                 Tables\Actions\Action::make('generate')
-                    ->label('Gerar Contrato (Fechar Fatura)')
+                    ->label('Gerar Contrato')
                     ->icon('heroicon-o-document-plus')
                     ->color('primary')
                     ->visible(fn(): bool => ! $this->getOwnerRecord()->hasContract())
@@ -115,7 +115,7 @@ class ContractsRelationManager extends RelationManager
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\Action::make('pdf_bundle')
-                        ->label('Todos os Docs (Agrupados)')
+                        ->label('Todos os Documentos')
                         ->icon('heroicon-o-document-duplicate')
                         ->color('success')
                         ->url(fn(Contract $record): string => route('contract-bundle-pdf', ['contract' => $record->id]))
