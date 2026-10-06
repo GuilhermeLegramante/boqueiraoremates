@@ -58,11 +58,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/contracts/{contract}/promissory-note', [ContractController::class, 'showPromissoryNote'])
         ->name('promissory-note-pdf');
 
-    Route::get('/contracts/{contract}/regulation', [ContractController::class, 'showRegulation'])
-        ->name('contract-regulation-pdf');
-
+    /**
+     * Contratos e Documentos Emitidos
+     */
+    // Pré-visualizações
     Route::get('/orders/{order}/preview-pdf', [ContractController::class, 'previewPdf'])->name('order-preview-pdf');
-    Route::get('/orders/{order}/preview-promissory-pdf', [ContractController::class, 'previewPromissoryPdf'])->name('order-promissory-preview-pdf');
+    Route::get('/orders/{order}/promissory-preview-pdf', [ContractController::class, 'previewPromissoryPdf'])->name('order-promissory-preview-pdf');
+    Route::get('/orders/{order}/regulation-preview-pdf', [ContractController::class, 'previewRegulationPdf'])->name('order-regulation-preview-pdf');
+    Route::get('/orders/{order}/bundle-preview-pdf', [ContractController::class, 'previewBundlePdf'])->name('order-bundle-preview-pdf');
+
+    // Documentos Emitidos
+    Route::get('/contracts/{contract}/pdf', [ContractController::class, 'getPdf'])->name('contract-pdf');
+    Route::get('/contracts/{contract}/promissory-note', [ContractController::class, 'showPromissoryNote'])->name('promissory-note-pdf');
+    Route::get('/contracts/{contract}/regulation', [ContractController::class, 'showRegulation'])->name('contract-regulation-pdf');
+    Route::get('/contracts/{contract}/bundle-pdf', [ContractController::class, 'bundlePdf'])->name('contract-bundle-pdf');
 });
 
 Route::get('/teste', function () {});

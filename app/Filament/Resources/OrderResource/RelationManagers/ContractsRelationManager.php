@@ -46,22 +46,35 @@ class ContractsRelationManager extends RelationManager
             ->headerActions([
                 // 🔹 GRUPO DE PRÉ-VISUALIZAÇÃO (Sem travar a fatura)
                 ActionGroup::make([
+                    Tables\Actions\Action::make('preview_bundle')
+                        ->label('Todos os Docs (Agrupados)')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('success')
+                        ->url(fn(): string => route('order-bundle-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
+                        ->openUrlInNewTab(),
+
                     Tables\Actions\Action::make('preview_via1')
-                        ->label('1ª Via (Prévia)')
+                        ->label('1ª Via Contrato')
                         ->icon('heroicon-o-eye')
                         ->url(fn(): string => route('order-preview-pdf', ['order' => $this->getOwnerRecord()->id, 'via' => 1]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_via2')
-                        ->label('2ª Via (Prévia)')
+                        ->label('2ª Via Contrato')
                         ->icon('heroicon-o-eye')
                         ->url(fn(): string => route('order-preview-pdf', ['order' => $this->getOwnerRecord()->id, 'via' => 2]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_promissory')
-                        ->label('Nota Promissória (Prévia)')
+                        ->label('Nota Promissória')
                         ->icon('heroicon-o-eye')
                         ->url(fn(): string => route('order-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('preview_regulation')
+                        ->label('Regulamento')
+                        ->icon('heroicon-o-eye')
+                        ->url(fn(): string => route('order-regulation-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
                         ->openUrlInNewTab(),
                 ])
                     ->label('Pré-visualizar Documentos')
@@ -101,6 +114,13 @@ class ContractsRelationManager extends RelationManager
             ])
             ->actions([
                 ActionGroup::make([
+                    Tables\Actions\Action::make('pdf_bundle')
+                        ->label('Todos os Docs (Agrupados)')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('success')
+                        ->url(fn(Contract $record): string => route('contract-bundle-pdf', ['contract' => $record->id]))
+                        ->openUrlInNewTab(),
+
                     Tables\Actions\Action::make('pdf_via1')
                         ->label('1ª Via')
                         ->icon('heroicon-o-document-text')
@@ -125,7 +145,7 @@ class ContractsRelationManager extends RelationManager
                     Tables\Actions\Action::make('regulation')
                         ->label('Regulamento')
                         ->icon('heroicon-o-document-text')
-                        ->url(fn(Contract $record) => route('contract-regulation-pdf', $record))
+                        ->url(fn(Contract $record): string => route('contract-regulation-pdf', $record))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\DeleteAction::make()

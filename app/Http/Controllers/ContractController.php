@@ -471,4 +471,138 @@ class ContractController extends Controller
             "previa_promissoria_OS_{$order->number}.pdf"
         );
     }
+
+    /**
+     * Pré-visualiza o Regulamento
+     */
+    public function previewRegulationPdf(Order $order)
+    {
+        $order->load([
+            'event',
+            'seller.address',
+            'buyer.address',
+            'animal.breed',
+            'animalEvent',
+            'paymentWay',
+            'parcels',
+        ]);
+
+        $data = [
+            'order' => $order,
+            'event' => $order->event,
+            'seller' => $order->seller,
+            'buyer' => $order->buyer,
+            'animal' => $order->animal,
+            'isPreview' => true,
+            'contractDate' => now(),
+            'title' => 'PRÉ-VISUALIZAÇÃO DE REGULAMENTO',
+            'eventBanner' => $order->event && $order->event->banner_min ? storage_path('app/public/' . $order->event->banner_min) : null,
+            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
+        ];
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.regulation',
+            $data,
+            "previa_regulamento_OS_{$order->number}.pdf"
+        );
+    }
+
+    /**
+     * Imprime Todos os Documentos Agrupados em uma única View
+     */
+    public function bundlePdf($id)
+    {
+        set_time_limit(0);
+
+        $contract = Contract::with([
+            'order.event',
+            'order.seller.address',
+            'order.buyer.address',
+            'order.animal.breed',
+            'order.animal.coat',
+            'order.paymentWay',
+            'order.parcels',
+        ])->findOrFail($id);
+
+        $data = !empty($contract->snapshot)
+            ? $this->prepareFromSnapshot($contract, 1)
+            : $this->prepareFromDatabase($contract, 1);
+
+        $data['title'] = 'DOCUMENTOS DO CONTRATO - OS ' . $data['order']->number;
+        $data['isPreview'] = false;
+
+        $fileName = 'PACOTE_COMPLETO_OS_' . $data['order']->number . '.pdf';
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.bundle',
+            $data,
+            $fileName
+        );
+    }
+
+    /**
+     * Pré-visualiza Todos os Documentos Agrupados em uma única View
+     */
+    public function previewBundlePdf(Order $order)
+    {
+        set_time_limit(0);
+
+        $order->load([
+            'event',
+            'seller.address',
+            'buyer.address',
+            'animal.breed',
+            'animalEvent',
+            'paymentWay',
+            'parcels',
+        ]);
+
+        $event = $order->event;
+        $seller = $order->seller;
+        $buyer = $order->buyer;
+        $animal = $order->animal;
+
+        $grossValue = (float) $order->gross_value;
+        $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
+        $netValue = $grossValue - $discountValue;
+
+        $parcels = $order->parcels->sortBy('date');
+        $installments = $parcels->count();
+        $firstParcel = $parcels->first();
+
+        $firstParcelValue = $firstParcel ? (float) $firstParcel->value : (float) $order->first_parcel_value;
+        $firstDueDate = $firstParcel?->date ? Carbon::parse($firstParcel->date) : ($order->first_date ? Carbon::parse($order->first_date) : null);
+
+        $paymentText = $this->buildPaymentText($order, $netValue, $installments, $firstParcelValue, $firstDueDate);
+
+        $data = [
+            'order' => $order,
+            'event' => $event,
+            'seller' => $seller,
+            'buyer' => $buyer,
+            'animal' => $animal,
+            'parcels' => $parcels,
+            'grossValue' => $grossValue,
+            'netValue' => $netValue,
+            'discountValue' => $discountValue,
+            'installments' => $installments,
+            'firstParcelValue' => $firstParcelValue,
+            'firstDueDate' => $firstDueDate,
+            'paymentText' => $paymentText,
+            'contractDate' => now(),
+            'isPreview' => true,
+            'title' => 'PRÉ-VISUALIZAÇÃO - PACOTE COMPLETO',
+            'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
+            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
+        ];
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.bundle',
+            $data,
+            "previa_pacote_completo_OS_{$order->number}.pdf"
+        );
+    }
 }
