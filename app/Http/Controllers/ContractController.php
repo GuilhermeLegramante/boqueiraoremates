@@ -385,8 +385,29 @@ class ContractController extends Controller
         $buyer = $order->buyer;
         $animal = $order->animal;
 
-        // Monta o texto de pagamento dinâmico se tiver um método/helper
-        $paymentText = $order->payment_text ?? '';
+        $grossValue = (float) $order->gross_value;
+        $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
+        $netValue = $grossValue - $discountValue;
+
+        $parcels = $order->parcels->sortBy('date');
+        $installments = $parcels->count();
+        $firstParcel = $parcels->first();
+
+        $firstParcelValue = $firstParcel
+            ? (float) $firstParcel->value
+            : (float) $order->first_parcel_value;
+
+        $firstDueDate = $firstParcel?->date
+            ? Carbon::parse($firstParcel->date)
+            : ($order->first_date ? Carbon::parse($order->first_date) : null);
+
+        $paymentText = $this->buildPaymentText(
+            order: $order,
+            netValue: $netValue,
+            installments: $installments,
+            firstParcelValue: $firstParcelValue,
+            firstDueDate: $firstDueDate,
+        );
 
         $data = [
             'order' => $order,
