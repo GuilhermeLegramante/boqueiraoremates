@@ -166,7 +166,7 @@ class ContractController extends Controller
     }
 
     /**
-     * Monta os dados a partir do Snapshot JSON
+     * Monta os dados a partir do Snapshot JSON com fallback para o Banco caso faltem campos
      */
     private function prepareFromSnapshot(Contract $contract, int $via): array
     {
@@ -182,6 +182,54 @@ class ContractController extends Controller
         $buyer = json_decode(json_encode($snapshot['buyer'] ?? []));
         $animal = json_decode(json_encode($snapshot['animal'] ?? []));
         $event = json_decode(json_encode($snapshot['event'] ?? []));
+
+        // 🔹 FALLBACK SE FALTAR DADOS NO SNAPSHOT DO VENDEDOR
+        if ($contract->order && $contract->order->seller) {
+            $dbSeller = $contract->order->seller;
+
+            // Garante Telefone / WhatsApp
+            if (empty($seller->whatsapp) && empty($seller->phone) && empty($seller->cellphone)) {
+                $seller->whatsapp = $dbSeller->whatsapp ?? $dbSeller->phone ?? $dbSeller->cellphone ?? null;
+            }
+
+            // Garante dados do Endereço (Rua, Número, Bairro, CEP, etc.)
+            if ($dbSeller->address) {
+                if (!isset($seller->address) || is_null($seller->address)) {
+                    $seller->address = (object) [];
+                }
+                $seller->address->street = $seller->address->street ?? $dbSeller->address->street ?? null;
+                $seller->address->number = $seller->address->number ?? $dbSeller->address->number ?? $dbSeller->address->street_number ?? null;
+                $seller->address->complement = $seller->address->complement ?? $dbSeller->address->complement ?? null;
+                $seller->address->district = $seller->address->district ?? $dbSeller->address->district ?? null;
+                $seller->address->city = $seller->address->city ?? $dbSeller->address->city ?? null;
+                $seller->address->state = $seller->address->state ?? $dbSeller->address->state ?? null;
+                $seller->address->postal_code = $seller->address->postal_code ?? $dbSeller->address->postal_code ?? null;
+            }
+        }
+
+        // 🔹 FALLBACK SE FALTAR DADOS NO SNAPSHOT DO COMPRADOR
+        if ($contract->order && $contract->order->buyer) {
+            $dbBuyer = $contract->order->buyer;
+
+            // Garante Telefone / WhatsApp
+            if (empty($buyer->whatsapp) && empty($buyer->phone) && empty($buyer->cellphone)) {
+                $buyer->whatsapp = $dbBuyer->whatsapp ?? $dbBuyer->phone ?? $dbBuyer->cellphone ?? null;
+            }
+
+            // Garante dados do Endereço
+            if ($dbBuyer->address) {
+                if (!isset($buyer->address) || is_null($buyer->address)) {
+                    $buyer->address = (object) [];
+                }
+                $buyer->address->street = $buyer->address->street ?? $dbBuyer->address->street ?? null;
+                $buyer->address->number = $buyer->address->number ?? $dbBuyer->address->number ?? $dbBuyer->address->street_number ?? null;
+                $buyer->address->complement = $buyer->address->complement ?? $dbBuyer->address->complement ?? null;
+                $buyer->address->district = $buyer->address->district ?? $dbBuyer->address->district ?? null;
+                $buyer->address->city = $buyer->address->city ?? $dbBuyer->address->city ?? null;
+                $buyer->address->state = $buyer->address->state ?? $dbBuyer->address->state ?? null;
+                $buyer->address->postal_code = $buyer->address->postal_code ?? $dbBuyer->address->postal_code ?? null;
+            }
+        }
 
         $grossValue = (float) $order->gross_value;
         $discountValue = ($grossValue * (float) ($order->discount_percentage ?? 0)) / 100;
