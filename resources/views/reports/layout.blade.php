@@ -268,7 +268,7 @@
         }
 
         .city-date {
-            text-align: center;
+            text-align: left;
             font-size: 9.5px;
             font-weight: bold;
             margin-top: 6px;
