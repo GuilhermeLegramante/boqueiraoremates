@@ -200,7 +200,7 @@
                     <div class="promissory-title">NOTA PROMISSÓRIA - ÚNICA</div>
                     <div class="header-info">
                         <div><span class="label">Nota do:</span>
-                            {{ mb_strtoupper($seller->establishment ?? ($event->name ?? ''), 'UTF-8') }}</div>
+                            {{ mb_strtoupper($event->name, 'UTF-8') }}</div>
                         <div><span class="label">NP Nº:</span> {{ $order->number }}</div>
                         <div><span class="label">Escritório/Leiloeiro:</span> {{ $event->auctioneer ?? '' }}</div>
                     </div>
@@ -402,7 +402,7 @@
     {{-- CIDADE E DATA --}}
     <div class="city-date">
         {{ $seller->address->city ?? 'Uruguaiana' }} - {{ $seller->address->state ?? 'RS' }},
-        {{ \Carbon\Carbon::parse($contractDate)->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }} </div>
+        {{ \Carbon\Carbon::parse($order->base_date)->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }} </div>
 
     {{-- ASSINATURAS --}}
     <div class="signature-container">

@@ -138,7 +138,7 @@ class ContractController extends Controller
             }
         }
 
-        $boqueiraoLogo = public_path('img/logo_completa.png');
+        $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
 
         return [
             'title' => "CONTRATO DE VENDA - {$via}ª VIA",
@@ -218,7 +218,7 @@ class ContractController extends Controller
             }
         }
 
-        $boqueiraoLogo = public_path('img/logo_completa.png');
+        $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
         $city = $seller->address->city ?? 'Uruguaiana';
         $state = $seller->address->state ?? 'RS';
 
@@ -400,7 +400,7 @@ class ContractController extends Controller
             'isPreview' => true,
             'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
             'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
-            'boqueiraoLogo' => public_path('img/logo_completa.png'),
+            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
         ];
 
         return ReportFactory::getBasicPdf(

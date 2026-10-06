@@ -32,7 +32,7 @@
                 font-weight: bold;
                 line-height: 1.25;
             ">
-                Nota de Leilão e Contrato de Compra
+                Contrato de Compra
                 com Reserva de Domínio
             </div>
         </td>

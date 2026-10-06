@@ -186,7 +186,7 @@
     @if (!empty($isPreview) && $isPreview)
         <div class="watermark">PRÉ-VISUALIZAÇÃO</div>
     @endif
-    
+
     <div class="contract contract-page">
 
         {{-- CABEÇALHO --}}
@@ -207,7 +207,7 @@
                 {{-- Nome do Evento e Cidade (Centro) --}}
                 <td style="width: 40%; text-align: center;">
                     <div class="event-title-center">
-                        {{ $seller->establishment }}
+                        {{ $event->name }}
                     </div>
                     <div class="contract-city">
                         {{ $seller->address->city ?? '' }} - {{ $seller->address->state ?? '' }}
@@ -235,7 +235,7 @@
             <tr>
                 <td style="width: 80%;">
                     <span class="contract-title">
-                        NOTA DE LEILÃO E CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO
+                        CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO
                     </span>
 
                     {{-- Indicação da Via --}}
@@ -249,7 +249,7 @@
 
                 <td style="width: 20%; text-align: right;">
                     <div class="contract-number">
-                        Nº {{ $order->number }} / {{ $contractDate->format('Y') }}
+                        Nº {{ $order->number }} / {{ $order->base_date->format('Y') }}
                     </div>
                 </td>
             </tr>
@@ -274,7 +274,7 @@
 
                 <td>
                     <span class="label">Telefone:</span>
-                    {{ $seller->phone ?? '' }}
+                    {{ $seller->whatsapp ?? '' }}
                 </td>
             </tr>
 
@@ -286,7 +286,8 @@
 
                 <td colspan="2">
                     <span class="label">Endereço:</span>
-                    {{ $seller->address->street ?? '' }}
+                    {{ $seller->address->street ?? '' }}{{ $seller->address->number ? ', ' . $seller->address->number : '' }}
+                    {{ $seller->address->complement ? ' - ' . $seller->address->complement : '' }}
                 </td>
             </tr>
 
@@ -327,7 +328,7 @@
 
                 <td>
                     <span class="label">Telefone:</span>
-                    {{ $buyer->phone ?? '' }}
+                    {{ $buyer->whatsapp ?? '' }}
                 </td>
             </tr>
 
@@ -524,7 +525,7 @@
 
         <p style="text-align: center; font-size: 9.5px; margin-top: 12px;">
             {{ $seller->address->city ?? 'Uruguaiana' }} - {{ $seller->address->state ?? 'RS' }},
-            {{ \Carbon\Carbon::parse($contractDate)->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}
+            {{ \Carbon\Carbon::parse($order->base_date)->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}
         </p>
 
         {{-- ASSINATURAS --}}
