@@ -249,8 +249,7 @@
 
                 <td style="width: 20%; text-align: right;">
                     <div class="contract-number">
-                        Nº {{ $order->number }} / {{ $order->base_date->format('Y') }}
-                    </div>
+                        Nº {{ $order->number }} / {{ $order->base_date->format('Y') }} </div>
                 </td>
             </tr>
         </table>
