@@ -649,33 +649,5 @@ class ContractController extends Controller
 
         return ReportFactory::getBasicPdf('portrait', 'reports.bundle', $data, "previa_pacote_OS_{$order->number}.pdf");
     }
-
-    private function parseClauseVariables(string $text, array $data): string
-    {
-        $event = $data['event'] ?? null;
-        $order = $data['order'] ?? null;
-        $buyer = $data['buyer'] ?? null;
-        $seller = $data['seller'] ?? null;
-
-        // Converte para objeto se vier como array (Snapshot)
-        $eventObj = is_array($event) ? (object) $event : $event;
-        $orderObj = is_array($order) ? (object) $order : $order;
-        $buyerObj = is_array($buyer) ? (object) $buyer : $buyer;
-        $sellerObj = is_array($seller) ? (object) $seller : $seller;
-
-        $replacements = [
-            '{evento_nome}'     => $eventObj->name ?? '',
-            '{evento_cidade}'   => $eventObj->city ?? '',
-            '{evento_data}'     => !empty($eventObj->start_date) ? \Carbon\Carbon::parse($eventObj->start_date)->format('d/m/Y') : '',
-            '{leiloeiro}'       => $eventObj->auctioneer ?? '',
-            '{os_numero}'       => $orderObj->number ?? '',
-            '{comprador_nome}'  => $buyerObj->name ?? '',
-            '{comprador_doc}'   => $buyerObj->cpf_cnpj ?? ($buyerObj->document ?? ''),
-            '{vendedor_nome}'   => $sellerObj->name ?? '',
-            '{vendedor_doc}'    => $sellerObj->cpf_cnpj ?? ($sellerObj->document ?? ''),
-            '{data_atual}'      => now()->format('d/m/Y'),
-        ];
-
-        return str_replace(array_keys($replacements), array_values($replacements), $text);
-    }
+    
 }

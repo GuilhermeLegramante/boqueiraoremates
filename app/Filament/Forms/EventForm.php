@@ -209,7 +209,6 @@ class EventForm
                         ->label('Texto da Cláusula do Regulamento')
                         ->required()
                         ->rows(4)
-                        ->helperText('Variáveis disponíveis: {evento_nome}, {evento_cidade}, {evento_data}, {comprador_nome}, {vendedor_nome}, {os_numero}, {data_atual}')
                         ->columnSpanFull(),
                 ])
                 ->orderColumn('order')
