@@ -138,6 +138,8 @@ class ContractController extends Controller
             }
         }
 
+        dd($eventBanner);
+
         $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
 
         return [
