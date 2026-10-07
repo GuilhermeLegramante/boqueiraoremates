@@ -85,14 +85,14 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_seller_promissory')
-                        ->label('NP (Fat. Vendedor)')
+                        ->label('NP (Comissão Vendedor)')
                         ->icon('heroicon-o-eye')
                         ->visible(fn(): bool => $this->getOwnerRecord()->sellerParcels()->count() > 0)
                         ->url(fn(): string => route('order-seller-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_buyer_promissory')
-                        ->label('NP (Fat. Comprador)')
+                        ->label('NP (Comissão Comprador)')
                         ->icon('heroicon-o-eye')
                         ->visible(fn(): bool => $this->getOwnerRecord()->buyerParcels()->count() > 0)
                         ->url(fn(): string => route('order-buyer-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
@@ -182,7 +182,7 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('seller_promissory_note')
-                        ->label('NP - Fat. Vendedor')
+                        ->label('NP - Comissão Vendedor')
                         ->icon('heroicon-o-banknotes')
                         ->color('warning')
                         ->visible(fn(Contract $record): bool => count($record->snapshot['seller_parcels'] ?? []) > 0)
@@ -190,7 +190,7 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('buyer_promissory_note')
-                        ->label('NP - Fat. Comprador')
+                        ->label('NP - Comissão Comprador')
                         ->icon('heroicon-o-banknotes')
                         ->color('warning')
                         ->visible(fn(Contract $record): bool => count($record->snapshot['buyer_parcels'] ?? []) > 0)
