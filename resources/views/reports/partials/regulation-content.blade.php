@@ -32,6 +32,8 @@
             @php
                 $title = is_array($clause) ? $clause['title'] ?? null : $clause->title ?? null;
                 $content = is_array($clause) ? $clause['content'] ?? '' : $clause->content ?? '';
+                // Remove as tags <p> e </p> iniciais/finais que o RichEditor insere
+                $cleanContent = preg_replace('/^<p>(.*?)<\/p>$/s', '$1', trim($content));
             @endphp
             <tr>
                 <td class="num" style="vertical-align: top; padding-top: 0; line-height: 1.4;">{{ $index + 1 }} )
@@ -40,7 +42,7 @@
                     @if (!empty($title))
                         <strong>{{ $title }}</strong><br>
                     @endif
-                    {!! $content !!}
+                    {!! $cleanContent !!}
                 </td>
             </tr>
         @endforeach
