@@ -314,6 +314,7 @@ class ContractController extends Controller
         float $firstParcelValue,
         ?Carbon $firstDueDate
     ): string {
+        dd($order);
         $totalFormatted = number_format($netValue, 2, ',', '.');
         $firstParcelFormatted = number_format($firstParcelValue, 2, ',', '.');
 
