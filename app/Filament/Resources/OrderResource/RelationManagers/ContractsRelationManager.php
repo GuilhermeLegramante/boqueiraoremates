@@ -79,20 +79,20 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_promissory')
-                        ->label('Nota Promissória (Única)')
+                        ->label('NP (Única)')
                         ->icon('heroicon-o-eye')
                         ->url(fn(): string => route('order-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_seller_promissory')
-                        ->label('Nota Promissória (Fat. Vendedor)')
+                        ->label('NP (Fat. Vendedor)')
                         ->icon('heroicon-o-eye')
                         ->visible(fn(): bool => $this->getOwnerRecord()->sellerParcels()->count() > 0)
                         ->url(fn(): string => route('order-seller-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_buyer_promissory')
-                        ->label('Nota Promissória (Fat. Comprador)')
+                        ->label('NP (Fat. Comprador)')
                         ->icon('heroicon-o-eye')
                         ->visible(fn(): bool => $this->getOwnerRecord()->buyerParcels()->count() > 0)
                         ->url(fn(): string => route('order-buyer-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
@@ -175,7 +175,7 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('promissory_note')
-                        ->label('Nota Promissória (Única)')
+                        ->label('NP (Única)')
                         ->icon('heroicon-o-banknotes')
                         ->color('warning')
                         ->url(fn(Contract $record): string => route('promissory-note-pdf', ['contract' => $record->id]))
@@ -220,7 +220,7 @@ class ContractsRelationManager extends RelationManager
         $options = [
             'via1' => '1ª Via do Contrato',
             'via2' => '2ª Via do Contrato',
-            'promissory' => 'Nota Promissória (Única)',
+            'promissory' => 'NP (Única)',
         ];
 
         $hasSellerParcels = $order && method_exists($order, 'sellerParcels') ? $order->sellerParcels()->count() > 0 : false;
