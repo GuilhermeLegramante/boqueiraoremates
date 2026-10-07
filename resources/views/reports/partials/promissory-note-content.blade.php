@@ -43,7 +43,7 @@
         </tr>
         <tr>
             <td><span class="label">E-mail:</span> {{ $seller->email ?? '' }}</td>
-            <td><span class="label">Contato:</span> {{ $seller->phone ?? '' }}</td>
+            <td><span class="label">Contato:</span> {{ $seller->whatsapp ?? '' }}</td>
         </tr>
     </table>
 
@@ -66,7 +66,7 @@
         </tr>
         <tr>
             <td><span class="label">E-mail:</span> {{ $buyer->email ?? '' }}</td>
-            <td><span class="label">Contato:</span> {{ $buyer->phone ?? '' }}</td>
+            <td><span class="label">Contato:</span> {{ $buyer->whatsapp ?? '' }}</td>
         </tr>
     </table>
 
