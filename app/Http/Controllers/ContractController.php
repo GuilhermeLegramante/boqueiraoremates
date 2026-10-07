@@ -409,9 +409,9 @@ class ContractController extends Controller
                     $label = sprintf('a parcela %d no valor de R$ %s, com vencimento em %s', $currentParcelNum, $groupValueFormatted, $formattedDate);
                     $currentParcelNum += 1;
                 } else {
-                    // Parcelas agrupadas (ex: as parcelas 1 e 2 somando um valor de R$ 740,00, com vencimento em 06/10/2026)
+                    // Parcelas agrupadas (ex: as parcelas 1 e 2 perfazendo um valor de R$ 740,00, com vencimento em 06/10/2026)
                     $endParcelNum = $currentParcelNum + $groupSize - 1;
-                    $label = sprintf('as parcelas %d e %d somando um valor de R$ %s, com vencimento em %s', $currentParcelNum, $endParcelNum, $groupValueFormatted, $formattedDate);
+                    $label = sprintf('as parcelas %d e %d perfazendo um valor de R$ %s, com vencimento em %s', $currentParcelNum, $endParcelNum, $groupValueFormatted, $formattedDate);
                     $currentParcelNum += $groupSize;
                 }
 
