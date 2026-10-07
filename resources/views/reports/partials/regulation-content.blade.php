@@ -83,7 +83,7 @@
     </tr>
     <tr>
         <td class="num">12 )</td>
-        <td>O comISSIONAMENTO da leiloeira trata-se de uma prestação de serviços executada durante o período de
+        <td>O comissionamento da leiloeira trata-se de uma prestação de serviços executada durante o período de
             pré-lance e recinto e/ou transmissão da finalização.</td>
     </tr>
     <tr>
