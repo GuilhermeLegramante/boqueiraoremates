@@ -200,6 +200,7 @@ class ContractsRelationManager extends RelationManager
                 'id' => $order->event->id,
                 'name' => $order->event->name,
                 'banner_contract' => $order->event->banner_contract ?? null,
+                'city' => $order->event->city ?? null,
                 'start_date' => $order->event->start_date
                     ? \Carbon\Carbon::parse($order->event->start_date)->format('Y-m-d')
                     : null,

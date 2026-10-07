@@ -34,6 +34,7 @@ class Event extends Model
         'witness_1_name',
         'witness_2_name',
         'banner_contract',
+        'city',
     ];
 
     protected $casts = [

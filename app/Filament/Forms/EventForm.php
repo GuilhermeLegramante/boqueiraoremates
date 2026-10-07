@@ -72,6 +72,13 @@ class EventForm
                 ->unique(ignoreRecord: true)
                 ->maxLength(255),
 
+            TextInput::make('city')
+                ->label('Cidade')
+                ->columnSpanFull()
+                ->required()
+                ->visible($operation != 'view')
+                ->maxLength(255),
+
             DateTimePicker::make('start_date')
                 ->label('Data do Evento')
                 ->visible($operation != 'view')
