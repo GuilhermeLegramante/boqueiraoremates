@@ -359,74 +359,127 @@ class ContractController extends Controller
         ?Carbon $firstDueDate
     ): string {
         $totalFormatted = number_format($netValue, 2, ',', '.');
-        $firstParcelFormatted = number_format($firstParcelValue, 2, ',', '.');
-        $firstDueDateText = $firstDueDate ? $firstDueDate->format('d/m/Y') : '';
 
-        // Se houver Forma de Pagamento cadastrada (ex: "2+2+46")
-        $paymentWayName = $order->paymentWay->name ?? null;
+        // 1. Obtém a forma de pagamento (ex: "2+2+46", "1+1+10", "20")
+        $paymentWayName = is_array($order)
+            ? ($order['payment_way']['name'] ?? null)
+            : ($order->paymentWay->name ?? null);
 
-        if ($paymentWayName && str_contains($paymentWayName, '+')) {
-            $parts = array_map('intval', explode('+', $paymentWayName));
-            $totalInstallments = array_sum($parts); // Ex: 2 + 2 + 46 = 50 parcelas
-            $totalInWords = $this->numberInWords($totalInstallments);
-
-            // Identifica as parcelas de entrada (todas as partes exceto a última)
-            $entryParts = array_slice($parts, 0, -1);
-            $entryCount = array_sum($entryParts); // Ex: 2 + 2 = 4 parcelas
-            $remainingCount = end($parts); // Ex: 46 parcelas
-            $unitValueFormatted = number_format((float) ($order->parcel_value ?? ($netValue / $totalInstallments)), 2, ',', '.');
-
-            $text = sprintf(
-                'Valor total de R$ %s, a ser pago na condição (%s) perfazendo o total de %s parcelas, sendo %s parcelas de entrada no valor de R$ %s cada',
-                $totalFormatted,
-                $paymentWayName,
-                $totalInWords,
-                $this->numberInWords($entryCount),
-                $unitValueFormatted
-            );
-
-            if ($firstDueDateText) {
-                $text .= sprintf(', com a primeira no dia %s', $firstDueDateText);
-            }
-
-            $text .= sprintf(
-                ', e as demais %s parcelas mensais e consecutivas no valor de R$ %s cada, até a quitação total do produto.',
-                $this->numberInWords($remainingCount),
-                $unitValueFormatted
-            );
-
-            return $text;
+        // Se não houver paymentWay, tenta inferir pelas parcelas
+        if (empty($paymentWayName)) {
+            $paymentWayName = (string) (count($parcels) > 0 ? count($parcels) : 1);
         }
 
-        // Fallback para parcelamento simples ou à vista
-        $totalInstallments = $parcels->count();
+        // Divide as partes (ex: "2+2+46" -> [2, 2, 46]) ignorando zeros (ex: "0+20" -> [20])
+        $rawParts = array_map('intval', explode('+', $paymentWayName));
+        $parts = array_values(array_filter($rawParts, fn($val) => $val > 0));
 
-        if ($totalInstallments <= 1) {
-            $text = sprintf('Valor total de R$ %s', $totalFormatted);
-            if ($firstDueDateText) {
-                $text .= sprintf(', sendo o pagamento no dia %s', $firstDueDateText);
-            }
-            $text .= ', até a quitação do produto.';
-            return $text;
-        }
-
+        $totalInstallments = array_sum($parts);
         $totalInWords = $this->numberInWords($totalInstallments);
-        $remainingInstallments = $totalInstallments - 1;
-        $remainingInWords = $this->numberInWords($remainingInstallments);
 
+        // Valor individual da parcela base (ex: R$ 370,00)
+        $unitParcelValue = (float) (is_array($order) ? ($order['parcel_value'] ?? 0) : ($order->parcel_value ?? 0));
+        if ($unitParcelValue <= 0 && $totalInstallments > 0) {
+            $unitParcelValue = $netValue / $totalInstallments;
+        }
+        $parcelValueFormatted = number_format($unitParcelValue, 2, ',', '.');
+
+        // Início do texto padrão
         $text = sprintf(
-            'Valor total de R$ %s, divididos em %s parcelas, no valor de R$ %s cada',
+            'Valor total de R$ %s, divididos em %s parcelas iguais, no valor de R$ %s, ',
             $totalFormatted,
             $totalInWords,
-            $firstParcelFormatted
+            $parcelValueFormatted
         );
 
-        if ($firstDueDateText) {
-            $text .= sprintf(', sendo o pagamento da primeira no dia %s', $firstDueDateText);
+        // Array para os ordinais por extenso das parcelas
+        $ordinals = [
+            1 => 'primeira',
+            2 => 'segunda',
+            3 => 'terceira',
+            4 => 'quarta',
+            5 => 'quinta',
+            6 => 'sexta',
+            7 => 'sétima',
+            8 => 'oitava',
+            9 => 'nona',
+            10 => 'décima'
+        ];
+
+        $cardinals = [
+            1 => 'uma',
+            2 => 'duas',
+            3 => 'três',
+            4 => 'quatro',
+            5 => 'cinco',
+            6 => 'seis',
+            7 => 'sete',
+            8 => 'oito',
+            9 => 'nove',
+            10 => 'dez'
+        ];
+
+        // Data de referência inicial
+        $currentDate = $firstDueDate ? $firstDueDate->copy() : now();
+        $dueDay = (int) (is_array($order) ? ($order['due_day'] ?? $currentDate->format('d')) : ($order->due_day ?? $currentDate->format('d')));
+
+        // CASO 1: Condição composta com mais de um grupo (ex: 2+2+46, 1+1+10, 2+2+2+44)
+        if (count($parts) > 1) {
+            $entryGroups = array_slice($parts, 0, -1); // Todos os grupos de entrada
+            $remainingInstallments = end($parts);       // Grupo das parcelas mensais vincendas
+
+            $clauses = [];
+
+            foreach ($entryGroups as $index => $groupSize) {
+                $formattedDate = $currentDate->format('d/m/Y');
+
+                if ($groupSize === 1) {
+                    // Exemplo: "sendo o pagamento da primeira no dia 14/06/2026" ou "a segunda em 14/07/2026"
+                    $ordinalText = $ordinals[$index + 1] ?? ($index + 1) . 'ª';
+                    if ($index === 0) {
+                        $clauses[] = sprintf('sendo o pagamento da %s no dia %s', $ordinalText, $formattedDate);
+                    } else {
+                        $clauses[] = sprintf('a %s em %s', $ordinalText, $formattedDate);
+                    }
+                } else {
+                    // Exemplo: "sendo o pagamento das duas primeiras no dia 06/10/2026" ou "mais duas no dia 06/11/2026"
+                    $cardinalText = $cardinals[$groupSize] ?? $this->numberInWords($groupSize);
+                    if ($index === 0) {
+                        $clauses[] = sprintf('sendo o pagamento das %s primeiras no dia %s', $cardinalText, $formattedDate);
+                    } else {
+                        $clauses[] = sprintf('mais %s no dia %s', $cardinalText, $formattedDate);
+                    }
+                }
+
+                // Avança para o próximo mês mantendo o dia fixo
+                $currentDate->addMonth();
+                $currentDate->day(min($dueDay, $currentDate->daysInMonth));
+            }
+
+            // Conecta as cláusulas de entrada com vírgula/e
+            $text .= implode(', ', $clauses);
+
+            // Adiciona as parcelas restantes vincendas
+            $remainingInWords = $this->numberInWords($remainingInstallments);
+            $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
+        } else {
+            // CASO 2: Condição de parcelamento simples (ex: 12 parcelas corridas ou 1 parcela)
+            if ($totalInstallments === 1) {
+                $text .= sprintf('sendo o pagamento no dia %s', $currentDate->format('d/m/Y'));
+            } else {
+                $text .= sprintf('sendo o pagamento da primeira no dia %s', $currentDate->format('d/m/Y'));
+
+                $remainingInstallments = $totalInstallments - 1;
+                $remainingInWords = $this->numberInWords($remainingInstallments);
+                $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
+            }
         }
 
-        $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
-        $text .= ', até a quitação do produto.';
+        // Fechamento padrão
+        $text .= sprintf(
+            ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
+            $dueDay
+        );
 
         return $text;
     }
