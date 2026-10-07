@@ -273,7 +273,6 @@
             font-weight: bold;
             margin-top: 6px;
             margin-bottom: 10px;
-            text-transform: uppercase;
         }
 
         .promissory-signatures {
