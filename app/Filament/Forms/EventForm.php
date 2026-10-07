@@ -224,7 +224,6 @@ class EventForm
 
                 ])
                 ->orderColumn('order')
-                ->defaultItems(0)
                 ->reorderable()
                 ->collapsible()
                 ->cloneable()
