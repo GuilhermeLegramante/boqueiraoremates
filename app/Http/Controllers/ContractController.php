@@ -138,8 +138,6 @@ class ContractController extends Controller
             }
         }
 
-        dd($eventBanner);
-
         $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
 
         return [
@@ -583,6 +581,8 @@ class ContractController extends Controller
         $data['isPreview'] = false;
 
         $fileName = 'PACOTE_COMPLETO_OS_' . $data['order']->number . '.pdf';
+
+        dd($data['event']->banner_contract);
 
         return ReportFactory::getBasicPdf(
             'portrait',
