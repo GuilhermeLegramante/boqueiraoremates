@@ -273,39 +273,69 @@
     </p>
 
     @php
-        // Normaliza $event e $clauses para aceitar Objeto Eloquent ou Array do Snapshot
+        // 1. Normaliza $event e suas cláusulas (seja Objeto Eloquent ou Array Snapshot)
         $eventClauses = is_array($event) ? $event['clauses'] ?? [] : $event->clauses ?? ($event->clauses_list ?? []);
 
-        // Converte os atores em objetos para facilitar leitura segura
-        $eventObj = is_array($event) ? (object) $event : $event;
-        $orderObj = is_array($order) ? (object) $order : $order;
-        $buyerObj = is_array($buyer) ? (object) $buyer : $buyer;
-        $sellerObj = is_array($seller) ? (object) $seller : $seller;
-        $animalObj = is_array($animal) ? (object) $animal : $animal;
+        // 2. Converte todas as entidades envolvidas para objeto de forma segura
+        $eventObj = is_object($event) ? $event : (object) ($event ?? []);
+        $orderObj = is_object($order) ? $order : (object) ($order ?? []);
+        $buyerObj = is_object($buyer) ? $buyer : (object) ($buyer ?? []);
+        $sellerObj = is_object($seller) ? $seller : (object) ($seller ?? []);
+        $animalObj = is_object($animal) ? $animal : (object) ($animal ?? []);
 
-        // Closure para substituir os placeholders das variáveis
-        $parseVars = function ($text) use ($eventObj, $orderObj, $buyerObj, $sellerObj, $animalObj) {
+        // 3. Monta o dicionário aceitando variações comuns nos nomes das tags
+        $replacements = [
+            // Evento
+            '{evento_nome}' => $eventObj->name ?? (is_array($event) ? $event['name'] ?? '' : ''),
+            '{nome_evento}' => $eventObj->name ?? (is_array($event) ? $event['name'] ?? '' : ''),
+            '{evento_cidade}' => $eventObj->city ?? (is_array($event) ? $event['city'] ?? '' : ''),
+            '{cidade_evento}' => $eventObj->city ?? (is_array($event) ? $event['city'] ?? '' : ''),
+            '{evento_data}' => !empty($eventObj->start_date)
+                ? \Carbon\Carbon::parse($eventObj->start_date)->format('d/m/Y')
+                : '',
+            '{data_evento}' => !empty($eventObj->start_date)
+                ? \Carbon\Carbon::parse($eventObj->start_date)->format('d/m/Y')
+                : '',
+            '{leiloeiro}' => $eventObj->auctioneer ?? (is_array($event) ? $event['auctioneer'] ?? '' : ''),
+
+            // Ordem / Pedido
+            '{os_numero}' => $orderObj->number ?? (is_array($order) ? $order['number'] ?? '' : ''),
+            '{numero_ordem}' => $orderObj->number ?? (is_array($order) ? $order['number'] ?? '' : ''),
+
+            // Comprador
+            '{comprador_nome}' => $buyerObj->name ?? (is_array($buyer) ? $buyer['name'] ?? '' : ''),
+            '{nome_comprador}' => $buyerObj->name ?? (is_array($buyer) ? $buyer['name'] ?? '' : ''),
+            '{comprador_doc}' =>
+                $buyerObj->cpf_cnpj ??
+                ($buyerObj->document ?? (is_array($buyer) ? $buyer['cpf_cnpj'] ?? ($buyer['document'] ?? '') : '')),
+
+            // Vendedor
+            '{vendedor_nome}' => $sellerObj->name ?? (is_array($seller) ? $seller['name'] ?? '' : ''),
+            '{nome_vendedor}' => $sellerObj->name ?? (is_array($seller) ? $seller['name'] ?? '' : ''),
+            '{vendedor_doc}' =>
+                $sellerObj->cpf_cnpj ??
+                ($sellerObj->document ?? (is_array($seller) ? $seller['cpf_cnpj'] ?? ($seller['document'] ?? '') : '')),
+
+            // Animal e Gerais
+            '{animal_nome}' => $animalObj->name ?? (is_array($animal) ? $animal['name'] ?? '' : ''),
+            '{nome_animal}' => $animalObj->name ?? (is_array($animal) ? $animal['name'] ?? '' : ''),
+            '{data_atual}' => date('d/m/Y'),
+        ];
+
+        // 4. Função de substituição usando Regex para tolerar espaços extras como { evento_nome }
+        $parseVars = function ($text) use ($replacements) {
             if (empty($text)) {
                 return '';
             }
 
-            $replacements = [
-                '{evento_nome}' => $eventObj->name ?? '',
-                '{evento_cidade}' => $eventObj->city ?? '',
-                '{evento_data}' => !empty($eventObj->start_date)
-                    ? \Carbon\Carbon::parse($eventObj->start_date)->format('d/m/Y')
-                    : '',
-                '{leiloeiro}' => $eventObj->auctioneer ?? '',
-                '{os_numero}' => $orderObj->number ?? '',
-                '{comprador_nome}' => $buyerObj->name ?? '',
-                '{comprador_doc}' => $buyerObj->cpf_cnpj ?? ($buyerObj->document ?? ''),
-                '{vendedor_nome}' => $sellerObj->name ?? '',
-                '{vendedor_doc}' => $sellerObj->cpf_cnpj ?? ($sellerObj->document ?? ''),
-                '{animal_nome}' => $animalObj->name ?? '',
-                '{data_atual}' => date('d/m/Y'),
-            ];
+            foreach ($replacements as $placeholder => $value) {
+                // Remove as chaves para criar o padrão Regex flexível
+                $key = trim($placeholder, '{}');
+                $pattern = '/\{\s*' . preg_quote($key, '/') . '\s*\}/i';
+                $text = preg_replace($pattern, $value ?? '', $text);
+            }
 
-            return str_replace(array_keys($replacements), array_values($replacements), $text);
+            return $text;
         };
     @endphp
 
@@ -313,11 +343,13 @@
         @php
             $title = is_array($clause) ? $clause['title'] ?? null : $clause->title ?? null;
             $rawContent = is_array($clause) ? $clause['content'] ?? '' : $clause->content ?? '';
+
+            $parsedTitle = $parseVars($title);
             $parsedContent = $parseVars($rawContent);
         @endphp
 
-        @if (!empty($title))
-            <h4 class="contract-clause-title">{{ $parseVars($title) }}</h4>
+        @if (!empty($parsedTitle))
+            <h4 class="contract-clause-title">{{ $parsedTitle }}</h4>
         @endif
 
         <p class="contract-text">
