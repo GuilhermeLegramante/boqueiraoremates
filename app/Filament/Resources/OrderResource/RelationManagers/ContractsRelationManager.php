@@ -271,6 +271,7 @@ class ContractsRelationManager extends RelationManager
                 'sale_type' => $order->sale_type,
                 'sale_type_percentage' => $order->sale_type_percentage,
                 'sale_type_quantity' => $order->sale_type_quantity,
+                'total_installments' => $order->total_installments,
             ],
             'event' => $order->event ? [
                 'id' => $order->event->id,
