@@ -272,12 +272,56 @@
         {{ $paymentText ?? '' }}
     </p>
 
-    @forelse ($event->clauses as $clause)
-        @if ($clause->title)
-            <h4 class="contract-clause-title">{{ $clause->title }}</h4>
+    @php
+        // Normaliza $event e $clauses para aceitar Objeto Eloquent ou Array do Snapshot
+        $eventClauses = is_array($event) ? $event['clauses'] ?? [] : $event->clauses ?? ($event->clauses_list ?? []);
+
+        // Converte os atores em objetos para facilitar leitura segura
+        $eventObj = is_array($event) ? (object) $event : $event;
+        $orderObj = is_array($order) ? (object) $order : $order;
+        $buyerObj = is_array($buyer) ? (object) $buyer : $buyer;
+        $sellerObj = is_array($seller) ? (object) $seller : $seller;
+        $animalObj = is_array($animal) ? (object) $animal : $animal;
+
+        // Closure para substituir os placeholders das variáveis
+        $parseVars = function ($text) use ($eventObj, $orderObj, $buyerObj, $sellerObj, $animalObj) {
+            if (empty($text)) {
+                return '';
+            }
+
+            $replacements = [
+                '{evento_nome}' => $eventObj->name ?? '',
+                '{evento_cidade}' => $eventObj->city ?? '',
+                '{evento_data}' => !empty($eventObj->start_date)
+                    ? \Carbon\Carbon::parse($eventObj->start_date)->format('d/m/Y')
+                    : '',
+                '{leiloeiro}' => $eventObj->auctioneer ?? '',
+                '{os_numero}' => $orderObj->number ?? '',
+                '{comprador_nome}' => $buyerObj->name ?? '',
+                '{comprador_doc}' => $buyerObj->cpf_cnpj ?? ($buyerObj->document ?? ''),
+                '{vendedor_nome}' => $sellerObj->name ?? '',
+                '{vendedor_doc}' => $sellerObj->cpf_cnpj ?? ($sellerObj->document ?? ''),
+                '{animal_nome}' => $animalObj->name ?? '',
+                '{data_atual}' => date('d/m/Y'),
+            ];
+
+            return str_replace(array_keys($replacements), array_values($replacements), $text);
+        };
+    @endphp
+
+    @forelse ($eventClauses as $clause)
+        @php
+            $title = is_array($clause) ? $clause['title'] ?? null : $clause->title ?? null;
+            $rawContent = is_array($clause) ? $clause['content'] ?? '' : $clause->content ?? '';
+            $parsedContent = $parseVars($rawContent);
+        @endphp
+
+        @if (!empty($title))
+            <h4 class="contract-clause-title">{{ $parseVars($title) }}</h4>
         @endif
+
         <p class="contract-text">
-            {!! nl2br(e($clause->content)) !!}
+            {!! nl2br(e($parsedContent)) !!}
         </p>
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
@@ -302,7 +346,8 @@
         <p class="contract-text">
             Fica também ajustado que, nos termos do art. 190 do Código de Processo Civil, em caso de inadimplemento de
             qualquer das parcelas previstas neste contrato, poderá o vendedor, a seu exclusivo critério, ingressar com
-            ação de busca e apreensão do bem objeto deste instrumento, ou promover a execução dos valores devidos, conforme
+            ação de busca e apreensão do bem objeto deste instrumento, ou promover a execução dos valores devidos,
+            conforme
             as
             disposições aqui estabelecidas, facultando-se ao vendedor a adoção do procedimento que melhor atender aos
             seus
