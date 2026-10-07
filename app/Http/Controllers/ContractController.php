@@ -147,7 +147,7 @@ class ContractController extends Controller
         $paymentText = $this->buildPaymentText(
             order: $order,
             netValue: $netValue,
-            installments: $installments,
+            parcels: $parcels,
             firstParcelValue: $firstParcelValue,
             firstDueDate: $firstDueDate,
         );
@@ -291,7 +291,7 @@ class ContractController extends Controller
         $paymentText = $this->buildPaymentText(
             order: $order,
             netValue: $netValue,
-            installments: $installments,
+            parcels: $parcels,
             firstParcelValue: $firstParcelValue,
             firstDueDate: $firstDueDate,
         );
@@ -354,17 +354,54 @@ class ContractController extends Controller
     private function buildPaymentText(
         $order,
         float $netValue,
-        int $installments,
+        $parcels,
         float $firstParcelValue,
         ?Carbon $firstDueDate
     ): string {
         $totalFormatted = number_format($netValue, 2, ',', '.');
         $firstParcelFormatted = number_format($firstParcelValue, 2, ',', '.');
-
-        $installmentsInWords = $this->numberInWords($installments);
         $firstDueDateText = $firstDueDate ? $firstDueDate->format('d/m/Y') : '';
 
-        if ($installments <= 1) {
+        // Se houver Forma de Pagamento cadastrada (ex: "2+2+46")
+        $paymentWayName = $order->paymentWay->name ?? null;
+
+        if ($paymentWayName && str_contains($paymentWayName, '+')) {
+            $parts = array_map('intval', explode('+', $paymentWayName));
+            $totalInstallments = array_sum($parts); // Ex: 2 + 2 + 46 = 50 parcelas
+            $totalInWords = $this->numberInWords($totalInstallments);
+
+            // Identifica as parcelas de entrada (todas as partes exceto a última)
+            $entryParts = array_slice($parts, 0, -1);
+            $entryCount = array_sum($entryParts); // Ex: 2 + 2 = 4 parcelas
+            $remainingCount = end($parts); // Ex: 46 parcelas
+            $unitValueFormatted = number_format((float) ($order->parcel_value ?? ($netValue / $totalInstallments)), 2, ',', '.');
+
+            $text = sprintf(
+                'Valor total de R$ %s, a ser pago na condição (%s) perfazendo o total de %s parcelas, sendo %s parcelas de entrada no valor de R$ %s cada',
+                $totalFormatted,
+                $paymentWayName,
+                $totalInWords,
+                $this->numberInWords($entryCount),
+                $unitValueFormatted
+            );
+
+            if ($firstDueDateText) {
+                $text .= sprintf(', com a primeira no dia %s', $firstDueDateText);
+            }
+
+            $text .= sprintf(
+                ', e as demais %s parcelas mensais e consecutivas no valor de R$ %s cada, até a quitação total do produto.',
+                $this->numberInWords($remainingCount),
+                $unitValueFormatted
+            );
+
+            return $text;
+        }
+
+        // Fallback para parcelamento simples ou à vista
+        $totalInstallments = $parcels->count();
+
+        if ($totalInstallments <= 1) {
             $text = sprintf('Valor total de R$ %s', $totalFormatted);
             if ($firstDueDateText) {
                 $text .= sprintf(', sendo o pagamento no dia %s', $firstDueDateText);
@@ -373,13 +410,14 @@ class ContractController extends Controller
             return $text;
         }
 
-        $remainingInstallments = $installments - 1;
+        $totalInWords = $this->numberInWords($totalInstallments);
+        $remainingInstallments = $totalInstallments - 1;
         $remainingInWords = $this->numberInWords($remainingInstallments);
 
         $text = sprintf(
-            'Valor total de R$ %s, divididos em %s parcelas iguais, no valor de R$ %s',
+            'Valor total de R$ %s, divididos em %s parcelas, no valor de R$ %s cada',
             $totalFormatted,
-            $installmentsInWords,
+            $totalInWords,
             $firstParcelFormatted
         );
 
@@ -388,20 +426,7 @@ class ContractController extends Controller
         }
 
         $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
-        $text .= ', até a quitação do produto';
-
-        $dueDay = !empty($order->due_day)
-            ? (int) $order->due_day
-            : ($firstDueDate ? (int) $firstDueDate->format('d') : null);
-
-        if ($dueDay) {
-            $text .= sprintf(
-                ', sendo definida a data do dia %d de cada mês para o vencimento.',
-                $dueDay
-            );
-        } else {
-            $text .= '.';
-        }
+        $text .= ', até a quitação do produto.';
 
         return $text;
     }
@@ -649,5 +674,4 @@ class ContractController extends Controller
 
         return ReportFactory::getBasicPdf('portrait', 'reports.bundle', $data, "previa_pacote_OS_{$order->number}.pdf");
     }
-    
 }
