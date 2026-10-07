@@ -646,7 +646,7 @@ class ContractController extends Controller
             'contractDate' => now(),
             'isPreview' => true,
             'title' => 'PRÉ-VISUALIZAÇÃO - PACOTE COMPLETO',
-            'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
+            'eventBanner' => $event && $event->banner_contract ? storage_path('app/public/' . $event->banner_contract) : null,
             'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
 
             // 🔹 VARIÁVEIS ADICIONADAS PARA EVITAR O ERRO:
