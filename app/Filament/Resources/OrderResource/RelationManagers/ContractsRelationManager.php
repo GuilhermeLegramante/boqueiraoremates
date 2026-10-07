@@ -227,6 +227,7 @@ class ContractsRelationManager extends RelationManager
                 'id' => $order->seller->id,
                 'name' => $order->seller->name,
                 'establishment' => $order->seller->establishment ?? null,
+                'establishment_city' => $order->seller->establishment_city ?? null,
                 'cpf_cnpj' => $order->seller->cpf_cnpj ?? null,
                 'phone' => $order->seller->phone ?? null,
                 'email' => $order->seller->email ?? null,
