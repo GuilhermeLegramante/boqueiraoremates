@@ -312,46 +312,54 @@ class ContractController extends Controller
         float $netValue,
         int $installments,
         float $firstParcelValue,
-        ?Carbon $firstDueDate,
+        ?Carbon $firstDueDate
     ): string {
-        $totalInWords = $this->moneyInWords($netValue);
-        $installmentsInWords = $this->numberInWords($installments);
-        $parcelValueInWords = $this->moneyInWords($firstParcelValue);
+        $totalFormatted = number_format($netValue, 2, ',', '.');
+        $firstParcelFormatted = number_format($firstParcelValue, 2, ',', '.');
 
-        $firstDueDateText = $firstDueDate
-            ? $firstDueDate->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y')
-            : '';
+        $installmentsInWords = $this->numberInWords($installments);
+        $firstDueDateText = $firstDueDate ? $firstDueDate->format('d/m/Y') : '';
+
+        // Pagamento à vista (1 parcela)
+        if ($installments <= 1) {
+            $text = sprintf('Valor total de R$ %s', $totalFormatted);
+
+            if ($firstDueDateText) {
+                $text .= sprintf(', sendo o pagamento no dia %s', $firstDueDateText);
+            }
+
+            $text .= ', até a quitação do produto.';
+
+            return $text;
+        }
+
+        // Pagamento parcelado (> 1 parcela)
+        $remainingInstallments = $installments - 1;
+        $remainingInWords = $this->numberInWords($remainingInstallments);
 
         $text = sprintf(
-            'R$ %s (%s), divididos em %s parcelas',
-            number_format($netValue, 2, ',', '.'),
-            $totalInWords,
-            $installmentsInWords
+            'Valor total de R$ %s, divididos em %s parcelas iguais, no valor de R$ %s',
+            $totalFormatted,
+            $installmentsInWords,
+            $firstParcelFormatted
         );
 
-        if ($installments > 1) {
-            $text .= sprintf(
-                ' iguais, no valor de R$ %s (%s)',
-                number_format($firstParcelValue, 2, ',', '.'),
-                $parcelValueInWords
-            );
+        if ($firstDueDateText) {
+            $text .= sprintf(', sendo o pagamento da primeira no dia %s', $firstDueDateText);
         }
 
-        if ($firstDueDateText) {
-            $text .= sprintf(
-                ', sendo o pagamento da primeira no dia %s',
-                $firstDueDateText
-            );
-        }
+        $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
+
+        $text .= ', até a quitação do produto';
 
         if (!empty($order->due_day)) {
             $text .= sprintf(
-                ', e as demais parcelas mensais e consecutivas, com vencimento todo dia %d de cada mês',
+                ', sendo definida a data do dia %d de cada mês para o vencimento.',
                 $order->due_day
             );
+        } else {
+            $text .= '.';
         }
-
-        $text .= ', até a quitação do produto,';
 
         return $text;
     }
