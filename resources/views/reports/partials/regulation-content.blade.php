@@ -39,7 +39,7 @@
                     @if (!empty($title))
                         <strong>{{ $title }}</strong><br>
                     @endif
-                    {!! nl2br(e($content)) !!}
+                    {!! $content !!}
                 </td>
             </tr>
         @endforeach
