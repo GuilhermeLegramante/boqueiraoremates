@@ -227,11 +227,11 @@ class ContractsRelationManager extends RelationManager
         $hasBuyerParcels = $order && method_exists($order, 'buyerParcels') ? $order->buyerParcels()->count() > 0 : false;
 
         if ($hasSellerParcels) {
-            $options['seller_promissory'] = 'Nota Promissória (Comissão Vendedor)';
+            $options['seller_promissory'] = 'NP (Comissão Vendedor)';
         }
 
         if ($hasBuyerParcels) {
-            $options['buyer_promissory'] = 'Nota Promissória (Comissão Comprador)';
+            $options['buyer_promissory'] = 'NP (Comissão Comprador)';
         }
 
         $options['regulation'] = 'Regulamento do Remate';
