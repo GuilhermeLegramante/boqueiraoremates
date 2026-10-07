@@ -215,7 +215,7 @@
     declaro para devidos fins e a quem possa interessar que adquiri o equino de nome
     <span class="fill-line" style="min-width: 180px;">{{ $animalObj->name ?? '' }}{{ $textoGrauSangue }}</span>
     com {{ $labelNumero }} <span class="fill-line" style="min-width: 50px;">{{ $numeroIdentificacao }}</span>,
-    no <span class="fill-line" style="min-width: 200px;">{{ $eventObj->name ?? '' }}</span>
+    no <span class="fill-line" style="min-width: auto; display: inline;">{{ $eventObj->name ?? '' }}</span>
     e estou CIENTE e DE ACORDO com o regulamento que normatiza a negociação.
 </div>
 
