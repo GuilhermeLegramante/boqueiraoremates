@@ -130,7 +130,7 @@
             <td style="width: 33%;"><span class="label">Dta da Compra:</span>
                 {{ \Carbon\Carbon::parse($order->base_date ?? now())->format('d/m/Y') }}</td>
             <td style="width: 34%;"><span class="label">Cond.:</span> {{ $order->paymentWay->name ?? '' }}</td>
-            <td style="width: 33%;" class="text-right"><span class="label">/{{ count($order->parcels ?? []) }}
+            <td style="width: 33%;" class="text-right"><span class="label">{{ count($order->parcels ?? []) }}
                     PARCELAS</span></td>
         </tr>
         <tr>
@@ -178,7 +178,7 @@
                                 @for ($i = $col * 15; $i < ($col + 1) * 15; $i++)
                                     <tr>
                                         @if (isset($parcelsArray[$i]))
-                                            <td>{{ data_get($parcelsArray[$i], 'number', $i + 1) }}/{{ $totalParcels }}
+                                            <td>{{ data_get($parcelsArray[$i], 'number', $i + 1) }}
                                             </td>
                                             <td>{{ date('d/m/Y', strtotime(data_get($parcelsArray[$i], 'date'))) }}
                                             </td>
