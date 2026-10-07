@@ -192,7 +192,7 @@
             'cobertura' => 'Cobertura (' .
                 ($order->sale_type_quantity ? $order->sale_type_quantity . ' unidades' : '') .
                 ') do animal equino com as informações a seguir descritas:',
-            default => 'Animal equino com as informações a seguir descritas:',
+            default => '01 Animal equino com as informações a seguir descritas:',
         };
 
         $breedName = mb_strtoupper($animal->breed->name ?? '', 'UTF-8');
