@@ -56,6 +56,7 @@ class Client extends Model
         'representative_name',
         'representative_role',
         'representative_document',
+        'establishment_city',
     ];
 
     protected $casts = [

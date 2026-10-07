@@ -18,7 +18,7 @@
                     {{ $seller->establishment ?? '' }}
                 </div>
                 <div class="contract-city">
-                    {{ $seller->address->city ?? '' }} - {{ $seller->address->state ?? '' }}
+                    {{ $seller->establishment_city ?? '' }}
                 </div>
             </td>
 
