@@ -7,9 +7,7 @@ use App\Models\Order;
 use App\Utils\ReportFactory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use NumberToWords\Exception\InvalidArgumentException;
 use NumberToWords\NumberToWords;
-use Barryvdh\DomPDF\PDF;
 
 class ContractController extends Controller
 {
@@ -17,7 +15,6 @@ class ContractController extends Controller
 
     public function __construct()
     {
-        // Reutiliza uma única instância do conversor durante o ciclo do controller
         $numberToWords = new NumberToWords();
         $this->numberTransformer = $numberToWords->getNumberTransformer('pt_BR');
     }
@@ -37,16 +34,15 @@ class ContractController extends Controller
             'order.animal.coat',
             'order.paymentWay',
             'order.parcels',
+            'order.sellerParcels',
+            'order.buyerParcels',
         ])->findOrFail($id);
 
         $via = (int) $request->get('via', 1);
 
-        // Se houver snapshot gravado, prioriza a leitura dele
-        if (!empty($contract->snapshot)) {
-            $data = $this->prepareFromSnapshot($contract, $via);
-        } else {
-            $data = $this->prepareFromDatabase($contract, $via);
-        }
+        $data = !empty($contract->snapshot)
+            ? $this->prepareFromSnapshot($contract, $via)
+            : $this->prepareFromDatabase($contract, $via);
 
         $fileName = 'CONTRATO_' . $data['order']->number . '_VIA_' . $via . '.pdf';
 
@@ -59,9 +55,30 @@ class ContractController extends Controller
     }
 
     /**
-     * Imprime a Nota Promissória
+     * Imprime a Nota Promissória Padrão (Geral)
      */
     public function showPromissoryNote($id)
+    {
+        return $this->renderPromissoryPdf($id, 'promissory', 'NOTA PROMISSÓRIA - ÚNICA', 'NOTA_PROMISSORIA_');
+    }
+
+    /**
+     * Imprime a Nota Promissória - Faturamento Vendedor
+     */
+    public function showSellerPromissoryNote($id)
+    {
+        return $this->renderBillingPromissoryPdf($id, 'sellerParcels', 'seller', 'NOTA PROMISSÓRIA - FATURAMENTO VENDEDOR', 'NOTA_PROMISSORIA_VENDEDOR_');
+    }
+
+    /**
+     * Imprime a Nota Promissória - Faturamento Comprador
+     */
+    public function showBuyerPromissoryNote($id)
+    {
+        return $this->renderBillingPromissoryPdf($id, 'buyerParcels', 'buyer', 'NOTA PROMISSÓRIA - FATURAMENTO COMPRADOR', 'NOTA_PROMISSORIA_COMPRADOR_');
+    }
+
+    private function renderBillingPromissoryPdf($id, string $parcelKey, string $payerKey, string $title, string $prefix)
     {
         set_time_limit(0);
 
@@ -73,26 +90,30 @@ class ContractController extends Controller
             'order.animal.coat',
             'order.paymentWay',
             'order.parcels',
+            'order.sellerParcels',
+            'order.buyerParcels',
         ])->findOrFail($id);
 
-        if (!empty($contract->snapshot)) {
-            $data = $this->prepareFromSnapshot($contract, 1);
-        } else {
-            $data = $this->prepareFromDatabase($contract, 1);
-        }
+        $data = !empty($contract->snapshot)
+            ? $this->prepareFromSnapshot($contract, 1)
+            : $this->prepareFromDatabase($contract, 1);
 
-        $fileName = 'NOTA_PROMISSORIA_' . $data['order']->number . '.pdf';
+        $data['promissoryTitle'] = $title;
+        $data['payer'] = $data[$payerKey] ?? null;
+        $data['activeParcels'] = $data[$parcelKey] ?? collect();
+
+        $fileName = $prefix . $data['order']->number . '.pdf';
 
         return ReportFactory::getBasicPdf(
             'portrait',
-            'reports.promissory-note',
+            'reports.promissory-note-billing', // Blade dedicada a faturamento
             $data,
             $fileName
         );
     }
 
     /**
-     * Monta os dados a partir do banco (Fallback ou geração em tempo real)
+     * Monta os dados a partir do banco
      */
     private function prepareFromDatabase(Contract $contract, int $via): array
     {
@@ -107,6 +128,9 @@ class ContractController extends Controller
         $netValue = $grossValue - $discountValue;
 
         $parcels = $order->parcels->sortBy('date');
+        $sellerParcels = $order->sellerParcels ? $order->sellerParcels->sortBy('date') : collect();
+        $buyerParcels = $order->buyerParcels ? $order->buyerParcels->sortBy('date') : collect();
+
         $installments = $parcels->count();
         $firstParcel = $parcels->first();
 
@@ -139,6 +163,8 @@ class ContractController extends Controller
         }
 
         $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
+        $city = $seller->address->city ?? 'Uruguaiana';
+        $state = $seller->address->state ?? 'RS';
 
         return [
             'title' => "CONTRATO DE VENDA - {$via}ª VIA",
@@ -150,6 +176,8 @@ class ContractController extends Controller
             'seller' => $seller,
             'animal' => $animal,
             'parcels' => $parcels,
+            'sellerParcels' => $sellerParcels,
+            'buyerParcels' => $buyerParcels,
             'grossValue' => $grossValue,
             'netValue' => $netValue,
             'discountValue' => $discountValue,
@@ -160,13 +188,13 @@ class ContractController extends Controller
             'contractDate' => $contractDate,
             'eventBanner' => $eventBanner,
             'boqueiraoLogo' => $boqueiraoLogo,
-            'contractCity' => ($seller->address->city ?? 'Uruguaiana') . ' - ' . ($seller->address->state ?? 'RS'),
-            'fixedTexts' => $this->getFixedTexts($seller->address->city ?? 'Uruguaiana', $seller->address->state ?? 'RS'),
+            'contractCity' => "{$city} - {$state}",
+            'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
     }
 
     /**
-     * Monta os dados a partir do Snapshot JSON com fallback para o Banco caso faltem campos
+     * Monta os dados a partir do Snapshot JSON
      */
     private function prepareFromSnapshot(Contract $contract, int $via): array
     {
@@ -174,7 +202,13 @@ class ContractController extends Controller
 
         $order = (object) $snapshot['order'];
         $parcels = collect($snapshot['parcels'] ?? [])->map(fn($p) => (object) $p)->sortBy('date');
+        $sellerParcels = collect($snapshot['seller_parcels'] ?? [])->map(fn($p) => (object) $p)->sortBy('date');
+        $buyerParcels = collect($snapshot['buyer_parcels'] ?? [])->map(fn($p) => (object) $p)->sortBy('date');
+
         $order->parcels = $parcels;
+        $order->sellerParcels = $sellerParcels;
+        $order->buyerParcels = $buyerParcels;
+
         $order->animalEvent = isset($snapshot['lote']) ? (object) $snapshot['lote'] : null;
         $order->paymentWay = isset($snapshot['payment_way']) ? (object) $snapshot['payment_way'] : null;
 
@@ -183,16 +217,12 @@ class ContractController extends Controller
         $animal = json_decode(json_encode($snapshot['animal'] ?? []));
         $event = json_decode(json_encode($snapshot['event'] ?? []));
 
-        // 🔹 FALLBACK SE FALTAR DADOS NO SNAPSHOT DO VENDEDOR
+        // Fallbacks Vendedor e Comprador
         if ($contract->order && $contract->order->seller) {
             $dbSeller = $contract->order->seller;
-
-            // Garante Telefone / WhatsApp
             if (empty($seller->whatsapp) && empty($seller->phone) && empty($seller->cellphone)) {
                 $seller->whatsapp = $dbSeller->whatsapp ?? $dbSeller->phone ?? $dbSeller->cellphone ?? null;
             }
-
-            // Garante dados do Endereço (Rua, Número, Bairro, CEP, etc.)
             if ($dbSeller->address) {
                 if (!isset($seller->address) || is_null($seller->address)) {
                     $seller->address = (object) [];
@@ -207,16 +237,11 @@ class ContractController extends Controller
             }
         }
 
-        // 🔹 FALLBACK SE FALTAR DADOS NO SNAPSHOT DO COMPRADOR
         if ($contract->order && $contract->order->buyer) {
             $dbBuyer = $contract->order->buyer;
-
-            // Garante Telefone / WhatsApp
             if (empty($buyer->whatsapp) && empty($buyer->phone) && empty($buyer->cellphone)) {
                 $buyer->whatsapp = $dbBuyer->whatsapp ?? $dbBuyer->phone ?? $dbBuyer->cellphone ?? null;
             }
-
-            // Garante dados do Endereço
             if ($dbBuyer->address) {
                 if (!isset($buyer->address) || is_null($buyer->address)) {
                     $buyer->address = (object) [];
@@ -280,6 +305,8 @@ class ContractController extends Controller
             'seller' => $seller,
             'animal' => $animal,
             'parcels' => $parcels,
+            'sellerParcels' => $sellerParcels,
+            'buyerParcels' => $buyerParcels,
             'grossValue' => $grossValue,
             'netValue' => $netValue,
             'discountValue' => $discountValue,
@@ -320,20 +347,15 @@ class ContractController extends Controller
         $installmentsInWords = $this->numberInWords($installments);
         $firstDueDateText = $firstDueDate ? $firstDueDate->format('d/m/Y') : '';
 
-        // Pagamento à vista (1 parcela)
         if ($installments <= 1) {
             $text = sprintf('Valor total de R$ %s', $totalFormatted);
-
             if ($firstDueDateText) {
                 $text .= sprintf(', sendo o pagamento no dia %s', $firstDueDateText);
             }
-
             $text .= ', até a quitação do produto.';
-
             return $text;
         }
 
-        // Pagamento parcelado (> 1 parcela)
         $remainingInstallments = $installments - 1;
         $remainingInWords = $this->numberInWords($remainingInstallments);
 
@@ -349,10 +371,8 @@ class ContractController extends Controller
         }
 
         $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
-
         $text .= ', até a quitação do produto';
 
-        // Se não houver due_day no order, tenta pegar o dia da primeira parcela ($firstDueDate)
         $dueDay = !empty($order->due_day)
             ? (int) $order->due_day
             : ($firstDueDate ? (int) $firstDueDate->format('d') : null);
@@ -369,211 +389,12 @@ class ContractController extends Controller
         return $text;
     }
 
-    private function moneyInWords(float $value): string
-    {
-        $integer = (int) floor($value);
-        $cents = (int) round(($value - $integer) * 100);
-
-        $result = $this->numberInWords($integer);
-        $result .= $integer === 1 ? ' real' : ' reais';
-
-        if ($cents > 0) {
-            $result .= ' e ' . $this->numberInWords($cents);
-            $result .= $cents === 1 ? ' centavo' : ' centavos';
-        }
-
-        return $result;
-    }
-
     private function numberInWords(int $number): string
     {
         return $this->numberTransformer->toWords($number);
     }
 
-    /**
-     * Imprime o Regulamento do Remate
-     */
     public function showRegulation($id)
-    {
-        set_time_limit(0);
-
-        $contract = Contract::with([
-            'order.event',
-            'order.seller.address',
-            'order.buyer.address',
-            'order.animal.breed',
-            'order.animal.coat',
-            'order.paymentWay',
-            'order.parcels',
-        ])->findOrFail($id);
-
-        if (!empty($contract->snapshot)) {
-            $data = $this->prepareFromSnapshot($contract, 1);
-        } else {
-            $data = $this->prepareFromDatabase($contract, 1);
-        }
-
-        $fileName = 'REGULAMENTO_' . $data['order']->number . '.pdf';
-
-        return ReportFactory::getBasicPdf(
-            'portrait',
-            'reports.regulation',
-            $data,
-            $fileName
-        );
-    }
-
-    /**
-     * Pré-visualiza o contrato antes de ser gerado/fechado
-     */
-    public function previewPdf(Order $order, Request $request)
-    {
-        $via = $request->get('via', 1);
-
-        // Carrega as relações necessárias diretamente do Order
-        $order->load([
-            'event',
-            'seller.address',
-            'buyer.address',
-            'animal.breed',
-            'animalEvent',
-            'paymentWay',
-            'parcels',
-        ]);
-
-        $event = $order->event;
-        $seller = $order->seller;
-        $buyer = $order->buyer;
-        $animal = $order->animal;
-
-        $grossValue = (float) $order->gross_value;
-        $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
-        $netValue = $grossValue - $discountValue;
-
-        $parcels = $order->parcels->sortBy('date');
-        $installments = $parcels->count();
-        $firstParcel = $parcels->first();
-
-        $firstParcelValue = $firstParcel
-            ? (float) $firstParcel->value
-            : (float) $order->first_parcel_value;
-
-        $firstDueDate = $firstParcel?->date
-            ? Carbon::parse($firstParcel->date)
-            : ($order->first_date ? Carbon::parse($order->first_date) : null);
-
-        $paymentText = $this->buildPaymentText(
-            order: $order,
-            netValue: $netValue,
-            installments: $installments,
-            firstParcelValue: $firstParcelValue,
-            firstDueDate: $firstDueDate,
-        );
-
-        $data = [
-            'order' => $order,
-            'event' => $event,
-            'seller' => $seller,
-            'buyer' => $buyer,
-            'animal' => $animal,
-            'paymentText' => $paymentText,
-            'contractDate' => now(),
-            'via' => $via,
-            'isPreview' => true,
-            'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
-            'eventBanner' => $event && $event->banner_contract ? storage_path('app/public/' . $event->banner_contract) : null,
-            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
-        ];
-
-        return ReportFactory::getBasicPdf(
-            'portrait',
-            'reports.contract', // caminho da sua blade
-            $data,
-            "previa_contrato_OS_{$order->number}_via_{$via}.pdf"
-        );
-    }
-
-    /**
-     * Pré-visualiza a Nota Promissória antes de ser gerada/fechada
-     */
-    public function previewPromissoryPdf(Order $order)
-    {
-        // Carrega as relações necessárias diretamente do Order
-        $order->load([
-            'event',
-            'seller.address',
-            'buyer.address',
-            'animal.breed',
-            'animalEvent',
-            'paymentWay',
-            'parcels',
-        ]);
-
-        $event = $order->event;
-        $seller = $order->seller;
-        $buyer = $order->buyer;
-        $animal = $order->animal;
-
-        $data = [
-            'order' => $order,
-            'event' => $event,
-            'seller' => $seller,
-            'buyer' => $buyer,
-            'animal' => $animal,
-            'isPreview' => true,
-            'contractDate' => now(),
-            'eventBanner' => $event && $event->banner_contract ? storage_path('app/public/' . $event->banner_contract) : null,
-            'title' => 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA',
-        ];
-
-        return ReportFactory::getBasicPdf(
-            'portrait',
-            'reports.promissory-note', // ajuste para a sua blade de promissória
-            $data,
-            "previa_promissoria_OS_{$order->number}.pdf"
-        );
-    }
-
-    /**
-     * Pré-visualiza o Regulamento
-     */
-    public function previewRegulationPdf(Order $order)
-    {
-        $order->load([
-            'event',
-            'seller.address',
-            'buyer.address',
-            'animal.breed',
-            'animalEvent',
-            'paymentWay',
-            'parcels',
-        ]);
-
-        $data = [
-            'order' => $order,
-            'event' => $order->event,
-            'seller' => $order->seller,
-            'buyer' => $order->buyer,
-            'animal' => $order->animal,
-            'isPreview' => true,
-            'contractDate' => now(),
-            'title' => 'PRÉ-VISUALIZAÇÃO DE REGULAMENTO',
-            'eventBanner' => $order->event && $order->event->banner_contract ? storage_path('app/public/' . $order->event->banner_contract) : null,
-            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
-        ];
-
-        return ReportFactory::getBasicPdf(
-            'portrait',
-            'reports.regulation',
-            $data,
-            "previa_regulamento_OS_{$order->number}.pdf"
-        );
-    }
-
-    /**
-     * Imprime Todos os Documentos Agrupados em uma única View
-     */
-    public function bundlePdf($id)
     {
         set_time_limit(0);
 
@@ -591,40 +412,23 @@ class ContractController extends Controller
             ? $this->prepareFromSnapshot($contract, 1)
             : $this->prepareFromDatabase($contract, 1);
 
-        $data['title'] = 'DOCUMENTOS DO CONTRATO - OS ' . $data['order']->number;
-        $data['isPreview'] = false;
-
-        $fileName = 'PACOTE_COMPLETO_OS_' . $data['order']->number . '.pdf';
+        $fileName = 'REGULAMENTO_' . $data['order']->number . '.pdf';
 
         return ReportFactory::getBasicPdf(
             'portrait',
-            'reports.bundle',
+            'reports.regulation',
             $data,
             $fileName
         );
     }
 
     /**
-     * Pré-visualiza Todos os Documentos Agrupados em uma única View
+     * Pré-visualizações Individuais
      */
-    public function previewBundlePdf(Order $order)
+    public function previewPdf(Order $order, Request $request)
     {
-        set_time_limit(0);
-
-        $order->load([
-            'event',
-            'seller.address',
-            'buyer.address',
-            'animal.breed',
-            'animalEvent',
-            'paymentWay',
-            'parcels',
-        ]);
-
-        $event = $order->event;
-        $seller = $order->seller;
-        $buyer = $order->buyer;
-        $animal = $order->animal;
+        $via = $request->get('via', 1);
+        $order->load(['event', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
 
         $grossValue = (float) $order->gross_value;
         $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
@@ -639,9 +443,164 @@ class ContractController extends Controller
 
         $paymentText = $this->buildPaymentText($order, $netValue, $installments, $firstParcelValue, $firstDueDate);
 
-        // Cidade e Estado do Vendedor (fallback para 'Uruguaiana - RS')
+        $data = [
+            'order' => $order,
+            'event' => $order->event,
+            'seller' => $order->seller,
+            'buyer' => $order->buyer,
+            'animal' => $order->animal,
+            'paymentText' => $paymentText,
+            'contractDate' => now(),
+            'via' => $via,
+            'isPreview' => true,
+            'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
+            'eventBanner' => $order->event && $order->event->banner_contract ? storage_path('app/public/' . $order->event->banner_contract) : null,
+            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
+        ];
+
+        return ReportFactory::getBasicPdf('portrait', 'reports.contract', $data, "previa_contrato_OS_{$order->number}_via_{$via}.pdf");
+    }
+
+    public function previewPromissoryPdf(Order $order)
+    {
+        return $this->renderPreviewPromissory($order, 'parcels', 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA', 'previa_promissoria_OS_');
+    }
+
+    public function previewSellerPromissoryPdf(Order $order)
+    {
+        return $this->renderPreviewPromissory($order, 'sellerParcels', 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA - FAT. VENDEDOR', 'previa_promissoria_vendedor_OS_');
+    }
+
+    public function previewBuyerPromissoryPdf(Order $order)
+    {
+        return $this->renderPreviewPromissory($order, 'buyerParcels', 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA - FAT. COMPRADOR', 'previa_promissoria_comprador_OS_');
+    }
+
+    private function renderPreviewPromissory(Order $order, string $relation, string $title, string $filePrefix)
+    {
+        $order->load(['event', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', $relation]);
+
+        $data = [
+            'order' => $order,
+            'event' => $order->event,
+            'seller' => $order->seller,
+            'buyer' => $order->buyer,
+            'animal' => $order->animal,
+            'activeParcels' => $order->$relation,
+            'promissoryTitle' => mb_strtoupper(str_replace('PRÉ-VISUALIZAÇÃO DE ', '', $title)),
+            'isPreview' => true,
+            'contractDate' => now(),
+            'eventBanner' => $order->event && $order->event->banner_contract ? storage_path('app/public/' . $order->event->banner_contract) : null,
+            'title' => $title,
+        ];
+
+        return ReportFactory::getBasicPdf('portrait', 'reports.promissory-note', $data, "{$filePrefix}{$order->number}.pdf");
+    }
+
+    public function previewRegulationPdf(Order $order)
+    {
+        $order->load(['event', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
+
+        $data = [
+            'order' => $order,
+            'event' => $order->event,
+            'seller' => $order->seller,
+            'buyer' => $order->buyer,
+            'animal' => $order->animal,
+            'isPreview' => true,
+            'contractDate' => now(),
+            'title' => 'PRÉ-VISUALIZAÇÃO DE REGULAMENTO',
+            'eventBanner' => $order->event && $order->event->banner_contract ? storage_path('app/public/' . $order->event->banner_contract) : null,
+            'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
+        ];
+
+        return ReportFactory::getBasicPdf('portrait', 'reports.regulation', $data, "previa_regulamento_OS_{$order->number}.pdf");
+    }
+
+    /**
+     * Imprime Pacote de Documentos Selecionados (Gerado/Oficial)
+     */
+    public function bundlePdf($id, Request $request)
+    {
+        set_time_limit(0);
+
+        $contract = Contract::with([
+            'order.event',
+            'order.seller.address',
+            'order.buyer.address',
+            'order.animal.breed',
+            'order.animal.coat',
+            'order.paymentWay',
+            'order.parcels',
+            'order.sellerParcels',
+            'order.buyerParcels',
+        ])->findOrFail($id);
+
+        $data = !empty($contract->snapshot)
+            ? $this->prepareFromSnapshot($contract, 1)
+            : $this->prepareFromDatabase($contract, 1);
+
+        $selectedDocs = $request->get('docs');
+        if (is_string($selectedDocs)) {
+            $selectedDocs = explode(',', $selectedDocs);
+        }
+
+        $data['selectedDocs'] = $selectedDocs ?? ['via1', 'via2', 'promissory', 'seller_promissory', 'buyer_promissory', 'regulation'];
+        $data['title'] = 'DOCUMENTOS DO CONTRATO - OS ' . $data['order']->number;
+        $data['isPreview'] = false;
+
+        $fileName = 'PACOTE_COMPLETO_OS_' . $data['order']->number . '.pdf';
+
+        return ReportFactory::getBasicPdf('portrait', 'reports.bundle', $data, $fileName);
+    }
+
+    /**
+     * Pré-visualiza Pacote Selecionado
+     */
+    public function previewBundlePdf(Order $order, Request $request)
+    {
+        set_time_limit(0);
+
+        $order->load([
+            'event',
+            'seller.address',
+            'buyer.address',
+            'animal.breed',
+            'animalEvent',
+            'paymentWay',
+            'parcels',
+            'sellerParcels',
+            'buyerParcels',
+        ]);
+
+        $event = $order->event;
+        $seller = $order->seller;
+        $buyer = $order->buyer;
+        $animal = $order->animal;
+
+        $grossValue = (float) $order->gross_value;
+        $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
+        $netValue = $grossValue - $discountValue;
+
+        $parcels = $order->parcels->sortBy('date');
+        $sellerParcels = $order->sellerParcels ? $order->sellerParcels->sortBy('date') : collect();
+        $buyerParcels = $order->buyerParcels ? $order->buyerParcels->sortBy('date') : collect();
+
+        $installments = $parcels->count();
+        $firstParcel = $parcels->first();
+
+        $firstParcelValue = $firstParcel ? (float) $firstParcel->value : (float) $order->first_parcel_value;
+        $firstDueDate = $firstParcel?->date ? Carbon::parse($firstParcel->date) : ($order->first_date ? Carbon::parse($order->first_date) : null);
+
+        $paymentText = $this->buildPaymentText($order, $netValue, $installments, $firstParcelValue, $firstDueDate);
+
         $city = $seller->address->city ?? 'Uruguaiana';
         $state = $seller->address->state ?? 'RS';
+
+        $selectedDocs = $request->get('docs');
+        if (is_string($selectedDocs)) {
+            $selectedDocs = explode(',', $selectedDocs);
+        }
 
         $data = [
             'order' => $order,
@@ -650,6 +609,9 @@ class ContractController extends Controller
             'buyer' => $buyer,
             'animal' => $animal,
             'parcels' => $parcels,
+            'sellerParcels' => $sellerParcels,
+            'buyerParcels' => $buyerParcels,
+            'selectedDocs' => $selectedDocs ?? ['via1', 'via2', 'promissory', 'seller_promissory', 'buyer_promissory', 'regulation'],
             'grossValue' => $grossValue,
             'netValue' => $netValue,
             'discountValue' => $discountValue,
@@ -659,20 +621,13 @@ class ContractController extends Controller
             'paymentText' => $paymentText,
             'contractDate' => now(),
             'isPreview' => true,
-            'title' => 'PRÉ-VISUALIZAÇÃO - PACOTE COMPLETO',
+            'title' => 'PRÉ-VISUALIZAÇÃO - PACOTE SELECIONADO',
             'eventBanner' => $event && $event->banner_contract ? storage_path('app/public/' . $event->banner_contract) : null,
             'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
-
-            // 🔹 VARIÁVEIS ADICIONADAS PARA EVITAR O ERRO:
             'contractCity' => "{$city} - {$state}",
             'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
 
-        return ReportFactory::getBasicPdf(
-            'portrait',
-            'reports.bundle',
-            $data,
-            "previa_pacote_completo_OS_{$order->number}.pdf"
-        );
+        return ReportFactory::getBasicPdf('portrait', 'reports.bundle', $data, "previa_pacote_OS_{$order->number}.pdf");
     }
 }

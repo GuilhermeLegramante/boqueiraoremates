@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\OrderResource\RelationManagers;
 
 use App\Models\Contract;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -44,14 +45,26 @@ class ContractsRelationManager extends RelationManager
                 TextColumn::make('generatedBy.name')->label('Emitido por'),
             ])
             ->headerActions([
-                // 🔹 GRUPO DE PRÉ-VISUALIZAÇÃO (Sem travar a fatura)
+                // GRUPO DE PRÉ-VISUALIZAÇÃO
                 ActionGroup::make([
-                    Tables\Actions\Action::make('preview_bundle')
-                        ->label('Todos os Documentos')
+                    // Modal para Selecionar Documentos na Pré-visualização
+                    Tables\Actions\Action::make('preview_bundle_modal')
+                        ->label('Selecionar Documentos (Prévia)')
                         ->icon('heroicon-o-document-duplicate')
                         ->color('success')
-                        ->url(fn(): string => route('order-bundle-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
-                        ->openUrlInNewTab(),
+                        ->form([
+                            Forms\Components\CheckboxList::make('documents')
+                                ->label('Selecione os documentos para pré-visualizar:')
+                                ->options(fn() => $this->getAvailableDocumentOptions($this->getOwnerRecord()))
+                                ->default(fn() => array_keys($this->getAvailableDocumentOptions($this->getOwnerRecord())))
+                                ->required(),
+                        ])
+                        ->action(function (array $data) {
+                            $query = http_build_query(['docs' => implode(',', $data['documents'])]);
+                            $url = route('order-bundle-preview-pdf', ['order' => $this->getOwnerRecord()->id]) . '?' . $query;
+
+                            $this->js("window.open('{$url}', '_blank')");
+                        }),
 
                     Tables\Actions\Action::make('preview_via1')
                         ->label('1ª Via Contrato')
@@ -66,9 +79,23 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_promissory')
-                        ->label('Nota Promissória')
+                        ->label('Nota Promissória (Única)')
                         ->icon('heroicon-o-eye')
                         ->url(fn(): string => route('order-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('preview_seller_promissory')
+                        ->label('Nota Promissória (Fat. Vendedor)')
+                        ->icon('heroicon-o-eye')
+                        ->visible(fn(): bool => $this->getOwnerRecord()->sellerParcels()->count() > 0)
+                        ->url(fn(): string => route('order-seller-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('preview_buyer_promissory')
+                        ->label('Nota Promissória (Fat. Comprador)')
+                        ->icon('heroicon-o-eye')
+                        ->visible(fn(): bool => $this->getOwnerRecord()->buyerParcels()->count() > 0)
+                        ->url(fn(): string => route('order-buyer-promissory-preview-pdf', ['order' => $this->getOwnerRecord()->id]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('preview_regulation')
@@ -81,7 +108,7 @@ class ContractsRelationManager extends RelationManager
                     ->icon('heroicon-o-eye')
                     ->color('warning'),
 
-                // BOTÃO DE GERAR E OFICIALIZAR
+                // BOTÃO DE GERAR E OFICIALIZAR CONTRATO
                 Tables\Actions\Action::make('generate')
                     ->label('Gerar Contrato')
                     ->icon('heroicon-o-document-plus')
@@ -114,12 +141,24 @@ class ContractsRelationManager extends RelationManager
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\Action::make('pdf_bundle')
-                        ->label('Todos os Documentos')
+                    // Modal para Selecionar Documentos para Impressão
+                    Tables\Actions\Action::make('pdf_bundle_modal')
+                        ->label('Selecionar Documentos (Pacote)')
                         ->icon('heroicon-o-document-duplicate')
                         ->color('success')
-                        ->url(fn(Contract $record): string => route('contract-bundle-pdf', ['contract' => $record->id]))
-                        ->openUrlInNewTab(),
+                        ->form([
+                            Forms\Components\CheckboxList::make('documents')
+                                ->label('Selecione os documentos para gerar em PDF:')
+                                ->options(fn(Contract $record) => $this->getAvailableDocumentOptions($record->order))
+                                ->default(fn(Contract $record) => array_keys($this->getAvailableDocumentOptions($record->order)))
+                                ->required(),
+                        ])
+                        ->action(function (Contract $record, array $data) {
+                            $query = http_build_query(['docs' => implode(',', $data['documents'])]);
+                            $url = route('contract-bundle-pdf', ['contract' => $record->id]) . '?' . $query;
+
+                            $this->js("window.open('{$url}', '_blank')");
+                        }),
 
                     Tables\Actions\Action::make('pdf_via1')
                         ->label('1ª Via')
@@ -136,10 +175,26 @@ class ContractsRelationManager extends RelationManager
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('promissory_note')
-                        ->label('Nota Promissória')
+                        ->label('Nota Promissória (Única)')
                         ->icon('heroicon-o-banknotes')
                         ->color('warning')
                         ->url(fn(Contract $record): string => route('promissory-note-pdf', ['contract' => $record->id]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('seller_promissory_note')
+                        ->label('NP - Fat. Vendedor')
+                        ->icon('heroicon-o-banknotes')
+                        ->color('warning')
+                        ->visible(fn(Contract $record): bool => count($record->snapshot['seller_parcels'] ?? []) > 0)
+                        ->url(fn(Contract $record): string => route('seller-promissory-note-pdf', ['contract' => $record->id]))
+                        ->openUrlInNewTab(),
+
+                    Tables\Actions\Action::make('buyer_promissory_note')
+                        ->label('NP - Fat. Comprador')
+                        ->icon('heroicon-o-banknotes')
+                        ->color('warning')
+                        ->visible(fn(Contract $record): bool => count($record->snapshot['buyer_parcels'] ?? []) > 0)
+                        ->url(fn(Contract $record): string => route('buyer-promissory-note-pdf', ['contract' => $record->id]))
                         ->openUrlInNewTab(),
 
                     Tables\Actions\Action::make('regulation')
@@ -158,6 +213,30 @@ class ContractsRelationManager extends RelationManager
                     ->color('primary')
             ])
             ->bulkActions([]);
+    }
+
+    private function getAvailableDocumentOptions($order): array
+    {
+        $options = [
+            'via1' => '1ª Via do Contrato',
+            'via2' => '2ª Via do Contrato',
+            'promissory' => 'Nota Promissória (Única)',
+        ];
+
+        $hasSellerParcels = $order && method_exists($order, 'sellerParcels') ? $order->sellerParcels()->count() > 0 : false;
+        $hasBuyerParcels = $order && method_exists($order, 'buyerParcels') ? $order->buyerParcels()->count() > 0 : false;
+
+        if ($hasSellerParcels) {
+            $options['seller_promissory'] = 'Nota Promissória (Faturamento Vendedor)';
+        }
+
+        if ($hasBuyerParcels) {
+            $options['buyer_promissory'] = 'Nota Promissória (Faturamento Comprador)';
+        }
+
+        $options['regulation'] = 'Regulamento do Remate';
+
+        return $options;
     }
 
     protected function makeSnapshot($order): array
@@ -179,9 +258,7 @@ class ContractsRelationManager extends RelationManager
             'order' => [
                 'id' => $order->id,
                 'number' => $order->number,
-                'base_date' => $order->base_date
-                    ? \Carbon\Carbon::parse($order->base_date)->format('Y-m-d')
-                    : null,
+                'base_date' => $order->base_date ? \Carbon\Carbon::parse($order->base_date)->format('Y-m-d') : null,
                 'gross_value' => $order->gross_value,
                 'net_value' => $order->net_value,
                 'discount_percentage' => $order->discount_percentage,
@@ -195,45 +272,26 @@ class ContractsRelationManager extends RelationManager
                 'sale_type_percentage' => $order->sale_type_percentage,
                 'sale_type_quantity' => $order->sale_type_quantity,
             ],
-
             'event' => $order->event ? [
                 'id' => $order->event->id,
                 'name' => $order->event->name,
                 'banner_contract' => $order->event->banner_contract ?? null,
                 'city' => $order->event->city ?? null,
-                'start_date' => $order->event->start_date
-                    ? \Carbon\Carbon::parse($order->event->start_date)->format('Y-m-d')
-                    : null,
-                'finish_date' => $order->event->finish_date
-                    ? \Carbon\Carbon::parse($order->event->finish_date)->format('Y-m-d')
-                    : null,
+                'start_date' => $order->event->start_date ? \Carbon\Carbon::parse($order->event->start_date)->format('Y-m-d') : null,
+                'finish_date' => $order->event->finish_date ? \Carbon\Carbon::parse($order->event->finish_date)->format('Y-m-d') : null,
                 'multiplier' => $order->event->multiplier,
                 'note' => $order->event->note,
                 'regulation' => $order->event->regulation,
-                'pre_start_date' => $order->event->pre_start_date
-                    ? \Carbon\Carbon::parse($order->event->pre_start_date)->format('Y-m-d')
-                    : null,
-                'pre_finish_date' => $order->event->pre_finish_date
-                    ? \Carbon\Carbon::parse($order->event->pre_finish_date)->format('Y-m-d')
-                    : null,
                 'auctioneer' => $order->event->auctioneer,
-                'representative_name' => $order->event->representative_name ?? null, // 🔹 Adicionado
-                'representative_role' => $order->event->representative_role ?? null, // 🔹 Adicionado
                 'witness_1_name' => $order->event->witness_1_name,
-                'witness_2_name' => $order->event->witness_2_name
+                'witness_2_name' => $order->event->witness_2_name,
             ] : null,
-
             'seller' => $order->seller ? [
                 'id' => $order->seller->id,
                 'name' => $order->seller->name,
-                'establishment' => $order->seller->establishment ?? null,
-                'establishment_city' => $order->seller->establishment_city ?? null,
                 'cpf_cnpj' => $order->seller->cpf_cnpj ?? null,
                 'phone' => $order->seller->phone ?? null,
                 'email' => $order->seller->email ?? null,
-                'representative_name' => $order->seller->representative_name ?? null,
-                'representative_role' => $order->seller->representative_role ?? null,
-                'representative_document' => $order->seller->representative_document ?? null,
                 'address' => $order->seller->address ? [
                     'street' => $order->seller->address->street ?? null,
                     'district' => $order->seller->address->district ?? null,
@@ -242,7 +300,6 @@ class ContractsRelationManager extends RelationManager
                     'postal_code' => $order->seller->address->postal_code ?? null,
                 ] : null,
             ] : null,
-
             'buyer' => $order->buyer ? [
                 'id' => $order->buyer->id,
                 'name' => $order->buyer->name,
@@ -257,35 +314,28 @@ class ContractsRelationManager extends RelationManager
                     'postal_code' => $order->buyer->address->postal_code ?? null,
                 ] : null,
             ] : null,
-
             'animal' => $order->animal ? [
                 'id' => $order->animal->id,
                 'name' => $order->animal->name,
                 'rb' => $order->animal->rb ?? null,
                 'sbb' => $order->animal->sbb ?? null,
                 'register' => $order->animal->register ?? null,
-                'blood_level' => $order->animal->blood_level ?? null,
-                'blood_percentual' => $order->animal->blodd_percentual ?? null,
                 'gender' => $order->animal->gender ?? null,
                 'breed' => $order->animal->breed ? ['name' => $order->animal->breed->name] : null,
                 'coat' => $order->animal->coat ? ['name' => $order->animal->coat->name] : null,
             ] : null,
-
             'lote' => $order->animalEvent ? [
                 'id' => $order->animalEvent->id,
                 'lot_number' => $order->animalEvent->lot_number,
                 'name' => $order->animalEvent->name,
             ] : null,
-
             'payment_way' => $order->paymentWay ? [
                 'id' => $order->paymentWay->id,
                 'name' => $order->paymentWay->name,
             ] : null,
-
-            'parcels' => $order->parcels
-                ->map(fn($parcel) => $parcel->toArray())
-                ->values()
-                ->all(),
+            'parcels' => $order->parcels->map(fn($p) => $p->toArray())->values()->all(),
+            'seller_parcels' => $order->sellerParcels ? $order->sellerParcels->map(fn($p) => $p->toArray())->values()->all() : [],
+            'buyer_parcels' => $order->buyerParcels ? $order->buyerParcels->map(fn($p) => $p->toArray())->values()->all() : [],
         ];
     }
 }
