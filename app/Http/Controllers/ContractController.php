@@ -582,7 +582,7 @@ class ContractController extends Controller
 
         $fileName = 'PACOTE_COMPLETO_OS_' . $data['order']->number . '.pdf';
 
-        dd($data['event']->banner_contract);
+        dd($data);
 
         return ReportFactory::getBasicPdf(
             'portrait',
