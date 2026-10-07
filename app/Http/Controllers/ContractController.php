@@ -27,7 +27,7 @@ class ContractController extends Controller
         set_time_limit(0);
 
         $contract = Contract::with([
-            'order.event',
+            'order.event.clauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',
@@ -83,7 +83,7 @@ class ContractController extends Controller
         set_time_limit(0);
 
         $contract = Contract::with([
-            'order.event',
+            'order.event.clauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',
@@ -216,6 +216,15 @@ class ContractController extends Controller
         $buyer = json_decode(json_encode($snapshot['buyer'] ?? []));
         $animal = json_decode(json_encode($snapshot['animal'] ?? []));
         $event = json_decode(json_encode($snapshot['event'] ?? []));
+
+        // Se as cláusulas não existirem no snapshot (contratos antigos),
+        // busca do evento no banco de dados como fallback:
+        if (empty($event->clauses) && $contract->order && $contract->order->event) {
+            $event->clauses = $contract->order->event->clauses;
+        } else {
+            // Converte em Collection para facilitar a iteração na Blade
+            $event->clauses = collect($event->clauses ?? [])->sortBy('order');
+        }
 
         // Fallbacks Vendedor e Comprador
         if ($contract->order && $contract->order->seller) {
@@ -399,7 +408,7 @@ class ContractController extends Controller
         set_time_limit(0);
 
         $contract = Contract::with([
-            'order.event',
+            'order.event.clauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',
@@ -428,7 +437,7 @@ class ContractController extends Controller
     public function previewPdf(Order $order, Request $request)
     {
         $via = $request->get('via', 1);
-        $order->load(['event', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
+        $order->load(['event.clauses', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
 
         $grossValue = (float) $order->gross_value;
         $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
@@ -525,7 +534,7 @@ class ContractController extends Controller
         set_time_limit(0);
 
         $contract = Contract::with([
-            'order.event',
+            'order.event.clauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',

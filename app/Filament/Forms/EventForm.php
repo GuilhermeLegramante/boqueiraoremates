@@ -5,6 +5,7 @@ namespace App\Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -167,6 +168,32 @@ class EventForm
                 ->label('Nome da Testemunha 2')
                 ->visible($operation != 'view')
                 ->maxLength(255),
+
+            // 🔹 REPEATER DE CLÁUSULAS DO CONTRATO
+            Repeater::make('clauses')
+                ->relationship('clauses')
+                ->label('Cláusulas do Contrato')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Título / Identificador')
+                        ->placeholder('Ex: CLÁUSULA PRIMEIRA ou Da Inadimplência')
+                        ->columnSpanFull(),
+
+                    Textarea::make('content')
+                        ->label('Texto da Cláusula')
+                        ->required()
+                        ->rows(4)
+                        ->columnSpanFull(),
+                ])
+                ->orderColumn('order') // Mantém a ordem salva na coluna 'order' da tabela
+                ->defaultItems(0)
+                ->reorderable()
+                ->collapsible()
+                ->cloneable()
+                ->itemLabel(fn(array $state): ?string => $state['title'] ?? ($state['content'] ? mb_substr($state['content'], 0, 50) . '...' : 'Nova Cláusula'))
+                ->addActionLabel('Adicionar Cláusula')
+                ->columnSpanFull()
+                ->visible($operation != 'view'),
 
             Toggle::make('published')
                 ->label('Publicado')

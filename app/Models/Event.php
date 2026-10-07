@@ -92,4 +92,12 @@ class Event extends Model
     {
         return mb_strtoupper($value, 'UTF-8');
     }
+
+    /**
+     * Cláusulas contratuais do evento
+     */
+    public function clauses(): HasMany
+    {
+        return $this->hasMany(EventClause::class)->orderBy('order', 'asc');
+    }
 }

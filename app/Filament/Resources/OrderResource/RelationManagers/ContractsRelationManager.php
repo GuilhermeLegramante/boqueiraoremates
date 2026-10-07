@@ -242,7 +242,7 @@ class ContractsRelationManager extends RelationManager
     protected function makeSnapshot($order): array
     {
         $order->load([
-            'event',
+            'event.clauses',
             'seller.address',
             'buyer.address',
             'animal.breed',
@@ -285,6 +285,14 @@ class ContractsRelationManager extends RelationManager
                 'auctioneer' => $order->event->auctioneer,
                 'witness_1_name' => $order->event->witness_1_name,
                 'witness_2_name' => $order->event->witness_2_name,
+
+                // 🔹 Mapeamento das cláusulas para o Snapshot
+                'clauses' => $order->event->clauses ? $order->event->clauses->map(fn($clause) => [
+                    'id' => $clause->id,
+                    'title' => $clause->title,
+                    'content' => $clause->content,
+                    'order' => $clause->order,
+                ])->toArray() : [],
             ] : null,
             'seller' => $order->seller ? [
                 'id' => $order->seller->id,
