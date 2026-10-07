@@ -33,6 +33,7 @@ class Event extends Model
         'representative_role',
         'witness_1_name',
         'witness_2_name',
+        'banner_contract',
 
     ];
 

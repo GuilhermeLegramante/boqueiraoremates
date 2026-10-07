@@ -46,6 +46,18 @@ class EventForm
                 ->columnSpanFull()
                 ->maxSize(4096),
 
+            FileUpload::make('banner_contract')
+                ->label('Logo p/ Contrato')
+                ->image()
+                ->previewable()
+                ->openable()
+                ->downloadable()
+                ->visible($operation != 'view')
+                ->directory('events/banners')
+                ->visibility('public')
+                ->columnSpanFull()
+                ->maxSize(4096),
+
             ViewField::make('event_info')
                 ->label('Evento')
                 ->columnSpanFull()

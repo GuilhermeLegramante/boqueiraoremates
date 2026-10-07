@@ -131,8 +131,8 @@ class ContractController extends Controller
             : now();
 
         $eventBanner = null;
-        if ($event?->banner_min) {
-            $bannerPath = public_path('storage/' . ltrim($event->banner_min, '/'));
+        if ($event?->banner_contract) {
+            $bannerPath = public_path('storage/' . ltrim($event->banner_contract, '/'));
             if (file_exists($bannerPath)) {
                 $eventBanner = $bannerPath;
             }
@@ -259,8 +259,8 @@ class ContractController extends Controller
             : now();
 
         $eventBanner = null;
-        if (!empty($event->banner_min)) {
-            $bannerPath = public_path('storage/' . ltrim($event->banner_min, '/'));
+        if (!empty($event->banner_contract)) {
+            $bannerPath = public_path('storage/' . ltrim($event->banner_contract, '/'));
             if (file_exists($bannerPath)) {
                 $eventBanner = $bannerPath;
             }
@@ -468,7 +468,7 @@ class ContractController extends Controller
             'via' => $via,
             'isPreview' => true,
             'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
-            'eventBanner' => $event && $event->banner_min ? storage_path('app/public/' . $event->banner_min) : null,
+            'eventBanner' => $event && $event->banner_contract ? storage_path('app/public/' . $event->banner_contract) : null,
             'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
         ];
 
@@ -544,7 +544,7 @@ class ContractController extends Controller
             'isPreview' => true,
             'contractDate' => now(),
             'title' => 'PRÉ-VISUALIZAÇÃO DE REGULAMENTO',
-            'eventBanner' => $order->event && $order->event->banner_min ? storage_path('app/public/' . $order->event->banner_min) : null,
+            'eventBanner' => $order->event && $order->event->banner_contract ? storage_path('app/public/' . $order->event->banner_contract) : null,
             'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
         ];
 
