@@ -277,9 +277,9 @@
         @if ($clause->title)
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
         @endif
-        <p class="contract-text">
+        <div class="contract-text" style="text-align: justify; text-justify: inter-word;">
             {!! $clause->content !!}
-        </p>
+        </div>
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
         <p class="contract-text">

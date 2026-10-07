@@ -217,4 +217,21 @@ class Order extends Model
     {
         return $this->contract()->exists();
     }
+
+    public function getTotalInstallmentsAttribute(): int
+    {
+        // 1. Tenta calcular pela soma da condição da Forma de Pagamento (ex: "2+2+46" = 50)
+        if (! empty($this->paymentWay?->name) && str_contains($this->paymentWay->name, '+')) {
+            $parts = array_map('intval', explode('+', $this->paymentWay->name));
+            return (int) array_sum($parts);
+        }
+
+        // 2. Se for um plano simples sem "+", usa o multiplicador do evento/OS ou a contagem da tabela
+        if (! empty($this->multiplier) && $this->multiplier > 0) {
+            return (int) $this->multiplier;
+        }
+
+        // 3. Fallback: contagem de parcelas registradas
+        return $this->parcels->count();
+    }
 }

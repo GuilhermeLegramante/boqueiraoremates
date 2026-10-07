@@ -277,7 +277,7 @@ class ContractController extends Controller
         $discountValue = ($grossValue * (float) ($order->discount_percentage ?? 0)) / 100;
         $netValue = (float) ($order->net_value ?? ($grossValue - $discountValue));
 
-        $installments = $parcels->count();
+        $installments = $order->total_installments;
         $firstParcel = $parcels->first();
 
         $firstParcelValue = $firstParcel
