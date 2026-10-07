@@ -374,14 +374,12 @@ class ContractController extends Controller
         $parts = array_values(array_filter($rawParts, fn($val) => $val > 0));
 
         $totalInstallments = array_sum($parts);
-        $totalInWords = $this->numberInWords($totalInstallments);
 
-        // Valor da parcela individual base
+        // Valor da parcela individual base (ex: 370.00)
         $unitParcelValue = (float) (is_array($order) ? ($order['parcel_value'] ?? 0) : ($order->parcel_value ?? 0));
         if ($unitParcelValue <= 0 && $totalInstallments > 0) {
             $unitParcelValue = $netValue / $totalInstallments;
         }
-        $parcelValueFormatted = number_format($unitParcelValue, 2, ',', '.');
 
         // Data de referência e dia de vencimento
         $currentDate = $firstDueDate ? $firstDueDate->copy() : now();
@@ -389,38 +387,38 @@ class ContractController extends Controller
 
         // Início padrão do texto
         $text = sprintf(
-            'Valor total de R$ %s, divididos em %s parcelas, no valor de R$ %s, ',
-            $totalFormatted,
-            $totalInWords,
-            $parcelValueFormatted
+            'Valor total de R$ %s, que serão pagos da seguinte maneira: ',
+            $totalFormatted
         );
 
-        // CASO 1: Condição com entradas agrupadas (ex: 2+2+46, 1+1+10, 2+2+2+44)
+        // CASO 1: Condição composta com parcelas agrupadas (ex: 2+2+46, 1+1+10)
         if (count($parts) > 1) {
-            $entryGroups = array_slice($parts, 0, -1); // Grupos da entrada
-            $remainingInstallments = end($parts);       // Parcelas mensais restantes
+            $entryGroups = array_slice($parts, 0, -1); // Grupos de entrada
+            $remainingInstallments = end($parts);       // Parcelas vincendas finais
 
             $clauses = [];
             $currentParcelNum = 1;
 
             foreach ($entryGroups as $index => $groupSize) {
                 $formattedDate = $currentDate->format('d/m/Y');
+                $groupTotalValue = $unitParcelValue * $groupSize;
+                $groupValueFormatted = number_format($groupTotalValue, 2, ',', '.');
 
                 if ($groupSize === 1) {
-                    // Parcela individual (ex: parcela 1 no dia 14/06/2026)
-                    $label = sprintf('parcela %d', $currentParcelNum);
+                    // Parcela individual (ex: a parcela 1 no valor de R$ 370,00, com vencimento em 14/06/2026)
+                    $label = sprintf('a parcela %d no valor de R$ %s, com vencimento em %s', $currentParcelNum, $groupValueFormatted, $formattedDate);
                     $currentParcelNum += 1;
                 } else {
-                    // Faixa de parcelas espelhada da tabela (ex: parcelas 1-2 no dia 06/10/2026)
+                    // Parcelas agrupadas (ex: as parcelas 1 e 2 somando um valor de R$ 740,00, com vencimento em 06/10/2026)
                     $endParcelNum = $currentParcelNum + $groupSize - 1;
-                    $label = sprintf('parcelas %d-%d', $currentParcelNum, $endParcelNum);
+                    $label = sprintf('as parcelas %d e %d somando um valor de R$ %s, com vencimento em %s', $currentParcelNum, $endParcelNum, $groupValueFormatted, $formattedDate);
                     $currentParcelNum += $groupSize;
                 }
 
                 if ($index === 0) {
-                    $clauses[] = sprintf('sendo o pagamento da %s no dia %s', $label, $formattedDate);
+                    $clauses[] = 'As ' . ltrim($label, 'as '); // Ajusta caixa da primeira palavra
                 } else {
-                    $clauses[] = sprintf('%s no dia %s', $label, $formattedDate);
+                    $clauses[] = $label;
                 }
 
                 // Avança para o próximo mês
@@ -428,26 +426,30 @@ class ContractController extends Controller
                 $currentDate->day(min($dueDay, $currentDate->daysInMonth));
             }
 
-            // Conecta as entradas espelhadas
+            // Conecta os blocos de entrada com vírgula/e
             $text .= implode(', ', $clauses);
 
-            // Adiciona o fechamento das parcelas mensais restantes
+            // Adiciona as parcelas mensais restantes
             $remainingInWords = $this->numberInWords($remainingInstallments);
-            $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
+            $unitValueFormatted = number_format($unitParcelValue, 2, ',', '.');
+            $text .= sprintf(' e as demais %s parcelas mensais e consecutivas no valor de R$ %s cada', $remainingInWords, $unitValueFormatted);
         } else {
-            // CASO 2: Parcelamento simples (ex: 12 ou 20 parcelas corridas)
+            // CASO 2: Parcelamento simples (ex: 20 parcelas diretas ou à vista)
+            $unitValueFormatted = number_format($unitParcelValue, 2, ',', '.');
             if ($totalInstallments === 1) {
-                $text .= sprintf('sendo o pagamento no dia %s', $currentDate->format('d/m/Y'));
+                $text .= sprintf('parcela única no valor de R$ %s, com vencimento em %s', $totalFormatted, $currentDate->format('d/m/Y'));
             } else {
-                $text .= sprintf('sendo o pagamento da primeira no dia %s', $currentDate->format('d/m/Y'));
-
-                $remainingInstallments = $totalInstallments - 1;
-                $remainingInWords = $this->numberInWords($remainingInstallments);
-                $text .= sprintf(' e as demais %s parcelas mensais e consecutivas', $remainingInWords);
+                $text .= sprintf(
+                    'a primeira parcela no valor de R$ %s com vencimento em %s e as demais %s parcelas mensais e consecutivas no valor de R$ %s cada',
+                    $unitValueFormatted,
+                    $currentDate->format('d/m/Y'),
+                    $this->numberInWords($totalInstallments - 1),
+                    $unitValueFormatted
+                );
             }
         }
 
-        // Fechamento da regra do dia de vencimento
+        // Fechamento padrão com quitação e dia do vencimento
         $text .= sprintf(
             ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
             $dueDay
