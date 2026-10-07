@@ -134,6 +134,10 @@ class ClientForm
                             TextInput::make('establishment')
                                 ->label(__('fields.establishment')),
 
+                            TextInput::make('establishment_city')
+                                ->label('Cidade e UF do Estabelecimento')
+                                ->hint('Ex: Santiago - RS'),
+
                             TextInput::make('representative_name')
                                 ->label('Nome do Representante'),
 
