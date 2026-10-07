@@ -17,7 +17,8 @@
                 <div style="font-size: 9.5px; line-height: 1.25;">
                     <div><span class="label">Nota do:</span> {{ mb_strtoupper($event->name ?? '', 'UTF-8') }}</div>
                     <div><span class="label">NP Nº:</span> {{ $order->number }}</div>
-                    <div><span class="label">Escritório/Leiloeiro:</span> {{ $event->auctioneer ?? '' }}</div>
+                    <div><span class="label">Escritório/Leiloeiro:</span> Boqueirão Remates /
+                        {{ $event->auctioneer ?? '' }}</div>
                 </div>
             </td>
         </tr>
@@ -31,7 +32,8 @@
             <td style="width: 40%;"><span class="label">CPF/CNPJ:</span> {{ $seller->cpf_cnpj }}</td>
         </tr>
         <tr>
-            <td><span class="label">Ender.:</span> {{ $seller->address->street ?? '' }}</td>
+            <td><span class="label">Ender.:</span> {{ $seller->address->street ?? '' }},
+                {{ $seller->address->number ?? '' }} {{ $seller->address->complement ?? '' }}</td>
             <td><span class="label">Bairro:</span> {{ $seller->address->district ?? '' }}</td>
         </tr>
         <tr>
@@ -53,7 +55,8 @@
             <td style="width: 40%;"><span class="label">CPF/CNPJ:</span> {{ $buyer->cpf_cnpj }}</td>
         </tr>
         <tr>
-            <td><span class="label">Ender.:</span> {{ $buyer->address->street ?? '' }}</td>
+            <td><span class="label">Ender.:</span> {{ $buyer->address->street ?? '' }},
+                {{ $buyer->address->number ?? '' }} {{ $buyer->address->complement ?? '' }}</td>
             <td><span class="label">Bairro:</span> {{ $buyer->address->district ?? '' }}</td>
         </tr>
         <tr>
