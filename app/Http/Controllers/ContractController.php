@@ -509,6 +509,7 @@ class ContractController extends Controller
             'animal' => $animal,
             'isPreview' => true,
             'contractDate' => now(),
+            'eventBanner' => $event && $event->banner_contract ? storage_path('app/public/' . $event->banner_contract) : null,
             'title' => 'PRÉ-VISUALIZAÇÃO DE NOTA PROMISSÓRIA',
         ];
 
