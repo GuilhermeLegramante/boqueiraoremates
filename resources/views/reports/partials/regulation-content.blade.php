@@ -159,7 +159,7 @@
     $isQuartoDeMilha = str_contains($breedName, 'QUARTO DE MILHA') || str_contains($breedName, 'QM');
 
     $labelNumero = $isQuartoDeMilha ? 'REG nº' : 'RP nº';
-    $numeroIdentificacao = $isQuartoDeMilha ? $animal->register ?? ($animal->rp ?? '') : $animal->rp ?? '';
+    $numeroIdentificacao = $isQuartoDeMilha ? $animal->register ?? ($animal->rb ?? '') : $animal->rb ?? '';
 
     $grauSangue = $animal->blood_degree ?? ($animal->blood_degree_name ?? '');
     $percentual = $animal->purity_percentage ?? ($animal->percentage ?? '');
