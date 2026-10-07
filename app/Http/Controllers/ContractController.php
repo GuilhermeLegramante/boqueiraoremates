@@ -314,7 +314,6 @@ class ContractController extends Controller
         float $firstParcelValue,
         ?Carbon $firstDueDate
     ): string {
-        dd($order);
         $totalFormatted = number_format($netValue, 2, ',', '.');
         $firstParcelFormatted = number_format($firstParcelValue, 2, ',', '.');
 
@@ -353,10 +352,15 @@ class ContractController extends Controller
 
         $text .= ', até a quitação do produto';
 
-        if (!empty($order->due_day)) {
+        // Se não houver due_day no order, tenta pegar o dia da primeira parcela ($firstDueDate)
+        $dueDay = !empty($order->due_day)
+            ? (int) $order->due_day
+            : ($firstDueDate ? (int) $firstDueDate->format('d') : null);
+
+        if ($dueDay) {
             $text .= sprintf(
                 ', sendo definida a data do dia %d de cada mês para o vencimento.',
-                $order->due_day
+                $dueDay
             );
         } else {
             $text .= '.';
