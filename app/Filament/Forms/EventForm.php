@@ -73,7 +73,8 @@ class EventForm
                 ->maxLength(255),
 
             TextInput::make('city')
-                ->label('Cidade')
+                ->label('Cidade e UF')
+                ->hint('Ex: Santiago - RS')
                 ->columnSpanFull()
                 ->required()
                 ->visible($operation != 'view')
