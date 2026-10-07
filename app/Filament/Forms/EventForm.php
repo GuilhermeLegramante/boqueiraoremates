@@ -2,6 +2,7 @@
 
 namespace App\Filament\Forms;
 
+use App\Models\Event;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -12,7 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
-
+use Filament\Forms\Components\Actions\Action; 
 class EventForm
 {
     public static function form($operation = ''): array
@@ -177,21 +178,68 @@ class EventForm
                 ->schema([
                     TextInput::make('title')
                         ->label('Título / Identificador')
-                        ->placeholder('Ex: CLÁUSULA PRIMEIRA ou Da Inadimplência')
+                        ->placeholder('Ex: CLÁUSULA PRIMEIRA')
                         ->columnSpanFull(),
 
-                    Textarea::make('content')
+                    RichEditor::make('content')
                         ->label('Texto da Cláusula')
                         ->required()
-                        ->rows(4)
+                        ->toolbarButtons([
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strike',
+                            'textColor',
+                            'bulletList',
+                            'orderedList',
+                            'undo',
+                            'redo',
+                        ])
                         ->columnSpanFull(),
                 ])
-                ->orderColumn('order') // Mantém a ordem salva na coluna 'order' da tabela
-                ->defaultItems(0)
+                ->headerActions([
+                    Action::make('importClauses')
+                        ->label('Importar de outro Evento')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('warning')
+                        ->modalHeading('Importar Cláusulas de Contrato')
+                        ->modalDescription('Selecione o evento de onde deseja copiar as cláusulas. As cláusulas atuais deste formulário serão substituídas.')
+                        ->modalSubmitActionLabel('Importar')
+                        ->form([
+                            Select::make('source_event_id')
+                                ->label('Evento de Origem')
+                                ->options(function ($record) {
+                                    // Retorna os eventos ignorando o registro atual para não importar de si mesmo
+                                    return Event::query()
+                                        ->when($record, fn($q) => $q->where('id', '!=', $record->id))
+                                        ->orderBy('id', 'desc')
+                                        ->pluck('name', 'id');
+                                })
+                                ->searchable()
+                                ->required(),
+                        ])
+                        ->action(function (array $data, Repeater $component): void {
+                            $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
+
+                            if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
+                                return;
+                            }
+
+                            // Mapeia as cláusulas do evento selecionado para o formato aceito pelo Repeater
+                            $importedData = $sourceEvent->clauses->map(fn($clause) => [
+                                'title' => $clause->title,
+                                'content' => $clause->content,
+                                'order' => $clause->order,
+                            ])->toArray();
+
+                            // Injeta os dados importados no estado do Repeater
+                            $component->state($importedData);
+                        }),
+                ])
+                ->orderColumn('order')
                 ->reorderable()
                 ->collapsible()
                 ->cloneable()
-                ->itemLabel(fn(array $state): ?string => $state['title'] ?? ($state['content'] ? mb_substr($state['content'], 0, 50) . '...' : 'Nova Cláusula'))
                 ->addActionLabel('Adicionar Cláusula')
                 ->columnSpanFull()
                 ->visible($operation != 'view'),
@@ -203,32 +251,66 @@ class EventForm
                 ->schema([
                     TextInput::make('title')
                         ->label('Título / Identificador')
-                        ->placeholder('Ex: ARTIGO 1º ou Da Comissão do Leilão')
+                        ->placeholder('Ex: ARTIGO 1º')
                         ->columnSpanFull(),
 
                     RichEditor::make('content')
-                        ->label('Texto da Cláusula')
+                        ->label('Texto do Regulamento')
                         ->required()
                         ->toolbarButtons([
                             'bold',
                             'italic',
                             'underline',
                             'strike',
-                            'textColor', // 👈 Permite alterar a cor do texto
+                            'textColor',
                             'bulletList',
                             'orderedList',
                             'undo',
                             'redo',
                         ])
                         ->columnSpanFull(),
+                ])
+                ->headerActions([
+                    Action::make('importRegulationClauses')
+                        ->label('Importar de outro Evento')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('warning')
+                        ->modalHeading('Importar Regulamento de outro Evento')
+                        ->modalDescription('Selecione o evento de onde deseja copiar as regras do regulamento.')
+                        ->modalSubmitActionLabel('Importar')
+                        ->form([
+                            Select::make('source_event_id')
+                                ->label('Evento de Origem')
+                                ->options(function ($record) {
+                                    return Event::query()
+                                        ->when($record, fn($q) => $q->where('id', '!=', $record->id))
+                                        ->orderBy('id', 'desc')
+                                        ->pluck('name', 'id');
+                                })
+                                ->searchable()
+                                ->required(),
+                        ])
+                        ->action(function (array $data, Repeater $component): void {
+                            $sourceEvent = Event::with('regulationClauses')->find($data['source_event_id']);
 
+                            if (! $sourceEvent || $sourceEvent->regulationClauses->isEmpty()) {
+                                return;
+                            }
+
+                            $importedData = $sourceEvent->regulationClauses->map(fn($clause) => [
+                                'title' => $clause->title,
+                                'content' => $clause->content,
+                                'order' => $clause->order,
+                            ])->toArray();
+
+                            $component->state($importedData);
+                        }),
                 ])
                 ->orderColumn('order')
                 ->reorderable()
                 ->collapsible()
                 ->cloneable()
-                ->itemLabel(fn(array $state): ?string => $state['title'] ?? ($state['content'] ? mb_substr($state['content'], 0, 50) . '...' : 'Nova Cláusula'))
-                ->addActionLabel('Adicionar Cláusula do Regulamento')
+                ->addActionLabel('Adicionar Regra do Regulamento')
                 ->columnSpanFull()
                 ->visible($operation != 'view'),
 
