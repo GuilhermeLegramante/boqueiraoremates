@@ -293,6 +293,14 @@ class ContractsRelationManager extends RelationManager
                     'content' => $clause->content,
                     'order' => $clause->order,
                 ])->toArray() : [],
+
+                // 🔹 Cláusulas do Regulamento
+                'regulation_clauses' => $order->event->regulationClauses ? $order->event->regulationClauses->map(fn($clause) => [
+                    'id' => $clause->id,
+                    'title' => $clause->title,
+                    'content' => $clause->content,
+                    'order' => $clause->order,
+                ])->toArray() : [],
             ] : null,
             'seller' => $order->seller ? [
                 'id' => $order->seller->id,

@@ -28,6 +28,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',
@@ -84,6 +85,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',
@@ -224,6 +226,12 @@ class ContractController extends Controller
         } else {
             // Converte em Collection para facilitar a iteração na Blade
             $event->clauses = collect($event->clauses ?? [])->sortBy('order');
+        }
+
+        if (empty($event->regulation_clauses) && $contract->order && $contract->order->event) {
+            $event->regulation_clauses = $contract->order->event->regulationClauses;
+        } else {
+            $event->regulation_clauses = collect($event->regulation_clauses ?? [])->sortBy('order');
         }
 
         // Fallbacks Vendedor e Comprador
@@ -409,6 +417,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',
@@ -437,7 +446,7 @@ class ContractController extends Controller
     public function previewPdf(Order $order, Request $request)
     {
         $via = $request->get('via', 1);
-        $order->load(['event.clauses', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
+        $order->load(['event.clauses', 'event.regulationClauses', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
 
         $grossValue = (float) $order->gross_value;
         $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
@@ -535,6 +544,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
             'order.animal.breed',

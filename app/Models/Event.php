@@ -100,4 +100,12 @@ class Event extends Model
     {
         return $this->hasMany(EventClause::class)->orderBy('order', 'asc');
     }
+
+    /**
+     * Cláusulas do Regulamento do evento
+     */
+    public function regulationClauses(): HasMany
+    {
+        return $this->hasMany(EventRegulationClause::class)->orderBy('order', 'asc');
+    }
 }

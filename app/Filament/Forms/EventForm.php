@@ -195,6 +195,32 @@ class EventForm
                 ->columnSpanFull()
                 ->visible($operation != 'view'),
 
+            // 🔹 REPEATER DE CLÁUSULAS DO REGULAMENTO
+            Repeater::make('regulationClauses')
+                ->relationship('regulationClauses')
+                ->label('Cláusulas do Regulamento')
+                ->schema([
+                    TextInput::make('title')
+                        ->label('Título / Identificador')
+                        ->placeholder('Ex: ARTIGO 1º ou Da Comissão do Leilão')
+                        ->columnSpanFull(),
+
+                    Textarea::make('content')
+                        ->label('Texto da Cláusula do Regulamento')
+                        ->required()
+                        ->rows(4)
+                        ->columnSpanFull(),
+                ])
+                ->orderColumn('order')
+                ->defaultItems(0)
+                ->reorderable()
+                ->collapsible()
+                ->cloneable()
+                ->itemLabel(fn(array $state): ?string => $state['title'] ?? ($state['content'] ? mb_substr($state['content'], 0, 50) . '...' : 'Nova Cláusula'))
+                ->addActionLabel('Adicionar Cláusula do Regulamento')
+                ->columnSpanFull()
+                ->visible($operation != 'view'),
+
             Toggle::make('published')
                 ->label('Publicado')
                 ->default(false),
