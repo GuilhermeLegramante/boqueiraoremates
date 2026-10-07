@@ -72,14 +72,6 @@ class EventForm
                 ->unique(ignoreRecord: true)
                 ->maxLength(255),
 
-            TextInput::make('city')
-                ->label('Cidade e UF')
-                ->hint('Ex: Santiago - RS')
-                ->columnSpanFull()
-                ->required()
-                ->visible($operation != 'view')
-                ->maxLength(255),
-
             DateTimePicker::make('start_date')
                 ->label('Data do Evento')
                 ->visible($operation != 'view')
@@ -111,6 +103,13 @@ class EventForm
                 ->label(__('fields.multiplier'))
                 ->visible($operation != 'view')
                 ->numeric(),
+
+            TextInput::make('city')
+                ->label('Cidade e UF')
+                ->hint('Ex: Santiago - RS')
+                ->required()
+                ->visible($operation != 'view')
+                ->maxLength(255),
 
             Textarea::make('note')
                 ->label(__('fields.note'))
