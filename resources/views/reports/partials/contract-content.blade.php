@@ -302,8 +302,7 @@
         <p class="contract-text">
             Fica também ajustado que, nos termos do art. 190 do Código de Processo Civil, em caso de inadimplemento de
             qualquer das parcelas previstas neste contrato, poderá o vendedor, a seu exclusivo critério, ingressar com
-            ação
-            de busca e apreensão do bem objeto deste instrumento, ou promover a execução dos valores devidos, conforme
+            ação de busca e apreensão do bem objeto deste instrumento, ou promover a execução dos valores devidos, conforme
             as
             disposições aqui estabelecidas, facultando-se ao vendedor a adoção do procedimento que melhor atender aos
             seus
