@@ -199,7 +199,7 @@ class ContractsRelationManager extends RelationManager
             'event' => $order->event ? [
                 'id' => $order->event->id,
                 'name' => $order->event->name,
-                'banner_min' => $order->event->banner_min ?? null,
+                'banner_contract' => $order->event->banner_contract ?? null,
                 'start_date' => $order->event->start_date
                     ? \Carbon\Carbon::parse($order->event->start_date)->format('Y-m-d')
                     : null,

@@ -582,8 +582,6 @@ class ContractController extends Controller
 
         $fileName = 'PACOTE_COMPLETO_OS_' . $data['order']->number . '.pdf';
 
-        dd($data);
-
         return ReportFactory::getBasicPdf(
             'portrait',
             'reports.bundle',
