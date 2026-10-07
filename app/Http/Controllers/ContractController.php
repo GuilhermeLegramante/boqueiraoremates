@@ -359,6 +359,7 @@ class ContractController extends Controller
         ?Carbon $firstDueDate
     ): string {
         $totalFormatted = number_format($netValue, 2, ',', '.');
+        $totalInWordsMoney = $this->currencyInWords($netValue);
 
         // 1. Obtém a forma de pagamento (ex: "2+2+46", "1+1+10", "20")
         $paymentWayName = is_array($order)
@@ -375,7 +376,7 @@ class ContractController extends Controller
 
         $totalInstallments = array_sum($parts);
 
-        // Valor da parcela individual base (ex: 370.00)
+        // Valor da parcela individual base
         $unitParcelValue = (float) (is_array($order) ? ($order['parcel_value'] ?? 0) : ($order->parcel_value ?? 0));
         if ($unitParcelValue <= 0 && $totalInstallments > 0) {
             $unitParcelValue = $netValue / $totalInstallments;
@@ -387,8 +388,9 @@ class ContractController extends Controller
 
         // Início padrão do texto
         $text = sprintf(
-            'Valor total de R$ %s, que serão pagos da seguinte maneira: ',
-            $totalFormatted
+            'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
+            $totalFormatted,
+            $totalInWordsMoney
         );
 
         // CASO 1: Condição composta com parcelas agrupadas (ex: 2+2+46, 1+1+10)
@@ -403,20 +405,34 @@ class ContractController extends Controller
                 $formattedDate = $currentDate->format('d/m/Y');
                 $groupTotalValue = $unitParcelValue * $groupSize;
                 $groupValueFormatted = number_format($groupTotalValue, 2, ',', '.');
+                $groupValueInWords = $this->currencyInWords($groupTotalValue);
 
                 if ($groupSize === 1) {
-                    // Parcela individual (ex: a parcela 1 no valor de R$ 370,00, com vencimento em 14/06/2026)
-                    $label = sprintf('a parcela %d no valor de R$ %s, com vencimento em %s', $currentParcelNum, $groupValueFormatted, $formattedDate);
+                    // Parcela individual (ex: a parcela 1 no valor de R$ 9.916,67 (nove mil...))
+                    $label = sprintf(
+                        'a parcela %d no valor de R$ %s (%s), com vencimento em %s',
+                        $currentParcelNum,
+                        $groupValueFormatted,
+                        $groupValueInWords,
+                        $formattedDate
+                    );
                     $currentParcelNum += 1;
                 } else {
-                    // Parcelas agrupadas (ex: as parcelas 1 e 2 perfazendo um valor de R$ 740,00, com vencimento em 06/10/2026)
+                    // Parcelas agrupadas (ex: as parcelas 1 e 2 perfazendo um valor de R$ 740,00 (setecentos e quarenta reais...))
                     $endParcelNum = $currentParcelNum + $groupSize - 1;
-                    $label = sprintf('as parcelas %d e %d perfazendo um valor de R$ %s, com vencimento em %s', $currentParcelNum, $endParcelNum, $groupValueFormatted, $formattedDate);
+                    $label = sprintf(
+                        'as parcelas %d e %d perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                        $currentParcelNum,
+                        $endParcelNum,
+                        $groupValueFormatted,
+                        $groupValueInWords,
+                        $formattedDate
+                    );
                     $currentParcelNum += $groupSize;
                 }
 
                 if ($index === 0) {
-                    $clauses[] = 'As ' . ltrim($label, 'as '); // Ajusta caixa da primeira palavra
+                    $clauses[] = 'As ' . ltrim($label, 'as ');
                 } else {
                     $clauses[] = $label;
                 }
@@ -426,36 +442,69 @@ class ContractController extends Controller
                 $currentDate->day(min($dueDay, $currentDate->daysInMonth));
             }
 
-            // Conecta os blocos de entrada com vírgula/e
+            // Conecta os blocos de entrada
             $text .= implode(', ', $clauses);
 
             // Adiciona as parcelas mensais restantes
             $remainingInWords = $this->numberInWords($remainingInstallments);
             $unitValueFormatted = number_format($unitParcelValue, 2, ',', '.');
-            $text .= sprintf(' e as demais %s parcelas mensais e consecutivas no valor de R$ %s cada', $remainingInWords, $unitValueFormatted);
+            $unitValueInWords = $this->currencyInWords($unitParcelValue);
+
+            $text .= sprintf(
+                ' e as demais %s parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
+                $remainingInWords,
+                $unitValueFormatted,
+                $unitValueInWords
+            );
         } else {
-            // CASO 2: Parcelamento simples (ex: 20 parcelas diretas ou à vista)
+            // CASO 2: Parcelamento simples (ex: 20 parcelas diretas ou parcela única)
             $unitValueFormatted = number_format($unitParcelValue, 2, ',', '.');
+            $unitValueInWords = $this->currencyInWords($unitParcelValue);
+
             if ($totalInstallments === 1) {
-                $text .= sprintf('parcela única no valor de R$ %s, com vencimento em %s', $totalFormatted, $currentDate->format('d/m/Y'));
+                $text .= sprintf(
+                    'parcela única no valor de R$ %s (%s), com vencimento em %s',
+                    $totalFormatted,
+                    $totalInWordsMoney,
+                    $currentDate->format('d/m/Y')
+                );
             } else {
                 $text .= sprintf(
-                    'a primeira parcela no valor de R$ %s com vencimento em %s e as demais %s parcelas mensais e consecutivas no valor de R$ %s cada',
+                    'a primeira parcela no valor de R$ %s (%s) com vencimento em %s e as demais %s parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
                     $unitValueFormatted,
+                    $unitValueInWords,
                     $currentDate->format('d/m/Y'),
                     $this->numberInWords($totalInstallments - 1),
-                    $unitValueFormatted
+                    $unitValueFormatted,
+                    $unitValueInWords
                 );
             }
         }
 
-        // Fechamento padrão com quitação e dia do vencimento
+        // Fechamento padrão
         $text .= sprintf(
             ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
             $dueDay
         );
 
         return $text;
+    }
+
+    /**
+     * Auxiliar para formatar qualquer valor monetário em extenso com a biblioteca NumberToWords
+     */
+    private function currencyInWords(float $value): string
+    {
+        $dollars = (int) floor($value);
+        $cents = (int) round(($value - $dollars) * 100);
+
+        $words = $this->numberTransformer->toWords($dollars) . ($dollars === 1 ? ' real' : ' reais');
+
+        if ($cents > 0) {
+            $words .= ' e ' . $this->numberTransformer->toWords($cents) . ($cents === 1 ? ' centavo' : ' centavos');
+        }
+
+        return $words;
     }
 
     private function numberInWords(int $number): string
