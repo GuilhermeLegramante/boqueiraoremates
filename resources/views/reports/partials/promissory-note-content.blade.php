@@ -133,7 +133,7 @@
             <td style="width: 33%;"><span class="label">Dta da Compra:</span>
                 {{ \Carbon\Carbon::parse($order->base_date ?? now())->format('d/m/Y') }}</td>
             <td style="width: 34%;"><span class="label">Cond.:</span> {{ $order->paymentWay->name ?? '' }}</td>
-            <td style="width: 33%;" class="text-right"><span class="label">{{ count($order->parcels ?? []) }}
+            <td style="width: 33%;" class="text-right"><span class="label">{{ $order->total_installments }}
                     PARCELAS</span></td>
         </tr>
         <tr>
