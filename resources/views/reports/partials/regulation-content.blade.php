@@ -34,8 +34,9 @@
                 $content = is_array($clause) ? $clause['content'] ?? '' : $clause->content ?? '';
             @endphp
             <tr>
-                <td class="num">{{ $index + 1 }} )</td>
-                <td>
+                <td class="num" style="vertical-align: top; padding-top: 0; line-height: 1.4;">{{ $index + 1 }} )
+                </td>
+                <td style="vertical-align: top; padding-top: 0; line-height: 1.4;" class="rich-content">
                     @if (!empty($title))
                         <strong>{{ $title }}</strong><br>
                     @endif
@@ -63,7 +64,8 @@
             <td class="num">3 )</td>
             <td>Para a oferta de lance nos lotes do
                 <strong>{{ is_array($event) ? $event['name'] ?? '' : $event->name ?? '' }}</strong>, o cliente
-                deverá ter feito antecipadamente o seu cadastro junto ao escritório realizador.</td>
+                deverá ter feito antecipadamente o seu cadastro junto ao escritório realizador.
+            </td>
         </tr>
         <tr>
             <td class="num">4 )</td>
