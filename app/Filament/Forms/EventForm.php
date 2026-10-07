@@ -14,6 +14,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
+
 class EventForm
 {
     public static function form($operation = ''): array
@@ -171,145 +173,159 @@ class EventForm
                 ->visible($operation != 'view')
                 ->maxLength(255),
 
-            // 🔹 REPEATER DE CLÁUSULAS DO CONTRATO
-            Repeater::make('clauses')
-                ->relationship('clauses')
-                ->label('Cláusulas do Contrato')
-                ->schema([
-                    TextInput::make('title')
-                        ->label('Título / Identificador')
-                        ->placeholder('Ex: CLÁUSULA PRIMEIRA')
-                        ->columnSpanFull(),
-
-                    RichEditor::make('content')
-                        ->label('Texto da Cláusula')
-                        ->required()
-                        ->toolbarButtons([
-                            'bold',
-                            'italic',
-                            'underline',
-                            'strike',
-                            'textColor',
-                            'bulletList',
-                            'orderedList',
-                            'undo',
-                            'redo',
-                        ])
-                        ->columnSpanFull(),
-                ])
-                ->hintAction(
-                    Action::make('importClauses')
-                        ->label('Importar de outro Evento')
-                        ->icon('heroicon-o-document-duplicate')
-                        ->color('warning')
-                        ->modalHeading('Importar Cláusulas de Contrato')
-                        ->modalDescription('Selecione o evento de onde deseja copiar as cláusulas. As cláusulas atuais deste formulário serão substituídas.')
-                        ->modalSubmitActionLabel('Importar')
-                        ->form([
-                            Select::make('source_event_id')
-                                ->label('Evento de Origem')
-                                ->options(function ($record) {
-                                    return Event::query()
-                                        ->when($record, fn($q) => $q->where('id', '!=', $record->id))
-                                        ->orderBy('id', 'desc')
-                                        ->pluck('name', 'id');
-                                })
-                                ->searchable()
-                                ->required(),
-                        ])
-                        ->action(function (array $data, Repeater $component): void {
-                            $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
-
-                            if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
-                                return;
-                            }
-
-                            $importedData = $sourceEvent->clauses->map(fn($clause) => [
-                                'title' => $clause->title,
-                                'content' => $clause->content,
-                                'order' => $clause->order,
-                            ])->toArray();
-
-                            $component->state($importedData);
-                        })
-                )
-                ->orderColumn('order')
-                ->reorderable()
+            // 🔹 SEÇÃO 1: CLÁUSULAS DO CONTRATO
+            Section::make('Cláusulas do Contrato')
+                ->description('Gerencie as cláusulas e parágrafos do contrato de compra e venda específicos para este evento.')
+                ->icon('heroicon-o-document-text')
                 ->collapsible()
-                ->cloneable()
-                ->addActionLabel('Adicionar Cláusula')
-                ->columnSpanFull()
-                ->visible($operation != 'view'),
-
-            // 🔹 REPEATER DE CLÁUSULAS DO REGULAMENTO
-            Repeater::make('regulationClauses')
-                ->relationship('regulationClauses')
-                ->label('Cláusulas do Regulamento')
                 ->schema([
-                    TextInput::make('title')
-                        ->label('Título / Identificador')
-                        ->placeholder('Ex: ARTIGO 1º')
-                        ->columnSpanFull(),
+                    Repeater::make('clauses')
+                        ->relationship('clauses')
+                        ->hiddenLabel() // Oculta o rótulo repetido já que a Section tem título
+                        ->schema([
+                            // TextInput::make('title')
+                            //     ->label('Título / Identificador')
+                            //     ->placeholder('Ex: CLÁUSULA PRIMEIRA')
+                            //     ->columnSpanFull(),
 
-                    RichEditor::make('content')
-                        ->label('Texto do Regulamento')
-                        ->required()
-                        ->toolbarButtons([
-                            'bold',
-                            'italic',
-                            'underline',
-                            'strike',
-                            'textColor',
-                            'bulletList',
-                            'orderedList',
-                            'undo',
-                            'redo',
+                            RichEditor::make('content')
+                                ->label('Texto da Cláusula')
+                                ->required()
+                                ->toolbarButtons([
+                                    'bold',
+                                    'italic',
+                                    'underline',
+                                    'strike',
+                                    'textColor',
+                                    'bulletList',
+                                    'orderedList',
+                                    'undo',
+                                    'redo',
+                                ])
+                                ->columnSpanFull(),
                         ])
-                        ->columnSpanFull(),
-                ])
-                ->hintAction(
-                    Action::make('importRegulationClauses')
-                        ->label('Importar de outro Evento')
-                        ->icon('heroicon-o-document-duplicate')
-                        ->color('warning')
-                        ->modalHeading('Importar Regulamento de outro Evento')
-                        ->modalDescription('Selecione o evento de onde deseja copiar as regras do regulamento.')
-                        ->modalSubmitActionLabel('Importar')
-                        ->form([
-                            Select::make('source_event_id')
-                                ->label('Evento de Origem')
-                                ->options(function ($record) {
-                                    return Event::query()
-                                        ->when($record, fn($q) => $q->where('id', '!=', $record->id))
-                                        ->orderBy('id', 'desc')
-                                        ->pluck('name', 'id');
+                        ->hintAction(
+                            Action::make('importClauses')
+                                ->label('Importar de outro Evento')
+                                ->icon('heroicon-o-document-duplicate')
+                                ->color('warning')
+                                ->modalHeading('Importar Cláusulas de Contrato')
+                                ->modalDescription('Selecione o evento de onde deseja copiar as cláusulas. As cláusulas atuais deste formulário serão substituídas.')
+                                ->modalSubmitActionLabel('Importar')
+                                ->form([
+                                    Select::make('source_event_id')
+                                        ->label('Evento de Origem')
+                                        ->options(function ($record) {
+                                            return Event::query()
+                                                ->when($record, fn($q) => $q->where('id', '!=', $record->id))
+                                                ->orderBy('id', 'desc')
+                                                ->pluck('name', 'id');
+                                        })
+                                        ->searchable()
+                                        ->required(),
+                                ])
+                                ->action(function (array $data, Repeater $component): void {
+                                    $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
+
+                                    if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
+                                        return;
+                                    }
+
+                                    $importedData = $sourceEvent->clauses->map(fn($clause) => [
+                                        'title' => $clause->title,
+                                        'content' => $clause->content,
+                                        'order' => $clause->order,
+                                    ])->toArray();
+
+                                    $component->state($importedData);
                                 })
-                                ->searchable()
-                                ->required(),
-                        ])
-                        ->action(function (array $data, Repeater $component): void {
-                            $sourceEvent = Event::with('regulationClauses')->find($data['source_event_id']);
+                        )
+                        ->orderColumn('order')
+                        ->reorderable()
+                        ->collapsible()
+                        ->cloneable()
+                        ->addActionLabel('Adicionar Cláusula de Contrato')
+                        ->columnSpanFull()
+                        ->visible($operation != 'view'),
+                ])
+                ->columnSpanFull(),
 
-                            if (! $sourceEvent || $sourceEvent->regulationClauses->isEmpty()) {
-                                return;
-                            }
-
-                            $importedData = $sourceEvent->regulationClauses->map(fn($clause) => [
-                                'title' => $clause->title,
-                                'content' => $clause->content,
-                                'order' => $clause->order,
-                            ])->toArray();
-
-                            $component->state($importedData);
-                        })
-                )
-                ->orderColumn('order')
-                ->reorderable()
+            // 🔹 SEÇÃO 2: CLÁUSULAS DO REGULAMENTO
+            Section::make('Regulamento do Evento')
+                ->description('Defina as regras gerais do leilão/remate que compõem o documento de regulamento.')
+                ->icon('heroicon-o-clipboard-document-list')
                 ->collapsible()
-                ->cloneable()
-                ->addActionLabel('Adicionar Regra do Regulamento')
-                ->columnSpanFull()
-                ->visible($operation != 'view'),
+                ->schema([
+                    Repeater::make('regulationClauses')
+                        ->relationship('regulationClauses')
+                        ->hiddenLabel() // Oculta o rótulo repetido
+                        ->schema([
+                            // TextInput::make('title')
+                            //     ->label('Título / Identificador')
+                            //     ->placeholder('Ex: ARTIGO 1º')
+                            //     ->columnSpanFull(),
+
+                            RichEditor::make('content')
+                                ->label('Texto do Regulamento')
+                                ->required()
+                                ->toolbarButtons([
+                                    'bold',
+                                    'italic',
+                                    'underline',
+                                    'strike',
+                                    'textColor',
+                                    'bulletList',
+                                    'orderedList',
+                                    'undo',
+                                    'redo',
+                                ])
+                                ->columnSpanFull(),
+                        ])
+                        ->hintAction(
+                            Action::make('importRegulationClauses')
+                                ->label('Importar de outro Evento')
+                                ->icon('heroicon-o-document-duplicate')
+                                ->color('warning')
+                                ->modalHeading('Importar Regulamento de outro Evento')
+                                ->modalDescription('Selecione o evento de onde deseja copiar as regras do regulamento.')
+                                ->modalSubmitActionLabel('Importar')
+                                ->form([
+                                    Select::make('source_event_id')
+                                        ->label('Evento de Origem')
+                                        ->options(function ($record) {
+                                            return Event::query()
+                                                ->when($record, fn($q) => $q->where('id', '!=', $record->id))
+                                                ->orderBy('id', 'desc')
+                                                ->pluck('name', 'id');
+                                        })
+                                        ->searchable()
+                                        ->required(),
+                                ])
+                                ->action(function (array $data, Repeater $component): void {
+                                    $sourceEvent = Event::with('regulationClauses')->find($data['source_event_id']);
+
+                                    if (! $sourceEvent || $sourceEvent->regulationClauses->isEmpty()) {
+                                        return;
+                                    }
+
+                                    $importedData = $sourceEvent->regulationClauses->map(fn($clause) => [
+                                        'title' => $clause->title,
+                                        'content' => $clause->content,
+                                        'order' => $clause->order,
+                                    ])->toArray();
+
+                                    $component->state($importedData);
+                                })
+                        )
+                        ->orderColumn('order')
+                        ->reorderable()
+                        ->collapsible()
+                        ->cloneable()
+                        ->addActionLabel('Adicionar Regra do Regulamento')
+                        ->columnSpanFull()
+                        ->visible($operation != 'view'),
+                ])
+                ->columnSpanFull(),
 
             Toggle::make('published')
                 ->label('Publicado')
