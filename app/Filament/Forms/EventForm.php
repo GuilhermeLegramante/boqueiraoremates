@@ -6,6 +6,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -205,11 +206,22 @@ class EventForm
                         ->placeholder('Ex: ARTIGO 1º ou Da Comissão do Leilão')
                         ->columnSpanFull(),
 
-                    Textarea::make('content')
-                        ->label('Texto da Cláusula do Regulamento')
+                    RichEditor::make('content')
+                        ->label('Texto da Cláusula')
                         ->required()
-                        ->rows(4)
+                        ->toolbarButtons([
+                            'bold',
+                            'italic',
+                            'underline',
+                            'strike',
+                            'textColor', // 👈 Permite alterar a cor do texto
+                            'bulletList',
+                            'orderedList',
+                            'undo',
+                            'redo',
+                        ])
                         ->columnSpanFull(),
+
                 ])
                 ->orderColumn('order')
                 ->defaultItems(0)
