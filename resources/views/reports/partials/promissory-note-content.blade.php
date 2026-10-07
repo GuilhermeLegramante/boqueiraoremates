@@ -219,7 +219,7 @@
 
     {{-- CIDADE E DATA --}}
     <div class="city-date">
-        {{ $seller->address->city ?? 'Uruguaiana' }} - {{ $seller->address->state ?? 'RS' }},
+        {{ $event->city ?? 'Uruguaiana - RS' }},
         {{ \Carbon\Carbon::parse($order->base_date ?? now())->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}
     </div>
 

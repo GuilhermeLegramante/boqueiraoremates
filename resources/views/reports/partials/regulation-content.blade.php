@@ -182,7 +182,7 @@
 </div>
 
 <div style="text-align: right; margin-top: 12px; font-weight: bold; font-size: 9.5px;">
-    {{ mb_strtoupper($contractCity ?? 'URUGUAIANA - RS') }},
+    {{ $event->city ?? 'Uruguaiana - RS' }},
     {{ \Carbon\Carbon::parse($contractDate ?? now())->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}.
 </div>
 

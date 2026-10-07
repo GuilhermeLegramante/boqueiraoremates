@@ -310,7 +310,7 @@
     </p>
 
     <p style="text-align: center; font-size: 9.5px; margin-top: 12px;">
-        {{ $seller->address->city ?? 'Uruguaiana' }} - {{ $seller->address->state ?? 'RS' }},
+        {{ $event->city ?? 'Uruguaiana - RS' }},
         {{ \Carbon\Carbon::parse($order->base_date ?? now())->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}
     </p>
 
