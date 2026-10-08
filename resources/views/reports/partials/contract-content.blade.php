@@ -201,6 +201,7 @@
 
     <p class="contract-text" style="margin-bottom: 4px; font-weight: bold;">
         {{ $objetoTexto }}
+        {{ $order->business_note }}
     </p>
 
     <table class="data-table">
