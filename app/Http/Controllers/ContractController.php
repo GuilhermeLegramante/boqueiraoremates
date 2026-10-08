@@ -170,6 +170,8 @@ class ContractController extends Controller
         $city = $seller->address->city ?? 'Uruguaiana';
         $state = $seller->address->state ?? 'RS';
 
+        dd($order);
+
         return [
             'title' => "CONTRATO DE VENDA - {$via}ª VIA",
             'via' => $via,
