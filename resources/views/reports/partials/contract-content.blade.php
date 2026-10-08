@@ -270,8 +270,13 @@
 
     <p class="payment-text">
         {{ $paymentText ?? '' }}
-        {{ $order->business_note ?? '' }}
     </p>
+
+    @if ($order->business_note)
+        <p class="contract-text">
+           {{ $order->business_note }}
+        </p>
+    @endif
 
     @forelse ($event->clauses as $clause)
         @if ($clause->title)
@@ -283,11 +288,14 @@
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
         <p class="contract-text">
-            Na hipótese de haver atraso no pagamento, de qualquer uma das parcelas do preço, constituirá o comprador em
-            mora, independentemente de notificação, implicará no vencimento das demais antecipadamente, as quais serão
+            Na hipótese de haver atraso no pagamento, de qualquer uma das parcelas do preço, constituirá o comprador
+            em
+            mora, independentemente de notificação, implicará no vencimento das demais antecipadamente, as quais
+            serão
             corrigidas pelo IGP-M e acrescidas de juros de vencimento de mora à razão de 1% ao mês a contar do
             vencimento, e
-            sendo assim implicará no protesto do presente título de dívida. Em caso de rescisão por inadimplemento do
+            sendo assim implicará no protesto do presente título de dívida. Em caso de rescisão por inadimplemento
+            do
             comprador, os valores já pagos não serão restituídos, ficando retidos pelo vendedor a título de cláusula
             penal
             compensatória e indenização por perdas e danos, sem prejuízo da cobrança de eventuais valores ainda
@@ -301,20 +309,25 @@
         </p>
 
         <p class="contract-text">
-            Fica também ajustado que, nos termos do art. 190 do Código de Processo Civil, em caso de inadimplemento de
-            qualquer das parcelas previstas neste contrato, poderá o vendedor, a seu exclusivo critério, ingressar com
+            Fica também ajustado que, nos termos do art. 190 do Código de Processo Civil, em caso de inadimplemento
+            de
+            qualquer das parcelas previstas neste contrato, poderá o vendedor, a seu exclusivo critério, ingressar
+            com
             ação de busca e apreensão do bem objeto deste instrumento, ou promover a execução dos valores devidos,
             conforme
             as
-            disposições aqui estabelecidas, facultando-se ao vendedor a adoção do procedimento que melhor atender aos
+            disposições aqui estabelecidas, facultando-se ao vendedor a adoção do procedimento que melhor atender
+            aos
             seus
             interesses.
         </p>
 
         <p class="contract-text">
-            A transferência do(s) animal(is), ou cota(s) dele, será realizada junto à ABCCC logo após a quitação total
+            A transferência do(s) animal(is), ou cota(s) dele, será realizada junto à ABCCC logo após a quitação
+            total
             do(s)
-            produto(s). Em caso de transferências dos mesmo(s) ainda com o contrato ainda em vigor, ambas partes SÃO DE
+            produto(s). Em caso de transferências dos mesmo(s) ainda com o contrato ainda em vigor, ambas partes SÃO
+            DE
             ACORDO com inclusão de Reserva de Domínio no(s) animal(is), sendo liberada pelo Vendedor logo após a
             quitação
             total deste contrato.
@@ -326,7 +339,8 @@
         </p>
 
         <p class="contract-text">
-            E por assim estarem justos e contratados, firma o presente instrumento em duas vias de igual teor e forma.
+            E por assim estarem justos e contratados, firma o presente instrumento em duas vias de igual teor e
+            forma.
         </p>
     @endforelse
 
