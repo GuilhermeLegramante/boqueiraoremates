@@ -28,6 +28,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.business_note',
             'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
@@ -85,6 +86,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.business_note',
             'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
@@ -518,6 +520,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.business_note',
             'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
@@ -645,6 +648,7 @@ class ContractController extends Controller
 
         $contract = Contract::with([
             'order.event.clauses',
+            'order.business_note',
             'order.event.regulationClauses',
             'order.seller.address',
             'order.buyer.address',
