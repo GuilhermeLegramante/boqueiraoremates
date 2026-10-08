@@ -48,6 +48,7 @@ class ContractController extends Controller
 
         $fileName = 'CONTRATO_' . $data['order']->number . '_VIA_' . $via . '.pdf';
 
+        dd($data);
         return ReportFactory::getBasicPdf(
             'portrait',
             'reports.contract',
@@ -169,8 +170,6 @@ class ContractController extends Controller
         $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
         $city = $seller->address->city ?? 'Uruguaiana';
         $state = $seller->address->state ?? 'RS';
-
-        dd($order);
 
         return [
             'title' => "CONTRATO DE VENDA - {$via}ª VIA",
