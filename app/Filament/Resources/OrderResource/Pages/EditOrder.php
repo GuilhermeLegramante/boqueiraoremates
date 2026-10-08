@@ -63,8 +63,36 @@ class EditOrder extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        // Se a OS já possui contrato, bloqueia a alteração apenas dos campos financeiros/dados da venda
         if ($this->record->hasContract()) {
-            abort(403, 'Esta Ordem de Serviço possui contrato emitido e não pode mais ser alterada.');
+            $saleFields = [
+                'seller_id',
+                'buyer_id',
+                'payment_way_id',
+                'gross_value',
+                'discount_percentage',
+                'parcel_value',
+                'first_parcel_value',
+                'multiplier',
+                'due_day',
+                'first_due_date',
+                'reinforcements_amount',
+                'reinforcement_value',
+                'reinforcement_parcels',
+                'buyer_commission',
+                'buyer_commission_installments_number',
+                'buyer_due_day',
+                'seller_commission',
+                'seller_commission_installments_number',
+                'seller_due_day',
+            ];
+
+            // Restaura os valores originais vindos do banco de dados para os campos de venda
+            foreach ($saleFields as $field) {
+                if (array_key_exists($field, $data)) {
+                    $data[$field] = $this->record->getOriginal($field);
+                }
+            }
         }
 
         return $data;
