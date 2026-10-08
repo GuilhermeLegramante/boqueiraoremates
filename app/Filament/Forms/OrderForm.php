@@ -318,7 +318,6 @@ class OrderForm
                     ->numeric()
                     ->visible(fn(Get $get): bool => $get('sale_type') === 'cobertura'),
 
-
                 Textarea::make('business_note')
                     ->label('Observação')
                     ->rows(8)
