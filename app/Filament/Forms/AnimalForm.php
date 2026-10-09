@@ -115,7 +115,7 @@ class AnimalForm
             FileUpload::make('file_fifth_generation')
                 ->label('Arquivo da Quinta Geração')
                 ->columnSpanFull()
-                ->previewable()
+                ->openable()
                 ->downloadable()
                 ->directory('fifth_generation_files'),
         ];
