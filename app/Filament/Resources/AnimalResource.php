@@ -55,6 +55,9 @@ class AnimalResource extends Resource
 
         return $table
             ->columns([
+                Tables\Columns\ViewColumn::make('file_fifth_generation')
+                    ->label('5ª Geração')
+                    ->view('filament.tables.columns.pdf-uploader'),
                 ImageColumn::make('photo')
                     ->label('Foto')
                     ->height(100)
