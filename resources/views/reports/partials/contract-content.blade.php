@@ -273,7 +273,7 @@
     </p>
 
     @if ($order->contract_note)
-        <p class="contract-text">
+        <p class="payment-text">
             {{ $order->contract_note }}
         </p>
     @endif
