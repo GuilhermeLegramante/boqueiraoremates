@@ -302,7 +302,7 @@ class OrderForm
                         }
                     })
                     ->columnSpan(2),
-                    
+
                 TextInput::make('sale_type_percentage')
                     ->label('Porcentagem')
                     ->live()
@@ -533,7 +533,12 @@ class OrderForm
                     ->label('Data da liberação para embarque'),
                 Textarea::make('output_documentation_note')
                     ->columnSpanFull()
+                    ->label('Observação'),
+                Textarea::make('contract_note')
                     ->label('Observação')
+                    ->hint('Essa observação será exibida no contrato.')
+                    ->rows(8)
+                    ->columnSpanFull(),
             ])->columns(6);
     }
 }

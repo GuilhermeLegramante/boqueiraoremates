@@ -74,6 +74,7 @@ class Order extends Model
         'sale_type',
         'sale_type_percentage',
         'sale_type_quantity',
+        'contract_note',
     ];
 
     protected $casts = [
