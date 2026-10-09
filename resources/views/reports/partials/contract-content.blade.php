@@ -272,7 +272,7 @@
         {{ $paymentText ?? '' }}
     </p>
 
-    <p>
+    <p class="contract-text">
         {{ $order->contract_note }}
     </p>
 
