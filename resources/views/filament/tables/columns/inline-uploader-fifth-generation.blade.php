@@ -12,7 +12,7 @@
             title="Visualizar PDF da 5ª Geração"
             class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-white !text-white bg-gray-900 hover:bg-black rounded-md shadow-sm transition-colors border border-gray-900 dark:bg-white dark:!text-gray-900 dark:hover:bg-gray-100 dark:border-white">
             <x-heroicon-m-document-text class="w-4 h-4 text-red-500 shrink-0" />
-            <span class="leading-none">PDF</span>
+            <span class="leading-none text-red-500">PDF</span>
         </a>
 
         {{-- Botão para Remover o PDF --}}
