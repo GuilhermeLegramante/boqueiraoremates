@@ -110,7 +110,12 @@ class AnimalForm
                 ->label('Link da Quinta Geração')
                 ->url() // valida como URL
                 ->placeholder('https://...')
-                ->columnSpan('full')
+                ->columnSpan('full'),
+
+            FileUpload::make('file_fifth_generation')
+                ->label('Arquivo da Quinta Geração')
+                ->columnSpanFull()
+                ->directory('fifth_generation_files'),
         ];
     }
 

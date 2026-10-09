@@ -32,7 +32,8 @@ class Animal extends Model
         'quantity',
         'birth_date',
         'video_link',
-        'generation_link'
+        'generation_link',
+        'file_fifth_generation',
     ];
 
     protected $casts = [

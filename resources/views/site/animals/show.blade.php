@@ -133,11 +133,23 @@
                     <p><b>Pai:</b> {{ $animal->father ?? '-' }}</p>
                     <p><b>Mãe:</b> {{ $animal->mother ?? '-' }}</p>
 
-                    @if ($animal->generation_link)
+
+                    {{-- @if ($animal->generation_link)
+                        Link desabilitado pq ABCCC colocou captcha na página da quinta geração, então não dá pra abrir direto.
                         <p>
                             <b>Quinta geração:</b>
                             <a href="{{ $animal->generation_link }}" target="_blank"
                                 class="text-green-300 underline">Clique aqui</a>
+                        </p>
+                    @endif --}}
+
+                    @if ($animal->file_fifth_generation)
+                        <p>
+                            <b>Quinta geração:</b>
+                            <a href="{{ Storage::url($animal->file_fifth_generation) }}" target="_blank"
+                                rel="noopener noreferrer" class="text-green-300 underline">
+                                Clique aqui
+                            </a>
                         </p>
                     @endif
 
