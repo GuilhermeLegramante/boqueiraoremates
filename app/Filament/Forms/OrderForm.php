@@ -535,7 +535,7 @@ class OrderForm
                     ->columnSpanFull()
                     ->label('Observação'),
                 Textarea::make('contract_note')
-                    ->label('Observação')
+                    ->label('Observação p/ Contrato')
                     ->hint('Essa observação será exibida no contrato.')
                     ->rows(8)
                     ->columnSpanFull(),
