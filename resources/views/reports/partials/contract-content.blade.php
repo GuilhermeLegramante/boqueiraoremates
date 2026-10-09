@@ -272,11 +272,9 @@
         {{ $paymentText ?? '' }}
     </p>
 
-    @if ($order->contract_note)
-        <p class="payment-text">
-            {{ $order->contract_note }}
-        </p>
-    @endif
+    <p class="payment-text">
+        {{ $order->contract_note }}
+    </p>
 
     @forelse ($event->clauses as $clause)
         @if ($clause->title)
