@@ -213,6 +213,10 @@ class LotesRelationManager extends RelationManager
                     ->label('Foto (Grande)')
                     ->view('filament.tables.columns.inline-uploader'),
 
+                Tables\Columns\ViewColumn::make('animal.file_fifth_generation')
+                    ->label('5ª Geração (PDF)')
+                    ->view('filament.tables.columns.inline-uploader-fifth-generation'),
+
                 Tables\Columns\TextColumn::make('name')
                     ->label('Animal')
                     ->sortable(query: fn($query, $direction) => $query->orderBy('animal_event.name', $direction))
@@ -426,8 +430,6 @@ class LotesRelationManager extends RelationManager
                 ]),
             ]);
     }
-
-    // Adicione este método dentro da classe LotesRelationManager
 
     public function updated($property, $value)
     {
