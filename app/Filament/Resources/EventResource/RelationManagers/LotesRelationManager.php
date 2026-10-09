@@ -470,4 +470,29 @@ class LotesRelationManager extends RelationManager
             }
         }
     }
+
+    /**
+     * Remove o PDF da 5ª geração do Animal e apaga o ficheiro do disco.
+     */
+    public function removeFifthGenerationPdf($recordId): void
+    {
+        $record = $this->getOwnerRecord()->lotes()->find($recordId);
+
+        if ($record && $record->animal && $record->animal->file_fifth_generation) {
+            // Apaga o ficheiro físico do disco público se existir
+            if (\Illuminate\Support\Facades\Storage::disk('public')->exists($record->animal->file_fifth_generation)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($record->animal->file_fifth_generation);
+            }
+
+            // Limpa o campo na base de dados
+            $record->animal->update([
+                'file_fifth_generation' => null,
+            ]);
+
+            $this->dispatch('notify', [
+                'status' => 'success',
+                'message' => 'PDF da 5ª geração removido com sucesso!',
+            ]);
+        }
+    }
 }
