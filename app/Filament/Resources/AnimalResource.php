@@ -22,6 +22,7 @@ use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
@@ -55,9 +56,7 @@ class AnimalResource extends Resource
 
         return $table
             ->columns([
-                Tables\Columns\ViewColumn::make('file_fifth_generation')
-                    ->label('5ª Geração')
-                    ->view('filament.tables.columns.pdf-uploader'),
+
                 ImageColumn::make('photo')
                     ->label('Foto')
                     ->height(100)
@@ -179,6 +178,26 @@ class AnimalResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
+                    // Alternativa nativa do Filament sem precisar de Blade customizado:
+                    Tables\Actions\Action::make('upload_pdf')
+                        ->label('Anexar PDF')
+                        ->icon('heroicon-o-document-plus')
+                        ->color('gray')
+                        ->button()
+                        ->size('xs')
+                        ->form([
+                            Forms\Components\FileUpload::make('file_fifth_generation')
+                                ->label('Ficheiro PDF')
+                                ->acceptedFileTypes(['application/pdf'])
+                                ->directory('fifth_generation_files')
+                                ->required(),
+                        ])
+                        ->action(function (Model $record, array $data): void {
+                            $record->update([
+                                'file_fifth_generation' => $data['file_fifth_generation'],
+                            ]);
+                        }),
+
                     Tables\Actions\EditAction::make()
                         ->mutateRecordDataUsing(function (array $data): array {
                             $data['name'] = Str::upper($data['name']);
