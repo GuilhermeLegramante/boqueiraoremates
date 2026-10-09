@@ -401,7 +401,7 @@
 
     @yield('content')
 
-    @include('reports.footer')
+    {{-- @include('reports.footer') --}}
 </body>
 
 </html>
