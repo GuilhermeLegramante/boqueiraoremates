@@ -433,37 +433,27 @@ class LotesRelationManager extends RelationManager
 
     public function updated($property, $value)
     {
-        // Verifica se a propriedade alterada vem do nosso uploader customizado
-        // Formato esperado: mountedTableActionsData.{id}.{campo}
+        // Processa apenas o upload do PDF da 5ª Geração (Model Animal)
         if (str_starts_with($property, 'mountedTableActionsData.')) {
             $parts = explode('.', $property);
 
             if (count($parts) === 3) {
                 $recordId = $parts[1];
-                $fieldName = $parts[2]; // 'photo' ou 'photo_full'
+                $fieldName = $parts[2];
 
-                // Valida se é um dos nossos campos de imagem
-                if (in_array($fieldName, ['photo', 'photo_full']) && $value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
-
-                    // Busca o registro do lote (AnimalEvent)
+                if ($fieldName === 'file_fifth_generation' && $value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
                     $record = $this->getOwnerRecord()->lotes()->find($recordId);
 
-                    if ($record) {
-                        // Define o diretório baseado no campo
-                        $directory = $fieldName === 'photo' ? 'animals/photos' : 'animals/photos_full';
+                    if ($record && $record->animal) {
+                        $path = $value->store('animals/pdf_fifth_generation', 'public');
 
-                        // Salva o arquivo permanentemente no disco público
-                        $path = $value->store($directory, 'public');
-
-                        // Atualiza o banco de dados
-                        $record->update([
-                            $fieldName => $path
+                        $record->animal->update([
+                            'file_fifth_generation' => $path,
                         ]);
 
-                        // Opcional: envia notificação toast discreta
                         $this->dispatch('notify', [
                             'status' => 'success',
-                            'message' => 'Imagem do lote atualizada!',
+                            'message' => 'PDF da 5ª geração do animal atualizado!',
                         ]);
                     }
                 }
@@ -493,6 +483,30 @@ class LotesRelationManager extends RelationManager
                 'status' => 'success',
                 'message' => 'PDF da 5ª geração removido com sucesso!',
             ]);
+        }
+    }
+
+    public function updatedPdfUploads($value, $key)
+    {
+        $recordId = $key;
+
+        if ($value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+            $record = $this->getOwnerRecord()->lotes()->find($recordId);
+
+            if ($record && $record->animal) {
+                $path = $value->store('animals/pdf_fifth_generation', 'public');
+
+                $record->animal->update([
+                    'file_fifth_generation' => $path,
+                ]);
+
+                unset($this->pdfUploads[$recordId]);
+
+                $this->dispatch('notify', [
+                    'status' => 'success',
+                    'message' => 'PDF da 5ª geração atualizado com sucesso!',
+                ]);
+            }
         }
     }
 }
