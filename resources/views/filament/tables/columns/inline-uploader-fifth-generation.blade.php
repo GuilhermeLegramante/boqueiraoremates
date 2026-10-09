@@ -10,9 +10,9 @@
         {{-- Botão para Visualizar / Baixar o PDF --}}
         <a href="{{ \Illuminate\Support\Facades\Storage::url($filePath) }}" target="_blank"
             title="Visualizar PDF da 5ª Geração"
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-md shadow-sm transition dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white">
-            <x-heroicon-m-document-text class="w-4 h-4 text-red-500" />
-            <span>PDF</span>
+            class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-white !text-white bg-gray-900 hover:bg-black rounded-md shadow-sm transition-colors border border-gray-900 dark:bg-white dark:!text-gray-900 dark:hover:bg-gray-100 dark:border-white">
+            <x-heroicon-m-document-text class="w-4 h-4 text-red-500 shrink-0" />
+            <span class="leading-none">PDF</span>
         </a>
 
         {{-- Botão para Remover o PDF --}}
