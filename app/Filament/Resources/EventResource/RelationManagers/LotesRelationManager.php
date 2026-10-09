@@ -34,6 +34,8 @@ class LotesRelationManager extends RelationManager
     protected static ?string $label = 'Lote';
     protected static ?string $pluralLabel = 'Lotes';
 
+    public array $pdfUploads = []; // 🔹 3. Declare a propriedade que estava faltando!
+
     public function form(Form $form): Form
     {
         return $form
