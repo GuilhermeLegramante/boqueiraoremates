@@ -42,11 +42,7 @@
                 <!-- Descrição -->
                 <div class="text-justify">
                     <p class="text-sm md:text-base leading-relaxed">
-                        @if (str_contains($event->note ?? '', '<'))
-                            {!! $event->note !!}
-                        @else
-                            {!! nl2br(e($event->note)) !!}
-                        @endif
+                        {!! $event->note !!}
                     </p>
                 </div>
 

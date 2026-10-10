@@ -68,11 +68,7 @@
         <!-- Observações -->
         <div class="bg-white/10 rounded-xl p-5 text-sm md:text-base leading-relaxed shadow-md mt-6 lg:mt-0"
             style="text-align: justify;">
-            @if (str_contains($event->note ?? '', '<'))
-                {!! $event->note !!}
-            @else
-                {!! nl2br(e($event->note)) !!}
-            @endif
+            {!! $event->note !!}
         </div>
 
 
