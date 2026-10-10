@@ -116,28 +116,28 @@ class EventForm
                 ->visible($operation != 'view')
                 ->maxLength(255),
 
-            // Textarea::make('note')
-            //     ->label(__('fields.note'))
-            //     ->visible($operation != 'view')
-            //     ->columnSpanFull()
-            //     ->rows(4)
-            //     ->maxLength(65535), // limite do campo text
-
-            RichEditor::make('note')
+            Textarea::make('note')
                 ->label(__('fields.note'))
-                ->required()
-                ->toolbarButtons([
-                    'bold',
-                    'italic',
-                    'underline',
-                    'strike',
-                    'textColor',
-                    'bulletList',
-                    'orderedList',
-                    'undo',
-                    'redo',
-                ])
-                ->columnSpanFull(),
+                ->visible($operation != 'view')
+                ->columnSpanFull()
+                ->rows(4)
+                ->maxLength(65535), // limite do campo text
+
+            // RichEditor::make('note')
+            //         ->label(__('fields.note'))
+            //         ->required()
+            //         ->toolbarButtons([
+            //                         'bold',
+            //                         'italic',
+            //                         'underline',
+            //                         'strike',
+            //                         'textColor',
+            //                         'bulletList',
+            //                         'orderedList',
+            //                         'undo',
+            //                         'redo',
+            //                     ])
+            //                     ->columnSpanFull(),
 
             FileUpload::make('regulation')
                 ->label('Regulamento Completo (PDF)')
