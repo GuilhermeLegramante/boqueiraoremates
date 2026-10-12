@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ $title ?? 'RELATÓRIO' }}</title>
+    <title>{{ $title ?? '' }}</title>
     <style>
         @page {
             margin: 8mm;
