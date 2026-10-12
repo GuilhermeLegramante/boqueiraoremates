@@ -203,42 +203,5 @@
             @endif
         </table>
 
-        {{-- DECLARAÇÃO EM BRANCO PARA PREENCHIMENTO DA NEGOCIAÇÃO --}}
-        <div class="decl-box">
-            Eu, <span class="fill-line" style="min-width: 250px;"></span>,
-            portador do CPF/CNPJ nº <span class="fill-line" style="min-width: 150px;"></span>,
-            declaro para devidos fins e a quem possa interessar que adquiri o equino/lote
-            <span class="fill-line" style="min-width: 200px;"></span>,
-            no <span class="fill-line" style="min-width: auto; display: inline;">{{ $event->name }}</span>
-            e estou CIENTE e DE ACORDO com o regulamento acima especificado que normatiza a negociação.
-        </div>
-
-        <div style="text-align: right; margin-top: 15px; font-weight: bold; font-size: 9.5px;">
-            {{ $event->city ?? 'Uruguaiana - RS' }},
-            {{ \Carbon\Carbon::parse($event->start_date ?? now())->locale('pt_BR')->translatedFormat('d \d\e F \d\e Y') }}.
-        </div>
-
-        {{-- ASSINATURAS --}}
-        <div class="signatures-container" style="margin-top: 30px;">
-            <div class="signature-block">
-                <div class="signature-line-item">COMPRADOR</div>
-                <div class="signature-role">COMPRADOR</div>
-            </div>
-
-            <div class="signature-block">
-                <div class="signature-line-item">VENDEDOR</div>
-                <div class="signature-role">VENDEDOR</div>
-            </div>
-
-            <div class="signature-block">
-                <div class="signature-line-item">{{ $event->witness_1_name ?? 'TESTEMUNHA 1' }}</div>
-                <div class="signature-role">TESTEMUNHA</div>
-            </div>
-
-            <div class="signature-block">
-                <div class="signature-line-item">{{ $event->witness_2_name ?? 'TESTEMUNHA 2' }}</div>
-                <div class="signature-role">TESTEMUNHA</div>
-            </div>
-        </div>
     </div>
 @endsection
