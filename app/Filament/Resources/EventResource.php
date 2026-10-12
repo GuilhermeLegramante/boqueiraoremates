@@ -126,6 +126,13 @@ class EventResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('downloadRegulationPdf')
+                        ->label('Imprimir Regulamento')
+                        ->icon('heroicon-o-document-arrow-down')
+                        ->color('success')
+                        ->url(fn(Event $record): string => route('events.regulation.pdf', $record->id))
+                        ->openUrlInNewTab(),
+
                     Tables\Actions\EditAction::make()
                         ->mutateRecordDataUsing(function (array $data): array {
                             $data['name'] = Str::upper($data['name']);

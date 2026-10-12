@@ -76,6 +76,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/contracts/{contract}/buyer-promissory-note', [ContractController::class, 'showBuyerPromissoryNote'])->name('buyer-promissory-note-pdf');
     Route::get('/contracts/{contract}/regulation', [ContractController::class, 'showRegulation'])->name('contract-regulation-pdf');
     Route::get('/contracts/{contract}/bundle', [ContractController::class, 'bundlePdf'])->name('contract-bundle-pdf');
+
+    Route::get('/events/{id}/regulamento-pdf', [ContractController::class, 'getEventRegulationPdf'])
+        ->name('events.regulation.pdf');
 });
 
 Route::get('/teste', function () {});

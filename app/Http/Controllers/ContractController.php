@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contract;
+use App\Models\Event;
 use App\Models\Order;
 use App\Utils\ReportFactory;
 use Carbon\Carbon;
@@ -753,5 +754,43 @@ class ContractController extends Controller
         ];
 
         return ReportFactory::getBasicPdf('portrait', 'reports.bundle', $data, "previa_pacote_OS_{$order->number}.pdf");
+    }
+
+    /**
+     * Gera o PDF do Regulamento Geral diretamente a partir de um Evento
+     */
+    public function getEventRegulationPdf($eventId)
+    {
+        set_time_limit(0);
+
+        $event = Event::with(['regulationClauses'])->findOrFail($eventId);
+
+        $eventBanner = null;
+        if ($event->banner_contract) {
+            $bannerPath = public_path('storage/' . ltrim($event->banner_contract, '/'));
+            if (file_exists($bannerPath)) {
+                $eventBanner = $bannerPath;
+            }
+        }
+
+        $boqueiraoLogo = public_path('img/logo_header_10_anos.png');
+
+        $data = [
+            'title' => 'REGULAMENTO DO EVENTO',
+            'event' => $event,
+            'eventBanner' => $eventBanner,
+            'boqueiraoLogo' => $boqueiraoLogo,
+            'contractDate' => now(),
+            'contractCity' => $event->city ?? 'Uruguaiana - RS',
+        ];
+
+        $fileName = 'REGULAMENTO_EVENTO_' . \Illuminate\Support\Str::slug($event->name) . '.pdf';
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.event-regulation',
+            $data,
+            $fileName
+        );
     }
 }

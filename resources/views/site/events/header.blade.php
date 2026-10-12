@@ -55,8 +55,9 @@
                     </span>
                 @endif
 
-                @if ($event->regulation)
-                    <a href="{{ asset('storage/' . $event->regulation) }}" target="_blank"
+                @if ($event->regulationClauses->count() > 0 || $event->regulation)
+                    <a href="{{ $event->regulationClauses->count() > 0 ? route('events.regulation.pdf', $event->id) : asset('storage/' . $event->regulation) }}"
+                        target="_blank"
                         class="flex-shrink-0 inline-flex items-center gap-1 bg-blue-200 text-[#003333] text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-full shadow-sm hover:bg-blue-300 transition-all whitespace-nowrap">
                         Regulamento Completo
                     </a>

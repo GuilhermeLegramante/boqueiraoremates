@@ -123,22 +123,6 @@ class EventForm
                 ->rows(4)
                 ->maxLength(65535), // limite do campo text
 
-            // RichEditor::make('note')
-            //         ->label(__('fields.note'))
-            //         ->required()
-            //         ->toolbarButtons([
-            //                         'bold',
-            //                         'italic',
-            //                         'underline',
-            //                         'strike',
-            //                         'textColor',
-            //                         'bulletList',
-            //                         'orderedList',
-            //                         'undo',
-            //                         'redo',
-            //                     ])
-            //                     ->columnSpanFull(),
-
             FileUpload::make('regulation')
                 ->label('Regulamento Completo (PDF)')
                 ->directory('events/regulations')
