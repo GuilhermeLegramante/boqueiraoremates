@@ -198,13 +198,21 @@ class LotesRelationManager extends RelationManager
                     ->label('Comentário')
                     ->nullable()
                     ->toolbarButtons([
-                        ['bold', 'italic', 'underline', 'strike'],
-                        ['textColor'],
-                        ['bulletList', 'orderedList'],
-                        ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'],
-                        ['undo', 'redo'],
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'textColor',
+                        'bulletList',
+                        'orderedList',
+                        'alignStart',
+                        'alignCenter',
+                        'alignEnd',
+                        'alignJustify',
+                        'undo',
+                        'redo',
                     ]),
-
+                    
                 TextInput::make('video_link')->columnSpanFull()->label('Link do Vídeo')->url()->nullable(),
 
                 Toggle::make('visible')
