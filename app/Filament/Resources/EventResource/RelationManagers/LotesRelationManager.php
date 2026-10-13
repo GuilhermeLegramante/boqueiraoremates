@@ -198,7 +198,8 @@ class LotesRelationManager extends RelationManager
                     ->label('Comentário')
                     ->nullable()
                     ->toolbarButtons([
-                        ['bold', 'italic', 'underline', 'strike', 'textColor'],
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['textColor'],
                         ['bulletList', 'orderedList'],
                         ['alignStart', 'alignCenter', 'alignEnd', 'alignJustify'],
                         ['undo', 'redo'],
