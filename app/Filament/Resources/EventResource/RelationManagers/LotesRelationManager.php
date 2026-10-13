@@ -192,7 +192,27 @@ class LotesRelationManager extends RelationManager
 
                 FileUpload::make('photo')->columnSpanFull()->label('Foto (Miniatura)')->image()->directory('animals/photos')->nullable(),
                 FileUpload::make('photo_full')->columnSpanFull()->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
-                RichEditor::make('note')->columnSpanFull()->label('Comentário')->nullable(),
+
+                RichEditor::make('note')
+                    ->columnSpanFull()
+                    ->label('Comentário')
+                    ->nullable()
+                    ->toolbarButtons([
+                        'bold',
+                        'italic',
+                        'underline',
+                        'strike',
+                        'textColor',
+                        'bulletList',
+                        'orderedList',
+                        'alignStart',
+                        'alignCenter',
+                        'alignEnd',
+                        'alignJustify',
+                        'undo',
+                        'redo',
+                    ]),
+                    
                 TextInput::make('video_link')->columnSpanFull()->label('Link do Vídeo')->url()->nullable(),
 
                 Toggle::make('visible')
