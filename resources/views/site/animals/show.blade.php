@@ -153,12 +153,15 @@
                         </p>
                     @endif
 
+
                     <div class="mt-3 text-white">
                         <h3 class="text-lg font-semibold">Comentários</h3>
-                        <div class="comentarios-conteudo">
-                            {!! str_replace('<p>', '<p style="text-align: justify;">', $animal->pivot->note) !!}
+
+                        <div class="comentarios-conteudo [&_p]:text-justify">
+                            {!! $animal->pivot->note !!}
                         </div>
                     </div>
+
 
                     <!-- Card de lance -->
                     @if ($animal->pivot->status === 'disponivel' && !$event->closed && !$event->is_permanent)
