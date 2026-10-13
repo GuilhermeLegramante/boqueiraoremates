@@ -155,7 +155,15 @@
 
                     <div class="mt-3 text-white">
                         <h3 class="text-lg font-semibold">Comentários</h3>
-                        <div class="comentarios-conteudo">
+                        <div style="text-align: justify;" class="comentarios-conteudo">
+                            <style>
+                                .comentarios-conteudo p,
+                                .comentarios-conteudo div,
+                                .comentarios-conteudo span,
+                                .comentarios-conteudo li {
+                                    text-align: justify !important;
+                                }
+                            </style>
                             {!! $animal->pivot->note !!}
                         </div>
                     </div>
