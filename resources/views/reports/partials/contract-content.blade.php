@@ -13,12 +13,16 @@
                 @endif
             </td>
 
+            @php
+                $establishment = $order->seller ?? ($seller ?? null);
+            @endphp
+
             <td style="width: 40%; text-align: center;">
                 <div class="event-title-center">
-                    {{ $seller->establishment ?? '' }}
+                    {{ $establishment?->establishment ?? '' }}
                 </div>
                 <div class="contract-city">
-                    {{ $seller->establishment_city ?? '' }}
+                    {{ $establishment?->establishment_city ?? '' }}
                 </div>
             </td>
 
