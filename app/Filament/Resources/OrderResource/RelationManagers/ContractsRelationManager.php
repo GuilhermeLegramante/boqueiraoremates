@@ -307,6 +307,8 @@ class ContractsRelationManager extends RelationManager
             'seller' => $order->seller ? [
                 'id' => $order->seller->id,
                 'name' => $order->seller->name,
+                'establishment' => $order->seller->establishment ?? null,
+                'establishment_city' => $order->seller->establishment_city ?? null,
                 'cpf_cnpj' => $order->seller->cpf_cnpj ?? null,
                 'phone' => $order->seller->phone ?? null,
                 'email' => $order->seller->email ?? null,
@@ -321,6 +323,8 @@ class ContractsRelationManager extends RelationManager
             'buyer' => $order->buyer ? [
                 'id' => $order->buyer->id,
                 'name' => $order->buyer->name,
+                'establishment' => $order->buyer->establishment ?? null,
+                'establishment_city' => $order->buyer->establishment_city ?? null,
                 'cpf_cnpj' => $order->buyer->cpf_cnpj ?? null,
                 'phone' => $order->buyer->phone ?? null,
                 'email' => $order->buyer->email ?? null,
