@@ -109,6 +109,7 @@ class ContractController extends Controller
 
         $fileName = $prefix . $data['order']->number . '.pdf';
 
+        dd($data);
         return ReportFactory::getBasicPdf(
             'portrait',
             'reports.promissory-note-billing', // Blade dedicada a faturamento
