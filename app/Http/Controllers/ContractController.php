@@ -652,6 +652,7 @@ class ContractController extends Controller
             'order',
             'order.event.regulationClauses',
             'order.seller.address',
+            'order.seller',
             'order.buyer.address',
             'order.animal.breed',
             'order.animal.coat',
