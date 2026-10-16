@@ -551,20 +551,51 @@ class ContractController extends Controller
     public function previewPdf(Order $order, Request $request)
     {
         $via = $request->get('via', 1);
-        $order->load(['event.clauses', 'event.regulationClauses', 'seller.address', 'buyer.address', 'animal.breed', 'animalEvent', 'paymentWay', 'parcels']);
+        $order->load([
+            'event.clauses',
+            'event.regulationClauses',
+            'seller.address',
+            'buyer.address',
+            'animal.breed',
+            'animalEvent',
+            'paymentWay',
+            'parcels',
+            'sellerParcels',
+            'buyerParcels',
+        ]);
 
         $grossValue = (float) $order->gross_value;
         $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
         $netValue = $grossValue - $discountValue;
 
+        // Usa as parcelas reais já cadastradas/geradas na Order
         $parcels = $order->parcels->sortBy('date');
+        $sellerParcels = $order->sellerParcels ? $order->sellerParcels->sortBy('date') : collect();
+        $buyerParcels = $order->buyerParcels ? $order->buyerParcels->sortBy('date') : collect();
+
         $installments = $parcels->count();
         $firstParcel = $parcels->first();
 
-        $firstParcelValue = $firstParcel ? (float) $firstParcel->value : (float) $order->first_parcel_value;
-        $firstDueDate = $firstParcel?->date ? Carbon::parse($firstParcel->date) : ($order->first_date ? Carbon::parse($order->first_date) : null);
+        // Evita recalcular valores se já existirem parcelas reais gravadas
+        $firstParcelValue = $firstParcel
+            ? (float) $firstParcel->value
+            : (float) $order->first_parcel_value;
 
-        $paymentText = $this->buildPaymentText($order, $netValue, $installments, $firstParcelValue, $firstDueDate);
+        $firstDueDate = $firstParcel?->date
+            ? Carbon::parse($firstParcel->date)
+            : ($order->first_date ? Carbon::parse($order->first_date) : null);
+
+        // Passa a collection de parcelas correta para a construção do texto de pagamento
+        $paymentText = $this->buildPaymentText(
+            order: $order,
+            netValue: $netValue,
+            parcels: $parcels,
+            firstParcelValue: $firstParcelValue,
+            firstDueDate: $firstDueDate,
+        );
+
+        $city = $order->seller->address->city ?? 'Uruguaiana';
+        $state = $order->seller->address->state ?? 'RS';
 
         $data = [
             'order' => $order,
@@ -572,6 +603,15 @@ class ContractController extends Controller
             'seller' => $order->seller,
             'buyer' => $order->buyer,
             'animal' => $order->animal,
+            'parcels' => $parcels,
+            'sellerParcels' => $sellerParcels,
+            'buyerParcels' => $buyerParcels,
+            'grossValue' => $grossValue,
+            'netValue' => $netValue,
+            'discountValue' => $discountValue,
+            'installments' => $installments,
+            'firstParcelValue' => $firstParcelValue,
+            'firstDueDate' => $firstDueDate,
             'paymentText' => $paymentText,
             'contractDate' => now(),
             'via' => $via,
@@ -579,6 +619,8 @@ class ContractController extends Controller
             'title' => 'PRÉ-VISUALIZAÇÃO DE CONTRATO',
             'eventBanner' => $order->event && $order->event->banner_contract ? storage_path('app/public/' . $order->event->banner_contract) : null,
             'boqueiraoLogo' => public_path('img/logo_header_10_anos.png'),
+            'contractCity' => "{$city} - {$state}",
+            'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
 
         return ReportFactory::getBasicPdf('portrait', 'reports.contract', $data, "previa_contrato_OS_{$order->number}_via_{$via}.pdf");
@@ -688,6 +730,8 @@ class ContractController extends Controller
         set_time_limit(0);
 
         $order->load([
+            'event.clauses',
+            'event.regulationClauses',
             'event',
             'seller.address',
             'buyer.address',
@@ -708,6 +752,7 @@ class ContractController extends Controller
         $discountValue = ($grossValue * (float) $order->discount_percentage) / 100;
         $netValue = $grossValue - $discountValue;
 
+        // Recupera as parcelas reais vinculadas
         $parcels = $order->parcels->sortBy('date');
         $sellerParcels = $order->sellerParcels ? $order->sellerParcels->sortBy('date') : collect();
         $buyerParcels = $order->buyerParcels ? $order->buyerParcels->sortBy('date') : collect();
@@ -718,7 +763,14 @@ class ContractController extends Controller
         $firstParcelValue = $firstParcel ? (float) $firstParcel->value : (float) $order->first_parcel_value;
         $firstDueDate = $firstParcel?->date ? Carbon::parse($firstParcel->date) : ($order->first_date ? Carbon::parse($order->first_date) : null);
 
-        $paymentText = $this->buildPaymentText($order, $netValue, $installments, $firstParcelValue, $firstDueDate);
+        // Utiliza o mesmo construtor de texto padrão baseado nas parcelas reais
+        $paymentText = $this->buildPaymentText(
+            order: $order,
+            netValue: $netValue,
+            parcels: $parcels,
+            firstParcelValue: $firstParcelValue,
+            firstDueDate: $firstDueDate,
+        );
 
         $city = $seller->address->city ?? 'Uruguaiana';
         $state = $seller->address->state ?? 'RS';
