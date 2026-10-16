@@ -364,7 +364,6 @@ class ContractController extends Controller
         $totalFormatted = number_format($netValue, 2, ',', '.');
         $totalInWordsMoney = $this->currencyInWords($netValue);
 
-        // Se não houver parcelas cadastradas no banco, retorna fallback simples
         if ($parcels->isEmpty()) {
             return sprintf(
                 'Valor total de R$ %s (%s), a ser pago conforme condições negociadas.',
@@ -373,151 +372,84 @@ class ContractController extends Controller
             );
         }
 
-        // 1. Obtém a forma de pagamento (ex: "2+2+46", "1+1+10", "20")
-        $paymentWayName = is_array($order)
-            ? ($order['payment_way']['name'] ?? null)
-            : ($order->paymentWay->name ?? null);
-
-        if (empty($paymentWayName)) {
-            $paymentWayName = (string) $parcels->count();
-        }
-
-        // Processa os grupos do plano (ex: "2+2+46" -> [2, 2, 46])
-        $rawParts = array_map('intval', explode('+', $paymentWayName));
-        $parts = array_values(array_filter($rawParts, fn($val) => $val > 0));
-
-        // Se a soma da regra do plano não bater com a quantidade real de parcelas gravadas,
-        // ajusta o último grupo para englobar as parcelas restantes do banco.
-        if (!empty($parts)) {
-            $sumParts = array_sum($parts);
-            if ($sumParts !== $parcels->count()) {
-                $diff = $parcels->count() - $sumParts;
-                $parts[count($parts) - 1] += $diff;
-            }
-        } else {
-            $parts = [$parcels->count()];
-        }
-
         $dueDay = (int) (is_array($order) ? ($order['due_day'] ?? 10) : ($order->due_day ?? 10));
 
-        // Início padrão do texto
         $text = sprintf(
             'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
             $totalFormatted,
             $totalInWordsMoney
         );
 
-        // Reindexa as parcelas para iteração exata por índice (0..N-1)
         $parcelsArray = $parcels->values();
+        $totalCount = $parcelsArray->count();
 
-        // CASO 1: Condição composta com parcelas agrupadas (ex: 2+2+46, 1+1+10)
-        if (count($parts) > 1) {
-            $entryGroups = array_slice($parts, 0, -1); // Grupos de entrada
-            $remainingCount = end($parts);             // Quantidade do grupo final
-            $clauses = [];
-            $currentIndex = 0;
+        if ($totalCount === 1) {
+            $p = $parcelsArray->first();
+            $val = (float) (is_array($p) ? $p['value'] : $p->value);
+            $dateRaw = is_array($p) ? $p['date'] : $p->date;
+            $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : now()->format('d/m/Y');
 
-            foreach ($entryGroups as $index => $groupSize) {
-                // Pega fatia exata de parcelas reais do banco para este grupo
-                $groupParcels = $parcelsArray->slice($currentIndex, $groupSize);
-
-                $groupTotalValue = $groupParcels->sum(fn($p) => (float) (is_array($p) ? $p['value'] : $p->value));
-                $groupValueFormatted = number_format($groupTotalValue, 2, ',', '.');
-                $groupValueInWords = $this->currencyInWords($groupTotalValue);
-
-                $firstInGroup = $groupParcels->first();
-                $dateRaw = is_array($firstInGroup) ? $firstInGroup['date'] : $firstInGroup->date;
-                $formattedDate = Carbon::parse($dateRaw)->format('d/m/Y');
-
-                $startParcelNum = $currentIndex + 1;
-
-                if ($groupSize === 1) {
-                    $label = sprintf(
-                        'a parcela %d no valor de R$ %s (%s), com vencimento em %s',
-                        $startParcelNum,
-                        $groupValueFormatted,
-                        $groupValueInWords,
-                        $formattedDate
-                    );
-                } else {
-                    $endParcelNum = $currentIndex + $groupSize;
-                    $label = sprintf(
-                        'as parcelas %d e %d perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                        $startParcelNum,
-                        $endParcelNum,
-                        $groupValueFormatted,
-                        $groupValueInWords,
-                        $formattedDate
-                    );
-                }
-
-                if ($index === 0) {
-                    $clauses[] = 'As ' . ltrim($label, 'as ');
-                } else {
-                    $clauses[] = $label;
-                }
-
-                $currentIndex += $groupSize;
-            }
-
-            // Conecta os blocos de entrada
-            $text .= implode(', ', $clauses);
-
-            // Parcelas restantes (último grupo) lidas do banco
-            $remainingParcels = $parcelsArray->slice($currentIndex, $remainingCount);
-            $sampleRemaining = $remainingParcels->first();
-            $sampleValue = (float) (is_array($sampleRemaining) ? $sampleRemaining['value'] : $sampleRemaining->value);
-
-            $remainingInWords = $this->numberInWords($remainingParcels->count());
-            $unitValueFormatted = number_format($sampleValue, 2, ',', '.');
-            $unitValueInWords = $this->currencyInWords($sampleValue);
+            $valFormatted = number_format($val, 2, ',', '.');
+            $valInWords = $this->currencyInWords($val);
 
             $text .= sprintf(
-                ' e as demais %s parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
-                $remainingInWords,
-                $unitValueFormatted,
-                $unitValueInWords
+                'parcela única no valor de R$ %s (%s), com vencimento em %s',
+                $valFormatted,
+                $valInWords,
+                $dateFormatted
             );
         } else {
-            // CASO 2: Plano simples (sem "+", ex: 20 parcelas ou 1 parcela única)
-            $totalParcelsCount = $parcelsArray->count();
-            $firstParcelReal = $parcelsArray->first();
+            $descriptions = [];
 
-            $firstRealValue = (float) (is_array($firstParcelReal) ? $firstParcelReal['value'] : $firstParcelReal->value);
-            $firstRealDateRaw = is_array($firstParcelReal) ? $firstParcelReal['date'] : $firstParcelReal->date;
-            $firstRealDateFormatted = Carbon::parse($firstRealDateRaw)->format('d/m/Y');
+            foreach ($parcelsArray as $index => $parcel) {
+                $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
+                $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
+                $numberLabel = is_array($parcel) ? $parcel['number'] : $parcel->number;
 
-            if ($totalParcelsCount === 1) {
-                $text .= sprintf(
-                    'parcela única no valor de R$ %s (%s), com vencimento em %s',
-                    $totalFormatted,
-                    $totalInWordsMoney,
-                    $firstRealDateFormatted
-                );
+                $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
+                $valFormatted = number_format($val, 2, ',', '.');
+                $valInWords = $this->currencyInWords($val);
+
+                // Restaura o termo "perfazendo" para dar clareza jurídica, especialmente em entradas ou grupos
+                if (!empty($numberLabel)) {
+                    // Se o número da parcela indica um grupo (ex: contem "/" ou "(Ent.)")
+                    if (str_contains($numberLabel, '/') || str_contains(mb_strtolower($numberLabel), 'ent')) {
+                        $descriptions[] = sprintf(
+                            'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                            $numberLabel,
+                            $valFormatted,
+                            $valInWords,
+                            $dateFormatted
+                        );
+                    } else {
+                        $descriptions[] = sprintf(
+                            'a parcela %s no valor de R$ %s (%s), com vencimento em %s',
+                            $numberLabel,
+                            $valFormatted,
+                            $valInWords,
+                            $dateFormatted
+                        );
+                    }
+                } else {
+                    $numSeq = $index + 1;
+                    $descriptions[] = sprintf(
+                        'a %º parcela no valor de R$ %s (%s), com vencimento em %s',
+                        $numSeq,
+                        $valFormatted,
+                        $valInWords,
+                        $dateFormatted
+                    );
+                }
+            }
+
+            if (count($descriptions) > 1) {
+                $last = array_pop($descriptions);
+                $text .= implode(', ', $descriptions) . ' e ' . $last;
             } else {
-                // Amostra o valor das parcelas seguintes (index 1 em diante)
-                $secondParcelReal = $parcelsArray->get(1) ?? $firstParcelReal;
-                $secondRealValue = (float) (is_array($secondParcelReal) ? $secondParcelReal['value'] : $secondParcelReal->value);
-
-                $firstValueFormatted = number_format($firstRealValue, 2, ',', '.');
-                $firstValueInWords = $this->currencyInWords($firstRealValue);
-
-                $secondValueFormatted = number_format($secondRealValue, 2, ',', '.');
-                $secondValueInWords = $this->currencyInWords($secondRealValue);
-
-                $text .= sprintf(
-                    'a primeira parcela no valor de R$ %s (%s) com vencimento em %s e as demais %s parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
-                    $firstValueFormatted,
-                    $firstValueInWords,
-                    $firstRealDateFormatted,
-                    $this->numberInWords($totalParcelsCount - 1),
-                    $secondValueFormatted,
-                    $secondValueInWords
-                );
+                $text .= $descriptions[0];
             }
         }
 
-        // Fechamento padrão
         $text .= sprintf(
             ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
             $dueDay
@@ -656,7 +588,6 @@ class ContractController extends Controller
             'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
 
-        dd($data);
         return ReportFactory::getBasicPdf('portrait', 'reports.contract', $data, "previa_contrato_OS_{$order->number}_via_{$via}.pdf");
     }
 
