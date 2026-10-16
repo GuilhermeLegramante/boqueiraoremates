@@ -84,10 +84,13 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->summarize([
                         Sum::make()
                             ->label('Faturamento Total')
-                            ->money('BRL'),
+                            ->money('BRL')
+                            ->using(fn($query) => $query->sum('gross_value') ?? 0),
+
                         Average::make()
                             ->label('Média Geral por Lote')
-                            ->money('BRL'),
+                            ->money('BRL')
+                            ->using(fn($query) => $query->avg('gross_value') ?? 0),
                     ]),
             ])
             ->filters([
