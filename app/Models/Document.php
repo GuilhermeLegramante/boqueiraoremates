@@ -39,7 +39,9 @@ class Document extends Model
                 // precisamos garantir um ID válido ou pular a nota automática
                 \App\Models\ClientNote::create([
                     'client_id' => $document->client_id,
-                    'user_id'   => User::first()->id,
+                    // 'user_id'   => User::first()->id,
+                    // Força a leitura do usuário autenticado pelo Filament / Auth padrão
+                    'user_id' => auth()->id() ?? \Filament\Facades\Filament::auth()->id() ?? 1,
                     'content'   => "Documento {$document->documentType->name} foi adicionado ao cliente.",
                 ]);
             }
