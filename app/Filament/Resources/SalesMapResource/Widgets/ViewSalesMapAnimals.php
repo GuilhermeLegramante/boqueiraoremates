@@ -16,12 +16,13 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Facades\DB;
 use Filament\Tables\Actions\Action;
+use Illuminate\Database\Schema\Builder;
 
 class ViewSalesMapAnimals extends BaseWidget
 {
     protected int|string|array $columnSpan = 'full';
 
-    
+
 
     public $record;
 
@@ -36,11 +37,8 @@ class ViewSalesMapAnimals extends BaseWidget
         return $table
             ->heading($this->record->event->name)
             ->query(function () {
-                $orders = Order::where('event_id', $this->record->event_id)
-                    ->with(['animal', 'seller.address']) // Relacionamentos
-                    ->get(); // Executa a query aqui
-
                 return Order::where('event_id', $this->record->event_id)
+                
                     ->with(['animal', 'seller.address']);
             })
             ->columns([
@@ -84,8 +82,13 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->money('BRL')
                     ->alignEnd()
                     ->summarize([
-                        Sum::make()->label('Faturamento Total')->money('BRL'),
-                        Average::make()->label('Média Geral por Lote')->money('BRL'),
+                        Sum::make()
+                            ->label('Faturamento Total')
+                            ->money('BRL')
+                            ->query(fn(Builder $query) => $query->sum('gross_value')), // Opcional para forçar o cálculo via SQL
+                        Average::make()
+                            ->label('Média Geral por Lote')
+                            ->money('BRL'),
                     ]),
             ])
             ->filters([
