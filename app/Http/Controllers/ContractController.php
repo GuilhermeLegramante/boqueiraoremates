@@ -364,30 +364,41 @@ class ContractController extends Controller
         $totalFormatted = number_format($netValue, 2, ',', '.');
         $totalInWordsMoney = $this->currencyInWords($netValue);
 
+        // Se não houver parcelas cadastradas no banco, retorna fallback simples
+        if ($parcels->isEmpty()) {
+            return sprintf(
+                'Valor total de R$ %s (%s), a ser pago conforme condições negociadas.',
+                $totalFormatted,
+                $totalInWordsMoney
+            );
+        }
+
         // 1. Obtém a forma de pagamento (ex: "2+2+46", "1+1+10", "20")
         $paymentWayName = is_array($order)
             ? ($order['payment_way']['name'] ?? null)
             : ($order->paymentWay->name ?? null);
 
         if (empty($paymentWayName)) {
-            $paymentWayName = (string) (count($parcels) > 0 ? count($parcels) : 1);
+            $paymentWayName = (string) $parcels->count();
         }
 
         // Processa os grupos do plano (ex: "2+2+46" -> [2, 2, 46])
         $rawParts = array_map('intval', explode('+', $paymentWayName));
         $parts = array_values(array_filter($rawParts, fn($val) => $val > 0));
 
-        $totalInstallments = array_sum($parts);
-
-        // Valor da parcela individual base
-        $unitParcelValue = (float) (is_array($order) ? ($order['parcel_value'] ?? 0) : ($order->parcel_value ?? 0));
-        if ($unitParcelValue <= 0 && $totalInstallments > 0) {
-            $unitParcelValue = $netValue / $totalInstallments;
+        // Se a soma da regra do plano não bater com a quantidade real de parcelas gravadas,
+        // ajusta o último grupo para englobar as parcelas restantes do banco.
+        if (!empty($parts)) {
+            $sumParts = array_sum($parts);
+            if ($sumParts !== $parcels->count()) {
+                $diff = $parcels->count() - $sumParts;
+                $parts[count($parts) - 1] += $diff;
+            }
+        } else {
+            $parts = [$parcels->count()];
         }
 
-        // Data de referência e dia de vencimento
-        $currentDate = $firstDueDate ? $firstDueDate->copy() : now();
-        $dueDay = (int) (is_array($order) ? ($order['due_day'] ?? $currentDate->format('d')) : ($order->due_day ?? $currentDate->format('d')));
+        $dueDay = (int) (is_array($order) ? ($order['due_day'] ?? 10) : ($order->due_day ?? 10));
 
         // Início padrão do texto
         $text = sprintf(
@@ -396,42 +407,48 @@ class ContractController extends Controller
             $totalInWordsMoney
         );
 
+        // Reindexa as parcelas para iteração exata por índice (0..N-1)
+        $parcelsArray = $parcels->values();
+
         // CASO 1: Condição composta com parcelas agrupadas (ex: 2+2+46, 1+1+10)
         if (count($parts) > 1) {
             $entryGroups = array_slice($parts, 0, -1); // Grupos de entrada
-            $remainingInstallments = end($parts);       // Parcelas vincendas finais
-
+            $remainingCount = end($parts);             // Quantidade do grupo final
             $clauses = [];
-            $currentParcelNum = 1;
+            $currentIndex = 0;
 
             foreach ($entryGroups as $index => $groupSize) {
-                $formattedDate = $currentDate->format('d/m/Y');
-                $groupTotalValue = $unitParcelValue * $groupSize;
+                // Pega fatia exata de parcelas reais do banco para este grupo
+                $groupParcels = $parcelsArray->slice($currentIndex, $groupSize);
+
+                $groupTotalValue = $groupParcels->sum(fn($p) => (float) (is_array($p) ? $p['value'] : $p->value));
                 $groupValueFormatted = number_format($groupTotalValue, 2, ',', '.');
                 $groupValueInWords = $this->currencyInWords($groupTotalValue);
 
+                $firstInGroup = $groupParcels->first();
+                $dateRaw = is_array($firstInGroup) ? $firstInGroup['date'] : $firstInGroup->date;
+                $formattedDate = Carbon::parse($dateRaw)->format('d/m/Y');
+
+                $startParcelNum = $currentIndex + 1;
+
                 if ($groupSize === 1) {
-                    // Parcela individual (ex: a parcela 1 no valor de R$ 9.916,67 (nove mil...))
                     $label = sprintf(
                         'a parcela %d no valor de R$ %s (%s), com vencimento em %s',
-                        $currentParcelNum,
+                        $startParcelNum,
                         $groupValueFormatted,
                         $groupValueInWords,
                         $formattedDate
                     );
-                    $currentParcelNum += 1;
                 } else {
-                    // Parcelas agrupadas (ex: as parcelas 1 e 2 perfazendo um valor de R$ 740,00 (setecentos e quarenta reais...))
-                    $endParcelNum = $currentParcelNum + $groupSize - 1;
+                    $endParcelNum = $currentIndex + $groupSize;
                     $label = sprintf(
                         'as parcelas %d e %d perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                        $currentParcelNum,
+                        $startParcelNum,
                         $endParcelNum,
                         $groupValueFormatted,
                         $groupValueInWords,
                         $formattedDate
                     );
-                    $currentParcelNum += $groupSize;
                 }
 
                 if ($index === 0) {
@@ -440,18 +457,20 @@ class ContractController extends Controller
                     $clauses[] = $label;
                 }
 
-                // Avança para o próximo mês
-                $currentDate->addMonth();
-                $currentDate->day(min($dueDay, $currentDate->daysInMonth));
+                $currentIndex += $groupSize;
             }
 
             // Conecta os blocos de entrada
             $text .= implode(', ', $clauses);
 
-            // Adiciona as parcelas mensais restantes
-            $remainingInWords = $this->numberInWords($remainingInstallments);
-            $unitValueFormatted = number_format($unitParcelValue, 2, ',', '.');
-            $unitValueInWords = $this->currencyInWords($unitParcelValue);
+            // Parcelas restantes (último grupo) lidas do banco
+            $remainingParcels = $parcelsArray->slice($currentIndex, $remainingCount);
+            $sampleRemaining = $remainingParcels->first();
+            $sampleValue = (float) (is_array($sampleRemaining) ? $sampleRemaining['value'] : $sampleRemaining->value);
+
+            $remainingInWords = $this->numberInWords($remainingParcels->count());
+            $unitValueFormatted = number_format($sampleValue, 2, ',', '.');
+            $unitValueInWords = $this->currencyInWords($sampleValue);
 
             $text .= sprintf(
                 ' e as demais %s parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
@@ -460,26 +479,40 @@ class ContractController extends Controller
                 $unitValueInWords
             );
         } else {
-            // CASO 2: Parcelamento simples (ex: 20 parcelas diretas ou parcela única)
-            $unitValueFormatted = number_format($unitParcelValue, 2, ',', '.');
-            $unitValueInWords = $this->currencyInWords($unitParcelValue);
+            // CASO 2: Plano simples (sem "+", ex: 20 parcelas ou 1 parcela única)
+            $totalParcelsCount = $parcelsArray->count();
+            $firstParcelReal = $parcelsArray->first();
 
-            if ($totalInstallments === 1) {
+            $firstRealValue = (float) (is_array($firstParcelReal) ? $firstParcelReal['value'] : $firstParcelReal->value);
+            $firstRealDateRaw = is_array($firstParcelReal) ? $firstParcelReal['date'] : $firstParcelReal->date;
+            $firstRealDateFormatted = Carbon::parse($firstRealDateRaw)->format('d/m/Y');
+
+            if ($totalParcelsCount === 1) {
                 $text .= sprintf(
                     'parcela única no valor de R$ %s (%s), com vencimento em %s',
                     $totalFormatted,
                     $totalInWordsMoney,
-                    $currentDate->format('d/m/Y')
+                    $firstRealDateFormatted
                 );
             } else {
+                // Amostra o valor das parcelas seguintes (index 1 em diante)
+                $secondParcelReal = $parcelsArray->get(1) ?? $firstParcelReal;
+                $secondRealValue = (float) (is_array($secondParcelReal) ? $secondParcelReal['value'] : $secondParcelReal->value);
+
+                $firstValueFormatted = number_format($firstRealValue, 2, ',', '.');
+                $firstValueInWords = $this->currencyInWords($firstRealValue);
+
+                $secondValueFormatted = number_format($secondRealValue, 2, ',', '.');
+                $secondValueInWords = $this->currencyInWords($secondRealValue);
+
                 $text .= sprintf(
                     'a primeira parcela no valor de R$ %s (%s) com vencimento em %s e as demais %s parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
-                    $unitValueFormatted,
-                    $unitValueInWords,
-                    $currentDate->format('d/m/Y'),
-                    $this->numberInWords($totalInstallments - 1),
-                    $unitValueFormatted,
-                    $unitValueInWords
+                    $firstValueFormatted,
+                    $firstValueInWords,
+                    $firstRealDateFormatted,
+                    $this->numberInWords($totalParcelsCount - 1),
+                    $secondValueFormatted,
+                    $secondValueInWords
                 );
             }
         }
@@ -622,8 +655,6 @@ class ContractController extends Controller
             'contractCity' => "{$city} - {$state}",
             'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
-
-        dd($data);
 
         return ReportFactory::getBasicPdf('portrait', 'reports.contract', $data, "previa_contrato_OS_{$order->number}_via_{$via}.pdf");
     }
