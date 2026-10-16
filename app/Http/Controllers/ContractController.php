@@ -656,6 +656,7 @@ class ContractController extends Controller
             'fixedTexts' => $this->getFixedTexts($city, $state),
         ];
 
+        dd($data);
         return ReportFactory::getBasicPdf('portrait', 'reports.contract', $data, "previa_contrato_OS_{$order->number}_via_{$via}.pdf");
     }
 
