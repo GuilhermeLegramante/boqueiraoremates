@@ -38,7 +38,7 @@ class ViewSalesMapAnimals extends BaseWidget
             ->heading($this->record->event->name)
             ->query(function () {
                 return Order::where('event_id', $this->record->event_id)
-                
+
                     ->with(['animal', 'seller.address']);
             })
             ->columns([
@@ -84,8 +84,7 @@ class ViewSalesMapAnimals extends BaseWidget
                     ->summarize([
                         Sum::make()
                             ->label('Faturamento Total')
-                            ->money('BRL')
-                            ->query(fn(Builder $query) => $query->sum('gross_value')), // Opcional para forçar o cálculo via SQL
+                            ->money('BRL'),
                         Average::make()
                             ->label('Média Geral por Lote')
                             ->money('BRL'),
