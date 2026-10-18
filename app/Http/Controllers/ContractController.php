@@ -372,8 +372,6 @@ class ContractController extends Controller
             );
         }
 
-        $dueDay = (int) (is_array($order) ? ($order['due_day'] ?? 10) : ($order->due_day ?? 10));
-
         $text = sprintf(
             'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
             $totalFormatted,
@@ -393,7 +391,7 @@ class ContractController extends Controller
             $valInWords = $this->currencyInWords($val);
 
             $text .= sprintf(
-                'parcela única no valor de R$ %s (%s), com vencimento em %s',
+                'parcela única no valor de R$ %s (%s), com vencimento em %s.',
                 $valFormatted,
                 $valInWords,
                 $dateFormatted
@@ -410,9 +408,7 @@ class ContractController extends Controller
                 $valFormatted = number_format($val, 2, ',', '.');
                 $valInWords = $this->currencyInWords($val);
 
-                // Restaura o termo "perfazendo" para dar clareza jurídica, especialmente em entradas ou grupos
                 if (!empty($numberLabel)) {
-                    // Se o número da parcela indica um grupo (ex: contem "/" ou "(Ent.)")
                     if (str_contains($numberLabel, '/') || str_contains(mb_strtolower($numberLabel), 'ent')) {
                         $descriptions[] = sprintf(
                             'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
@@ -432,8 +428,9 @@ class ContractController extends Controller
                     }
                 } else {
                     $numSeq = $index + 1;
+                    // Correção do erro de digitação do ordinal (%º para %dº)
                     $descriptions[] = sprintf(
-                        'a %º parcela no valor de R$ %s (%s), com vencimento em %s',
+                        'a %dº parcela no valor de R$ %s (%s), com vencimento em %s',
                         $numSeq,
                         $valFormatted,
                         $valInWords,
@@ -444,16 +441,16 @@ class ContractController extends Controller
 
             if (count($descriptions) > 1) {
                 $last = array_pop($descriptions);
-                $text .= implode(', ', $descriptions) . ' e ' . $last;
+                // Opcional: usar ponto e vírgula ou quebras para melhorar a leitura se for texto longo
+                $text .= implode(', ', $descriptions) . ' e ' . $last . '.';
             } else {
-                $text .= $descriptions[0];
+                $text .= $descriptions[0] . '.';
             }
         }
 
-        $text .= sprintf(
-            ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
-            $dueDay
-        );
+        // Removida a frase fixa de vencimento no dia X que gerava o conflito com as datas individuais.
+        // Adicionado fechamento padrão para quitação.
+        $text .= ' Até a quitação integral do produto.';
 
         return $text;
     }
