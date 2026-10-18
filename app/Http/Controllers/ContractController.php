@@ -372,8 +372,6 @@ class ContractController extends Controller
             );
         }
 
-        $dueDay = (int) (is_array($order) ? ($order['due_day'] ?? 10) : ($order->due_day ?? 10));
-
         $text = sprintf(
             'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
             $totalFormatted,
@@ -401,14 +399,13 @@ class ContractController extends Controller
                 $dateFormatted
             );
         } else {
-            // Separa a entrada (se houver, identificada por "Ent" ou similar) das demais parcelas
             $firstParcel = $parcelsArray->first();
             $firstLabel = is_array($firstParcel) ? ($firstParcel['number'] ?? '') : ($firstParcel->number ?? '');
 
             $descriptions = [];
             $remainingParcels = $parcelsArray;
 
-            // Se a primeira parcela for uma entrada explícita
+            // Identifica e trata a entrada separadamente se houver
             if (!empty($firstLabel) && (str_contains(mb_strtolower($firstLabel), 'ent') || str_contains($firstLabel, '1/') && $parcelsArray->count() > 1)) {
                 $val = (float) (is_array($firstParcel) ? $firstParcel['value'] : $firstParcel->value);
                 $dateRaw = is_array($firstParcel) ? $firstParcel['date'] : $firstParcel->date;
@@ -424,7 +421,6 @@ class ContractController extends Controller
                     $dateFormatted
                 );
 
-                // Remove a entrada do array para agrupar o restante
                 $remainingParcels = $parcelsArray->slice(1)->values();
             }
 
@@ -464,13 +460,15 @@ class ContractController extends Controller
                 $valFormatted = number_format($group['val'], 2, ',', '.');
                 $valInWords = $this->currencyInWords($group['val']);
 
-                // Se houver muitas parcelas iguais no final, usa o formato resumido ("e as demais X parcelas...")
+                // Se houver um bloco grande no final, usa o formato resumido com o vencimento da primeira e da última parcela do grupo
                 if ($group['count'] >= 3 && $i === count($groups) - 1) {
                     $descriptions[] = sprintf(
-                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
+                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada, com vencimentos de %s a %s',
                         $group['count'],
                         $valFormatted,
-                        $valInWords
+                        $valInWords,
+                        $group['start_date'],
+                        $group['end_date']
                     );
                 } else {
                     $labelRange = $group['count'] > 1
@@ -499,10 +497,7 @@ class ContractController extends Controller
             }
         }
 
-        $text .= sprintf(
-            ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
-            $dueDay
-        );
+        $text .= ', até a quitação do produto.';
 
         return $text;
     }
