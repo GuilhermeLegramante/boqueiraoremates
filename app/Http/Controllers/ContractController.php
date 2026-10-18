@@ -372,21 +372,24 @@ class ContractController extends Controller
             );
         }
 
+        $parcelsArray = $parcels->values();
+        $totalCount = $parcelsArray->count();
+
+        // Pega o dia dinamicamente da primeira parcela (ou do pedido, como fallback)
+        $firstParcel = $parcelsArray->first();
+        $firstDateRaw = is_array($firstParcel) ? ($firstParcel['date'] ?? null) : ($firstParcel->date ?? null);
+        $dynamicDueDay = $firstDateRaw ? Carbon::parse($firstDateRaw)->day : (int) (is_array($order) ? ($order['due_day'] ?? 10) : ($order->due_day ?? 10));
+
         $text = sprintf(
             'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
             $totalFormatted,
             $totalInWordsMoney
         );
 
-        $parcelsArray = $parcels->values();
-        $totalCount = $parcelsArray->count();
-
         if ($totalCount === 1) {
-            $p = $parcelsArray->first();
-            $val = (float) (is_array($p) ? $p['value'] : $p->value);
-            $dateRaw = is_array($p) ? $p['date'] : $p->date;
-            $numberLabel = is_array($p) ? ($p['number'] ?? '1') : ($p->number ?? '1');
-            $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : now()->format('d/m/Y');
+            $val = (float) (is_array($firstParcel) ? $firstParcel['value'] : $firstParcel->value);
+            $numberLabel = is_array($firstParcel) ? ($firstParcel['number'] ?? '1') : ($firstParcel->number ?? '1');
+            $dateFormatted = $firstDateRaw ? Carbon::parse($firstDateRaw)->format('d/m/Y') : now()->format('d/m/Y');
 
             $valFormatted = number_format($val, 2, ',', '.');
             $valInWords = $this->currencyInWords($val);
@@ -399,17 +402,15 @@ class ContractController extends Controller
                 $dateFormatted
             );
         } else {
-            $firstParcel = $parcelsArray->first();
             $firstLabel = is_array($firstParcel) ? ($firstParcel['number'] ?? '') : ($firstParcel->number ?? '');
 
             $descriptions = [];
             $remainingParcels = $parcelsArray;
 
-            // Identifica e trata a entrada separadamente se houver
+            // Trata a entrada separadamente se houver
             if (!empty($firstLabel) && (str_contains(mb_strtolower($firstLabel), 'ent') || str_contains($firstLabel, '1/') && $parcelsArray->count() > 1)) {
                 $val = (float) (is_array($firstParcel) ? $firstParcel['value'] : $firstParcel->value);
-                $dateRaw = is_array($firstParcel) ? $firstParcel['date'] : $firstParcel->date;
-                $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
+                $dateFormatted = $firstDateRaw ? Carbon::parse($firstDateRaw)->format('d/m/Y') : '';
                 $valFormatted = number_format($val, 2, ',', '.');
                 $valInWords = $this->currencyInWords($val);
 
@@ -460,15 +461,12 @@ class ContractController extends Controller
                 $valFormatted = number_format($group['val'], 2, ',', '.');
                 $valInWords = $this->currencyInWords($group['val']);
 
-                // Se houver um bloco grande no final, usa o formato resumido com o vencimento da primeira e da última parcela do grupo
                 if ($group['count'] >= 3 && $i === count($groups) - 1) {
                     $descriptions[] = sprintf(
-                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada, com vencimentos de %s a %s',
+                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
                         $group['count'],
                         $valFormatted,
-                        $valInWords,
-                        $group['start_date'],
-                        $group['end_date']
+                        $valInWords
                     );
                 } else {
                     $labelRange = $group['count'] > 1
@@ -497,7 +495,10 @@ class ContractController extends Controller
             }
         }
 
-        $text .= ', até a quitação do produto.';
+        $text .= sprintf(
+            ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
+            $dynamicDueDay
+        );
 
         return $text;
     }
