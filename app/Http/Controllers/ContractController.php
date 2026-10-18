@@ -387,29 +387,32 @@ class ContractController extends Controller
             $p = $parcelsArray->first();
             $val = (float) (is_array($p) ? $p['value'] : $p->value);
             $dateRaw = is_array($p) ? $p['date'] : $p->date;
+            $numberLabel = is_array($p) ? ($p['number'] ?? 'parcela única') : ($p->number ?? 'parcela única');
             $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : now()->format('d/m/Y');
 
             $valFormatted = number_format($val, 2, ',', '.');
             $valInWords = $this->currencyInWords($val);
 
             $text .= sprintf(
-                'parcela única perfazendo o valor de R$ %s (%s), com vencimento em %s',
+                'a parcela %s no valor de R$ %s (%s), com vencimento em %s',
+                $numberLabel,
                 $valFormatted,
                 $valInWords,
                 $dateFormatted
             );
         } else {
-            // Agrupamento de parcelas com o mesmo valor e formatação sequencial
+            // Agrupa parcelas consecutivas com o mesmo valor para evitar repetição
             $groups = [];
             $currentGroup = null;
 
             foreach ($parcelsArray as $index => $parcel) {
                 $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
                 $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
-                $numberLabel = is_array($parcel) ? $parcel['number'] : ($index + 1 . 'ª');
+                $numberLabel = is_array($parcel) ? ($parcel['number'] ?? ($index + 1)) : ($parcel->number ?? ($index + 1));
 
                 $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
 
+                // Verifica se o valor é o mesmo para agrupar
                 if ($currentGroup && abs($currentGroup['val'] - $val) < 0.01) {
                     $currentGroup['end_label'] = $numberLabel;
                     $currentGroup['end_date'] = $dateFormatted;
@@ -437,10 +440,10 @@ class ContractController extends Controller
                 $valFormatted = number_format($group['val'], 2, ',', '.');
                 $valInWords = $this->currencyInWords($group['val']);
 
+                // Se houver mais de 1 parcela seguida com o mesmo valor, resume o bloco mantendo o padrão limpo
                 if ($group['count'] > 1) {
-                    // Se formam um bloco igual (ex: parcelas 2 a 20)
                     $descriptions[] = sprintf(
-                        'as parcelas de %s a %s, perfazendo cada uma o valor de R$ %s (%s), com vencimentos de %s a %s',
+                        'as parcelas de %s a %s perfazendo cada uma o valor de R$ %s (%s), com vencimentos de %s a %s',
                         $group['start_label'],
                         $group['end_label'],
                         $valFormatted,
@@ -449,11 +452,12 @@ class ContractController extends Controller
                         $group['end_date']
                     );
                 } else {
-                    // Parcela isolada (ex: uma entrada específica)
-                    if (str_contains($group['start_label'], '/') || str_contains(mb_strtolower($group['start_label']), 'ent')) {
+                    // Parcela única/isolada (como a 1/20 (Ent.)) usa a sua lógica original com "perfazendo" ou "no valor de"
+                    $numberLabel = $group['start_label'];
+                    if (str_contains($numberLabel, '/') || str_contains(mb_strtolower($numberLabel), 'ent')) {
                         $descriptions[] = sprintf(
                             'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                            $group['start_label'],
+                            $numberLabel,
                             $valFormatted,
                             $valInWords,
                             $group['start_date']
@@ -461,7 +465,7 @@ class ContractController extends Controller
                     } else {
                         $descriptions[] = sprintf(
                             'a parcela %s no valor de R$ %s (%s), com vencimento em %s',
-                            $group['start_label'],
+                            $numberLabel,
                             $valFormatted,
                             $valInWords,
                             $group['start_date']
