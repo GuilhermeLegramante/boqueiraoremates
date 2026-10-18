@@ -387,64 +387,113 @@ class ContractController extends Controller
             $p = $parcelsArray->first();
             $val = (float) (is_array($p) ? $p['value'] : $p->value);
             $dateRaw = is_array($p) ? $p['date'] : $p->date;
+            $numberLabel = is_array($p) ? ($p['number'] ?? '1') : ($p->number ?? '1');
             $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : now()->format('d/m/Y');
 
             $valFormatted = number_format($val, 2, ',', '.');
             $valInWords = $this->currencyInWords($val);
 
             $text .= sprintf(
-                'parcela única no valor de R$ %s (%s), com vencimento em %s',
+                'A parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                $numberLabel,
                 $valFormatted,
                 $valInWords,
                 $dateFormatted
             );
         } else {
+            // Separa a entrada (se houver, identificada por "Ent" ou similar) das demais parcelas
+            $firstParcel = $parcelsArray->first();
+            $firstLabel = is_array($firstParcel) ? ($firstParcel['number'] ?? '') : ($firstParcel->number ?? '');
+
             $descriptions = [];
+            $remainingParcels = $parcelsArray;
 
-            foreach ($parcelsArray as $index => $parcel) {
-                $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
-                $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
-                $numberLabel = is_array($parcel) ? $parcel['number'] : $parcel->number;
-
+            // Se a primeira parcela for uma entrada explícita
+            if (!empty($firstLabel) && (str_contains(mb_strtolower($firstLabel), 'ent') || str_contains($firstLabel, '1/') && $parcelsArray->count() > 1)) {
+                $val = (float) (is_array($firstParcel) ? $firstParcel['value'] : $firstParcel->value);
+                $dateRaw = is_array($firstParcel) ? $firstParcel['date'] : $firstParcel->date;
                 $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
                 $valFormatted = number_format($val, 2, ',', '.');
                 $valInWords = $this->currencyInWords($val);
 
-                // Restaura o termo "perfazendo" para dar clareza jurídica, especialmente em entradas ou grupos
-                if (!empty($numberLabel)) {
-                    // Se o número da parcela indica um grupo (ex: contem "/" ou "(Ent.)")
-                    if (str_contains($numberLabel, '/') || str_contains(mb_strtolower($numberLabel), 'ent')) {
-                        $descriptions[] = sprintf(
-                            'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                            $numberLabel,
-                            $valFormatted,
-                            $valInWords,
-                            $dateFormatted
-                        );
-                    } else {
-                        $descriptions[] = sprintf(
-                            'a parcela %s no valor de R$ %s (%s), com vencimento em %s',
-                            $numberLabel,
-                            $valFormatted,
-                            $valInWords,
-                            $dateFormatted
-                        );
-                    }
+                $descriptions[] = sprintf(
+                    'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                    $firstLabel,
+                    $valFormatted,
+                    $valInWords,
+                    $dateFormatted
+                );
+
+                // Remove a entrada do array para agrupar o restante
+                $remainingParcels = $parcelsArray->slice(1)->values();
+            }
+
+            // Agrupa o restante das parcelas consecutivas com o mesmo valor
+            $groups = [];
+            $currentGroup = null;
+
+            foreach ($remainingParcels as $index => $parcel) {
+                $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
+                $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
+                $numberLabel = is_array($parcel) ? ($parcel['number'] ?? ($index + 1)) : ($parcel->number ?? ($index + 1));
+                $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
+
+                if ($currentGroup && abs($currentGroup['val'] - $val) < 0.01) {
+                    $currentGroup['end_label'] = $numberLabel;
+                    $currentGroup['end_date'] = $dateFormatted;
+                    $currentGroup['count']++;
                 } else {
-                    $numSeq = $index + 1;
+                    if ($currentGroup) {
+                        $groups[] = $currentGroup;
+                    }
+                    $currentGroup = [
+                        'start_label' => $numberLabel,
+                        'end_label' => null,
+                        'val' => $val,
+                        'start_date' => $dateFormatted,
+                        'end_date' => $dateFormatted,
+                        'count' => 1
+                    ];
+                }
+            }
+            if ($currentGroup) {
+                $groups[] = $currentGroup;
+            }
+
+            foreach ($groups as $i => $group) {
+                $valFormatted = number_format($group['val'], 2, ',', '.');
+                $valInWords = $this->currencyInWords($group['val']);
+
+                // Se houver muitas parcelas iguais no final, usa o formato resumido ("e as demais X parcelas...")
+                if ($group['count'] >= 3 && $i === count($groups) - 1) {
                     $descriptions[] = sprintf(
-                        'a %º parcela no valor de R$ %s (%s), com vencimento em %s',
-                        $numSeq,
+                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
+                        $group['count'],
+                        $valFormatted,
+                        $valInWords
+                    );
+                } else {
+                    $labelRange = $group['count'] > 1
+                        ? 'as parcelas de ' . $group['start_label'] . ' a ' . $group['end_label']
+                        : 'a parcela ' . $group['start_label'];
+
+                    $descriptions[] = sprintf(
+                        '%s perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                        $labelRange,
                         $valFormatted,
                         $valInWords,
-                        $dateFormatted
+                        $group['start_date']
                     );
                 }
             }
 
             if (count($descriptions) > 1) {
                 $last = array_pop($descriptions);
-                $text .= implode(', ', $descriptions) . ' e ' . $last;
+                if (str_starts_with(trim($last), 'e as demais')) {
+                    $text .= implode(', ', $descriptions) . ' ' . $last;
+                } else {
+                    $text .= implode(', ', $descriptions) . ' e ' . $last;
+                }
             } else {
                 $text .= $descriptions[0];
             }
