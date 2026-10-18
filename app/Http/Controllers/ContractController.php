@@ -372,87 +372,111 @@ class ContractController extends Controller
             );
         }
 
-        $text = sprintf(
-            'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
-            $totalFormatted,
-            $totalInWordsMoney
-        );
-
         $parcelsArray = $parcels->values();
         $totalCount = $parcelsArray->count();
 
+        // Se for apenas 1 parcela
         if ($totalCount === 1) {
             $p = $parcelsArray->first();
             $val = (float) (is_array($p) ? $p['value'] : $p->value);
             $dateRaw = is_array($p) ? $p['date'] : $p->date;
             $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : now()->format('d/m/Y');
 
-            $valFormatted = number_format($val, 2, ',', '.');
-            $valInWords = $this->currencyInWords($val);
-
-            $text .= sprintf(
-                'parcela única no valor de R$ %s (%s), com vencimento em %s.',
-                $valFormatted,
-                $valInWords,
+            return sprintf(
+                'Valor total de R$ %s (%s), que serão pagos em parcela única perfazendo o valor de R$ %s (%s), com vencimento em %s.',
+                $totalFormatted,
+                $totalInWordsMoney,
+                number_format($val, 2, ',', '.'),
+                $this->currencyInWords($val),
                 $dateFormatted
             );
-        } else {
-            $descriptions = [];
+        }
 
-            foreach ($parcelsArray as $index => $parcel) {
-                $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
-                $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
-                $numberLabel = is_array($parcel) ? $parcel['number'] : $parcel->number;
+        // Verifica se todas as parcelas têm o mesmo valor para evitar repetição excessiva
+        $firstVal = (float) (is_array($parcelsArray[0]) ? $parcelsArray[0]['value'] : $parcelsArray[0]->value);
+        $allSameValue = true;
 
-                $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
-                $valFormatted = number_format($val, 2, ',', '.');
-                $valInWords = $this->currencyInWords($val);
-
-                if (!empty($numberLabel)) {
-                    if (str_contains($numberLabel, '/') || str_contains(mb_strtolower($numberLabel), 'ent')) {
-                        $descriptions[] = sprintf(
-                            'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                            $numberLabel,
-                            $valFormatted,
-                            $valInWords,
-                            $dateFormatted
-                        );
-                    } else {
-                        $descriptions[] = sprintf(
-                            'a parcela %s no valor de R$ %s (%s), com vencimento em %s',
-                            $numberLabel,
-                            $valFormatted,
-                            $valInWords,
-                            $dateFormatted
-                        );
-                    }
-                } else {
-                    $numSeq = $index + 1;
-                    // Correção do erro de digitação do ordinal (%º para %dº)
-                    $descriptions[] = sprintf(
-                        'a %dº parcela no valor de R$ %s (%s), com vencimento em %s',
-                        $numSeq,
-                        $valFormatted,
-                        $valInWords,
-                        $dateFormatted
-                    );
-                }
-            }
-
-            if (count($descriptions) > 1) {
-                $last = array_pop($descriptions);
-                // Opcional: usar ponto e vírgula ou quebras para melhorar a leitura se for texto longo
-                $text .= implode(', ', $descriptions) . ' e ' . $last . '.';
-            } else {
-                $text .= $descriptions[0] . '.';
+        foreach ($parcelsArray as $parcel) {
+            $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
+            if (abs($val - $firstVal) > 0.01) {
+                $allSameValue = false;
+                break;
             }
         }
 
-        // Removida a frase fixa de vencimento no dia X que gerava o conflito com as datas individuais.
-        // Adicionado fechamento padrão para quitação.
-        $text .= ' Até a quitação integral do produto.';
+        $firstDateRaw = is_array($parcelsArray[0]) ? $parcelsArray[0]['date'] : $parcelsArray[0]->date;
+        $lastDateRaw = is_array($parcelsArray[$totalCount - 1]) ? $parcelsArray[$totalCount - 1]['date'] : $parcelsArray[$totalCount - 1]->date;
 
-        return $text;
+        $firstDateFormatted = $firstDateRaw ? Carbon::parse($firstDateRaw)->format('d/m/Y') : '';
+        $lastDateFormatted = $lastDateRaw ? Carbon::parse($lastDateRaw)->format('d/m/Y') : '';
+        $valFormatted = number_format($firstVal, 2, ',', '.');
+        $valInWords = $this->currencyInWords($firstVal);
+
+        // Se todas as parcelas tiverem o mesmo valor, resume mantendo o padrão jurídico elegante
+        if ($allSameValue) {
+            return sprintf(
+                'Valor total de R$ %s (%s), que serão pagos em %d parcelas iguais e sucessivas, perfazendo cada uma o valor de R$ %s (%s), sendo a primeira com vencimento em %s e a última em %s, até a quitação do produto.',
+                $totalFormatted,
+                $totalInWordsMoney,
+                $totalCount,
+                $valFormatted,
+                $valInWords,
+                $firstDateFormatted,
+                $lastDateFormatted
+            );
+        }
+
+        // Fallback: se houver valores diferentes (ex: entrada com valor distinto), mantém a listagem detalhada com "perfazendo"
+        $descriptions = [];
+
+        foreach ($parcelsArray as $index => $parcel) {
+            $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
+            $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
+            $numberLabel = is_array($parcel) ? $parcel['number'] : $parcel->number;
+
+            $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
+            $fVal = number_format($val, 2, ',', '.');
+            $fWords = $this->currencyInWords($val);
+
+            if (!empty($numberLabel)) {
+                if (str_contains($numberLabel, '/') || str_contains(mb_strtolower($numberLabel), 'ent')) {
+                    $descriptions[] = sprintf(
+                        'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                        $numberLabel,
+                        $fVal,
+                        $fWords,
+                        $dateFormatted
+                    );
+                } else {
+                    $descriptions[] = sprintf(
+                        'a parcela %s no valor de R$ %s (%s), com vencimento em %s',
+                        $numberLabel,
+                        $fVal,
+                        $fWords,
+                        $dateFormatted
+                    );
+                }
+            } else {
+                $numSeq = $index + 1;
+                $descriptions[] = sprintf(
+                    'a %dº parcela perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                    $numSeq,
+                    $fVal,
+                    $fWords,
+                    $dateFormatted
+                );
+            }
+        }
+
+        $last = array_pop($descriptions);
+        $parcelListText = implode(', ', $descriptions) . ' e ' . $last;
+
+        return sprintf(
+            'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: %s, até a quitação do produto.',
+            $totalFormatted,
+            $totalInWordsMoney,
+            $parcelListText
+        );
     }
 
     /**
