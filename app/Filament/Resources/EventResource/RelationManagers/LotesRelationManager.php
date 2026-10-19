@@ -192,9 +192,9 @@ class LotesRelationManager extends RelationManager
 
                 FileUpload::make('photo')->columnSpanFull()->label('Foto (Miniatura)')->image()->directory('animals/photos')->nullable(),
                 FileUpload::make('photo_full')->columnSpanFull()->label('Foto (Grande)')->image()->directory('animals/photos_full')->nullable(),
-                
+
                 RichEditor::make('note')->columnSpanFull()->label('Comentário')->nullable(),
-                
+
                 TextInput::make('video_link')->columnSpanFull()->label('Link do Vídeo')->url()->nullable(),
 
                 Toggle::make('visible')
@@ -437,7 +437,7 @@ class LotesRelationManager extends RelationManager
 
     public function updated($property, $value)
     {
-        // Processa apenas o upload do PDF da 5ª Geração (Model Animal)
+        // 1. Trata uploads diretos na tabela (ex: mountedTableActionsData ou propriedades diretas)
         if (str_starts_with($property, 'mountedTableActionsData.')) {
             $parts = explode('.', $property);
 
@@ -445,19 +445,37 @@ class LotesRelationManager extends RelationManager
                 $recordId = $parts[1];
                 $fieldName = $parts[2];
 
-                if ($fieldName === 'file_fifth_generation' && $value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
-                    $record = $this->getOwnerRecord()->lotes()->find($recordId);
+                $record = $this->getOwnerRecord()->lotes()->find($recordId);
 
-                    if ($record && $record->animal) {
-                        $path = $value->store('animals/pdf_fifth_generation', 'public');
+                if ($record) {
+                    // Se for o PDF da 5ª geração (pertencente ao Model Animal relacional)
+                    if ($fieldName === 'file_fifth_generation' && $value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                        if ($record->animal) {
+                            $path = $value->store('animals/pdf_fifth_generation', 'public');
+                            $record->animal->update([
+                                'file_fifth_generation' => $path,
+                            ]);
 
-                        $record->animal->update([
-                            'file_fifth_generation' => $path,
+                            $this->dispatch('notify', [
+                                'status' => 'success',
+                                'message' => 'PDF da 5ª geração do animal atualizado!',
+                            ]);
+                        }
+                    }
+
+                    // 🔹 Se for um dos campos de foto da tabela pivot (photo ou photo_full)
+                    if (in_array($fieldName, ['photo', 'photo_full']) && $value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                        $directory = $fieldName === 'photo' ? 'animals/photos' : 'animals/photos_full';
+                        $path = $value->store($directory, 'public');
+
+                        // Atualiza diretamente o registro na tabela intermediária/pivot (animal_event)
+                        $record->update([
+                            $fieldName => $path,
                         ]);
 
                         $this->dispatch('notify', [
                             'status' => 'success',
-                            'message' => 'PDF da 5ª geração do animal atualizado!',
+                            'message' => 'Imagem atualizada com sucesso!',
                         ]);
                     }
                 }
