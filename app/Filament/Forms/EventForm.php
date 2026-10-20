@@ -232,17 +232,17 @@ class EventForm
                                         return;
                                     }
 
-                                    $importedData = $sourceEvent->clauses->map(fn($clause) => [
-                                        'title' => $clause->title,
-                                        'content' => $clause->content,
-                                        'order' => $clause->order,
-                                    ])->toArray();
+                                    // Mapeia os dados gerando uma chave única (UUID) para cada item do repeater
+                                    $importedData = [];
+                                    foreach ($sourceEvent->clauses as $clause) {
+                                        $importedData[(string) \Illuminate\Support\Str::uuid()] = [
+                                            'title' => $clause->title,
+                                            'content' => $clause->content,
+                                            'order' => $clause->order,
+                                        ];
+                                    }
 
-                                    // Limpa o estado atual e injeta os novos dados forçando a atualização do componente
-                                    $set($component->getStatePath(), []);
-
-                                    // Pequeno atraso ou reatribuição direta para o Repeater recriar os itens visuais
-                                    $component->state($importedData);
+                                    // Define o estado com as chaves customizadas limpando os registros fantasmas
                                     $set($component->getStatePath(), $importedData);
                                 })
                         )
@@ -314,16 +314,17 @@ class EventForm
                                         return;
                                     }
 
-                                    $importedData = $sourceEvent->regulationClauses->map(fn($clause) => [
-                                        'title' => $clause->title,
-                                        'content' => $clause->content,
-                                        'order' => $clause->order,
-                                    ])->toArray();
+                                    // Mapeia os dados gerando uma chave única (UUID) para cada item do repeater
+                                    $importedData = [];
+                                    foreach ($sourceEvent->regulationClauses as $clause) {
+                                        $importedData[(string) \Illuminate\Support\Str::uuid()] = [
+                                            'title' => $clause->title,
+                                            'content' => $clause->content,
+                                            'order' => $clause->order,
+                                        ];
+                                    }
 
-                                    // Limpa o estado atual e injeta os novos dados forçando a atualização do componente
-                                    $set($component->getStatePath(), []);
-
-                                    $component->state($importedData);
+                                    // Define o estado com as chaves customizadas limpando os registros fantasmas
                                     $set($component->getStatePath(), $importedData);
                                 })
                         )
