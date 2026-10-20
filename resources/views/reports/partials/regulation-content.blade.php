@@ -228,11 +228,37 @@
     <div class="signature-block">
         <div class="signature-line-item">{{ $buyerObj->name ?? 'COMPRADOR' }}</div>
         <div class="signature-role">COMPRADOR</div>
+
+        @if (!empty($buyerObj->representative_name))
+            <div style="margin-top: 8px; font-size: 8.5px; color: #333;">
+                <span class="label">Rep. Legal:</span>
+                {{ mb_strtoupper($buyerObj->representative_name, 'UTF-8') }}
+                @if (!empty($buyerObj->representative_role))
+                    ({{ mb_strtoupper($buyerObj->representative_role, 'UTF-8') }})
+                @endif
+                @if (!empty($buyerObj->representative_document))
+                    <br><span class="label">CPF/CNPJ:</span> {{ $buyerObj->representative_document }}
+                @endif
+            </div>
+        @endif
     </div>
 
     <div class="signature-block">
         <div class="signature-line-item">{{ $sellerObj->name ?? 'VENDEDOR' }}</div>
         <div class="signature-role">VENDEDOR</div>
+
+        @if (!empty($sellerObj->representative_name))
+            <div style="margin-top: 8px; font-size: 8.5px; color: #333;">
+                <span class="label">Rep. Legal:</span>
+                {{ mb_strtoupper($sellerObj->representative_name, 'UTF-8') }}
+                @if (!empty($sellerObj->representative_role))
+                    ({{ mb_strtoupper($sellerObj->representative_role, 'UTF-8') }})
+                @endif
+                @if (!empty($sellerObj->representative_document))
+                    <br><span class="label">CPF/CNPJ:</span> {{ $sellerObj->representative_document }}
+                @endif
+            </div>
+        @endif
     </div>
 
     <div class="signature-block">
