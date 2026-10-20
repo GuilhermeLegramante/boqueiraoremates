@@ -232,17 +232,17 @@ class EventForm
                                         return;
                                     }
 
-                                    // Mapeia os dados gerando uma chave única (UUID) para cada item do repeater
-                                    $importedData = [];
-                                    foreach ($sourceEvent->clauses as $clause) {
-                                        $importedData[(string) \Illuminate\Support\Str::uuid()] = [
-                                            'title' => $clause->title,
-                                            'content' => $clause->content,
-                                            'order' => $clause->order,
-                                        ];
-                                    }
+                                    $importedData = $sourceEvent->clauses->map(fn($clause) => [
+                                        'title' => $clause->title,
+                                        'content' => $clause->content,
+                                        'order' => $clause->order,
+                                    ])->values()->toArray();
 
-                                    // Define o estado com as chaves customizadas limpando os registros fantasmas
+                                    // Reseta o estado e define os novos dados importados
+                                    $set($component->getStatePath(), []);
+
+                                    // Pequeno truque para injetar os dados preservando o mapeamento correto do Repeater
+                                    $component->state($importedData);
                                     $set($component->getStatePath(), $importedData);
                                 })
                         )
