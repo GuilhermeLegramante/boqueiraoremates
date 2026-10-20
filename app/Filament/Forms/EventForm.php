@@ -238,7 +238,11 @@ class EventForm
                                         'order' => $clause->order,
                                     ])->toArray();
 
-                                    // Atualiza o estado do repeater usando o $set com o state path do componente
+                                    // Limpa o estado atual e injeta os novos dados forçando a atualização do componente
+                                    $set($component->getStatePath(), []);
+
+                                    // Pequeno atraso ou reatribuição direta para o Repeater recriar os itens visuais
+                                    $component->state($importedData);
                                     $set($component->getStatePath(), $importedData);
                                 })
                         )
@@ -316,7 +320,10 @@ class EventForm
                                         'order' => $clause->order,
                                     ])->toArray();
 
-                                    // Atualiza o estado do repeater usando o $set com o state path do componente
+                                    // Limpa o estado atual e injeta os novos dados forçando a atualização do componente
+                                    $set($component->getStatePath(), []);
+
+                                    $component->state($importedData);
                                     $set($component->getStatePath(), $importedData);
                                 })
                         )
