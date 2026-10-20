@@ -15,6 +15,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Set;
 
 class EventForm
 {
@@ -224,7 +225,7 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component): void {
+                                ->action(function (array $data, Repeater $component, Set $set): void {
                                     $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
@@ -237,7 +238,8 @@ class EventForm
                                         'order' => $clause->order,
                                     ])->toArray();
 
-                                    $component->state($importedData);
+                                    // Atualiza o estado do repeater usando o $set com o state path do componente
+                                    $set($component->getStatePath(), $importedData);
                                 })
                         )
                         ->orderColumn('order')
@@ -301,7 +303,7 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component): void {
+                                ->action(function (array $data, Repeater $component, Set $set): void {
                                     $sourceEvent = Event::with('regulationClauses')->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->regulationClauses->isEmpty()) {
@@ -314,7 +316,8 @@ class EventForm
                                         'order' => $clause->order,
                                     ])->toArray();
 
-                                    $component->state($importedData);
+                                    // Atualiza o estado do repeater usando o $set com o state path do componente
+                                    $set($component->getStatePath(), $importedData);
                                 })
                         )
                         ->orderColumn('order')
