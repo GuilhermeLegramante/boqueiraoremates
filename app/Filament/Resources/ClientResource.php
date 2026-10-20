@@ -149,6 +149,30 @@ class ClientResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
 
+                TextColumn::make('whatsapp')
+                    ->label('Whatsapp')
+                    ->searchable()
+                    ->copyable()
+                    ->color(fn($record) => self::getColor($record))
+                    ->toggleable(isToggledHiddenByDefault: false),
+
+                TextColumn::make('address.city')
+                    ->label('Cidade')
+                    ->formatStateUsing(function ($record) {
+                        $city = $record->address->city ?? null;
+                        $state = $record->address->state ?? null;
+
+                        if ($city && $state) {
+                            return "{$city} - {$state}";
+                        }
+
+                        return $city ?? $state ?? '-';
+                    })
+                    ->searchable(['address.city', 'address.state']) // Opcional: permite buscar tanto pela cidade quanto pelo estado
+                    ->copyable()
+                    ->color(fn($record) => self::getColor($record))
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 TextColumn::make('email')
                     ->label(__('fields.email'))
                     ->copyable()
@@ -198,7 +222,7 @@ class ClientResource extends Resource
                             default => '-',
                         }
                     )
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color(fn(?string $state): string => match ($state) {
                         'purchase' => 'primary',
                         'sale' => 'gray',
@@ -206,12 +230,6 @@ class ClientResource extends Resource
                         'marketing' => 'warning',
                         default => 'gray',
                     }),
-
-                TextColumn::make('whatsapp')
-                    ->label('Whatsapp')
-                    ->searchable()
-                    ->color(fn($record) => self::getColor($record))
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 TextColumn::make('cel_phone')
                     ->label('Celular')
@@ -234,13 +252,6 @@ class ClientResource extends Resource
                     ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: true),
 
-                TextColumn::make('address.city')
-                    ->label('Cidade')
-                    ->searchable()
-                    ->copyable()
-                    ->color(fn($record) => self::getColor($record))
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 TextColumn::make('birth_date')
                     ->label('Data de Nascimento')
                     ->date('d/m/Y')
@@ -255,12 +266,13 @@ class ClientResource extends Resource
                     ->falseIcon('heroicon-o-home')       // Ícone de casa para nacional (opcional)
                     ->trueColor('info')                  // Cor azul para internacional
                     ->falseColor('gray')                 // Cor cinza para nacional
-                    ->toggleable(isToggledHiddenByDefault: false), // Permite ocultar/exibir nas opções da tabela
+                    ->toggleable(isToggledHiddenByDefault: true), // Permite ocultar/exibir nas opções da tabela
 
                 TextColumn::make('created_at')
                     ->label('Dta Inclusão')
                     ->date('d/m/Y')
                     ->color(fn($record) => self::getColor($record))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
 
                 TextColumn::make('updated_at')
