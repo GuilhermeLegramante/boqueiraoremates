@@ -232,17 +232,18 @@ class EventForm
                                         return;
                                     }
 
-                                    $importedData = $sourceEvent->clauses->map(fn($clause) => [
-                                        'title' => $clause->title,
+                                    $importedData = $sourceEvent->clauses->map(fn($clause, $index) => [
+                                        // Se a sua tabela possuir um campo ID ou chave primária controlada, 
+                                        // o ideal é não passar 'id' para que o Filament trate como novos registros a serem criados,
+                                        // ou passar um array limpo apenas com os campos preenchidos:
                                         'content' => $clause->content,
-                                        'order' => $clause->order,
+                                        'order' => $clause->order ?? $index,
                                     ])->values()->toArray();
 
-                                    // Reseta o estado e define os novos dados importados
-                                    $set($component->getStatePath(), []);
+                                    // Limpa o estado atual completamente usando null antes de atribuir
+                                    $set($component->getStatePath(), null);
 
-                                    // Pequeno truque para injetar os dados preservando o mapeamento correto do Repeater
-                                    $component->state($importedData);
+                                    // Força o novo estado limpo para o componente
                                     $set($component->getStatePath(), $importedData);
                                 })
                         )
