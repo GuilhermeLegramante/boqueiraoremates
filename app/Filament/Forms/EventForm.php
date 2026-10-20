@@ -237,9 +237,7 @@ class EventForm
                                         'order' => $clause->order,
                                     ])->toArray();
 
-                                    // Define explicitamente o estado substituindo os anteriores
-                                    $component->getStatePath();
-                                    data_set($component->getLivewire(), $component->getStatePath(), $importedData);
+                                    $component->state($importedData);
                                 })
                         )
                         ->orderColumn('order')
@@ -316,8 +314,7 @@ class EventForm
                                         'order' => $clause->order,
                                     ])->toArray();
 
-                                    // Define explicitamente o estado substituindo os anteriores
-                                    data_set($component->getLivewire(), $component->getStatePath(), $importedData);
+                                    $component->state($importedData);
                                 })
                         )
                         ->orderColumn('order')
