@@ -15,6 +15,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Set;
 use Illuminate\Support\Str;
 
 class EventForm
@@ -225,7 +226,7 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component): void {
+                                ->action(function (array $data, Set $set, Repeater $component): void {
                                     $sourceEvent = Event::with('clauses')
                                         ->find($data['source_event_id']);
 
@@ -234,20 +235,13 @@ class EventForm
                                     }
 
                                     $importedData = $sourceEvent->clauses
-                                        ->mapWithKeys(fn($clause) => [
-                                            (string) Str::uuid() => [
-                                                'content' => $clause->content,
-                                            ],
+                                        ->map(fn($clause) => [
+                                            'content' => $clause->content,
                                         ])
+                                        ->values()
                                         ->toArray();
 
-                                    $component->state($importedData);
-
-                                    dd([
-                                        'state_path' => $component->getStatePath(),
-                                        'current_state' => $component->getState(),
-                                        'items_count' => count($component->getState() ?? []),
-                                    ]);
+                                    $set('clauses', $importedData);
                                 })
                         )
                         ->orderColumn('order')
