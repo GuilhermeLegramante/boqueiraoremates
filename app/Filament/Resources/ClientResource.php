@@ -202,7 +202,7 @@ class ClientResource extends Resource
                     ->formatStateUsing(
                         fn(string $state): string => (($state == 'marketing' ? 'ADM/VENDAS' : ($state == 'local' ? 'RECINTO' : 'SITE')))
                     )
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->color(fn(string $state): string => match ($state) {
                         'marketing' => 'info',
                         'local' => 'gray',
