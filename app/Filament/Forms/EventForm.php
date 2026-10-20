@@ -16,6 +16,7 @@ use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 use Illuminate\Support\Str;
+
 class EventForm
 {
     public static function form($operation = ''): array
@@ -241,6 +242,12 @@ class EventForm
                                         ->toArray();
 
                                     $component->state($importedData);
+
+                                    dd([
+                                        'state_path' => $component->getStatePath(),
+                                        'current_state' => $component->getState(),
+                                        'items_count' => count($component->getState() ?? []),
+                                    ]);
                                 })
                         )
                         ->orderColumn('order')
