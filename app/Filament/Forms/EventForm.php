@@ -15,7 +15,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
-
+use Illuminate\Support\Str;
 class EventForm
 {
     public static function form($operation = ''): array
@@ -233,15 +233,12 @@ class EventForm
                                     }
 
                                     $importedData = $sourceEvent->clauses
-                                        ->map(fn($clause) => [
-                                            'title' => $clause->title,
-                                            'content' => $clause->content,
-                                            'order' => $clause->order,
+                                        ->mapWithKeys(fn($clause) => [
+                                            (string) Str::uuid() => [
+                                                'content' => $clause->content,
+                                            ],
                                         ])
                                         ->toArray();
-
-                                    // Substitui integralmente os itens do Repeater.
-                                    $component->state([]);
 
                                     $component->state($importedData);
                                 })
