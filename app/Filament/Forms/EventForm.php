@@ -15,7 +15,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Set;
 
 class EventForm
 {
@@ -225,26 +224,20 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component, Set $set): void {
+                                ->action(function (array $data, Repeater $component): void {
                                     $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
                                         return;
                                     }
 
-                                    $importedData = $sourceEvent->clauses->map(fn($clause, $index) => [
-                                        // Se a sua tabela possuir um campo ID ou chave primária controlada, 
-                                        // o ideal é não passar 'id' para que o Filament trate como novos registros a serem criados,
-                                        // ou passar um array limpo apenas com os campos preenchidos:
+                                    $importedData = $sourceEvent->clauses->map(fn($clause) => [
+                                        'title' => $clause->title,
                                         'content' => $clause->content,
-                                        'order' => $clause->order ?? $index,
-                                    ])->values()->toArray();
+                                        'order' => $clause->order,
+                                    ])->toArray();
 
-                                    // Limpa o estado atual completamente usando null antes de atribuir
-                                    $set($component->getStatePath(), null);
-
-                                    // Força o novo estado limpo para o componente
-                                    $set($component->getStatePath(), $importedData);
+                                    $component->state($importedData);
                                 })
                         )
                         ->orderColumn('order')
@@ -308,25 +301,20 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component, Set $set): void {
+                                ->action(function (array $data, Repeater $component): void {
                                     $sourceEvent = Event::with('regulationClauses')->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->regulationClauses->isEmpty()) {
                                         return;
                                     }
 
-                                    // Mapeia os dados gerando uma chave única (UUID) para cada item do repeater
-                                    $importedData = [];
-                                    foreach ($sourceEvent->regulationClauses as $clause) {
-                                        $importedData[(string) \Illuminate\Support\Str::uuid()] = [
-                                            'title' => $clause->title,
-                                            'content' => $clause->content,
-                                            'order' => $clause->order,
-                                        ];
-                                    }
+                                    $importedData = $sourceEvent->regulationClauses->map(fn($clause) => [
+                                        'title' => $clause->title,
+                                        'content' => $clause->content,
+                                        'order' => $clause->order,
+                                    ])->toArray();
 
-                                    // Define o estado com as chaves customizadas limpando os registros fantasmas
-                                    $set($component->getStatePath(), $importedData);
+                                    $component->state($importedData);
                                 })
                         )
                         ->orderColumn('order')
