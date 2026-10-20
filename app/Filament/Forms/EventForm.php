@@ -226,25 +226,22 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component, Set $set, $record): void {
-                                    $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
+                                ->action(function (array $data, Set $set, Repeater $component): void {
+                                    $sourceEvent = Event::with('clauses')
+                                        ->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
                                         return;
                                     }
 
-                                    // Se estivermos editando um registro existente ($record), apaga as cláusulas antigas no banco de dados
-                                    if ($record) {
-                                        $record->clauses()->delete();
-                                    }
+                                    $importedData = $sourceEvent->clauses
+                                        ->map(fn($clause) => [
+                                            'content' => $clause->content,
+                                        ])
+                                        ->values()
+                                        ->toArray();
 
-                                    $importedData = $sourceEvent->clauses->map(fn($clause, $index) => [
-                                        'content' => $clause->content,
-                                        'order' => $clause->order ?? $index,
-                                    ])->values()->toArray();
-
-                                    // Atualiza o estado limpo
-                                    $set($component->getStatePath(), $importedData);
+                                    $set('clauses', $importedData);
                                 })
                         )
                         ->orderColumn('order')
@@ -308,25 +305,20 @@ class EventForm
                                         ->searchable()
                                         ->required(),
                                 ])
-                                ->action(function (array $data, Repeater $component, Set $set, $record): void {
+                                ->action(function (array $data, Repeater $component): void {
                                     $sourceEvent = Event::with('regulationClauses')->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->regulationClauses->isEmpty()) {
                                         return;
                                     }
 
-                                    // Se estivermos editando um registro existente ($record), apaga as cláusulas antigas no banco de dados
-                                    if ($record) {
-                                        $record->regulationClauses()->delete();
-                                    }
-
-                                    $importedData = $sourceEvent->regulationClauses->map(fn($clause, $index) => [
+                                    $importedData = $sourceEvent->regulationClauses->map(fn($clause) => [
+                                        'title' => $clause->title,
                                         'content' => $clause->content,
-                                        'order' => $clause->order ?? $index,
-                                    ])->values()->toArray();
+                                        'order' => $clause->order,
+                                    ])->toArray();
 
-                                    // Atualiza o estado limpo
-                                    $set($component->getStatePath(), $importedData);
+                                    $component->state($importedData);
                                 })
                         )
                         ->orderColumn('order')
