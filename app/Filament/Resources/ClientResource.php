@@ -168,7 +168,6 @@ class ClientResource extends Resource
 
                         return $city ?? $state ?? '-';
                     })
-                    ->searchable(['address.city', 'address.state']) // Opcional: permite buscar tanto pela cidade quanto pelo estado
                     ->copyable()
                     ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: false),
