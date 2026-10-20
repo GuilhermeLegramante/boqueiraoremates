@@ -225,17 +225,23 @@ class EventForm
                                         ->required(),
                                 ])
                                 ->action(function (array $data, Repeater $component): void {
-                                    $sourceEvent = Event::with('clauses')->find($data['source_event_id']);
+                                    $sourceEvent = Event::with('clauses')
+                                        ->find($data['source_event_id']);
 
                                     if (! $sourceEvent || $sourceEvent->clauses->isEmpty()) {
                                         return;
                                     }
 
-                                    $importedData = $sourceEvent->clauses->map(fn($clause) => [
-                                        'title' => $clause->title,
-                                        'content' => $clause->content,
-                                        'order' => $clause->order,
-                                    ])->toArray();
+                                    $importedData = $sourceEvent->clauses
+                                        ->map(fn($clause) => [
+                                            'title' => $clause->title,
+                                            'content' => $clause->content,
+                                            'order' => $clause->order,
+                                        ])
+                                        ->toArray();
+
+                                    // Substitui integralmente os itens do Repeater.
+                                    $component->state([]);
 
                                     $component->state($importedData);
                                 })
