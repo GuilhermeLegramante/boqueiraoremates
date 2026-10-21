@@ -158,7 +158,6 @@
             text-align: justify;
             font-size: 9.5px;
             line-height: 1.4;
-            margin: 0 0 4px 0;
             margin-bottom: 0px;
         }
 
