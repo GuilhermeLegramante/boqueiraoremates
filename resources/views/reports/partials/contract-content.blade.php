@@ -280,8 +280,6 @@
         {{ $paymentText ?? '' }}
     </p>
 
-
-
     @forelse ($event->clauses as $clause)
         @if ($clause->title)
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
