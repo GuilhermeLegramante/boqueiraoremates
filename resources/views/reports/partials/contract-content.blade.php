@@ -289,7 +289,7 @@
         </div>
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
-        <p class="contract-text" style="margin-top: -5px; margin-bottom: 4px;">
+        <p class="contract-text" style="margin-top: -15px; margin-bottom: 4px;">
             Na hipótese de haver atraso no pagamento, de qualquer uma das parcelas do preço, constituirá o comprador
             em
             mora, independentemente de notificação, implicará no vencimento das demais antecipadamente, as quais
