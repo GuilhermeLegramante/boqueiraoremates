@@ -147,40 +147,14 @@ class ClientResource extends Resource
                     ->copyable()
                     ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        // Remove tudo que não for número do que o usuário digitou
-                        $cleanSearch = preg_replace('/\D/', '', $search);
-
-                        return $query->where(function (Builder $query) use ($search, $cleanSearch) {
-                            // 1. Busca normal (caso o banco salve com máscara e o usuário digite com máscara)
-                            $query->orWhere('cpf_cnpj', 'like', "%{$search}%");
-
-                            // 2. Busca sem máscara (remove caracteres especiais do banco para comparar com o número limpo)
-                            if (!empty($cleanSearch)) {
-                                $query->orWhereRaw("REGEXP_REPLACE(cpf_cnpj, '[^0-9]', '', 'g') LIKE ?", ["%{$cleanSearch}%"]);
-                            }
-                        });
-                    }),
+                    ->searchable(),
 
                 TextColumn::make('whatsapp')
                     ->label('Whatsapp')
+                    ->searchable()
                     ->copyable()
                     ->color(fn($record) => self::getColor($record))
-                    ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        // Remove tudo que não for número do que o usuário digitou
-                        $cleanSearch = preg_replace('/\D/', '', $search);
-
-                        return $query->where(function (Builder $query) use ($search, $cleanSearch) {
-                            // 1. Busca normal
-                            $query->orWhere('whatsapp', 'like', "%{$search}%");
-
-                            // 2. Busca sem máscara
-                            if (!empty($cleanSearch)) {
-                                $query->orWhereRaw("REGEXP_REPLACE(whatsapp, '[^0-9]', '', 'g') LIKE ?", ["%{$cleanSearch}%"]);
-                            }
-                        });
-                    }),
+                    ->toggleable(isToggledHiddenByDefault: false),
 
                 TextColumn::make('address.city')
                     ->label('Cidade')
