@@ -157,8 +157,9 @@
         .contract-text {
             text-align: justify;
             font-size: 9.5px;
-            line-height: 1.4;
-            margin-bottom: 0px;
+            margin-top: 0;
+            margin-bottom: 6px;
+            line-height: 1.25;
         }
 
         .payment-text {
