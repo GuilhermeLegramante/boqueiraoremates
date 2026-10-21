@@ -458,30 +458,40 @@ class ContractController extends Controller
             }
 
             foreach ($groups as $i => $group) {
-                // Calcula o valor total do grupo (valor unitário x quantidade de parcelas)
-                $groupTotalVal = $group['val'] * $group['count'];
-                $valFormatted = number_format($groupTotalVal, 2, ',', '.');
-                $valInWords = $this->currencyInWords($groupTotalVal);
+                $isGrouped = $group['count'] > 1;
+
+                // Se for grupo, multiplica pelo total de parcelas. Se for individual, usa o valor unitário.
+                $targetVal = $isGrouped ? ($group['val'] * $group['count']) : $group['val'];
+                $valFormatted = number_format($targetVal, 2, ',', '.');
+                $valInWords = $this->currencyInWords($targetVal);
 
                 if ($group['count'] >= 3 && $i === count($groups) - 1) {
+                    // Para o último bloco com 3 ou mais parcelas unitárias sozinhas (ex: "as demais 46 parcelas...")
+                    // Caso prefira que use o unitário ou o somatório, ajuste aqui. Mantido o unitário unit x count no texto se necessário, ou exibindo o "cada".
+                    $unitValFormatted = number_format($group['val'], 2, ',', '.');
+                    $unitValInWords = $this->currencyInWords($group['val']);
+
                     $descriptions[] = sprintf(
-                        'e as demais %d parcelas mensais e consecutivas no valor total de R$ %s (%s)',
+                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
                         $group['count'],
-                        $valFormatted,
-                        $valInWords
+                        $unitValFormatted,
+                        $unitValInWords
                     );
                 } else {
-                    $labelRange = $group['count'] > 1
+                    $labelRange = $isGrouped
                         ? 'as parcelas de ' . $group['start_label'] . ' a ' . $group['end_label']
                         : 'a parcela ' . $group['start_label'];
 
-                    // Se quiser exibir o vencimento inicial e final ou apenas o inicial, ajuste conforme sua regra. 
-                    // Mantive o start_date, mas agora o $valFormatted é a soma total daquele grupo.
+                    $textValDescription = $isGrouped ? 'perfazendo um valor total de' : 'perfazendo um valor de';
+                    $dateDescription = $isGrouped ? 'com vencimento inicial em' : 'com vencimento em';
+
                     $descriptions[] = sprintf(
-                        '%s perfazendo um valor total de R$ %s (%s), com vencimento inicial em %s',
+                        '%s %s R$ %s (%s), %s %s',
                         $labelRange,
+                        $textValDescription,
                         $valFormatted,
                         $valInWords,
+                        $dateDescription,
                         $group['start_date']
                     );
                 }
