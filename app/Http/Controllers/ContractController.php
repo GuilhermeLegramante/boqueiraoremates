@@ -458,12 +458,14 @@ class ContractController extends Controller
             }
 
             foreach ($groups as $i => $group) {
-                $valFormatted = number_format($group['val'], 2, ',', '.');
-                $valInWords = $this->currencyInWords($group['val']);
+                // Calcula o valor total do grupo (valor unitário x quantidade de parcelas)
+                $groupTotalVal = $group['val'] * $group['count'];
+                $valFormatted = number_format($groupTotalVal, 2, ',', '.');
+                $valInWords = $this->currencyInWords($groupTotalVal);
 
                 if ($group['count'] >= 3 && $i === count($groups) - 1) {
                     $descriptions[] = sprintf(
-                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
+                        'e as demais %d parcelas mensais e consecutivas no valor total de R$ %s (%s)',
                         $group['count'],
                         $valFormatted,
                         $valInWords
@@ -473,8 +475,10 @@ class ContractController extends Controller
                         ? 'as parcelas de ' . $group['start_label'] . ' a ' . $group['end_label']
                         : 'a parcela ' . $group['start_label'];
 
+                    // Se quiser exibir o vencimento inicial e final ou apenas o inicial, ajuste conforme sua regra. 
+                    // Mantive o start_date, mas agora o $valFormatted é a soma total daquele grupo.
                     $descriptions[] = sprintf(
-                        '%s perfazendo um valor de R$ %s (%s), com vencimento em %s',
+                        '%s perfazendo um valor total de R$ %s (%s), com vencimento inicial em %s',
                         $labelRange,
                         $valFormatted,
                         $valInWords,
