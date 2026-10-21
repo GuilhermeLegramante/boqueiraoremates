@@ -289,7 +289,7 @@
         </div>
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
-        <p class="contract-text" style="margin-bottom: 6px;">
+        <p class="contract-text" style="margin-top: 0; margin-bottom: 4px;">
             Na hipótese de haver atraso no pagamento, de qualquer uma das parcelas do preço, constituirá o comprador
             em
             mora, independentemente de notificação, implicará no vencimento das demais antecipadamente, as quais
@@ -304,13 +304,13 @@
             pendentes.
         </p>
 
-        <p class="contract-text">
+        <p class="contract-text" style="margin-top: 0; margin-bottom: 4px;">
             Consideramos o comprador e o vendedor como conhecendo e aceitando todos os termos do regulamento deste
             Remate/Leilão e o conteúdo nele existente tendo validade como documento e servindo para sanar futuras
             dúvidas.
         </p>
 
-        <p class="contract-text">
+        <p class="contract-text" style="margin-top: 0; margin-bottom: 4px;">
             Fica também ajustado que, nos termos do art. 190 do Código de Processo Civil, em caso de inadimplemento
             de
             qualquer das parcelas previstas neste contrato, poderá o vendedor, a seu exclusivo critério, ingressar
@@ -324,7 +324,7 @@
             interesses.
         </p>
 
-        <p class="contract-text">
+        <p class="contract-text" style="margin-top: 0; margin-bottom: 4px;">
             A transferência do(s) animal(is), ou cota(s) dele, será realizada junto à ABCCC logo após a quitação
             total
             do(s)
@@ -335,12 +335,12 @@
             total deste contrato.
         </p>
 
-        <p class="contract-text">
+        <p class="contract-text" style="margin-top: 0; margin-bottom: 4px;">
             Fica eleito o Foro da Comarca da cidade do vendedor para dirimir qualquer questão atinente ao presente
             contrato.
         </p>
 
-        <p class="contract-text">
+        <p class="contract-text" style="margin-top: 0; margin-bottom: 4px;">
             E por assim estarem justos e contratados, firma o presente instrumento em duas vias de igual teor e
             forma.
         </p>
