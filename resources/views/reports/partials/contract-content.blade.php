@@ -284,7 +284,7 @@
         @if ($clause->title)
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
         @endif
-        <div class="contract-text" style="text-align: justify; text-justify: inter-word;">
+        <div class="contract-text" style="text-align: justify; text-justify: inter-word; margin-top: -15px; margin-bottom: 4px;">
             {!! $clause->content !!}
         </div>
     @empty
