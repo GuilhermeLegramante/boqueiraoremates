@@ -266,6 +266,10 @@
         </tr>
     </table>
 
+    <p class="contract-text">
+        {{ $order->contract_note }}
+    </p>
+
     {{-- TEXTO --}}
     <p class="contract-text">
         Através do presente contrato, o comprador adquire o bem acima descrito, comprometendo-se a efetuar o pagamento
@@ -276,9 +280,7 @@
         {{ $paymentText ?? '' }}
     </p>
 
-    <p class="contract-text">
-        {{ $order->contract_note }}
-    </p>
+
 
     @forelse ($event->clauses as $clause)
         @if ($clause->title)
