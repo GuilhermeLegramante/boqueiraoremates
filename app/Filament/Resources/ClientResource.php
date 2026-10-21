@@ -147,14 +147,36 @@ class ClientResource extends Resource
                     ->copyable()
                     ->color(fn($record) => self::getColor($record))
                     ->toggleable(isToggledHiddenByDefault: false)
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        $cleanSearch = preg_replace('/\D/', '', $search);
+
+                        return $query->where(function (Builder $query) use ($search, $cleanSearch) {
+                            $query->orWhere('cpf_cnpj', 'like', "%{$search}%");
+
+                            if (!empty($cleanSearch)) {
+                                // Removido o 'g' do final da função do MySQL
+                                $query->orWhereRaw("REGEXP_REPLACE(cpf_cnpj, '[^0-9]', '') LIKE ?", ["%{$cleanSearch}%"]);
+                            }
+                        });
+                    }),
 
                 TextColumn::make('whatsapp')
                     ->label('Whatsapp')
-                    ->searchable()
                     ->copyable()
                     ->color(fn($record) => self::getColor($record))
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        $cleanSearch = preg_replace('/\D/', '', $search);
+
+                        return $query->where(function (Builder $query) use ($search, $cleanSearch) {
+                            $query->orWhere('whatsapp', 'like', "%{$search}%");
+
+                            if (!empty($cleanSearch)) {
+                                // Removido o 'g' do final da função do MySQL
+                                $query->orWhereRaw("REGEXP_REPLACE(whatsapp, '[^0-9]', '') LIKE ?", ["%{$cleanSearch}%"]);
+                            }
+                        });
+                    }),
 
                 TextColumn::make('address.city')
                     ->label('Cidade')
