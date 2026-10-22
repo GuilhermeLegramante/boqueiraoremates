@@ -683,6 +683,7 @@ class ContractController extends Controller
             'title' => $title,
         ];
 
+        dd($order->animalEvent);
         return ReportFactory::getBasicPdf('portrait', 'reports.promissory-note', $data, "{$filePrefix}{$order->number}.pdf");
     }
 
