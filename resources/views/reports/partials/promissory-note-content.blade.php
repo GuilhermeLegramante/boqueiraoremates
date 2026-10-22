@@ -96,8 +96,10 @@
 
     <table class="info-table">
         <tr>
-            <td style="width: 25%;"><span class="label">Nº Lote(s):</span>
-                {{ $order->animalEvent->lot_number ?? ($order->batch ?? '') }}</td>
+            <td style="width: 25%;">
+                <span class="label">Nº Lote(s):</span>
+                {{ $order->animalEvent?->lot_number ?? ($order->batch ?? '') }}
+            </td>
             <td style="width: 75%;" colspan="2"><span class="label">Nome(s):</span>
                 {{ $order->animalEvent->name ?? ($animal->name ?? '') }}</td>
         </tr>

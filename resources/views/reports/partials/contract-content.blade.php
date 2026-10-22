@@ -209,9 +209,9 @@
 
     <table class="data-table">
         <tr>
-            <td><span class="label">Lote:</span> {{ $order->animalEvent->lot_number ?? ($order->batch ?? '') }}</td>
+            <td><span class="label">Lote:</span> {{ $order->animalEvent?->lot_number ?? ($order->batch ?? '') }}</td>
             <td><span class="label">Raça:</span> {{ $animal->breed->name ?? '' }}</td>
-            <td><span class="label">Nome:</span> {{ $order->animalEvent->name ?? ($animal->name ?? '') }}</td>
+            <td><span class="label">Nome:</span> {{ $order->animalEvent?->name ?? ($animal->name ?? '') }}</td>
 
             @if ($isQuartoDeMilha)
                 <td><span class="label">Registro:</span> {{ $animal->register ?? '' }}</td>
