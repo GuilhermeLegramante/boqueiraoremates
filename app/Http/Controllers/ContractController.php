@@ -81,6 +81,47 @@ class ContractController extends Controller
         return $this->renderBillingPromissoryPdf($id, 'buyerParcels', 'buyer', 'NOTA PROMISSÓRIA - FATURAMENTO COMPRADOR', 'NOTA_PROMISSORIA_COMPRADOR_');
     }
 
+    /**
+     * Renderiza o PDF da Nota Promissória Padrão
+     */
+    private function renderPromissoryPdf($id, string $parcelKey, string $title, string $prefix)
+    {
+        set_time_limit(0);
+
+        $contract = Contract::with([
+            'order.event.clauses',
+            'order',
+            'order.event.regulationClauses',
+            'order.seller.address',
+            'order.buyer.address',
+            'order.animal.breed',
+            'order.animal.coat',
+            'order.paymentWay',
+            'order.parcels',
+            'order.sellerParcels',
+            'order.buyerParcels',
+        ])->findOrFail($id);
+
+        $data = !empty($contract->snapshot)
+            ? $this->prepareFromSnapshot($contract, 1)
+            : $this->prepareFromDatabase($contract, 1);
+
+        $resolvedParcelKey = ($parcelKey === 'promissory') ? 'parcels' : $parcelKey;
+
+        $data['promissoryTitle'] = $title;
+        $data['payer'] = $data['buyer'] ?? null;
+        $data['activeParcels'] = $data[$resolvedParcelKey] ?? collect();
+
+        $fileName = $prefix . $data['order']->number . '.pdf';
+
+        return ReportFactory::getBasicPdf(
+            'portrait',
+            'reports.promissory-note',
+            $data,
+            $fileName
+        );
+    }
+
     private function renderBillingPromissoryPdf($id, string $parcelKey, string $payerKey, string $title, string $prefix)
     {
         set_time_limit(0);

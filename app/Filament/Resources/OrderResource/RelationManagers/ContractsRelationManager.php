@@ -259,6 +259,7 @@ class ContractsRelationManager extends RelationManager
                 'id' => $order->id,
                 'number' => $order->number,
                 'base_date' => $order->base_date ? \Carbon\Carbon::parse($order->base_date)->format('Y-m-d') : null,
+                'batch' => $order->batch,
                 'gross_value' => $order->gross_value,
                 'net_value' => $order->net_value,
                 'discount_percentage' => $order->discount_percentage,
