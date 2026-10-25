@@ -402,7 +402,6 @@ class ContractController extends Controller
         float $firstParcelValue,
         ?Carbon $firstDueDate
     ): string {
-        dd($parcels);
         // Formata o valor total dinamicamente (ex: 32.500,00)
         $totalFormatted = number_format($netValue, 2, ',', '.');
 
