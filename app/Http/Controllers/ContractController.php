@@ -402,160 +402,23 @@ class ContractController extends Controller
         float $firstParcelValue,
         ?Carbon $firstDueDate
     ): string {
+        dd($parcels);
+        // Formata o valor total dinamicamente (ex: 32.500,00)
         $totalFormatted = number_format($netValue, 2, ',', '.');
+
+        // Converte o valor total para extenso (ex: trinta e dois mil e quinhentos reais)
         $totalInWordsMoney = $this->currencyInWords($netValue);
 
-        if ($parcels->isEmpty()) {
-            return sprintf(
-                'Valor total de R$ %s (%s), a ser pago conforme condições negociadas.',
-                $totalFormatted,
-                $totalInWordsMoney
-            );
-        }
+        // Obtém o número total de parcelas a partir da collection/array de parcelas
+        // ou do campo do pedido como fallback
+        $totalCount = $parcels ? $parcels->count() : (is_array($order) ? ($order['total_installments'] ?? 0) : ($order->total_installments ?? 0));
 
-        $parcelsArray = $parcels->values();
-        $totalCount = $parcelsArray->count();
-
-        // Pega o dia dinamicamente da primeira parcela (ou do pedido, como fallback)
-        $firstParcel = $parcelsArray->first();
-        $firstDateRaw = is_array($firstParcel) ? ($firstParcel['date'] ?? null) : ($firstParcel->date ?? null);
-        $dynamicDueDay = $firstDateRaw ? Carbon::parse($firstDateRaw)->day : (int) (is_array($order) ? ($order['due_day'] ?? 10) : ($order->due_day ?? 10));
-
-        $text = sprintf(
-            'Valor total de R$ %s (%s), que serão pagos da seguinte maneira: ',
+        return sprintf(
+            'Valor total de R$ %s (%s), que serão pagos da de forma parcelada, divididos em %d parcelas, obedecendo valores e vencimentos, descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e compõe o conjunto de documentos que formalizam essa negociação (venda).',
             $totalFormatted,
-            $totalInWordsMoney
+            $totalInWordsMoney,
+            $totalCount
         );
-
-        if ($totalCount === 1) {
-            $val = (float) (is_array($firstParcel) ? $firstParcel['value'] : $firstParcel->value);
-            $numberLabel = is_array($firstParcel) ? ($firstParcel['number'] ?? '1') : ($firstParcel->number ?? '1');
-            $dateFormatted = $firstDateRaw ? Carbon::parse($firstDateRaw)->format('d/m/Y') : now()->format('d/m/Y');
-
-            $valFormatted = number_format($val, 2, ',', '.');
-            $valInWords = $this->currencyInWords($val);
-
-            $text .= sprintf(
-                'A parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                $numberLabel,
-                $valFormatted,
-                $valInWords,
-                $dateFormatted
-            );
-        } else {
-            $firstLabel = is_array($firstParcel) ? ($firstParcel['number'] ?? '') : ($firstParcel->number ?? '');
-
-            $descriptions = [];
-            $remainingParcels = $parcelsArray;
-
-            // Trata a entrada separadamente se houver
-            if (!empty($firstLabel) && (str_contains(mb_strtolower($firstLabel), 'ent') || str_contains($firstLabel, '1/') && $parcelsArray->count() > 1)) {
-                $val = (float) (is_array($firstParcel) ? $firstParcel['value'] : $firstParcel->value);
-                $dateFormatted = $firstDateRaw ? Carbon::parse($firstDateRaw)->format('d/m/Y') : '';
-                $valFormatted = number_format($val, 2, ',', '.');
-                $valInWords = $this->currencyInWords($val);
-
-                $descriptions[] = sprintf(
-                    'a parcela %s perfazendo um valor de R$ %s (%s), com vencimento em %s',
-                    $firstLabel,
-                    $valFormatted,
-                    $valInWords,
-                    $dateFormatted
-                );
-
-                $remainingParcels = $parcelsArray->slice(1)->values();
-            }
-
-            // Agrupa o restante das parcelas consecutivas com o mesmo valor
-            $groups = [];
-            $currentGroup = null;
-
-            foreach ($remainingParcels as $index => $parcel) {
-                $val = (float) (is_array($parcel) ? $parcel['value'] : $parcel->value);
-                $dateRaw = is_array($parcel) ? $parcel['date'] : $parcel->date;
-                $numberLabel = is_array($parcel) ? ($parcel['number'] ?? ($index + 1)) : ($parcel->number ?? ($index + 1));
-                $dateFormatted = $dateRaw ? Carbon::parse($dateRaw)->format('d/m/Y') : '';
-
-                if ($currentGroup && abs($currentGroup['val'] - $val) < 0.01) {
-                    $currentGroup['end_label'] = $numberLabel;
-                    $currentGroup['end_date'] = $dateFormatted;
-                    $currentGroup['count']++;
-                } else {
-                    if ($currentGroup) {
-                        $groups[] = $currentGroup;
-                    }
-                    $currentGroup = [
-                        'start_label' => $numberLabel,
-                        'end_label' => null,
-                        'val' => $val,
-                        'start_date' => $dateFormatted,
-                        'end_date' => $dateFormatted,
-                        'count' => 1
-                    ];
-                }
-            }
-            if ($currentGroup) {
-                $groups[] = $currentGroup;
-            }
-
-            foreach ($groups as $i => $group) {
-                $isGrouped = $group['count'] > 1;
-
-                // Se for grupo, multiplica pelo total de parcelas. Se for individual, usa o valor unitário.
-                $targetVal = $isGrouped ? ($group['val'] * $group['count']) : $group['val'];
-                $valFormatted = number_format($targetVal, 2, ',', '.');
-                $valInWords = $this->currencyInWords($targetVal);
-
-                if ($group['count'] >= 3 && $i === count($groups) - 1) {
-                    // Para o último bloco com 3 ou mais parcelas unitárias sozinhas (ex: "as demais 46 parcelas...")
-                    // Caso prefira que use o unitário ou o somatório, ajuste aqui. Mantido o unitário unit x count no texto se necessário, ou exibindo o "cada".
-                    $unitValFormatted = number_format($group['val'], 2, ',', '.');
-                    $unitValInWords = $this->currencyInWords($group['val']);
-
-                    $descriptions[] = sprintf(
-                        'e as demais %d parcelas mensais e consecutivas no valor de R$ %s (%s) cada',
-                        $group['count'],
-                        $unitValFormatted,
-                        $unitValInWords
-                    );
-                } else {
-                    $labelRange = $isGrouped
-                        ? 'as parcelas de ' . $group['start_label'] . ' a ' . $group['end_label']
-                        : 'a parcela ' . $group['start_label'];
-
-                    $textValDescription = $isGrouped ? 'perfazendo um valor total de' : 'perfazendo um valor de';
-                    $dateDescription = $isGrouped ? 'com vencimento inicial em' : 'com vencimento em';
-
-                    $descriptions[] = sprintf(
-                        '%s %s R$ %s (%s), %s %s',
-                        $labelRange,
-                        $textValDescription,
-                        $valFormatted,
-                        $valInWords,
-                        $dateDescription,
-                        $group['start_date']
-                    );
-                }
-            }
-
-            if (count($descriptions) > 1) {
-                $last = array_pop($descriptions);
-                if (str_starts_with(trim($last), 'e as demais')) {
-                    $text .= implode(', ', $descriptions) . ' ' . $last;
-                } else {
-                    $text .= implode(', ', $descriptions) . ' e ' . $last;
-                }
-            } else {
-                $text .= $descriptions[0];
-            }
-        }
-
-        $text .= sprintf(
-            ', até a quitação do produto, sendo definida a data do dia %d de cada mês para o vencimento.',
-            $dynamicDueDay
-        );
-
-        return $text;
     }
 
     /**
