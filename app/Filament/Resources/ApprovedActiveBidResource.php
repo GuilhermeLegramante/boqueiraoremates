@@ -48,53 +48,6 @@ class ApprovedActiveBidResource extends Resource
                 'selectedStatusId' => session(self::$sessionPrefix . "selected_status_id"),
             ]))
 
-            ->headerActions([
-                Action::make('copiarDados')
-                    ->label('Copiar Dados Visíveis')
-                    ->icon('heroicon-o-clipboard')
-                    ->color('gray')
-                    ->action(function ($livewire) {
-                        // Esta ação acionará o código JavaScript abaixo via evento ou resposta direta
-                    })
-                    ->extraAttributes(function ($livewire) {
-                        // Script JS para extrair os dados da tabela na tela (ignorando o status) e copiar
-                        return [
-                            'wire:click' => 'prevent',
-                            'x-on:click' => "
-                            let rows = document.querySelectorAll('.fi-ta-table tbody tr');
-                            let textToCopy = '';
-                            
-                            rows.forEach(row => {
-                                let cols = row.querySelectorAll('td');
-                                let rowData = [];
-                                // Começa do índice 1 para ignorar a primeira coluna (status)
-                                for (let i = 1; i < cols.length; i++) {
-                                    let cellText = cols[i].innerText.trim();
-                                    if (cellText) rowData.push(cellText);
-                                }
-                                if (rowData.length > 0) {
-                                    textToCopy += rowData.join('\\t') + '\\n';
-                                }
-                            });
-
-                            if (textToCopy) {
-                                navigator.clipboard.writeText(textToCopy).then(() => {
-                                    new FilamentNotification()
-                                        .title('Dados copiados com sucesso!')
-                                        .success()
-                                        .send();
-                                });
-                            } else {
-                                new FilamentNotification()
-                                    .title('Nenhum dado encontrado para copiar.')
-                                    .warning()
-                                    .send();
-                            }
-                        ",
-                        ];
-                    }),
-            ])
-
             ->modifyQueryUsing(function (Builder $query) use ($table) {
                 $eventId  = session(self::$sessionPrefix . "selected_event_id");
                 $lotId    = session(self::$sessionPrefix . "selected_lot_id");
@@ -201,6 +154,36 @@ class ApprovedActiveBidResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+
+                    Tables\Actions\BulkAction::make('copiar')
+                        ->label('Copiar lances')
+                        ->icon('heroicon-o-document-duplicate')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Copiar lances selecionados')
+                        ->modalDescription(
+                            'Serão criadas cópias dos lances selecionados, mantendo os dados originais, exceto o status.'
+                        )
+                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            foreach ($records as $record) {
+                                $data = $record->getAttributes();
+
+                                unset(
+                                    $data['id'],
+                                    $data['status'],
+                                    $data['created_at'],
+                                    $data['updated_at']
+                                );
+
+                                Bid::create($data);
+                            }
+
+                            \Filament\Notifications\Notification::make()
+                                ->title('Lances copiados com sucesso!')
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
