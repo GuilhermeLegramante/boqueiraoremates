@@ -156,32 +156,48 @@ class ApprovedActiveBidResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
 
                     Tables\Actions\BulkAction::make('copiar')
-                        ->label('Copiar lances')
-                        ->icon('heroicon-o-document-duplicate')
+                        ->label('Copiar para planilha')
+                        ->icon('heroicon-o-clipboard-document')
                         ->color('success')
-                        ->requiresConfirmation()
-                        ->modalHeading('Copiar lances selecionados')
-                        ->modalDescription(
-                            'Serão criadas cópias dos lances selecionados, mantendo os dados originais, exceto o status.'
-                        )
                         ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                            $columns = [
+                                'ID' => 'id',
+                                'Evento' => 'event.name',
+                                'Lote' => 'animalEvent.lot_number',
+                                'Cliente' => 'user.name',
+                                'Valor' => 'amount',
+                                'Data' => 'created_at',
+                            ];
+
+                            $rows = [];
+
+                            // Cabeçalho
+                            $rows[] = implode("\t", array_keys($columns));
+
+                            // Dados
                             foreach ($records as $record) {
-                                $data = $record->getAttributes();
+                                $row = [];
 
-                                unset(
-                                    $data['id'],
-                                    $data['status'],
-                                    $data['created_at'],
-                                    $data['updated_at']
-                                );
+                                foreach ($columns as $attribute => $field) {
+                                    $value = data_get($record, $field, '');
 
-                                Bid::create($data);
+                                    if ($value instanceof \Carbon\CarbonInterface) {
+                                        $value = $value->format('d/m/Y H:i');
+                                    }
+
+                                    $row[] = str_replace(
+                                        ["\t", "\r", "\n"],
+                                        ' ',
+                                        (string) ($value ?? '')
+                                    );
+                                }
+
+                                $rows[] = implode("\t", $row);
                             }
 
-                            \Filament\Notifications\Notification::make()
-                                ->title('Lances copiados com sucesso!')
-                                ->success()
-                                ->send();
+                            $text = implode("\n", $rows);
+
+                            return redirect()->back()->with('clipboard_text', $text);
                         })
                         ->deselectRecordsAfterCompletion(),
                 ]),
