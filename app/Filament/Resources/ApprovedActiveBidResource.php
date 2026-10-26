@@ -236,7 +236,7 @@ class ApprovedActiveBidResource extends Resource
                         ->deselectRecordsAfterCompletion(),
                 ]),
             ])
-            ->defaultSort('created_at', 'desc');
+            ->defaultSort('amount', 'asc');
     }
 
     public static function getPages(): array
