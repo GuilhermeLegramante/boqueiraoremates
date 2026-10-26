@@ -159,45 +159,86 @@ class ApprovedActiveBidResource extends Resource
                         ->label('Copiar para planilha')
                         ->icon('heroicon-o-clipboard-document')
                         ->color('success')
-                        ->action(function (\Illuminate\Database\Eloquent\Collection $records) {
+                        ->action(function (
+                            \Illuminate\Database\Eloquent\Collection $records,
+                            \Livewire\Component $livewire
+                        ) {
                             $columns = [
-                                'ID' => 'id',
-                                'Evento' => 'event.name',
-                                'Lote' => 'animalEvent.lot_number',
-                                'Cliente' => 'user.name',
-                                'Valor' => 'amount',
-                                'Data' => 'created_at',
+                                'Data',
+                                'Valor',
+                                'Lote',
+                                'Evento',
+                                'Cliente',
+                                'Animal',
                             ];
 
-                            $rows = [];
+                            $rows = [$columns];
 
-                            // Cabeçalho
-                            $rows[] = implode("\t", array_keys($columns));
-
-                            // Dados
                             foreach ($records as $record) {
-                                $row = [];
+                                $data = $record->created_at?->format('d/m/y') ?? '';
 
-                                foreach ($columns as $attribute => $field) {
-                                    $value = data_get($record, $field, '');
+                                $valor = 'R$ ' . number_format(
+                                    (float) $record->amount,
+                                    2,
+                                    ',',
+                                    '.'
+                                );
 
-                                    if ($value instanceof \Carbon\CarbonInterface) {
-                                        $value = $value->format('d/m/Y H:i');
+                                $lote = $record->lot_number ?? '';
+
+                                $evento = $record->event?->name ?? '';
+
+                                // Mesmo padrão de abreviação da tabela
+                                $substituicoes = [
+                                    'LEILÃO VIRTUAL DE COBERTURAS' => 'L. V. Cob.',
+                                    'LEILÃO VIRTUAL/PRESENCIAL'    => 'L. V./P.',
+                                    'LEILÃO VIRTUAL'               => 'L. V.',
+                                    'LEILÃO PRESENCIAL'            => 'L. P.',
+                                    'LEILÃO DE COBERTURAS'         => 'L. Cob.',
+                                ];
+
+                                foreach ($substituicoes as $original => $abreviado) {
+                                    if (str_starts_with($evento, $original)) {
+                                        $evento = str_replace(
+                                            $original,
+                                            $abreviado,
+                                            $evento
+                                        );
+
+                                        break;
                                     }
-
-                                    $row[] = str_replace(
-                                        ["\t", "\r", "\n"],
-                                        ' ',
-                                        (string) ($value ?? '')
-                                    );
                                 }
 
-                                $rows[] = implode("\t", $row);
+                                $cliente = $record->user?->name ?? '—';
+
+                                $animal = $record->animalToFilament?->name ?? '';
+
+                                $rows[] = [
+                                    $data,
+                                    $valor,
+                                    $lote,
+                                    $evento,
+                                    $cliente,
+                                    $animal,
+                                ];
                             }
 
-                            $text = implode("\n", $rows);
+                            $text = collect($rows)
+                                ->map(fn($row) => implode("\t", array_map(
+                                    fn($value) => str_replace(
+                                        ["\t", "\r", "\n"],
+                                        ' ',
+                                        (string) $value
+                                    ),
+                                    $row
+                                )))
+                                ->implode("\n");
 
-                            return redirect()->back()->with('clipboard_text', $text);
+                            $livewire->js(
+                                'navigator.clipboard.writeText('
+                                    . \Illuminate\Support\Js::from($text)
+                                    . ')'
+                            );
                         })
                         ->deselectRecordsAfterCompletion(),
                 ]),
