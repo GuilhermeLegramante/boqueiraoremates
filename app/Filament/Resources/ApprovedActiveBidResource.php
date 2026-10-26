@@ -81,7 +81,7 @@ class ApprovedActiveBidResource extends Resource
             ->actions([], position: ActionsPosition::BeforeColumns)
             ->emptyStateHeading('Selecione um evento para visualizar os lances.')
             ->emptyStateIcon('heroicon-o-information-circle')
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('amount', 'asc')
             ->columns(BidTable::columns())
             ->actions([
                 Tables\Actions\ActionGroup::make([
@@ -163,14 +163,7 @@ class ApprovedActiveBidResource extends Resource
                             \Illuminate\Database\Eloquent\Collection $records,
                             \Livewire\Component $livewire
                         ) {
-                            $columns = [
-                                'Data',
-                                'Valor',
-                                'Lote',
-                                'Evento',
-                                'Cliente',
-                                'Animal',
-                            ];
+                            $columns = [];
 
                             $rows = [$columns];
 
