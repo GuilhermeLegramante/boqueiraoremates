@@ -44,7 +44,7 @@ class BidTable
             TextColumn::make('lot_number')
                 // ->searchable()
                 // ->sortable()
-                ->toggleable(isToggledHiddenByDefault: false)
+                ->toggleable(isToggledHiddenByDefault: true)
                 ->label('Lote'),
 
             TextColumn::make('event.name')
@@ -54,7 +54,7 @@ class BidTable
                 ->extraAttributes([
                     'class' => 'text-xs',
                 ])
-                ->toggleable(isToggledHiddenByDefault: false)
+                ->toggleable(isToggledHiddenByDefault: true)
                 ->label('Evento')
                 ->formatStateUsing(function (?string $state): string {
                     if (!$state) {
@@ -105,7 +105,7 @@ class BidTable
             TextColumn::make('user.client.whatsapp')
                 ->label('WhatsApp')
                 ->sortable(false)
-                ->toggleable(isToggledHiddenByDefault: true)
+                ->toggleable(isToggledHiddenByDefault: false)
                 ->copyable()
                 // ->searchable(['users.client.whatsapp'])
                 ->getStateUsing(function ($record) {
@@ -115,22 +115,32 @@ class BidTable
             TextColumn::make('user.client.address.city')
                 ->label('Cidade')
                 ->sortable(false)
-                ->toggleable(isToggledHiddenByDefault: true)
-                ->copyable()
-                // ->searchable(['users.client.address.city'])
-                ->getStateUsing(function ($record) {
-                    return $record->user?->client?->address?->city ?? '—';
-                }),
+                ->formatStateUsing(function ($record) {
+                    $city = $record->user->client->address->city ?? null;
+                    $state = $record->user->client->address->state ?? null;
 
-            TextColumn::make('user.client.address.state')
-                ->label('Estado')
-                ->sortable(false)
-                ->toggleable(isToggledHiddenByDefault: true)
-                ->copyable()
-                // ->searchable(['users.client.address.state'])
-                ->getStateUsing(function ($record) {
-                    return $record->user?->client?->address?->state ?? '—';
-                }),
+                    if ($city && $state) {
+                        return "{$city} - {$state}";
+                    }
+
+                    return $city ?? $state ?? '-';
+                })
+                ->toggleable(isToggledHiddenByDefault: false)
+                ->copyable(),
+            // ->searchable(['users.client.address.city'])
+            // ->getStateUsing(function ($record) {
+            //     return $record->user?->client?->address?->city ?? '—';
+            // }),
+
+            // TextColumn::make('user.client.address.state')
+            //     ->label('Estado')
+            //     ->sortable(false)
+            //     ->toggleable(isToggledHiddenByDefault: true)
+            //     ->copyable()
+            //     // ->searchable(['users.client.address.state'])
+            //     ->getStateUsing(function ($record) {
+            //         return $record->user?->client?->address?->state ?? '—';
+            //     }),
 
             TextColumn::make('animalToFilament.name')
                 ->searchable(['animals.name'])

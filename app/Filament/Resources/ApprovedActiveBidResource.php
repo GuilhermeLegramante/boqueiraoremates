@@ -177,42 +177,24 @@ class ApprovedActiveBidResource extends Resource
                                     '.'
                                 );
 
-                                $lote = $record->lot_number ?? '';
-
-                                $evento = $record->event?->name ?? '';
-
-                                // Mesmo padrão de abreviação da tabela
-                                $substituicoes = [
-                                    'LEILÃO VIRTUAL DE COBERTURAS' => 'L. V. Cob.',
-                                    'LEILÃO VIRTUAL/PRESENCIAL'    => 'L. V./P.',
-                                    'LEILÃO VIRTUAL'               => 'L. V.',
-                                    'LEILÃO PRESENCIAL'            => 'L. P.',
-                                    'LEILÃO DE COBERTURAS'         => 'L. Cob.',
-                                ];
-
-                                foreach ($substituicoes as $original => $abreviado) {
-                                    if (str_starts_with($evento, $original)) {
-                                        $evento = str_replace(
-                                            $original,
-                                            $abreviado,
-                                            $evento
-                                        );
-
-                                        break;
-                                    }
-                                }
-
                                 $cliente = $record->user?->name ?? '—';
 
                                 $animal = $record->animalToFilament?->name ?? '';
 
+                                $whatsapp = $record->user?->client?->whatsapp ?? '';
+
+                                // Concatenar cidade e estado, se disponíveis
+                                $cidade = $record->user?->client?->address?->city ?? '';
+                                $estado = $record->user?->client?->address?->state ?? '';
+
+                                $cidade = $cidade && $estado ? "{$cidade} - {$estado}" : ($cidade ?: $estado ?: '-');
+
                                 $rows[] = [
                                     $data,
                                     $valor,
-                                    $lote,
-                                    $evento,
                                     $cliente,
-                                    $animal,
+                                    $whatsapp,
+                                    $cidade,
                                 ];
                             }
 
