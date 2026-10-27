@@ -146,7 +146,7 @@ class BidTable
                 ->searchable(['animals.name'])
                 ->label('Animal')
                 ->sortable(['animals.name'])
-                ->toggleable(isToggledHiddenByDefault: false),
+                ->toggleable(isToggledHiddenByDefault: true),
 
             TextColumn::make('approvedBy.name')
                 ->label('Aprovado por')
