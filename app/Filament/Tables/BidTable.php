@@ -45,6 +45,7 @@ class BidTable
                 // ->searchable()
                 // ->sortable()
                 ->toggleable(isToggledHiddenByDefault: true)
+                ->copyable()
                 ->label('Lote'),
 
             TextColumn::make('event.name')
@@ -54,6 +55,7 @@ class BidTable
                 ->extraAttributes([
                     'class' => 'text-xs',
                 ])
+                ->copyable()
                 ->toggleable(isToggledHiddenByDefault: true)
                 ->label('Evento')
                 ->formatStateUsing(function (?string $state): string {
@@ -146,11 +148,13 @@ class BidTable
                 ->searchable(['animals.name'])
                 ->label('Animal')
                 ->sortable(['animals.name'])
+                ->copyable()
                 ->toggleable(isToggledHiddenByDefault: true),
 
             TextColumn::make('approvedBy.name')
                 ->label('Aprovado por')
                 ->sortable()
+                ->copyable()
                 ->toggleable(isToggledHiddenByDefault: true),
 
         ];
