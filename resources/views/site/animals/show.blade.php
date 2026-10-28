@@ -84,7 +84,7 @@
                             <!-- Plaquinha pendurada -->
                             <a href="{{ $animal->pivot->video_link ?? '#' }}" target="_blank"
                                 class="mt-1 inline-block hover:opacity-80 transition">
-                                <img src="{{ asset('img/link-youtube.png') }}" alt="Ver vídeo do lote"
+                                <img src="{{ asset('img/icone-video.png') }}" alt="Ver vídeo do lote"
                                     class="w-32 h-auto shadow-md">
                             </a>
                         </div>
