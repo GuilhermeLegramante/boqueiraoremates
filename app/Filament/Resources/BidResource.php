@@ -146,7 +146,7 @@ class BidResource extends Resource
 
                         // Select 1: Apenas clientes fixos (aparece se o toggle estiver ligado)
                         Forms\Components\Select::make('user_id')
-                            ->label('Cliente Fixo')
+                            ->label('Clientes Fixos/Favoritos')
                             ->options(function () {
                                 // Ajuste a query conforme a estrutura do seu relacionamento/modelo de cliente
                                 return \App\Models\User::whereHas('client', fn($q) => $q->where('fixed', true))
