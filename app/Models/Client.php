@@ -57,12 +57,14 @@ class Client extends Model
         'representative_role',
         'representative_document',
         'establishment_city',
+        'fixed',
     ];
 
     protected $casts = [
         'documents' => 'array',
         'has_register_in_another_auctioneer' => 'boolean',
         'income' => 'double',
+        'fixed' => 'boolean',
     ];
 
     public function bank(): BelongsTo
@@ -154,6 +156,13 @@ class Client extends Model
 
 
         static::updated(function ($client) {
+            // Garante que apenas um cliente fique fixo para dar lances
+            if ($client->fixed) {
+                static::where('id', '!=', $client->id)
+                    ->where('fixed', true)
+                    ->update(['fixed' => false]);
+            }
+
             // 🔹 Atualiza o nome do usuário vinculado
             if ($client->registeredUser) {
                 $client->registeredUser->update([
