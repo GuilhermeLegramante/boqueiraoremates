@@ -402,18 +402,26 @@ class ContractController extends Controller
         float $firstParcelValue,
         ?Carbon $firstDueDate
     ): string {
-        // Formata o valor total dinamicamente (ex: 32.500,00)
         $totalFormatted = number_format($netValue, 2, ',', '.');
 
-        // Converte o valor total para extenso (ex: trinta e dois mil e quinhentos reais)
         $totalInWordsMoney = $this->currencyInWords($netValue);
 
-        // Obtém o número total de parcelas a partir da collection/array de parcelas
-        // ou do campo do pedido como fallback
-        $totalCount = $parcels ? $parcels->count() : (is_array($order) ? ($order['total_installments'] ?? 0) : ($order->total_installments ?? 0));
+        $totalCount = $parcels
+            ? $parcels->count()
+            : (is_array($order)
+                ? ($order['total_installments'] ?? 0)
+                : ($order->total_installments ?? 0));
+
+        if ($totalCount <= 1) {
+            return sprintf(
+                'Valor total de R$ %s (%s), pago na condição à vista, conforme as condições estabelecidas neste contrato.',
+                $totalFormatted,
+                $totalInWordsMoney
+            );
+        }
 
         return sprintf(
-            'Valor total de R$ %s (%s), que serão pagos da de forma parcelada, divididos em %d parcelas, obedecendo valores e vencimentos, descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e compõe o conjunto de documentos que formalizam essa negociação (venda).',
+            'Valor total de R$ %s (%s), que será pago de forma parcelada, dividido em %d parcelas, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
             $totalFormatted,
             $totalInWordsMoney,
             $totalCount

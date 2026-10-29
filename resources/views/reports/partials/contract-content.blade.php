@@ -258,7 +258,7 @@
 
         <tr>
             <td colspan="{{ $isQuartoDeMilha ? 3 : 3 }}">
-                <span class="label">Valor Total:</span> R$ {{ number_format($order->gross_value ?? 0, 2, ',', '.') }}
+                <span class="label">Valor Total:</span> R$ {{ number_format($order->net_value ?? 0, 2, ',', '.') }}
             </td>
             <td colspan="{{ $isQuartoDeMilha ? 2 : 1 }}">
                 <span class="label">Fatura de Venda/OS:</span> {{ $order->number }}
