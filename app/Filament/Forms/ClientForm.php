@@ -167,9 +167,7 @@ class ClientForm
                                 ->prefixIcon('heroicon-o-globe-alt')
                                 ->maxLength(100),
 
-                            Toggle::make('fixed')
-                                ->label('Fixar para Lances')
-                                ->helperText('Marque para fixar o cliente p/ lances gerados via sistema.')
+
                         ])
                         ->columns(2),
                     Fieldset::make('Documentos')
@@ -369,6 +367,10 @@ class ClientForm
                                 ->placeholder('Ex: facebook.com/usuario')
                                 ->prefixIcon('heroicon-o-globe-alt')
                                 ->maxLength(100),
+
+                            Toggle::make('fixed')
+                                ->label('Fixar para Lances')
+                                ->helperText('Marque para fixar o cliente p/ lances gerados via sistema.')
                         ])
                         ->columns(3),
                 ])
