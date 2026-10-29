@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Support\HtmlString;
 
 class BidResource extends Resource
@@ -135,12 +136,37 @@ class BidResource extends Resource
                             ->helperText('O valor deve ser igual ou superior à sugestão do próximo lance.')
                             ->columnSpanFull(),
 
+                        // Toggle para alternar entre cliente fixo ou busca geral
+                        Forms\Components\Toggle::make('use_fixed_client')
+                            ->label('Selecionar de Clientes Fixos/Favoritos')
+                            ->default(true)
+                            ->live()
+                            ->afterStateUpdated(fn(Set $set) => $set('user_id', null))
+                            ->columnSpanFull(),
+
+                        // Select 1: Apenas clientes fixos (aparece se o toggle estiver ligado)
                         Forms\Components\Select::make('user_id')
-                            ->label('Cliente')
+                            ->label('Cliente Fixo')
+                            ->options(function () {
+                                // Ajuste a query conforme a estrutura do seu relacionamento/modelo de cliente
+                                return \App\Models\User::whereHas('client', fn($q) => $q->where('fixed', true))
+                                    ->pluck('name', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->columnSpanFull()
+                            ->required()
+                            ->visible(fn(Get $get) => $get('use_fixed_client')),
+
+                        // Select 2: Todos os clientes (aparece se o toggle estiver desligado)
+                        Forms\Components\Select::make('user_id')
+                            ->label('Cliente (Busca Geral)')
                             ->relationship('user', 'name')
                             ->searchable()
+                            ->preload()
                             ->columnSpanFull()
-                            ->required(),
+                            ->required()
+                            ->visible(fn(Get $get) => !$get('use_fixed_client')),
                     ])->columns(2)
             ]);
     }
