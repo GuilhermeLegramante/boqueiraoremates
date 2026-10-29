@@ -137,15 +137,7 @@ class BidResource extends Resource
 
                         Forms\Components\Select::make('user_id')
                             ->label('Cliente')
-                            ->relationship(
-                                name: 'user',
-                                titleAttribute: 'name',
-                                modifyQueryUsing: fn($query) => $query
-                                    ->leftJoin('clients', 'clients.user_id', '=', 'users.id')
-                                    ->orderByDesc('clients.fixed')
-                                    ->orderBy('users.name')
-                                    ->select('users.*')
-                            )
+                            ->relationship('user', 'name')
                             ->searchable()
                             ->columnSpanFull()
                             ->required(),
