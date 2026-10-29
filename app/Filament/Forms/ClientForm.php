@@ -369,8 +369,8 @@ class ClientForm
                                 ->maxLength(100),
 
                             Toggle::make('fixed')
-                                ->label('Fixar para Lances')
-                                ->helperText('Marque para fixar o cliente p/ lances gerados via sistema.')
+                                ->label('Favoritar para Lances')
+                                ->helperText('Marque para favoritar o cliente p/ lances gerados via sistema.')
                         ])
                         ->columns(3),
                 ])
