@@ -245,7 +245,7 @@
                                             <div
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
 
-                                                <span>Lance Atual:</span>
+                                                <span>Lance Atual.:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                     @if ($status === 'vendido')
