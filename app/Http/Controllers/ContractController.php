@@ -424,7 +424,7 @@ class ContractController extends Controller
             'Valor total de R$ %s (%s), que será pago de forma parcelada, dividido em %d pagamentos, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
             $totalFormatted,
             $totalInWordsMoney,
-            $totalCount
+            $order->total_installments ?? $totalCount
         );
     }
 
