@@ -251,11 +251,6 @@
                                                         class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                         R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
                                                     </span>
-                                                @else
-                                                    <span>&nbsp;&nbsp;</span>
-                                                    <span
-                                                        class="inline-block bg-gray-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                        &nbsp; &nbsp;
                                                 @endif
 
                                                 {{-- Exibe Lance-alvo e Parcelas APENAS se NÃO estiver vendido --}}
