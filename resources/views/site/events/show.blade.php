@@ -212,12 +212,7 @@
                                         </div>
                                     @endif
 
-                                    {{-- Mostra lance alvo se for venda de coberturas ou se tiver valor --}}
-                                    @php
-                                        $isCobertura = str_contains(strtolower($event->name), 'cobertura');
-                                        $showTargetValue = floatval($animal->pivot->target_value) > 0;
-                                    @endphp
-
+                                    {{-- Só mostra valores para eventos que não são VENDA DIRETA --}}
                                     @if (!$event->is_permanent)
                                         @if ($event->closed)
                                             <div
@@ -237,7 +232,7 @@
                                                 </span>
                                             </div>
                                         @else
-                                            {{-- EVENTO ATIVO --}}
+                                            {{-- EVENTO ATIVO: Unifica Lance Atual e Lance Alvo sem duplicar --}}
                                             <div
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
 
@@ -251,8 +246,8 @@
                                                     @endif
                                                 </span>
 
-                                                {{-- Exibe o Lance-alvo se houver valor cadastrado, mesmo se estiver vendido ou for cobertura --}}
-                                                @if ($showTargetValue || $isCobertura)
+                                                {{-- Exibe o Lance-alvo apenas se houver valor cadastrado e o lote não estiver vendido --}}
+                                                @if ($showTargetValue && !$alreadyDisplayedTargetValue)
                                                     <span>Lance-alvo:</span>
                                                     <span
                                                         class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
@@ -266,6 +261,7 @@
                                                         </span>
                                                     @endif
                                                 @else
+                                                    {{-- Espaçador invisível para manter o alinhamento visual dos cards --}}
                                                     <span>&nbsp;</span>
                                                     <span
                                                         class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
