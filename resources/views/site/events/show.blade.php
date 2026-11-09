@@ -189,7 +189,7 @@
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
 
-                                            @if ($showTargetValue)
+                                            @if (floatval($animal->pivot->target_value) > 0 || $isCobertura)
                                                 <span>Lance-alvo:</span>
                                                 <span
                                                     class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
