@@ -212,6 +212,15 @@
                                         </div>
                                     @endif
 
+                                    {{-- Checagem se deve exibir lance-alvo e parcelas --}}
+                                    @php
+                                        $isCobertura = str_contains(strtolower($event->name), 'cobertura');
+                                        $hasTargetValue = floatval($animal->pivot->target_value) > 0;
+
+                                        // Se estiver VENDIDO, NUNCA exibe o lance-alvo / parcelas
+                                        $showTargetValue = $status !== 'vendido' && ($isCobertura || $hasTargetValue);
+                                    @endphp
+
                                     {{-- Só mostra valores para eventos que não são VENDA DIRETA --}}
                                     @if (!$event->is_permanent)
                                         @if ($event->closed)
@@ -224,7 +233,7 @@
                                                 <span>Lance Atual:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    @if (floatval($animal->pivot->target_value) == 0 && $status === 'vendido')
+                                                    @if ($status === 'vendido')
                                                         R$ 0,00
                                                     @else
                                                         R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
@@ -232,7 +241,7 @@
                                                 </span>
                                             </div>
                                         @else
-                                            {{-- EVENTO ATIVO: Unifica Lance Atual e Lance Alvo sem duplicar --}}
+                                            {{-- EVENTO ATIVO --}}
                                             <div
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
 
@@ -246,13 +255,14 @@
                                                     @endif
                                                 </span>
 
-                                                {{-- Exibe o Lance-alvo apenas se houver valor cadastrado e o lote não estiver vendido --}}
-                                                @if ($showTargetValue && !$alreadyDisplayedTargetValue)
+                                                {{-- Exibe Lance-alvo e Parcelas APENAS se NÃO estiver vendido --}}
+                                                @if ($showTargetValue)
                                                     <span>Lance-alvo:</span>
                                                     <span
                                                         class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
                                                         R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
                                                     </span>
+
                                                     @if ($animal->pivot->parcels_quantity > 0)
                                                         <span>Qtde de Parcelas:</span>
                                                         <span
@@ -261,7 +271,7 @@
                                                         </span>
                                                     @endif
                                                 @else
-                                                    {{-- Espaçador invisível para manter o alinhamento visual dos cards --}}
+                                                    {{-- Espaçador invisível para manter o alinhamento de altura entre os cards da grid --}}
                                                     <span>&nbsp;</span>
                                                     <span
                                                         class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
