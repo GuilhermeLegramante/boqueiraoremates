@@ -14,7 +14,6 @@ class CreateClient extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        dd($data);
         $data['name'] = Str::upper($data['name']);
         $data['establishment'] = Str::upper($data['establishment']);
         $data['occupation'] = Str::upper($data['occupation']);
@@ -24,6 +23,7 @@ class CreateClient extends CreateRecord
         $data['auctioneer'] = Str::upper($data['auctioneer']);
         // $data['note'] = Str::upper($data['note']);
 
+        dd($data);
         return $data;
     }
 }
