@@ -361,31 +361,117 @@
                         const whatsappUrl =
                             `https://wa.me/${whatsappNumber}?text=Olá!%20Verifiquei%20que%20já%20possuo%20cadastro%20e%20gostaria%20de%20atualizar%20meus%20dados.`;
 
+
                         Swal.fire({
-                            title: '<span style="color: #1b4332; font-size: 1.4rem; font-weight: 700;">Cadastro Já Localizado</span>',
+                            title: `
+                            <div style="
+                                color: #1b4332;
+                                font-size: 1.35rem;
+                                font-weight: 700;
+                                letter-spacing: -0.4px;
+                                margin-top: 8px;
+                            ">
+                                Cadastro já localizado
+                            </div>
+                        `,
                             html: `
-                                <div style="color: #374151; font-size: 0.95rem; line-height: 1.6; text-align: left; padding: 0 5px;">
-                                    <p style="margin-bottom: 12px;">Olá! Notamos que já existe um cadastro vinculado a este documento em nossa base de dados.</p>
-                                    <p>Para garantir a segurança das suas informações e realizar eventuais atualizações no seu perfil, por gentileza, entre em contato diretamente com a nossa equipe de atendimento.</p>
+                            <div style="
+                                color: #4b5563;
+                                font-size: 0.95rem;
+                                line-height: 1.7;
+                                text-align: center;
+                                padding: 0 4px;
+                            ">
+                                <p style="margin-bottom: 14px;">
+                                    Identificamos que já existe um cadastro associado
+                                    ao documento informado em nossa base de dados.
+                                </p>
+
+                                <p style="margin-bottom: 20px;">
+                                    Para proteger suas informações e garantir que os
+                                    dados cadastrais estejam corretos, nossa equipe
+                                    de atendimento poderá auxiliá-lo na consulta,
+                                    atualização ou regularização do seu cadastro.
+                                </p>
+
+                                <div style="
+                                    background: #f0fdf4;
+                                    border: 1px solid #dcfce7;
+                                    border-radius: 12px;
+                                    padding: 14px 16px;
+                                    text-align: left;
+                                ">
+                                    <div style="
+                                        color: #166534;
+                                        font-weight: 700;
+                                        font-size: 0.9rem;
+                                        margin-bottom: 4px;
+                                    ">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                        Precisa de ajuda?
+                                    </div>
+
+                                    <div style="
+                                        color: #4b5563;
+                                        font-size: 0.85rem;
+                                        line-height: 1.5;
+                                    ">
+                                        Entre em contato conosco pelo WhatsApp.
+                                        Nossa equipe estará à disposição para orientá-lo.
+                                    </div>
                                 </div>
-                            `,
+                            </div>
+                        `,
                             icon: 'info',
                             iconColor: '#2d6a4f',
+
                             showCancelButton: true,
-                            confirmButtonText: 'Falar no WhatsApp',
+                            confirmButtonText: `
+                            <i class="fa-brands fa-whatsapp" style="font-size: 1.1rem;"></i>
+                            Falar com atendimento
+                        `,
                             cancelButtonText: 'Fechar',
+
                             buttonsStyling: false,
+                            reverseButtons: true,
+                            focusCancel: true,
+
                             customClass: {
-                                popup: 'rounded-2xl shadow-2xl p-6 md:p-8 max-w-lg w-full mx-4',
-                                actions: 'flex flex-col-reverse sm:flex-row gap-3 w-full mt-6',
-                                confirmButton: 'w-full sm:w-auto flex-1 bg-[#25D366] hover:bg-[#20ba5a] text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-center justify-center items-center flex text-sm uppercase tracking-wider',
-                                cancelButton: 'w-full sm:w-auto flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-xl transition-all text-center justify-center items-center flex text-sm'
+                                popup: `
+                                rounded-2xl shadow-2xl
+                                p-5 sm:p-7
+                                max-w-md w-full mx-4
+                            `,
+                                icon: 'mt-2 mb-2',
+                                actions: `
+                                flex flex-col-reverse sm:flex-row
+                                gap-3 w-full mt-6
+                            `,
+                                confirmButton: `
+                                w-full sm:flex-1
+                                bg-[#25D366] hover:bg-[#20ba5a]
+                                text-white font-semibold
+                                py-3.5 px-5 rounded-xl
+                                shadow-sm hover:shadow-md
+                                transition-all duration-200
+                                text-sm
+                                inline-flex items-center justify-center gap-2
+                            `,
+                                cancelButton: `
+                                w-full sm:flex-1
+                                bg-gray-100 hover:bg-gray-200
+                                text-gray-700 font-medium
+                                py-3.5 px-5 rounded-xl
+                                transition-all duration-200
+                                text-sm
+                            `
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 window.open(whatsappUrl, '_blank');
                             }
                         });
+
 
                         // Limpa o campo de CPF para evitar que prossiga com o fluxo de novo cadastro
                         cpfInput.value = '';
