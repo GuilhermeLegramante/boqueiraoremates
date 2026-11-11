@@ -290,7 +290,61 @@
                 }
             });
 
-            // Lógica de Autocompletar Cadastro Existente (CPF)
+            // Lógica de Autocompletar Cadastro Existente (CPF) CLIENTE PODENDO ATUALIZAR
+            // cpfInput.addEventListener('blur', async () => {
+            //     const val = cpfInput.value.replace(/\D/g, '');
+            //     if (val.length < 11) return;
+
+            //     document.getElementById('searchingMsg').classList.remove('hidden');
+            //     try {
+            //         const res = await fetch(`/api/check-client?cpf_cnpj=${cpfInput.value}`);
+            //         const json = await res.json();
+            //         if (json.exists) {
+            //             const d = json.data;
+            //             Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
+            //                 'info');
+            //             document.getElementById('name').value = d.name || '';
+            //             document.getElementById('rg').value = d.rg || '';
+            //             document.getElementById('email').value = d.email || '';
+            //             if (d.whatsapp) {
+            //                 document.getElementById('whatsapp').value = phoneMask(d.whatsapp);
+            //             }
+            //             document.getElementById('birth_date').value = d.birth_date || '';
+
+            //             if (d.birth_date && d.birth_date.includes('-')) {
+            //                 const [y, m, d_part] = d.birth_date.split('-');
+            //                 document.getElementById('birth_date').value = `${d_part}/${m}/${y}`;
+            //             }
+
+            //             document.getElementById('father').value = d.father || '';
+            //             document.getElementById('mother').value = d.mother || '';
+            //             document.getElementById('occupation').value = d.occupation || '';
+            //             document.getElementById('income').value = d.income || '';
+
+            //             // Preencher Dados Bancários
+            //             if (d.bank_id) document.getElementById('bank_id').value = d.bank_id;
+            //             document.getElementById('bank_agency').value = d.bank_agency || '';
+            //             document.getElementById('current_account').value = d.current_account || '';
+
+            //             if (d.address) {
+            //                 document.getElementById('postal_code').value = cepMask(d.address
+            //                     .postal_code || '');
+            //                 document.getElementById('street').value = d.address.street || '';
+            //                 document.getElementById('number').value = d.address.number || '';
+            //                 document.getElementById('district').value = d.address.district || '';
+            //                 document.getElementById('city').value = d.address.city || '';
+            //                 document.getElementById('state').value = d.address.state || '';
+            //                 document.getElementById('complement').value = d.address.complement || '';
+            //             }
+            //         }
+            //     } catch (e) {
+            //         console.log("Erro na busca.");
+            //     } finally {
+            //         document.getElementById('searchingMsg').classList.add('hidden');
+            //     }
+            // });
+
+            // Lógica de Autocompletar / Verificar Cadastro Existente (CPF)
             cpfInput.addEventListener('blur', async () => {
                 const val = cpfInput.value.replace(/\D/g, '');
                 if (val.length < 11) return;
@@ -299,43 +353,28 @@
                 try {
                     const res = await fetch(`/api/check-client?cpf_cnpj=${cpfInput.value}`);
                     const json = await res.json();
+                    
                     if (json.exists) {
-                        const d = json.data;
-                        Swal.fire('Cadastro Localizado', 'Seus dados foram carregados automaticamente.',
-                            'info');
-                        document.getElementById('name').value = d.name || '';
-                        document.getElementById('rg').value = d.rg || '';
-                        document.getElementById('email').value = d.email || '';
-                        if (d.whatsapp) {
-                            document.getElementById('whatsapp').value = phoneMask(d.whatsapp);
-                        }
-                        document.getElementById('birth_date').value = d.birth_date || '';
+                        // Mensagem cordial com botão do WhatsApp (número 55 9162-9140)
+                        const whatsappNumber = '5555991629140'; // Ajuste o DDD/DDI conforme o formato padrão do WhatsApp (ex: 55 + DDD + Número)
+                        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá!%20Verifiquei%20que%20já%20possuo%20cadastro%20e%20gostaria%20de%20atualizar%20meus%20dados.`;
 
-                        if (d.birth_date && d.birth_date.includes('-')) {
-                            const [y, m, d_part] = d.birth_date.split('-');
-                            document.getElementById('birth_date').value = `${d_part}/${m}/${y}`;
-                        }
+                        Swal.fire({
+                            title: 'Olá!',
+                            html: `Notamos que você já possui cadastro em nossa plataforma.<br><br>Para sua segurança e para mantermos suas informações corretas, por favor, entre em contato com nossa equipe para realizar a atualização dos seus dados.`,
+                            icon: 'info',
+                            confirmButtonText: 'Falar no WhatsApp',
+                            confirmButtonColor: '#25D366',
+                            showCancelButton: true,
+                            cancelButtonText: 'Fechar',
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.open(whatsappUrl, '_blank');
+                            }
+                        });
 
-                        document.getElementById('father').value = d.father || '';
-                        document.getElementById('mother').value = d.mother || '';
-                        document.getElementById('occupation').value = d.occupation || '';
-                        document.getElementById('income').value = d.income || '';
-
-                        // Preencher Dados Bancários
-                        if (d.bank_id) document.getElementById('bank_id').value = d.bank_id;
-                        document.getElementById('bank_agency').value = d.bank_agency || '';
-                        document.getElementById('current_account').value = d.current_account || '';
-
-                        if (d.address) {
-                            document.getElementById('postal_code').value = cepMask(d.address
-                                .postal_code || '');
-                            document.getElementById('street').value = d.address.street || '';
-                            document.getElementById('number').value = d.address.number || '';
-                            document.getElementById('district').value = d.address.district || '';
-                            document.getElementById('city').value = d.address.city || '';
-                            document.getElementById('state').value = d.address.state || '';
-                            document.getElementById('complement').value = d.address.complement || '';
-                        }
+                        // Limpa o campo de CPF para evitar que prossiga com o fluxo de novo cadastro
+                        cpfInput.value = '';
                     }
                 } catch (e) {
                     console.log("Erro na busca.");
