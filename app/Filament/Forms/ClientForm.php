@@ -90,8 +90,8 @@ class ClientForm
                             TextInput::make('email')
                                 ->label(__('fields.email'))
                                 ->email()
-                                ->live(),
-                                // ->required(fn(Get $get): bool => (bool) $get('is_international')),
+                                ->live()
+                                ->required(fn(Get $get): bool => (bool) $get('is_international')),
 
                             TextInput::make('birth_date')
                                 ->label('Data de Nascimento')

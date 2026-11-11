@@ -147,6 +147,11 @@ class Client extends Model
     protected static function booted()
     {
         static::creating(function ($client) {
+            // Se for perfil de divulgação (marketing), pula a criação de usuário
+            if ($client->profile === 'marketing') {
+                return self::handleMarketingClient($client);
+            }
+
             if ($client->is_international) {
                 return static::handleInternationalClient($client);
             }
@@ -281,5 +286,24 @@ class Client extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(ClientStatus::class, 'client_status_id');
+    }
+
+    /**
+     * Trata clientes de divulgação (marketing) que não exigem CPF/CNPJ nem criação de usuário.
+     */
+    private static function handleMarketingClient($client): bool
+    {
+        // Garante que campos opcionais vazios fiquem como null no banco
+        $client->cpf_cnpj = $client->cpf_cnpj ? preg_replace('/\D/', '', $client->cpf_cnpj) : null;
+
+        // Se houver email duplicado ou opcional vazio, limpa se necessário
+        if (empty($client->email)) {
+            $client->email = null;
+        }
+
+        // Não cria registro na tabela users para perfil marketing
+        $client->registered_user_id = null;
+
+        return true;
     }
 }
