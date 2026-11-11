@@ -188,9 +188,9 @@ class ClientForm
                                 ->unique(table: Client::class, column: 'cpf_cnpj', ignoreRecord: true)
                                 ->live()
                                 // Oculta o campo se for um cliente internacional ou se o perfil for marketing
-                                ->hidden(fn(Get $get): bool => (bool) $get('is_international')  || (bool) $get('profile') === 'marketing' )
+                                ->hidden(fn(Get $get): bool => (bool) $get('is_international')  || (bool) $get('profile') === 'marketing' ),
                                 // Só é obrigatório se NÃO for internacional
-                                ->required(fn(Get $get): bool => ! $get('is_international') && (bool) $get('profile') !== 'marketing'),
+                                // ->required(fn(Get $get): bool => ! $get('is_international') && (bool) $get('profile') !== 'marketing'),
 
                             TextInput::make('inscricaoestadual')
                                 ->label('Inscrição Estadual')
