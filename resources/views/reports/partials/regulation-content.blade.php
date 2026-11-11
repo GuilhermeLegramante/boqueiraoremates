@@ -48,7 +48,8 @@
         @endforeach
     @else
         {{-- FALLBACK: Lista de regras estáticas legadas --}}
-        <tr>
+        <p>SEM REGRAS CADASTRADAS</p>
+        {{-- <tr>
             <td class="num">1 )</td>
             <td>O leilão será realizado no dia
                 <strong>{{ !empty(is_array($event) ? $event['start_date'] ?? null : $event->start_date ?? null) ? \Carbon\Carbon::parse(is_array($event) ? $event['start_date'] : $event->start_date)->format('d/m/Y') : $contractDate->format('d/m/Y') ?? '' }}</strong>,
@@ -181,7 +182,7 @@
             <td class="num">25 )</td>
             <td>Este regulamento deverá ser guardado, pois o conteúdo nele existente vale como documento e servirá para
                 sanar futuras dúvidas.</td>
-        </tr>
+        </tr> --}}
     @endif
 </table>
 
