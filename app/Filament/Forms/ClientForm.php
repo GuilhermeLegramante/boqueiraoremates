@@ -185,16 +185,16 @@ class ClientForm
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
-                                ->validation(false) // Desativa validação interna estrita do plugin
+                                ->validation(false) // Desativa a validação estrita do plugin
                                 ->unique(table: Client::class, column: 'cpf_cnpj', ignoreRecord: true)
                                 ->live()
-                                // Oculta se for internacional ou se o perfil for marketing
+                                // Oculta se for internacional OU se for perfil marketing
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international') || $get('profile') === 'marketing')
+                                // Só exige preenchimento se NÃO for internacional E NÃO for marketing
+                                ->required(fn(Get $get): bool => ! (bool) $get('is_international') && $get('profile') !== 'marketing')
                                 // Só envia para o banco se NÃO for internacional E NÃO for marketing
                                 ->dehydrated(fn(Get $get): bool => ! (bool) $get('is_international') && $get('profile') !== 'marketing')
-                                ->dehydrateStateUsing(fn($state) => filled($state) ? $state : null)
-                                // Obrigatório apenas se não for internacional e perfil diferente de marketing
-                                ->required(fn(Get $get): bool => ! (bool) $get('is_international') && $get('profile') !== 'marketing'),
+                                ->dehydrateStateUsing(fn($state) => filled($state) ? $state : null),
 
                             TextInput::make('inscricaoestadual')
                                 ->label('Inscrição Estadual')
