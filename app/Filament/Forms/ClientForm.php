@@ -198,7 +198,7 @@ class ClientForm
                                     }
                                 )
                                 ->live()
-                                ->hidden(fn(Get $get): bool => (bool) $get('is_international')),
+                                ->hidden(fn(Get $get): bool => (bool) $get('is_international') || $get('profile') === 'marketing'),
                             // ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
 
 
