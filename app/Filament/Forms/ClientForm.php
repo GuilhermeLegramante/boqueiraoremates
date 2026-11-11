@@ -191,7 +191,7 @@ class ClientForm
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
                                 ->required(
                                     fn(Get $get): bool =>
-                                    $get('profile') === 'marketing' && ! $get('is_international')
+                                    $get('profile') !== 'marketing' && ! $get('is_international')
                                 ),
 
                             TextInput::make('inscricaoestadual')
