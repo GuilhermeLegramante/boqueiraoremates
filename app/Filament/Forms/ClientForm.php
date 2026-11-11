@@ -196,13 +196,9 @@ class ClientForm
                                 )
                                 ->live()
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
-                                ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
-                                ->dehydrated(fn($state) => filled($state)) // Evita enviar string vazia para o banco
-                                ->rules([
-                                    fn(Get $get) => $get('profile') !== 'marketing' && ! $get('is_international')
-                                        ? 'required'
-                                        : 'nullable',
-                                ]),
+                                // ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
+                                ->dehydrated(fn($state) => filled($state)),
+
 
                             TextInput::make('inscricaoestadual')
                                 ->label('Inscrição Estadual')
