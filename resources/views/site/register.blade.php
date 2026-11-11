@@ -15,7 +15,7 @@
 }
 
 /* Ícone */
-.cadastro-popup {
+.cadastro-popup .cadastro-icon {
     width: 24px !important;
     height: 24px !important;
     margin: 0 auto 14px !important;
@@ -523,9 +523,6 @@
                         Swal.fire({
                             title: `
                                 <div class="cadastro-cabecalho">
-                                    <div class="cadastro-simbolo">
-                                        <span>i</span>
-                                    </div>
                                     <div>Cadastro já localizado</div>
                                 </div>
                             `,
@@ -553,6 +550,8 @@
             </div>
         </div>
     `,
+                            icon: 'info',
+                            iconColor: '#2d6a4f',
                             showCancelButton: true,
                             confirmButtonText: `
         <i class="fa-brands fa-whatsapp"></i>
