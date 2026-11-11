@@ -137,6 +137,28 @@
     }
 }
 
+/* Ícone de informação */
+.cadastro-simbolo {
+    width: 58px;
+    height: 58px;
+    border: 3px solid #2d6a4f;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.cadastro-simbolo span {
+    color: #2d6a4f;
+    font-family: Arial, sans-serif;
+    font-size: 38px;
+    font-weight: 500;
+    line-height: 1;
+    display: block;
+    margin-top: -2px;
+}
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -499,7 +521,14 @@
 
 
                         Swal.fire({
-                            title: 'Cadastro localizado',
+                            title: `
+                                <div class="cadastro-cabecalho">
+                                    <div class="cadastro-simbolo">
+                                        <span>i</span>
+                                    </div>
+                                    <div>Cadastro já localizado</div>
+                                </div>
+                            `,
                             html: `
         <div class="cadastro-conteudo">
             <p>
@@ -540,7 +569,6 @@
 
                             customClass: {
                                 popup: 'cadastro-popup',
-                                icon: 'cadastro-icon',
                                 title: 'cadastro-title',
                                 htmlContainer: 'cadastro-html',
                                 actions: 'cadastro-actions',
