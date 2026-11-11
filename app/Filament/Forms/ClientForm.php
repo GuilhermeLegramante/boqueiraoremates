@@ -186,6 +186,7 @@ class ClientForm
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
                                 ->validation(false)
+                                ->required(false)
                                 ->unique(
                                     table: Client::class,
                                     column: 'cpf_cnpj',
@@ -196,9 +197,8 @@ class ClientForm
                                     }
                                 )
                                 ->live()
-                                ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
+                                ->hidden(fn(Get $get): bool => (bool) $get('is_international')),
                                 // ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
-                                ->dehydrated(fn($state) => filled($state)),
 
 
                             TextInput::make('inscricaoestadual')
