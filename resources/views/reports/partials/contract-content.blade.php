@@ -35,7 +35,9 @@
                     @endphp
                     <img src="{{ $base64Logo }}" class="boqueirao-logo">
                 @else
-                    <img src="{{ public_path('img/logo_completa.png') }}" class="boqueirao-logo">
+                    @if ($event->show_logo == 1)
+                        <img src="{{ public_path('img/logo_completa.png') }}" class="boqueirao-logo">
+                    @endif
                 @endif
             </td>
         </tr>
@@ -285,13 +287,14 @@
         @if ($clause->title)
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
         @endif
-        <div class="contract-text" style="text-align: justify; text-justify: inter-word; margin-top: -2px; margin-bottom: 2px;">
+        <div class="contract-text"
+            style="text-align: justify; text-justify: inter-word; margin-top: -2px; margin-bottom: 2px;">
             {!! $clause->content !!}
         </div>
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
         <p class="contract-text" style="margin-top: -15px; margin-bottom: 4px;">
-          EVENTO SEM CLÁUSULAS CADASTRADAS. 
+            EVENTO SEM CLÁUSULAS CADASTRADAS.
         </p>
     @endforelse
 
