@@ -10,6 +10,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class ContractsRelationManager extends RelationManager
 {
@@ -22,6 +23,11 @@ class ContractsRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form->schema([]);
+    }
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return $ownerRecord->profile !== 'marketing';
     }
 
     public function table(Table $table): Table
