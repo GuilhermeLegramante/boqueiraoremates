@@ -15,7 +15,7 @@
 }
 
 /* Ícone */
-.cadastro-popup .cadastro-icon {
+.cadastro-popup {
     width: 24px !important;
     height: 24px !important;
     margin: 0 auto 14px !important;
@@ -553,9 +553,6 @@
             </div>
         </div>
     `,
-                            icon: 'info',
-                            iconColor: '#2d6a4f',
-
                             showCancelButton: true,
                             confirmButtonText: `
         <i class="fa-brands fa-whatsapp"></i>
