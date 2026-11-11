@@ -523,7 +523,7 @@
                         Swal.fire({
                             title: `
                                 <div class="cadastro-cabecalho">
-                                    <div>Cadastro já localizado</div>
+                                    <div>Cadastro localizado</div>
                                 </div>
                             `,
                             html: `
