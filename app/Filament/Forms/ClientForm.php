@@ -184,7 +184,7 @@ class ClientForm
 
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
-                                ->dynamic()
+                                // ->dynamic()
                                 ->unique(
                                     table: Client::class,
                                     column: 'cpf_cnpj',
