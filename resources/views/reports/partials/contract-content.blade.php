@@ -27,7 +27,7 @@
             </td>
 
             <td style="width: 30%; text-align: right;">
-                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo) && $event->show_logo)
+                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo) && $event->show_logo == 1)
                     @php
                         $typeLogo = pathinfo($boqueiraoLogo, PATHINFO_EXTENSION);
                         $dataLogo = file_get_contents($boqueiraoLogo);
@@ -46,7 +46,7 @@
         <tr>
             <td style="width: 80%;">
                 <span class="contract-title">
-                    CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO {{$event->show_logo}}
+                    CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO
                 </span>
 
                 @if (isset($via))
