@@ -16,8 +16,8 @@
 
 /* Ícone */
 .cadastro-popup .cadastro-icon {
-    width: 64px !important;
-    height: 64px !important;
+    width: 24px !important;
+    height: 24px !important;
     margin: 0 auto 14px !important;
     font-size: 2rem !important;
 }
@@ -499,11 +499,11 @@
 
 
                         Swal.fire({
-                            title: 'Cadastro já localizado',
+                            title: 'Cadastro localizado',
                             html: `
         <div class="cadastro-conteudo">
             <p>
-                Identificamos que já existe um cadastro associado
+                Identificamos que há um cadastro associado
                 ao documento informado em nossa base de dados.
             </p>
 
