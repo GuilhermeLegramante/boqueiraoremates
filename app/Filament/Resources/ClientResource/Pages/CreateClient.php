@@ -23,7 +23,6 @@ class CreateClient extends CreateRecord
         $data['auctioneer'] = Str::upper($data['auctioneer']);
         // $data['note'] = Str::upper($data['note']);
 
-        dd($data);
         return $data;
     }
 }
