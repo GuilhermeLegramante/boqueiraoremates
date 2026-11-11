@@ -353,20 +353,35 @@
                 try {
                     const res = await fetch(`/api/check-client?cpf_cnpj=${cpfInput.value}`);
                     const json = await res.json();
-                    
+
                     if (json.exists) {
                         // Mensagem cordial com botão do WhatsApp (número 55 9162-9140)
-                        const whatsappNumber = '5555991629140'; // Ajuste o DDD/DDI conforme o formato padrão do WhatsApp (ex: 55 + DDD + Número)
-                        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Olá!%20Verifiquei%20que%20já%20possuo%20cadastro%20e%20gostaria%20de%20atualizar%20meus%20dados.`;
+                        const whatsappNumber =
+                        '5555991629140'; // Ajuste o DDD/DDI conforme o formato padrão do WhatsApp (ex: 55 + DDD + Número)
+                        const whatsappUrl =
+                            `https://wa.me/${whatsappNumber}?text=Olá!%20Verifiquei%20que%20já%20possuo%20cadastro%20e%20gostaria%20de%20atualizar%20meus%20dados.`;
 
                         Swal.fire({
-                            title: 'Olá!',
-                            html: `Notamos que você já possui cadastro em nossa plataforma.<br><br>Para sua segurança e para mantermos suas informações corretas, por favor, entre em contato com nossa equipe para realizar a atualização dos seus dados.`,
+                            title: '<span style="color: #1b4332; font-size: 1.5rem; font-weight: 700;">Cadastro Já Localizado</span>',
+                            html: `
+                                <div style="color: #4b5563; font-size: 0.95rem; line-height: 1.6; text-align: left; padding: 0 10px;">
+                                    <p style="margin-bottom: 12px;">Olá! Notamos que já existe um cadastro vinculado a este documento em nossa base de dados.</p>
+                                    <p>Para garantir a segurança das suas informações e realizar eventuais atualizações no seu perfil, por gentileza, entre em contato diretamente com a nossa equipe de atendimento.</p>
+                                </div>
+                            `,
                             icon: 'info',
-                            confirmButtonText: 'Falar no WhatsApp',
+                            iconColor: '#2d6a4f',
+                            confirmButtonText: '<i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Falar com a Equipe',
                             confirmButtonColor: '#25D366',
                             showCancelButton: true,
                             cancelButtonText: 'Fechar',
+                            cancelButtonColor: '#6b7280',
+                            customClass: {
+                                popup: 'rounded-2xl shadow-xl p-4',
+                                confirmButton: 'px-5 py-3 rounded-xl font-bold text-white shadow-md hover:opacity-90 transition-all flex items-center justify-center mx-auto',
+                                cancelButton: 'px-5 py-3 rounded-xl font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all'
+                            },
+                            buttonsStyling: false
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 window.open(whatsappUrl, '_blank');
