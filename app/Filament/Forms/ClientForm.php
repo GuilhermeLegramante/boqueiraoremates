@@ -185,14 +185,21 @@ class ClientForm
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
-                                ->unique(table: Client::class, column: 'cpf_cnpj', ignoreRecord: true)
-                                ->live()
-                                // Oculta o campo se for um cliente internacional
-                                ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
-                                ->required(
-                                    fn(Get $get): bool =>
-                                    $get('profile') !== 'marketing' && ! (bool) $get('is_international')
+                                ->unique(
+                                    table: Client::class,
+                                    column: 'cpf_cnpj',
+                                    ignoreRecord: true,
+                                    modifyRuleUsing: function ($rule, Get $get) {
+                                        if ($get('profile') === 'marketing') {
+                                            return $rule->ignore(null); // ou apenas remova/ignore a regra de unique
+                                        }
+                                        return $rule;
+                                    }
                                 )
+                                ->live()
+                                ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
+                                ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
+                                ->dehydrated(fn($state) => filled($state))
                                 ->rules([
                                     fn(Get $get) => $get('profile') !== 'marketing' && ! $get('is_international')
                                         ? 'required'
@@ -349,6 +356,11 @@ class ClientForm
                             Radio::make('profile')
                                 ->label(__('fields.profile'))
                                 ->live()
+                                ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
+                                    if ($state === 'marketing') {
+                                        $set('cpf_cnpj', null);
+                                    }
+                                })
                                 ->options([
                                     'purchase' => 'Compra',
                                     'sale' => 'Venda',
