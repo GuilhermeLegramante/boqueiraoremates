@@ -189,8 +189,10 @@ class ClientForm
                                 ->live()
                                 // Oculta o campo se for um cliente internacional
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
-                                // Só é obrigatório se NÃO for internacional
-                                ->required(fn(Get $get): bool => ! $get('is_international')),
+                                ->required(
+                                    fn(Get $get): bool =>
+                                    $get('profile') === 'marketing' && ! $get('is_international')
+                                ),
 
                             TextInput::make('inscricaoestadual')
                                 ->label('Inscrição Estadual')
@@ -338,14 +340,17 @@ class ClientForm
                                     'local' => 'Recinto',
                                     'site' => 'Site'
                                 ]),
+
                             Radio::make('profile')
                                 ->label(__('fields.profile'))
+                                ->live()
                                 ->options([
                                     'purchase' => 'Compra',
                                     'sale' => 'Venda',
                                     'both' => 'Compra e Venda',
                                     'marketing' => 'Divulgação'
                                 ]),
+
                             Toggle::make('has_register_in_another_auctioneer')
                                 ->label(__('fields.has_register_in_another_auctioneer')),
                             TextInput::make('auctioneer')
