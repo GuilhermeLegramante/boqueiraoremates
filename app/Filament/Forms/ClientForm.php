@@ -190,16 +190,14 @@ class ClientForm
                                     column: 'cpf_cnpj',
                                     ignoreRecord: true,
                                     modifyRuleUsing: function ($rule, Get $get) {
-                                        if ($get('profile') === 'marketing') {
-                                            return $rule->ignore(null); // ou apenas remova/ignore a regra de unique
-                                        }
-                                        return $rule;
+                                        // Ignora a regra de unicidade se for perfil marketing
+                                        return $get('profile') === 'marketing' ? $rule->ignore(null) : $rule;
                                     }
                                 )
                                 ->live()
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
                                 ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
-                                ->dehydrated(fn($state) => filled($state))
+                                ->dehydrated(fn($state) => filled($state)) // Evita enviar string vazia para o banco
                                 ->rules([
                                     fn(Get $get) => $get('profile') !== 'marketing' && ! $get('is_international')
                                         ? 'required'
