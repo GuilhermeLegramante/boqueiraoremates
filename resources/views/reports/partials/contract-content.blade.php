@@ -46,7 +46,7 @@
         <tr>
             <td style="width: 80%;">
                 <span class="contract-title">
-                    CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO
+                    CONTRATO DE COMPRA COM RESERVA DE DOMÍNIO {{$event->show_logo}}
                 </span>
 
                 @if (isset($via))
