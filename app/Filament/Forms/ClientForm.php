@@ -185,22 +185,12 @@ class ClientForm
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
-                                ->validation(false) // Desativa a validação interna estrita de CPF/CNPJ do plugin
-                                ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
-                                ->nullable()
-                                ->dehydrateStateUsing(fn($state) => filled($state) ? $state : null) // Garante que envia null se estiver vazio
-                                ->unique(
-                                    table: Client::class,
-                                    column: 'cpf_cnpj',
-                                    ignoreRecord: true,
-                                    modifyRuleUsing: function ($rule, Get $get) {
-                                        return $get('profile') === 'marketing' ? $rule->ignore(null) : $rule;
-                                    }
-                                )
+                                ->unique(table: Client::class, column: 'cpf_cnpj', ignoreRecord: true)
                                 ->live()
-                                ->hidden(fn(Get $get): bool => (bool) $get('is_international') || $get('profile') === 'marketing'),
-                            // ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
-
+                                // Oculta o campo se for um cliente internacional
+                                ->hidden(fn(Get $get): bool => (bool) $get('is_international'))
+                                // Só é obrigatório se NÃO for internacional
+                                ->required(fn(Get $get): bool => ! $get('is_international')),
 
                             TextInput::make('inscricaoestadual')
                                 ->label('Inscrição Estadual')
@@ -348,15 +338,10 @@ class ClientForm
                                     'local' => 'Recinto',
                                     'site' => 'Site'
                                 ]),
-
+                                
                             Radio::make('profile')
                                 ->label(__('fields.profile'))
                                 ->live()
-                                ->afterStateUpdated(function (Get $get, Set $set, ?string $state) {
-                                    if ($state === 'marketing') {
-                                        $set('cpf_cnpj', null);
-                                    }
-                                })
                                 ->options([
                                     'purchase' => 'Compra',
                                     'sale' => 'Venda',
