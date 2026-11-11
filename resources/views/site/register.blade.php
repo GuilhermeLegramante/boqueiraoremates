@@ -3,6 +3,141 @@
 @section('title', 'Cadastro - Boqueirão Remates')
 
 @section('content')
+    <style>
+
+/* Modal */
+.cadastro-popup {
+    width: calc(100% - 32px) !important;
+    max-width: 380px !important;
+    padding: 26px 26px 22px !important;
+    border-radius: 18px !important;
+    box-sizing: border-box !important;
+}
+
+/* Ícone */
+.cadastro-popup .cadastro-icon {
+    width: 64px !important;
+    height: 64px !important;
+    margin: 0 auto 14px !important;
+    font-size: 2rem !important;
+}
+
+/* Título */
+.cadastro-popup .cadastro-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #374151 !important;
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+}
+
+/* Conteúdo */
+.cadastro-popup .cadastro-html {
+    margin: 16px 0 0 !important;
+    padding: 0 !important;
+}
+
+.cadastro-conteudo {
+    color: #596273;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    text-align: center;
+}
+
+.cadastro-conteudo > p {
+    margin: 0 0 12px;
+}
+
+/* Bloco de atendimento */
+.cadastro-ajuda {
+    background: #f0fdf4;
+    border: 1px solid #dcfce7;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-top: 18px;
+    text-align: left;
+}
+
+.cadastro-ajuda-titulo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #166534;
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.cadastro-ajuda-titulo i {
+    font-size: 1.05rem;
+}
+
+.cadastro-ajuda p {
+    color: #596273;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Botões */
+.cadastro-popup .cadastro-actions {
+    display: flex !important;
+    gap: 10px !important;
+    width: 100% !important;
+    margin: 20px 0 0 !important;
+}
+
+.cadastro-popup .cadastro-actions button {
+    flex: 1 !important;
+    min-width: 0 !important;
+    min-height: 46px !important;
+    padding: 10px 12px !important;
+    border: none !important;
+    border-radius: 10px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.cadastro-popup .cadastro-confirmar {
+    background: #25d366 !important;
+    color: #fff !important;
+}
+
+.cadastro-popup .cadastro-confirmar:hover {
+    background: #20ba5a !important;
+}
+
+.cadastro-popup .cadastro-cancelar {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+}
+
+.cadastro-popup .cadastro-cancelar:hover {
+    background: #e5e7eb !important;
+}
+
+.cadastro-confirmar i {
+    margin-right: 5px;
+    font-size: 1rem;
+}
+
+/* Celulares menores */
+@media (max-width: 380px) {
+    .cadastro-popup {
+        padding: 22px 18px 18px !important;
+    }
+
+    .cadastro-popup .cadastro-actions button {
+        font-size: 0.78rem !important;
+        padding: 10px 8px !important;
+    }
+}
+
+    </style>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <section class="flex justify-center bg-gray-100 pt-48 pb-16 min-h-screen">
@@ -362,74 +497,41 @@
                             `https://wa.me/${whatsappNumber}?text=Olá!%20Verifiquei%20que%20já%20possuo%20cadastro%20e%20gostaria%20de%20atualizar%20meus%20dados.`;
 
 
+
                         Swal.fire({
-                            title: `
-                            <div style="
-                                color: #1b4332;
-                                font-size: 1.35rem;
-                                font-weight: 700;
-                                letter-spacing: -0.4px;
-                                margin-top: 8px;
-                            ">
-                                Cadastro já localizado
-                            </div>
-                        `,
+                            title: 'Cadastro já localizado',
                             html: `
-                            <div style="
-                                color: #4b5563;
-                                font-size: 0.95rem;
-                                line-height: 1.7;
-                                text-align: center;
-                                padding: 0 4px;
-                            ">
-                                <p style="margin-bottom: 14px;">
-                                    Identificamos que já existe um cadastro associado
-                                    ao documento informado em nossa base de dados.
-                                </p>
+        <div class="cadastro-conteudo">
+            <p>
+                Identificamos que já existe um cadastro associado
+                ao documento informado em nossa base de dados.
+            </p>
 
-                                <p style="margin-bottom: 20px;">
-                                    Para proteger suas informações e garantir que os
-                                    dados cadastrais estejam corretos, nossa equipe
-                                    de atendimento poderá auxiliá-lo na consulta,
-                                    atualização ou regularização do seu cadastro.
-                                </p>
+            <p>
+                Para sua segurança, nossa equipe poderá auxiliá-lo
+                na consulta ou atualização dos seus dados cadastrais.
+            </p>
 
-                                <div style="
-                                    background: #f0fdf4;
-                                    border: 1px solid #dcfce7;
-                                    border-radius: 12px;
-                                    padding: 14px 16px;
-                                    text-align: left;
-                                ">
-                                    <div style="
-                                        color: #166534;
-                                        font-weight: 700;
-                                        font-size: 0.9rem;
-                                        margin-bottom: 4px;
-                                    ">
-                                        <i class="fa-brands fa-whatsapp"></i>
-                                        Precisa de ajuda?
-                                    </div>
-
-                                    <div style="
-                                        color: #4b5563;
-                                        font-size: 0.85rem;
-                                        line-height: 1.5;
-                                    ">
-                                        Entre em contato conosco pelo WhatsApp.
-                                        Nossa equipe estará à disposição para orientá-lo.
-                                    </div>
-                                </div>
-                            </div>
-                        `,
+            <div class="cadastro-ajuda">
+                <div class="cadastro-ajuda-titulo">
+                    <i class="fa-brands fa-whatsapp"></i>
+                    Precisa de ajuda?
+                </div>
+                <p>
+                    Fale com nossa equipe pelo WhatsApp.
+                    Estamos à disposição para ajudá-lo.
+                </p>
+            </div>
+        </div>
+    `,
                             icon: 'info',
                             iconColor: '#2d6a4f',
 
                             showCancelButton: true,
                             confirmButtonText: `
-                            <i class="fa-brands fa-whatsapp" style="font-size: 1.1rem;"></i>
-                            Falar com atendimento
-                        `,
+        <i class="fa-brands fa-whatsapp"></i>
+        Falar no WhatsApp
+    `,
                             cancelButtonText: 'Fechar',
 
                             buttonsStyling: false,
@@ -437,40 +539,20 @@
                             focusCancel: true,
 
                             customClass: {
-                                popup: `
-                                rounded-2xl shadow-2xl
-                                p-5 sm:p-7
-                                max-w-md w-full mx-4
-                            `,
-                                icon: 'mt-2 mb-2',
-                                actions: `
-                                flex flex-col-reverse sm:flex-row
-                                gap-3 w-full mt-6
-                            `,
-                                confirmButton: `
-                                w-full sm:flex-1
-                                bg-[#25D366] hover:bg-[#20ba5a]
-                                text-white font-semibold
-                                py-3.5 px-5 rounded-xl
-                                shadow-sm hover:shadow-md
-                                transition-all duration-200
-                                text-sm
-                                inline-flex items-center justify-center gap-2
-                            `,
-                                cancelButton: `
-                                w-full sm:flex-1
-                                bg-gray-100 hover:bg-gray-200
-                                text-gray-700 font-medium
-                                py-3.5 px-5 rounded-xl
-                                transition-all duration-200
-                                text-sm
-                            `
+                                popup: 'cadastro-popup',
+                                icon: 'cadastro-icon',
+                                title: 'cadastro-title',
+                                htmlContainer: 'cadastro-html',
+                                actions: 'cadastro-actions',
+                                confirmButton: 'cadastro-confirmar',
+                                cancelButton: 'cadastro-cancelar'
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 window.open(whatsappUrl, '_blank');
                             }
                         });
+
 
 
                         // Limpa o campo de CPF para evitar que prossiga com o fluxo de novo cadastro
