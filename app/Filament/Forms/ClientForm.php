@@ -185,20 +185,21 @@ class ClientForm
                             Document::make('cpf_cnpj')
                                 ->label(__('fields.cpf_cnpj'))
                                 ->dynamic()
-                                ->validation(false)
-                                ->required(false)
+                                ->validation(false) // Desativa a validação interna estrita de CPF/CNPJ do plugin
+                                ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
+                                ->nullable()
+                                ->dehydrateStateUsing(fn($state) => filled($state) ? $state : null) // Garante que envia null se estiver vazio
                                 ->unique(
                                     table: Client::class,
                                     column: 'cpf_cnpj',
                                     ignoreRecord: true,
                                     modifyRuleUsing: function ($rule, Get $get) {
-                                        // Ignora a regra de unicidade se for perfil marketing
                                         return $get('profile') === 'marketing' ? $rule->ignore(null) : $rule;
                                     }
                                 )
                                 ->live()
                                 ->hidden(fn(Get $get): bool => (bool) $get('is_international')),
-                                // ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
+                            // ->required(fn(Get $get): bool => $get('profile') !== 'marketing' && ! (bool) $get('is_international'))
 
 
                             TextInput::make('inscricaoestadual')
