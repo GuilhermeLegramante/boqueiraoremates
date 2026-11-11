@@ -17,8 +17,11 @@
                 <div style="font-size: 9.5px; line-height: 1.25;">
                     <div><span class="label">Nota do:</span> {{ mb_strtoupper($event->name ?? '', 'UTF-8') }}</div>
                     <div><span class="label">NP Nº:</span> {{ $order->number }}</div>
-                    <div><span class="label">Escritório/Leiloeiro:</span> Boqueirão Remates /
-                        {{ $event->auctioneer ?? '' }}</div>
+                    @if (!empty($event->auctioneer))
+                        <div><span class="label">Escritório/Leiloeiro:</span> Boqueirão Remates /
+                            {{ $event->auctioneer ?? '' }}
+                        </div>
+                    @endif
                 </div>
             </td>
         </tr>

@@ -35,6 +35,7 @@ class Event extends Model
         'witness_2_name',
         'banner_contract',
         'city',
+        'show_logo', 
     ];
 
     protected $casts = [

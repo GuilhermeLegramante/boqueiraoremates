@@ -27,7 +27,7 @@
             </td>
 
             <td style="width: 30%; text-align: right;">
-                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo))
+                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo) && $event->show_logo)
                     @php
                         $typeLogo = pathinfo($boqueiraoLogo, PATHINFO_EXTENSION);
                         $dataLogo = file_get_contents($boqueiraoLogo);

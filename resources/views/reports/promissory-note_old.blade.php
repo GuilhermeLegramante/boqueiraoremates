@@ -202,7 +202,9 @@
                         <div><span class="label">Nota do:</span>
                             {{ mb_strtoupper($event->name, 'UTF-8') }}</div>
                         <div><span class="label">NP Nº:</span> {{ $order->number }}</div>
-                        <div><span class="label">Escritório/Leiloeiro:</span> {{ $event->auctioneer ?? '' }}</div>
+                        @if (!empty($event->auctioneer))
+                            <div><span class="label">Escritório/Leiloeiro:</span> {{ $event->auctioneer ?? '' }}</div>
+                        @endif
                     </div>
     </div>
     </td>

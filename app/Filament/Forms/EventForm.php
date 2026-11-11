@@ -350,6 +350,10 @@ class EventForm
             Toggle::make('can_offer')
                 ->label('Permitir Ofertas')
                 ->default(true),
+
+            Toggle::make('show_logo')
+                ->label('Mostrar Logo nos Documentos')
+                ->default(true),
         ];
     }
 }

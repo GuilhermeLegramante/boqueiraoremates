@@ -3,7 +3,7 @@
     <table class="promissory-header">
         <tr>
             <td style="width: 40%;">
-                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo))
+                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo) && $event->show_logo)
                     @php
                         $type = pathinfo($boqueiraoLogo, PATHINFO_EXTENSION);
                         $data = file_get_contents($boqueiraoLogo);

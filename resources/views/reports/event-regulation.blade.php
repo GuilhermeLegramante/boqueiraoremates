@@ -15,7 +15,7 @@
                     <h3>{{ $event->name }}</h3>
                 </td>
                 <td style="width: 20%; text-align: right;">
-                    @if (!empty($boqueiraoLogo))
+                    @if (!empty($boqueiraoLogo) && $event->show_logo)
                         <img src="{{ $boqueiraoLogo }}" style="max-height: 45px;">
                     @endif
                 </td>
