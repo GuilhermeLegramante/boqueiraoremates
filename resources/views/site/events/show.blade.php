@@ -244,12 +244,12 @@
                                                 <span>Lance Atual:</span>
                                                 <span
                                                     class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    {{-- @if ($status === 'vendido')
+                                                    @if (floatval($animal->pivot->target_value) == 0 && $status === 'vendido')
                                                         R$ 0,00
                                                     @else
                                                         R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                                    @endif --}}
-                                                    R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
+                                                    @endif
+                                                    {{-- R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }} --}}
                                                 </span>
 
                                                 {{-- Exibe o Lance-alvo se houver valor cadastrado, mesmo se estiver vendido ou for cobertura --}}
