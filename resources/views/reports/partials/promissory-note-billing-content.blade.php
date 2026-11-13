@@ -156,7 +156,7 @@
             <tr>
                 <td colspan="3">
                     <span class="label">Entrada de:</span> R$
-                    {{ number_format($order->first_parcel_value, 2, ',', '.') }} (+) as parcelas e seus respectivos
+                    {{ number_format(data_get($parcelsArray[0], 'value', 0), 2, ',', '.') }} (+) as parcelas e seus respectivos
                     vencimentos, descritos a seguir:
                 </td>
             </tr>
