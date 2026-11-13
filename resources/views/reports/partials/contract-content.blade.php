@@ -27,7 +27,7 @@
             </td>
 
             <td style="width: 30%; text-align: right;">
-                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo) && $event->show_logo == 1)
+                @if (!empty($boqueiraoLogo) && file_exists($boqueiraoLogo) && (!isset($event->show_logo) || $event->show_logo == 1))
                     @php
                         $typeLogo = pathinfo($boqueiraoLogo, PATHINFO_EXTENSION);
                         $dataLogo = file_get_contents($boqueiraoLogo);
@@ -35,7 +35,7 @@
                     @endphp
                     <img src="{{ $base64Logo }}" class="boqueirao-logo">
                 @else
-                    @if ($event->show_logo == 1)
+                    @if ((!isset($event->show_logo) || $event->show_logo == 1))
                         <img src="{{ public_path('img/logo_completa.png') }}" class="boqueirao-logo">
                     @endif
                 @endif
