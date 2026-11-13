@@ -152,9 +152,6 @@
             <td class="text-right"><span class="label">Vlr Líquido:</span> R$
                 {{ number_format($totalParcelsValue, 2, ',', '.') }}</td>
         </tr>
-        @php
-            $parcelsArray = is_array($order->parcels ?? []) ? $order->parcels : $order->parcels?->toArray() ?? [];
-        @endphp
         <tr>
             <td colspan="3">
                 <span class="label">Entrada de:</span> R$
