@@ -292,6 +292,8 @@ class OrderForm
                         'cota' => 'Cota',
                         'direito_de_uso' => 'Direito de Uso',
                         'cobertura' => 'Cobertura',
+                        'barriga' => 'Barriga',
+                        'embriao' => 'Embrião',
                     ])
                     ->live()
                     ->afterStateUpdated(function (Get $get, Set $set) {

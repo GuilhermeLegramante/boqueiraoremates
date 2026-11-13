@@ -147,6 +147,16 @@
                         @case('cobertura')
                             Cobertura ({{ $order->sale_type_quantity }} unidades)
                         @break
+
+                        @case('barriga')
+                            Barriga ({{ $order->sale_type_quantity }} unidades)
+                        @break
+
+                        @case('embriao')
+                            Embrião ({{ $order->sale_type_quantity }} unidades)
+                        @break
+
+                        
                     @endswitch
                 @endif
             </td>
