@@ -294,6 +294,7 @@ class ContractsRelationManager extends RelationManager
                 'auctioneer' => $order->event->auctioneer,
                 'witness_1_name' => $order->event->witness_1_name,
                 'witness_2_name' => $order->event->witness_2_name,
+                'show_logo' => $order->event->show_logo,
 
                 // 🔹 Mapeamento das cláusulas para o Snapshot
                 'clauses' => $order->event->clauses ? $order->event->clauses->map(fn($clause) => [
