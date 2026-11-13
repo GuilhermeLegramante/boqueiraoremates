@@ -152,15 +152,18 @@
             <td class="text-right"><span class="label">Vlr Líquido:</span> R$
                 {{ number_format($totalParcelsValue, 2, ',', '.') }}</td>
         </tr>
-        @if (($order->first_parcel_value ?? 0) > 0)
-            <tr>
-                <td colspan="3">
-                    <span class="label">Entrada de:</span> R$
-                    {{ number_format(data_get($parcelsArray[0], 'value', 0), 2, ',', '.') }} (+) as parcelas e seus respectivos
-                    vencimentos, descritos a seguir:
-                </td>
-            </tr>
-        @endif
+        @php
+            $parcelsArray = is_array($order->parcels ?? []) ? $order->parcels : $order->parcels?->toArray() ?? [];
+        @endphp
+        <tr>
+            <td colspan="3">
+                <span class="label">Entrada de:</span> R$
+                {{ number_format(data_get($parcelsArray[0], 'value', 0), 2, ',', '.') }} (+) as parcelas e seus
+                respectivos
+                vencimentos, descritos a seguir:
+            </td>
+        </tr>
+
     </table>
 
     {{-- TABELA DE PARCELAS --}}
