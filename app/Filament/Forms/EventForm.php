@@ -79,6 +79,30 @@ class EventForm
                 ->unique(ignoreRecord: true)
                 ->maxLength(255),
 
+            Toggle::make('published')
+                ->label('Publicado')
+                ->default(false),
+
+            Toggle::make('closed')
+                ->label('Encerrado')
+                ->default(false),
+
+            Toggle::make('show_lots')
+                ->label('Mostrar lotes')
+                ->default(false),
+
+            Toggle::make('is_permanent')
+                ->label('Venda Permanente')
+                ->default(false),
+
+            Toggle::make('can_offer')
+                ->label('Permitir Ofertas')
+                ->default(true),
+
+            Toggle::make('show_logo')
+                ->label('Mostrar Logo nos Documentos')
+                ->default(true),
+
             DateTimePicker::make('start_date')
                 ->label('Data do Evento')
                 ->visible($operation != 'view')
@@ -331,29 +355,7 @@ class EventForm
                 ])
                 ->columnSpanFull(),
 
-            Toggle::make('published')
-                ->label('Publicado')
-                ->default(false),
 
-            Toggle::make('closed')
-                ->label('Encerrado')
-                ->default(false),
-
-            Toggle::make('show_lots')
-                ->label('Mostrar lotes')
-                ->default(false),
-
-            Toggle::make('is_permanent')
-                ->label('Venda Permanente')
-                ->default(false),
-
-            Toggle::make('can_offer')
-                ->label('Permitir Ofertas')
-                ->default(true),
-
-            Toggle::make('show_logo')
-                ->label('Mostrar Logo nos Documentos')
-                ->default(true),
         ];
     }
 }
