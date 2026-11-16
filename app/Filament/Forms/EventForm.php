@@ -203,6 +203,8 @@ class EventForm
             Section::make('Cláusulas do Contrato')
                 ->description('Gerencie as cláusulas e parágrafos do contrato de compra e venda específicos para este evento.')
                 ->icon('heroicon-o-document-text')
+                // Visível só para usuários administradores
+                ->visible(auth()->user() && auth()->user()->is_admin)
                 ->collapsible()
                 ->schema([
                     Repeater::make('clauses')
@@ -283,6 +285,7 @@ class EventForm
                 ->description('Defina as regras gerais do leilão/remate que compõem o documento de regulamento.')
                 ->icon('heroicon-o-clipboard-document-list')
                 ->collapsible()
+                ->visible(auth()->user() && auth()->user()->is_admin)
                 ->schema([
                     Repeater::make('regulationClauses')
                         ->relationship('regulationClauses')
