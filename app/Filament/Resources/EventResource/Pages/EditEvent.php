@@ -12,6 +12,8 @@ class EditEvent extends EditRecord
 
     protected static ?string $navigationLabel = 'Editar Evento';
 
+    protected static string $view = 'filament.resources.event-resource.pages.edit-event';
+
     protected function getHeaderActions(): array
     {
         return [
