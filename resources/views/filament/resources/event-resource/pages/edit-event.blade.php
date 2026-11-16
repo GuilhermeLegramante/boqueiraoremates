@@ -1,8 +1,8 @@
 <x-filament-panels::page>
     {{-- 1. Relation Manager no início da página --}}
     @if (count($relationManagers = $this->getRelationManagers()))
-        <x-filament-panels::resources.relation-managers :active-locale="$this->activeLocale" :active-manager="$this->activeRelationManager" :content-tab-label="$this->getContentTabLabel()"
-            :managers="$relationManagers" :owner-record="$record" :page-class="static::class" />
+        <x-filament-panels::resources.relation-managers :active-manager="$this->activeRelationManager" :managers="$relationManagers" :owner-record="$record"
+            :page-class="static::class" />
     @endif
 
     {{-- 2. Formulário do Evento logo abaixo --}}
