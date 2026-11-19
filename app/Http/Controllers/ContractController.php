@@ -420,7 +420,7 @@ class ContractController extends Controller
 
         if ($isZeroPlusOne) {
             return sprintf(
-                'Valor total de R$ %s (%s), que será pago em 1 parcela, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
+                'Valor total de R$ %s (%s), que será pago em uma parcela, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
                 $totalFormatted,
                 $totalInWordsMoney
             );
