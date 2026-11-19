@@ -406,6 +406,8 @@ class ContractController extends Controller
 
         $totalInWordsMoney = $this->currencyInWords($netValue);
 
+        dd($parcels);
+
         $totalCount = $parcels
             ? $parcels->count()
             : (is_array($order)
