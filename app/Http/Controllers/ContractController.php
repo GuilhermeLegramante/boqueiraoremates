@@ -395,6 +395,110 @@ class ContractController extends Controller
         ];
     }
 
+    private function installmentsInWords(int $count): string
+    {
+        if ($count <= 0) {
+            return 'zero';
+        }
+
+        $units = [
+            1 => 'uma',
+            2 => 'duas',
+            3 => 'três',
+            4 => 'quatro',
+            5 => 'cinco',
+            6 => 'seis',
+            7 => 'sete',
+            8 => 'oito',
+            9 => 'nove',
+        ];
+
+        $teens = [
+            10 => 'dez',
+            11 => 'onze',
+            12 => 'doze',
+            13 => 'treze',
+            14 => 'quatorze',
+            15 => 'quinze',
+            16 => 'dezesseis',
+            17 => 'dezessete',
+            18 => 'dezoito',
+            19 => 'dezenove',
+        ];
+
+        $tens = [
+            20 => 'vinte',
+            30 => 'trinta',
+            40 => 'quarenta',
+            50 => 'cinquenta',
+            60 => 'sessenta',
+            70 => 'setenta',
+            80 => 'oitenta',
+            90 => 'noventa',
+        ];
+
+        $hundreds = [
+            100 => 'cento',
+            200 => 'duzentas',
+            300 => 'trezentas',
+            400 => 'quatrocentas',
+            500 => 'quinhentas',
+            600 => 'seiscentas',
+            700 => 'setecentas',
+            800 => 'oitocentas',
+            900 => 'novecentas',
+        ];
+
+        $convertBelowThousand = function (int $n) use ($units, $teens, $tens, $hundreds): string {
+            if ($n === 100) {
+                return 'cem';
+            }
+
+            $parts = [];
+
+            if ($n >= 100) {
+                $h = (int) (floor($n / 100) * 100);
+                $parts[] = $hundreds[$h];
+                $n %= 100;
+            }
+
+            if ($n >= 20) {
+                $t = (int) (floor($n / 10) * 10);
+                $parts[] = $tens[$t];
+                $n %= 10;
+            } elseif ($n >= 10) {
+                $parts[] = $teens[$n];
+                $n = 0;
+            }
+
+            if ($n > 0) {
+                $parts[] = $units[$n];
+            }
+
+            return implode(' e ', $parts);
+        };
+
+        if ($count < 1000) {
+            return $convertBelowThousand($count);
+        }
+
+        // Caso passe de 999 (ex.: 1000 -> mil parcelas, 2000 -> duas mil parcelas)
+        $thousands = (int) floor($count / 1000);
+        $remainder = $count % 1000;
+
+        $thousandPrefix = $thousands === 1
+            ? 'mil'
+            : $convertBelowThousand($thousands) . ' mil';
+
+        if ($remainder === 0) {
+            return $thousandPrefix;
+        }
+
+        $connector = ($remainder < 100 || $remainder % 100 === 0) ? ' e ' : ' ';
+
+        return $thousandPrefix . $connector . $convertBelowThousand($remainder);
+    }
+
     private function buildPaymentText(
         $order,
         float $netValue,
@@ -420,7 +524,7 @@ class ContractController extends Controller
 
         if ($isZeroPlusOne) {
             return sprintf(
-                'Valor total de R$ %s (%s), que será pago em uma parcela, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
+                'Valor total de R$ %s (%s), que será pago em 1 (uma) parcela, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
                 $totalFormatted,
                 $totalInWordsMoney
             );
@@ -434,15 +538,20 @@ class ContractController extends Controller
             );
         }
 
-        $installments = is_array($order)
+        $installments = max(1, (int) (is_array($order)
             ? ($order['total_installments'] ?? $totalCount)
-            : ($order->total_installments ?? $totalCount);
+            : ($order->total_installments ?? $totalCount)));
+
+        $installmentsInWords = $this->installmentsInWords($installments);
+        $parcelLabel = $installments === 1 ? 'parcela' : 'parcelas';
 
         return sprintf(
-            'Valor total de R$ %s (%s), que será pago de forma parcelada, dividido em %d parcelas, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
+            'Valor total de R$ %s (%s), que será pago de forma parcelada, dividido em %d (%s) %s, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
             $totalFormatted,
             $totalInWordsMoney,
-            max(1, (int) $installments)
+            $installments,
+            $installmentsInWords,
+            $parcelLabel
         );
     }
 
