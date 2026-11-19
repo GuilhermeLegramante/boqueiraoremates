@@ -403,7 +403,6 @@ class ContractController extends Controller
         ?Carbon $firstDueDate
     ): string {
         $totalFormatted = number_format($netValue, 2, ',', '.');
-
         $totalInWordsMoney = $this->currencyInWords($netValue);
 
         $totalCount = $parcels
@@ -412,7 +411,18 @@ class ContractController extends Controller
                 ? ($order['total_installments'] ?? 0)
                 : ($order->total_installments ?? 0));
 
-        if ($totalCount <= 1) {
+        $paymentWayName = is_array($order)
+            ? ($order['payment_way']['name'] ?? null)
+            : ($order->paymentWay?->name ?? null);
+
+        $isZeroPlusOne = is_string($paymentWayName) && trim($paymentWayName) === '0+1';
+
+        $installments = is_array($order)
+            ? ($order['total_installments'] ?? $totalCount)
+            : ($order->total_installments ?? $totalCount);
+
+        // Só é "à vista" quando for exatamente 1 parcela e NÃO for condição "0+1"
+        if ($totalCount === 1 && ! $isZeroPlusOne) {
             return sprintf(
                 'Valor total de R$ %s (%s), pago na condição à vista, conforme as condições estabelecidas neste contrato.',
                 $totalFormatted,
@@ -424,7 +434,7 @@ class ContractController extends Controller
             'Valor total de R$ %s (%s), que será pago de forma parcelada, dividido em %d parcelas, obedecendo aos valores e vencimentos descritos na Nota Promissória Única, gerada no mesmo ato deste contrato, identificada com o mesmo nº deste contrato e que compõe o conjunto de documentos que formalizam essa negociação (venda).',
             $totalFormatted,
             $totalInWordsMoney,
-            $order->total_installments ?? $totalCount
+            max(1, (int) $installments)
         );
     }
 
