@@ -177,7 +177,11 @@
                                         $isCobertura = str_contains(strtolower($event->name), 'cobertura');
                                         $targetValue = floatval($animal->pivot->target_value);
                                         $parcelsQuantity = intval($animal->pivot->parcels_quantity ?? 0);
+
+                                        // Exibe lance-alvo se houver valor cadastrado (> 0) ou se for evento de cobertura (mesmo zerado)
                                         $showTargetValue = $targetValue > 0 || $isCobertura;
+
+                                        // Se alvo == 0 e lote vendido, exibe R$ 0,00 no lance atual
                                         $currentBidFormatted =
                                             $targetValue == 0 && $status === 'vendido'
                                                 ? '0,00'
@@ -225,8 +229,8 @@
                                                 @endif
                                             </div>
                                         @endif
-                                    @elseif ($isCobertura)
-                                        {{-- EVENTO PERMANENTE DE COBERTURA --}}
+                                    @elseif ($showTargetValue)
+                                        {{-- EVENTO PERMANENTE (EXIBE LANCE-ALVO SE FOR COBERTURA OU SE TIVER VALOR > 0) --}}
                                         <div
                                             class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
                                             <span>Lance-alvo:</span>
