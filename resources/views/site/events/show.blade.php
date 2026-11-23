@@ -173,49 +173,15 @@
                                         </div>
                                     @endif
 
-                                    {{-- Mostra lance alvo se for venda de coberturas --}}
                                     @php
                                         $isCobertura = str_contains(strtolower($event->name), 'cobertura');
-                                        $showTargetValue =
-                                            floatval($animal->pivot->target_value) > 0 && $status !== 'vendido';
-                                        $alreadyDisplayedTargetValue = false; // Flag para evitar duplicação do lance-alvo
-                                    @endphp
-
-                                    @if ($isCobertura)
-                                        @php
-                                            // Se o evento for de coberturas, sempre mostra o lance-alvo, mesmo que seja 0
-                                            $alreadyDisplayedTargetValue = true;
-                                        @endphp
-                                        <div
-                                            class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
-
-                                            @if (floatval($animal->pivot->target_value) > 0 || $isCobertura)
-                                                <span>Lance-alvo:</span>
-                                                <span
-                                                    class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
-                                                </span>
-                                                @if ($animal->pivot->parcels_quantity > 0)
-                                                    <span>Qtde de Parcelas:</span>
-                                                    <span
-                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                        {{ $animal->pivot->parcels_quantity }}
-                                                    </span>
-                                                @endif
-                                            @else
-                                                <span>&nbsp;</span>
-                                                <span
-                                                    class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                    R$ 0,00
-                                                </span>
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    {{-- Mostra lance alvo se for venda de coberturas ou se tiver valor --}}
-                                    @php
-                                        $isCobertura = str_contains(strtolower($event->name), 'cobertura');
-                                        $showTargetValue = floatval($animal->pivot->target_value) > 0;
+                                        $targetValue = floatval($animal->pivot->target_value);
+                                        $parcelsQuantity = intval($animal->pivot->parcels_quantity ?? 0);
+                                        $showTargetValue = $targetValue > 0 || $isCobertura;
+                                        $currentBidFormatted =
+                                            $targetValue == 0 && $status === 'vendido'
+                                                ? '0,00'
+                                                : number_format(floatval($animal->current_bid), 2, ',', '.');
                                     @endphp
 
                                     @if (!$event->is_permanent)
@@ -228,53 +194,55 @@
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
                                                 <span>Lance Atual:</span>
                                                 <span
-                                                    class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    @if (floatval($animal->pivot->target_value) == 0 && $status === 'vendido')
-                                                        R$ 0,00
-                                                    @else
-                                                        R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                                    @endif
+                                                    class="justify-self-end inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    R$ {{ $currentBidFormatted }}
                                                 </span>
                                             </div>
                                         @else
                                             {{-- EVENTO ATIVO --}}
                                             <div
                                                 class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
-
                                                 <span>Lance Atual:</span>
                                                 <span
-                                                    class="inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                    @if (floatval($animal->pivot->target_value) == 0 && $status === 'vendido')
-                                                        R$ 0,00
-                                                    @else
-                                                        R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }}
-                                                    @endif
-                                                    {{-- R$ {{ number_format(floatval($animal->current_bid), 2, ',', '.') }} --}}
+                                                    class="justify-self-end inline-block bg-green-600 text-white px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    R$ {{ $currentBidFormatted }}
                                                 </span>
 
-                                                {{-- Exibe o Lance-alvo se houver valor cadastrado, mesmo se estiver vendido ou for cobertura --}}
-                                                @if ($showTargetValue || $isCobertura)
+                                                @if ($showTargetValue)
                                                     <span>Lance-alvo:</span>
                                                     <span
-                                                        class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                        R$ {{ number_format($animal->pivot->target_value, 2, ',', '.') }}
+                                                        class="justify-self-end inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                        R$ {{ number_format($targetValue, 2, ',', '.') }}
                                                     </span>
-                                                    @if ($animal->pivot->parcels_quantity > 0)
+
+                                                    @if ($parcelsQuantity > 0)
                                                         <span>Qtde de Parcelas:</span>
                                                         <span
-                                                            class="inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
-                                                            {{ $animal->pivot->parcels_quantity }}
+                                                            class="justify-self-end inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                            {{ $parcelsQuantity }}
                                                         </span>
                                                     @endif
-                                                @else
-                                                    <span>&nbsp;</span>
-                                                    <span
-                                                        class="inline-block px-3 py-1 rounded-lg text-transparent min-w-[110px] select-none">
-                                                        R$ 0,00
-                                                    </span>
                                                 @endif
                                             </div>
                                         @endif
+                                    @elseif ($isCobertura)
+                                        {{-- EVENTO PERMANENTE DE COBERTURA --}}
+                                        <div
+                                            class="grid grid-cols-[140px_1fr] items-center gap-2 text-gray-200 font-extrabold text-md mb-4 min-h-[60px]">
+                                            <span>Lance-alvo:</span>
+                                            <span
+                                                class="justify-self-end inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                R$ {{ number_format($targetValue, 2, ',', '.') }}
+                                            </span>
+
+                                            @if ($parcelsQuantity > 0)
+                                                <span>Qtde de Parcelas:</span>
+                                                <span
+                                                    class="justify-self-end inline-block bg-yellow-500 text-black px-3 py-1 rounded-lg shadow text-right min-w-[110px]">
+                                                    {{ $parcelsQuantity }}
+                                                </span>
+                                            @endif
+                                        </div>
                                     @endif
 
                                     @if (!$event->closed)
