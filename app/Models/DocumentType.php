@@ -12,10 +12,10 @@ class DocumentType extends Model
 
     protected $fillable = ['name', 'order'];
 
-    protected static function booted(): void
+   protected static function booted(): void
     {
         static::addGlobalScope('order', function (Builder $query) {
-            $query->orderByRaw('CASE WHEN order = 0 THEN 1 ELSE 0 END')
+            $query->orderByRaw('CASE WHEN `order` = 0 THEN 1 ELSE 0 END')
                 ->orderBy('order')
                 ->orderBy('id');
         });
