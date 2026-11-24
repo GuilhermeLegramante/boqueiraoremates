@@ -166,7 +166,7 @@
             text-align: justify;
             font-size: 9.5px;
             line-height: 1.4;
-            margin: 6px 0 8px 0;
+            margin: 4px 0 8px 0;
             font-weight: bold;
         }
 
