@@ -289,7 +289,6 @@
     <p class="payment-text">
         {{ $paymentText ?? '' }}
     </p>
-    <br>
 
     @forelse ($event->clauses as $clause)
         @if ($clause->title)
