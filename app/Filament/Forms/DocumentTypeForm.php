@@ -15,6 +15,12 @@ class DocumentTypeForm
                 ->required()
                 ->unique()
                 ->maxLength(255),
+
+            TextInput::make('order')
+                ->label('Ordem')
+                ->required()
+                ->numeric()
+                ->default(0),
         ];
     }
 }
