@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\OrderResource\RelationManagers;
 
+use App\Filament\Tables\BuyerParcelsTable;
 use App\Filament\Tables\ParcelsTable;
 use App\Models\PaymentMethod;
 use Filament\Forms;
@@ -42,7 +43,7 @@ class BuyerParcelsRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('number')
-            ->columns(ParcelsTable::table())
+            ->columns(BuyerParcelsTable::table())
             ->filters([
                 //
             ])
