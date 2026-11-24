@@ -295,7 +295,7 @@
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
         @endif
         <div class="contract-text"
-            style="text-align: justify; text-justify: inter-word; margin-top: -3px; margin-bottom: 0px;">
+            style="text-align: justify; text-justify: inter-word; margin-top: -3px; margin-bottom: -3px;">
             {!! $clause->content !!}
         </div>
     @empty
