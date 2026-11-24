@@ -298,7 +298,7 @@
             $content = preg_replace('/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/i', '', $clause->content);
         @endphp
         <div class="contract-text"
-            style="text-align: justify; text-justify: inter-word; margin-top: -3px; margin-bottom: -3px;">
+            style="text-align: justify; text-justify: inter-word;">
             {!! $content !!}
         </div>
     @empty
