@@ -47,6 +47,9 @@ class DocumentTypeResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('fields.name'))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('order')
+                    ->sortable()
+                    ->label('Ordem'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('fields.created_at'))
                     ->dateTime()
