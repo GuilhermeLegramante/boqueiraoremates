@@ -318,7 +318,7 @@ class OrderForm
                     ->live()
                     ->debounce(600)
                     ->numeric()
-                    ->visible(fn(Get $get): bool => $get('sale_type') === 'cobertura'),
+                    ->visible(fn(Get $get): bool => $get('sale_type') === 'cobertura' || $get('sale_type') === 'barriga' || $get('sale_type') === 'embriao'),
 
                 Textarea::make('business_note')
                     ->label('Observação')
