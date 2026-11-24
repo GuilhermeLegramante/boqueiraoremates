@@ -11,7 +11,7 @@
             <h3>{{ is_array($event) ? $event['name'] ?? 'REMATE' : $event->name ?? 'REMATE' }}</h3>
         </td>
         <td style="width: 20%; text-align: right;">
-            @if (!empty($boqueiraoLogo))
+            @if (!empty($boqueiraoLogo) && (!isset($event->show_logo) || $event->show_logo == 1))
                 <img src="{{ $boqueiraoLogo }}" style="max-height: 45px;">
             @endif
         </td>
