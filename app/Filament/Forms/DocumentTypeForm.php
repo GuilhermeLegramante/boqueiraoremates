@@ -13,7 +13,7 @@ class DocumentTypeForm
             TextInput::make('name')
                 ->label(__('fields.name'))
                 ->required()
-                ->unique()
+                ->unique(ignoreRecord: true)
                 ->maxLength(255),
 
             TextInput::make('order')
