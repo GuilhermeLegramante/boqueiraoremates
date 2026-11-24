@@ -291,10 +291,10 @@
     </p>
 
     @forelse ($event->clauses as $clause)
-        {{-- @if ($clause->title)
+        @if ($clause->title)
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
-        @endif --}}
-        <div class="contract-text"
+        @endif
+        <div class=""
             style="text-align: justify; text-justify: inter-word; margin-top: -3px; margin-bottom: -3px;">
             {!! $clause->content !!}
         </div>
