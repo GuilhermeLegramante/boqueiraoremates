@@ -15,7 +15,9 @@ class DocumentType extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('order', function (Builder $query) {
-            $query->orderBy('order')->orderBy('id');
+            $query->orderByRaw('CASE WHEN order = 0 THEN 1 ELSE 0 END')
+                ->orderBy('order')
+                ->orderBy('id');
         });
     }
 
