@@ -158,7 +158,7 @@
             text-align: justify;
             font-size: 9.5px;
             margin-top: 0;
-            margin-bottom: 6px;
+            margin-bottom: 0px;
             line-height: 1.25;
         }
 
