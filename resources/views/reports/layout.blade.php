@@ -162,6 +162,16 @@
             line-height: 1.25;
         }
 
+        .contract-text p {
+            margin: 0 0 3pt 0;
+            /* 0 em cima, 3pt embaixo (ajuste para 2pt ou 0 se quiser bem colado) */
+            padding: 0;
+        }
+
+        .contract-text p:last-child {
+            margin-bottom: 0;
+        }
+
         .payment-text {
             text-align: justify;
             font-size: 9.5px;

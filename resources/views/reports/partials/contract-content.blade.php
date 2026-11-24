@@ -294,9 +294,12 @@
         @if ($clause->title)
             <h4 class="contract-clause-title">{{ $clause->title }}</h4>
         @endif
-        <div class=""
+        @php
+            $content = preg_replace('/<p[^>]*>(\s|&nbsp;|<br\s*\/?>)*<\/p>/i', '', $clause->content);
+        @endphp
+        <div class="contract-text"
             style="text-align: justify; text-justify: inter-word; margin-top: -3px; margin-bottom: -3px;">
-            {!! $clause->content !!}
+            {!! $content !!}
         </div>
     @empty
         {{-- Caso o evento não tenha cláusulas cadastradas no banco, pode manter um fallback estático ou exibir nada --}}
